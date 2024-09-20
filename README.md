@@ -1,4 +1,4 @@
-# SpotReality
+# GHOST
 Brown University GHOST (Ghost Human Operator for Spot Teleoperation) Virtual Reality Project
 
 This repo contains code for the Unity half of the GHOST system, which allows for robust VR robot teleoperation with immersive point-cloud visualization and intuitive gesture controls. 
