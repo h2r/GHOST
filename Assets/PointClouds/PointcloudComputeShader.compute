@@ -1,0 +1,44 @@
+#pragma kernel CSMain
+
+struct MeshProperties {
+    float4 pos;
+};
+
+RWStructuredBuffer<MeshProperties> _Properties;
+RWStructuredBuffer<float> _Depth;
+float4x4 _GOPose;       // [2023-10-30][JHT] Global orientation? pose
+float4 intrinsics;      // [2023-10-30][JHT] Contains (CX, CY, FX, FY) - center point x, center point y, focal length x, focal length y
+float4 screenData;      // [2023-10-30][JHT] Continas (width, height, 1/width, FY) - screen/image coordinate data
+float samplingSize;     // [2023-10-30][JHT] Value of 1 samples all pixels; value of 2 samples half the pixels
+float t;                // [2023-10-30][JHT] Scalar on depth that also inverts the depth (?)
+
+// We used to just be able to use (1, 1, 1) threads for whatever population (not sure the old limit), but a Unity update
+// imposed a thread limit of 65535.  Now, to populations above that, we need to be more granular with our threads.
+[numthreads(64, 1, 1)]
+void CSMain(uint3 id : SV_DispatchThreadID) {
+    float4 pos = _Properties[id.x].pos;
+
+    //float i = samplingSize * id.x;
+    float i = id.x * samplingSize;
+
+    float col_y = floor(i * screenData.z);    
+    float col_x = i - floor(i * screenData.z) * screenData.x;
+    //_Properties[id.x].color.z = 1
+
+    uint depth_idx = (screenData.x * (screenData.y - col_y - 1)) + (screenData.x - col_x - 1);
+    
+    pos.z = _Depth[depth_idx] * t + (1 - t);
+
+    pos.x = (col_y - intrinsics.y) * pos.z / intrinsics.z;
+    pos.y = (col_x - intrinsics.x) * pos.z / intrinsics.w;
+
+    //pos.z = _Depth[depth_idx];
+    pos.w = 1;
+    if (pos.z <= 0.001){pos.z = 50000;}
+    //float4 pos = {.x,_Properties[id.x].pos.y,_Properties[id.x].pos.z,1.0};
+    
+    // Apply translation to existing matrix, which will be read in the shader.
+    _Properties[id.x].pos = mul(_GOPose, pos);
+    _Properties[id.x].pos.w = _Depth[depth_idx] * t + (1 - t);
+    //_Properties[id.x].pos.w = abs(id.x * samplingSize - i);
+}
