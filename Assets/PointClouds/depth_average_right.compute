@@ -1,0 +1,241 @@
+#pragma kernel EdgeDetection
+#pragma kernel MeanAveraging
+#pragma kernel ClearBuffer
+#pragma kernel MedianAveragingFast
+#pragma kernel MedianAveragingNaive
+
+// Size of the buffers
+#define WIDTH 640
+#define HEIGHT 480
+
+// Number of frames
+int num_frames;
+
+// For Edge Detection Min Grad
+float edgeThreshold;
+
+// Buffers
+RWStructuredBuffer<float> depth_ar; // EdgeDetection, MeanAveraging, MedianAveragingFast, MedianAveragingNaive 
+RWStructuredBuffer<float> depth_buffer; // MeanAveraging, ClearBuffer, MedianAveragingFast, MedianAveragingNaive 
+
+// buffer pos
+int buffer_pos;
+
+// activate filter or not
+bool activate;
+
+
+// EdgeDetection
+[numthreads(16, 16, 1)]
+void EdgeDetection(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupThreadID)
+{
+    int xIndex = groupId.x * 16 + threadId.x;
+    int yIndex = groupId.y * 16 + threadId.y;
+
+    int index = xIndex + yIndex * WIDTH;
+
+    if (xIndex > 0 && xIndex < WIDTH - 1 && yIndex > 0 && yIndex < HEIGHT - 1)
+    {
+        float gradX = depth_ar[(xIndex - 1) + (yIndex + 1) * WIDTH] * -1.0
+                    //+ depth_ar[(xIndex    ) + (yIndex + 1) * WIDTH] * 0.0
+                    + depth_ar[(xIndex + 1) + (yIndex + 1) * WIDTH] * 1.0
+                    + depth_ar[(xIndex    ) + (yIndex    ) * WIDTH] * -2.0
+                    //+ depth_ar[(xIndex - 1) + (yIndex    ) * WIDTH] * 0.0
+                    + depth_ar[(xIndex + 1) + (yIndex    ) * WIDTH] * 2.0
+                    + depth_ar[(xIndex - 1) + (yIndex - 1) * WIDTH] * -1.0
+                    //+ depth_ar[(xIndex    ) + (yIndex - 1) * WIDTH] * 0.0
+                    + depth_ar[(xIndex + 1) + (yIndex - 1) * WIDTH] * 1.0;
+            
+        float gradY = depth_ar[(xIndex - 1) + (yIndex + 1) * WIDTH] * -1.0
+                    + depth_ar[(xIndex    ) + (yIndex + 1) * WIDTH] * -2.0
+                    + depth_ar[(xIndex + 1) + (yIndex + 1) * WIDTH] * -1.0
+                    //+ depth_ar[(xIndex    ) + (yIndex    ) * WIDTH] * 0.0
+                    //+ depth_ar[(xIndex - 1) + (yIndex    ) * WIDTH] * 0.0
+                    //+ depth_ar[(xIndex + 1) + (yIndex    ) * WIDTH] * 0.0
+                    + depth_ar[(xIndex - 1) + (yIndex - 1) * WIDTH] * 1.0
+                    + depth_ar[(xIndex    ) + (yIndex - 1) * WIDTH] * 2.0
+                    + depth_ar[(xIndex + 1) + (yIndex - 1) * WIDTH] * 1.0;
+
+        float temp = gradX * gradX + gradY * gradY;
+
+        if (temp >= 0.0 && sqrt(temp) > edgeThreshold)
+        {
+            depth_ar[index] = 0.0;
+        }
+    }
+}
+
+
+// Clear Buffer Data
+[numthreads(16, 16, 1)]
+void ClearBuffer(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupThreadID)
+{
+    int xIndex = groupId.x * 16 + threadId.x;
+    int yIndex = groupId.y * 16 + threadId.y;
+
+    if (xIndex < WIDTH && yIndex < HEIGHT)
+    {
+        for (int i = 0; i < num_frames; i++)
+        {
+            int idx = i * WIDTH * HEIGHT + xIndex + yIndex * WIDTH;
+            depth_buffer[idx] = 0.0f;
+        }
+    }
+}
+
+
+// MedianAveragingFast
+[numthreads(16, 16, 1)]
+void MedianAveragingFast(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupThreadID)
+{
+    int xIndex = groupId.x * 16 + threadId.x;
+    int yIndex = groupId.y * 16 + threadId.y;
+
+    int index = xIndex + yIndex * WIDTH;
+    
+    if (xIndex < WIDTH && yIndex < HEIGHT)
+    {
+        float depth_value = depth_ar[index];
+        float old_value = depth_buffer[buffer_pos * WIDTH * HEIGHT + index];
+        depth_buffer[buffer_pos * WIDTH * HEIGHT + index] = depth_value;
+
+        float median_value = depth_buffer[(num_frames - 1) * WIDTH * HEIGHT + index];
+
+        if ((old_value - median_value) * (depth_value - median_value) > 0 && (old_value * depth_value > 0 || old_value + depth_value == 0)) // The new value and the old are on the same side
+        {
+            depth_ar[index] = median_value;
+        }
+        else
+        {
+            float new_med = -1;
+            int dir = -1;
+            float count = 0.0;
+            float count_z = 0.0;
+            if (old_value == 0 && depth_value > median_value) dir = 1;
+            else if (old_value < median_value && old_value > 0.0) dir = 1; 
+            else if (old_value == median_value && depth_value > median_value) dir = 1;
+
+            for (int i = 0; i < 19; i++)
+            {
+                float depth_i = depth_buffer[i * WIDTH * HEIGHT + index];
+                if (depth_i == 0.0) count_z += 1.0;
+                else if (depth_i * dir > median_value * dir)
+                {
+                    count += 1.0;
+                    if (depth_i * dir < new_med * dir || new_med == -1)
+                    { 
+                        new_med = depth_i;  
+                    }
+                }
+            }
+            if (count > floor((19.0 - count_z) / 2.0)) 
+            {
+                depth_buffer[(num_frames - 1) * WIDTH * HEIGHT + index] = new_med;    
+            }
+            else if (depth_value == 0.0 && old_value == median_value){
+                count = 0.0; new_med = -1.0; dir = dir * -1;
+                for (int i = 0; i < 19; i++){
+                    float depth_i = depth_buffer[i * WIDTH * HEIGHT + index];
+                    if (depth_i * dir > median_value * dir){
+                        count += 1.0;
+                        if (depth_i * dir < new_med * dir || new_med == -1){ 
+                            new_med = depth_i;  
+                        }
+                    }
+                }
+                if (count > floor((19.0 - count_z) / 2.0)) 
+                {
+                    depth_buffer[(num_frames - 1) * WIDTH * HEIGHT + index] = new_med;    
+                }
+            }
+
+            if (count_z > 16)
+            {
+                depth_buffer[(num_frames - 1) * WIDTH * HEIGHT + index] = 0.0;
+            }
+
+            depth_ar[index] = depth_buffer[(num_frames - 1) * WIDTH * HEIGHT + index];
+            
+        }
+    }
+}
+
+
+// Native Median Averaging
+[numthreads(16, 16, 1)]
+void MedianAveragingNaive(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupThreadID)
+{
+    int xIndex = groupId.x * 16 + threadId.x;
+    int yIndex = groupId.y * 16 + threadId.y;
+
+    int index = xIndex + yIndex * WIDTH;
+
+    depth_buffer[buffer_pos * WIDTH * HEIGHT + index] = depth_ar[index];
+    
+    if (xIndex < WIDTH && yIndex < HEIGHT && activate)
+    {
+        int n = 0;
+        float tmp[19];
+        tmp[0] = 0.0;
+        for (int q = 0; q < num_frames - 1; q++)
+        {
+            int idx = q * WIDTH * HEIGHT + index;
+            if (depth_buffer[idx] > 0.0)
+            {
+                tmp[n] = depth_buffer[idx]; 
+                n += 1;
+            }
+        }
+
+        int i, j;
+        float key;
+        for (i = 1; i < n; i++) 
+        {
+            key = tmp[i];
+            j = i - 1;
+
+            while (j >= 0 && tmp[j] > key) {
+                tmp[j + 1] = tmp[j];
+                j = j - 1;
+            }
+            tmp[j + 1] = key;
+        }
+
+        int result = n / 2;
+     
+        depth_ar[index] = tmp[result];
+        depth_buffer[(num_frames - 1) * WIDTH * HEIGHT + index] = tmp[result];
+    }
+}
+
+
+// Fast Median Averaging
+[numthreads(16, 16, 1)]
+void MeanAveraging(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupThreadID)
+{
+    int xIndex = groupId.x * 16 + threadId.x;
+    int yIndex = groupId.y * 16 + threadId.y;
+
+    int index = xIndex + yIndex * WIDTH;
+    depth_buffer[buffer_pos * WIDTH * HEIGHT + index] = depth_ar[index];
+
+    if (xIndex < WIDTH && yIndex < HEIGHT && activate)
+    {
+        float weighted_sum = 0.0;
+        float total_weight = 0.0001;
+ 
+        for (int i = 0; i < num_frames - 1; i++)
+        {
+            int idx = i * WIDTH * HEIGHT + index;
+            //float weight = 1.0;
+            //weight = 1.0;
+            if (depth_buffer[idx] > 0)
+            {
+                weighted_sum += depth_buffer[idx];
+                total_weight += 1.0;
+            }
+        }
+            
+        depth_ar[index] = weighted_sum / total_weight;
+    }
+}

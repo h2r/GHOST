@@ -18,7 +18,7 @@ using UnityEngine.UI;
 using System;
 
 namespace RosSharp.RosBridgeClient
-{                                            
+{
     [RequireComponent(typeof(RosConnector))]
     public class JPEGImageSubscriber : UnitySubscriber<MessageTypes.Sensor.Image>
     {
@@ -42,14 +42,14 @@ namespace RosSharp.RosBridgeClient
 
         protected override void Start()
         {
-			base.Start();
+            base.Start();
             texture2D = new Texture2D(1, 1);
             meshRenderer.material = new Material(Shader.Find("Standard"));
             freezeColor = false;
             lastMessageRetrieved = DateTime.Now;
 
             // Keep last 5 color images, or just 1 if there is no depth
-            if (associatedDepth == null || !associatedDepth.enabled) 
+            if (associatedDepth == null || !associatedDepth.enabled)
             {
                 bufferLength = 1;
             }
@@ -139,13 +139,15 @@ namespace RosSharp.RosBridgeClient
             // Look at the timestamp of each image in the buffer
             for (int i = 0; i < imgBuffer.Length; i++)
             {
-                //Debug.Log(imgBuffer[i].header.stamp.secs);
-                imgTime = imgBuffer[i].header.stamp.secs + imgBuffer[i].header.stamp.nsecs * 0.000000001;
-                disparity = Math.Abs(depthTime - imgTime);
-                if (disparity < closestTime)
+                if (imgBuffer[i].header != null)
                 {
-                    closestInd = i;
-                    closestTime = disparity;
+                    imgTime = imgBuffer[i].header.stamp.secs + imgBuffer[i].header.stamp.nsecs * 0.000000001;
+                    disparity = Math.Abs(depthTime - imgTime);
+                    if (disparity < closestTime)
+                    {
+                        closestInd = i;
+                        closestTime = disparity;
+                    }
                 }
             }
 
@@ -160,7 +162,7 @@ namespace RosSharp.RosBridgeClient
 
         public void toggleFreeze()
         {
-            freezeColor = !freezeColor; 
+            freezeColor = !freezeColor;
         }
 
         public bool getFrameUpdated()
@@ -172,4 +174,3 @@ namespace RosSharp.RosBridgeClient
 
     }
 }
-

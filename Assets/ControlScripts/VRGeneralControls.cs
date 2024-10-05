@@ -96,9 +96,9 @@ public class VRGeneralControls : MonoBehaviour
         {
             stow.Stow();
             // Pause depth history for 1.5 seconds
-            foreach (RawImageSubscriber ds in depthSubscribers)
+            foreach (DrawMeshInstanced ds in pointClouds)
             {
-                ds.pauseDepthHistory(1.5f);
+                ds.continue_update();
             }
         }
 

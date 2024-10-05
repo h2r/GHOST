@@ -97,13 +97,13 @@ public class VRDriveSpot : MonoBehaviour
             {
                 drive.drive(leftMove, rightMove.x, height);
             }
-                
+
             //todo:add spot 2 drive
 
             // Pause depth history for 1.5 seconds
-            foreach (RawImageSubscriber ds in depthSubscribers)
+            foreach (DrawMeshInstanced ds in pointClouds)
             {
-                ds.pauseDepthHistory(1.5f);
+                ds.continue_update();
             }
         }
     }
