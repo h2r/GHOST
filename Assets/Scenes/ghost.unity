@@ -253,11 +253,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fbf872e8a52963a42a7e0dfed4554676, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  activate_depth_estimation: 1
-  mean_averaging: 1
+  activate_depth_estimation: 0
+  mean_averaging: 0
   median_averaging: 0
   edge_detection: 0
-  edge_threshold: 0.5
+  edge_threshold: 0
   AveragerLeft: {fileID: 4523430}
   AveragerRight: {fileID: 4523429}
   Left_Depth_Renderer: {fileID: 409472602}
@@ -2945,6 +2945,10 @@ PrefabInstance:
       propertyPath: imageScriptIndex
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 1137478775010377568, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: use_saved_meshes
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1137478775010377574, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -2984,6 +2988,10 @@ PrefabInstance:
     - target: {fileID: 1137478775515482002, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: savePointCloud
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478775515482002, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: use_saved_meshes
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775531494915, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl

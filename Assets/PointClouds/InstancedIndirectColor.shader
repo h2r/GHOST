@@ -92,7 +92,7 @@ Shader "Custom/InstancedIndirectColor" {
                 //float4 coor = {0.2,0.5,0.0,0.0};
                 o.color = tex2Dlod(_colorMap, coor);
 
-                if (_Properties[instanceID].pos.y < 0.25 || _Properties[instanceID].pos.z < -0.25)
+                if (_Properties[instanceID].pos.y < 0.0 || _Properties[instanceID].pos.z < -0.25)
                 {
                     o.vertex = float4(0.0, 0.0, 0.0, 1.0);
                 }
