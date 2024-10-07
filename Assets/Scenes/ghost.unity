@@ -253,7 +253,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fbf872e8a52963a42a7e0dfed4554676, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  activate_depth_estimation: 0
+  activate_depth_estimation: 1
   mean_averaging: 0
   median_averaging: 0
   edge_detection: 0
@@ -274,7 +274,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45e88b52fad9fb94881edee1e15909ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  modelAsset: {fileID: 5022602860645237092, guid: 5932c1834e735a94daf9b5efa88ca096, type: 3}
+  modelAsset: {fileID: 5022602860645237092, guid: 53b0f34bfe3c6234aa6b4154af20ed65, type: 3}
 --- !u!1 &6154727
 GameObject:
   m_ObjectHideFlags: 0
