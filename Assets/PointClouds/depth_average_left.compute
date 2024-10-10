@@ -175,7 +175,7 @@ void MedianAveragingNaive(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupT
     if (xIndex < WIDTH && yIndex < HEIGHT && activate)
     {
         int n = 0;
-        float tmp[19];
+        float tmp[59];
         tmp[0] = 0.0;
         for (int q = 0; q < num_frames - 1; q++)
         {

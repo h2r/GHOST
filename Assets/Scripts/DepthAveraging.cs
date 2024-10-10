@@ -12,9 +12,9 @@ public class DepthAveraging : MonoBehaviour
     int median_kernel;
     int fast_median_kernel;
 
-    int num_frames = 20;
+    int num_frames = 60;
 
-    float[,] depth_buffer = new float[20, 480 * 640];
+    float[,] depth_buffer = new float[60, 480 * 640];
     //private ComputeBuffer depthArCompute;
     private ComputeBuffer depthBufferCompute;
 
@@ -43,7 +43,7 @@ public class DepthAveraging : MonoBehaviour
 
         // Data & Buffer
         //depthArCompute = new ComputeBuffer(480 * 640, sizeof(float));
-        depthBufferCompute = new ComputeBuffer(480 * 640 * 20, sizeof(float));
+        depthBufferCompute = new ComputeBuffer(480 * 640 * num_frames, sizeof(float));
         average_shader.SetInt("num_frames", num_frames);
         depthBufferCompute.SetData(depth_buffer);
 
