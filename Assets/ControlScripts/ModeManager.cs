@@ -11,8 +11,8 @@ public class ModeManager : MonoBehaviour
     private int currMode; // currMode is set to value from 0-modes.Count      
     public List<ControlMode> modes; 
     //public List<TextMeshProUGUI> UICanvases;
-    //public TextMeshProUGUI hintText;
-    public string hintTextString;
+    public TextMeshProUGUI hintText;
+    //public string hintTextString;
     public VRGeneralControls generalControlsScript;
     public SetFarPlane planePublisher;
 
@@ -60,11 +60,11 @@ public class ModeManager : MonoBehaviour
         mode.enableMode();
 
         //update UI
-       // UpdateUI("Mode: " + currMode.ToString() + " - " + mode.ToString());
-        //if (hintText != null)
-        //{
-            //hintText.text = " Mode: " + (currMode + 1).ToString() + " - " + mode.modeName + "\n";
-        //}
+        // UpdateUI("Mode: " + currMode.ToString() + " - " + mode.ToString());
+        if (hintText != null)
+        {
+            hintText.text = " Mode: " + (currMode + 1).ToString() + " - " + mode.modeName + "\n";
+        }
 
         UnityEngine.Debug.Log(mode.name);
         // Send far plane request

@@ -96,10 +96,10 @@ public class VRGeneralControls : MonoBehaviour
         {
             stow.Stow();
             // Pause depth history for 1.5 seconds
-            foreach (DrawMeshInstanced ds in pointClouds)
-            {
-                ds.continue_update();
-            }
+            //foreach (DrawMeshInstanced ds in pointClouds)
+            //{
+            //    ds.continue_update();
+            //}
         }
 
         /* Switch modes if A is pressed */
