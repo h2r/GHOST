@@ -8,9 +8,14 @@ using UnityEngine.VFX;
 
 public class DepthCompletion : MonoBehaviour
 {
-    public ModelAsset modelAsset;
-    Model runtimeModel;
-    Worker worker;
+    public ModelAsset Baseline;
+    public ModelAsset MaskBaseline;
+    Model runtimeModelBaseline;
+    Model runtimeModelMaskBaseline;
+    Worker workerBaseline;
+    Worker workerMaskBaseline;
+
+    public bool use_baseline;
     //TensorShape depth_shape = new TensorShape(1, 1, 480, 640);
     //TensorShape color_shape = new TensorShape(1, 3, 480, 640);
 
@@ -20,16 +25,24 @@ public class DepthCompletion : MonoBehaviour
     //// =============================================================================== //
     void Start()
     {
-        runtimeModel = ModelLoader.Load(modelAsset);
-        worker = new Worker(runtimeModel, BackendType.GPUCompute);
+        runtimeModelBaseline = ModelLoader.Load(Baseline);
+        workerBaseline = new Worker(runtimeModelBaseline, BackendType.GPUCompute);
+
+        runtimeModelMaskBaseline = ModelLoader.Load(MaskBaseline);
+        workerMaskBaseline = new Worker(runtimeModelMaskBaseline, BackendType.GPUCompute);
     }
 
     void OnDestroy()
     {
-        worker.Dispose();
-        if (runtimeModel != null)
+        workerBaseline.Dispose();
+        workerMaskBaseline.Dispose();
+        if (runtimeModelBaseline != null)
         {
-            runtimeModel = null;
+            runtimeModelBaseline = null;
+        }
+        if (runtimeModelMaskBaseline != null)
+        {
+            runtimeModelMaskBaseline = null;
         }
     }
 
@@ -39,33 +52,53 @@ public class DepthCompletion : MonoBehaviour
     //public (ComputeBuffer, ComputeBuffer) complete(float[] depth_data_0, Texture2D color_data_0, float[] depth_data_1, Texture2D color_data_1)
     public (ComputeBuffer, ComputeBuffer) complete(Tensor<float> depth_tensor_0, Tensor<float> color_tensor_0, Tensor<float> depth_tensor_1, Tensor<float> color_tensor_1)
     {
-        //Tensor<float> depth_tensor_0 = new Tensor<float>(depth_shape, depth_data_0);
-        //Tensor<float> color_tensor_0 = TextureConverter.ToTensor(color_data_0, channels: 3);
-        //color_tensor_0.Reshape(color_shape);
+        if (use_baseline)
+        {
+            workerBaseline.SetInput("rgb_0", color_tensor_0);
+            workerBaseline.SetInput("rgb_1", color_tensor_1);
+            workerBaseline.SetInput("depth_0", depth_tensor_0);
+            workerBaseline.SetInput("depth_1", depth_tensor_1);
+            workerBaseline.Schedule();
 
-        //Tensor<float> depth_tensor_1 = new Tensor<float>(depth_shape, depth_data_1);
-        //Tensor<float> color_tensor_1 = TextureConverter.ToTensor(color_data_1, channels: 3);
-        //color_tensor_1.Reshape(color_shape);
+            Tensor<float> depth_outputTensor_0 = workerBaseline.PeekOutput("output_depth_0") as Tensor<float>;
+            //float[] output_depth_0 = depth_outputTensor_0.DownloadToArray();
+            ComputeBuffer computeTensorData0 = ComputeTensorData.Pin(depth_outputTensor_0).buffer;
 
-        worker.SetInput("rgb_0", color_tensor_0);
-        worker.SetInput("rgb_1", color_tensor_1);
-        worker.SetInput("depth_0", depth_tensor_0);
-        worker.SetInput("depth_1", depth_tensor_1);
-        worker.Schedule();
+            Tensor<float> depth_outputTensor_1 = workerBaseline.PeekOutput("output_depth_1") as Tensor<float>;
+            //float[] output_depth_1 = depth_outputTensor_1.DownloadToArray();
+            ComputeBuffer computeTensorData1 = ComputeTensorData.Pin(depth_outputTensor_1).buffer;
 
-        Tensor<float> depth_outputTensor_0 = worker.PeekOutput("output_depth_0") as Tensor<float>;
-        //float[] output_depth_0 = depth_outputTensor_0.DownloadToArray();
-        ComputeBuffer computeTensorData0 = ComputeTensorData.Pin(depth_outputTensor_0).buffer;
+            color_tensor_0.Dispose();
+            color_tensor_1.Dispose();
+            depth_tensor_0.Dispose();
+            depth_tensor_1.Dispose();
 
-        Tensor<float> depth_outputTensor_1 = worker.PeekOutput("output_depth_1") as Tensor<float>;
-        //float[] output_depth_1 = depth_outputTensor_1.DownloadToArray();
-        ComputeBuffer computeTensorData1 = ComputeTensorData.Pin(depth_outputTensor_1).buffer;
+            return (computeTensorData0, computeTensorData1);
+        }
+        else
+        {
+            workerMaskBaseline.SetInput("rgb_0", color_tensor_0);
+            workerMaskBaseline.SetInput("rgb_1", color_tensor_1);
+            workerMaskBaseline.SetInput("depth_0", depth_tensor_0);
+            workerMaskBaseline.SetInput("depth_1", depth_tensor_1);
+            workerMaskBaseline.Schedule();
 
-        color_tensor_0.Dispose();
-        color_tensor_1.Dispose();
-        depth_tensor_0.Dispose();
-        depth_tensor_1.Dispose();
+            Tensor<float> depth_outputTensor_0 = workerMaskBaseline.PeekOutput("output_depth_0") as Tensor<float>;
+            //float[] output_depth_0 = depth_outputTensor_0.DownloadToArray();
+            ComputeBuffer computeTensorData0 = ComputeTensorData.Pin(depth_outputTensor_0).buffer;
 
-        return (computeTensorData0, computeTensorData1);
+            Tensor<float> depth_outputTensor_1 = workerMaskBaseline.PeekOutput("output_depth_1") as Tensor<float>;
+            //float[] output_depth_1 = depth_outputTensor_1.DownloadToArray();
+            ComputeBuffer computeTensorData1 = ComputeTensorData.Pin(depth_outputTensor_1).buffer;
+
+            color_tensor_0.Dispose();
+            color_tensor_1.Dispose();
+            depth_tensor_0.Dispose();
+            depth_tensor_1.Dispose();
+
+            return (computeTensorData0, computeTensorData1);
+        }
+
+
     }
 }
