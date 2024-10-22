@@ -255,9 +255,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   activate_depth_estimation: 1
   mean_averaging: 0
-  median_averaging: 0
+  median_averaging: 1
   edge_detection: 1
-  edge_threshold: 0.4
+  edge_threshold: 0.45
   AveragerLeft: {fileID: 4523430}
   AveragerRight: {fileID: 4523429}
   Left_Depth_Renderer: {fileID: 409472602}
@@ -276,7 +276,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Baseline: {fileID: 5022602860645237092, guid: d15adac15f1f81c4ab79276f3b80aa8d, type: 3}
   MaskBaseline: {fileID: 5022602860645237092, guid: dad3f1951feb0ad4eba6d588d0ca3e44, type: 3}
-  use_baseline: 0
+  use_baseline: 1
 --- !u!1 &6154727
 GameObject:
   m_ObjectHideFlags: 0
@@ -2965,19 +2965,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775010377568, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: use_saved_meshes
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775010377568, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: max_inpainting_dis
-      value: 0.1
+      value: 1.2
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775010377568, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: min_estimation_dis
-      value: 0.5
+      value: 0.8
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775010377568, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: size_of_new_points
-      value: 3
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478775010377568, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: activate_inpainting
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775010377574, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_IsActive
@@ -3021,19 +3025,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775515482002, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: use_saved_meshes
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775515482002, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: max_inpainting_dis
-      value: 0.1
+      value: 1.2
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775515482002, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: min_estimation_dis
-      value: 0.5
+      value: 0.8
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775515482002, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: size_of_new_points
-      value: 3
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478775515482002, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: activate_inpainting
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775531494915, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl

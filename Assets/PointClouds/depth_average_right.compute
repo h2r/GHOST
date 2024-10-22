@@ -37,44 +37,44 @@ void EdgeInpainting(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupThreadI
 
     if (xIndex > 20 && xIndex < WIDTH - 1 && yIndex > 45 && yIndex < HEIGHT - 1 - 45)
     {
-        float currentValue = depth_ar[index];
-        if (currentValue == 0.0f)
-        {
-            float closestValue = 0.0f;
-            bool found = false;
-            int searchRadius = 1;
+        //float currentValue = depth_ar[index];
+        //if (currentValue == 0.0f)
+        //{
+        //    float closestValue = 0.0f;
+        //    bool found = false;
+        //    int searchRadius = 1;
 
-            while (!found)
-            {
-                for (int dy = -searchRadius; dy <= searchRadius && !found; dy++)
-                {
-                    for (int dx = -searchRadius; dx <= searchRadius; dx++)
-                    {
-                        int nx = xIndex + dx;
-                        int ny = yIndex + dy;
-                        int nindex = nx + ny * WIDTH;
+        //    while (!found)
+        //    {
+        //        for (int dy = -searchRadius; dy <= searchRadius && !found; dy++)
+        //        {
+        //            for (int dx = -searchRadius; dx <= searchRadius; dx++)
+        //            {
+        //                int nx = xIndex + dx;
+        //                int ny = yIndex + dy;
+        //                int nindex = nx + ny * WIDTH;
 
-                        // Check the boundaries
-                        if (nx >= 0 && nx < WIDTH && ny >= 0 && ny < HEIGHT)
-                        {
-                            float neighborValue = depth_ar[nindex];
-                            if (neighborValue != 0.0f)
-                            {
-                                closestValue = neighborValue;
-                                found = true;
-                                break;
-                            }
-                        }
-                    }
-                }
-                searchRadius++;
-            }
+        //                // Check the boundaries
+        //                if (nx >= 0 && nx < WIDTH && ny >= 0 && ny < HEIGHT)
+        //                {
+        //                    float neighborValue = depth_ar[nindex];
+        //                    if (neighborValue != 0.0f)
+        //                    {
+        //                        closestValue = neighborValue;
+        //                        found = true;
+        //                        break;
+        //                    }
+        //                }
+        //            }
+        //        }
+        //        searchRadius++;
+        //    }
             
-            if (found)
-            {
-                depth_ar[index] = closestValue;
-            }
-        }
+        //    if (found)
+        //    {
+        //        depth_ar[index] = closestValue;
+        //    }
+        //}
     }
 }
 

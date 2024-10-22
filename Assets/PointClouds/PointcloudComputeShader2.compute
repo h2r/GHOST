@@ -97,23 +97,23 @@ void CSMain(uint3 id : SV_DispatchThreadID)
         _Properties[id.x].pos.w = _Depth[depth_idx] * t + (1 - t);
         //_Properties[id.x].pos.w = abs(id.x * samplingSize - i);
 
-        float4 zero_pos = float4(0.0f, 0.0f, 0.0f, 0.0f);
+        //float4 zero_pos = float4(0.0f, 0.0f, 0.0f, 0.0f);
 
         uint xIndex = id.x % 640;
         uint yIndex = id.x / 640;
 
-        for (int i = 1; i < size_of_new_points + 1; i++)
-        {
-            _Properties[id.x + i * 480 * 640].pos = zero_pos;
-        }
+        //for (int i = 1; i < size_of_new_points + 1; i++)
+        //{
+        //    _Properties[id.x + i * 480 * 640].pos = zero_pos;
+        //}
 
-        if (activate_inpainting && xIndex > 0 && xIndex < WIDTH - 1 && yIndex > 0 && yIndex < HEIGHT - 1)
+        if (activate_inpainting && xIndex > 20 && xIndex < WIDTH - 1 && yIndex > 45 && yIndex < HEIGHT - 1 - 45 && final_pos.z > 0.8)
         {
             float4 currentpos = _Properties[id.x].pos;
-            float4 pos0 =  _Properties[xIndex + 1 + yIndex * WIDTH].pos;
-            float4 pos1 =  _Properties[xIndex - 1 + yIndex * WIDTH].pos;
-            float4 pos2 =  _Properties[xIndex + (yIndex + 1) * WIDTH].pos;
-            float4 pos3 =  _Properties[xIndex + (yIndex - 1) * WIDTH].pos;
+            float4 pos0 = _Properties[xIndex + 1 + yIndex * WIDTH].pos;
+            float4 pos1 = _Properties[xIndex - 1 + yIndex * WIDTH].pos;
+            float4 pos2 = _Properties[xIndex + (yIndex + 1) * WIDTH].pos;
+            float4 pos3 = _Properties[xIndex + (yIndex - 1) * WIDTH].pos;
 
             float dis0 = CalculateDistance(currentpos, pos0);
             float dis1 = CalculateDistance(currentpos, pos1);
@@ -147,9 +147,9 @@ void CSMain(uint3 id : SV_DispatchThreadID)
                 maxValidPos = pos3;
             }
 
-            _Properties[id.x + 1 * 480 * 640].pos = InterpolateFloat4(currentpos, maxValidPos, 0.25f);
-            _Properties[id.x + 2 * 480 * 640].pos = InterpolateFloat4(currentpos, maxValidPos, 0.50f);
-            _Properties[id.x + 3 * 480 * 640].pos = InterpolateFloat4(currentpos, maxValidPos, 0.75f);
+            _Properties[id.x + 1 * 480 * 640].pos = InterpolateFloat4(currentpos, maxValidPos, 0.33f);
+            _Properties[id.x + 2 * 480 * 640].pos = InterpolateFloat4(currentpos, maxValidPos, 0.66f);
+            //_Properties[id.x + 3 * 480 * 640].pos = InterpolateFloat4(currentpos, maxValidPos, 0.75f);
         }
     }
 }
