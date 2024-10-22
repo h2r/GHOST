@@ -3,6 +3,7 @@
 #pragma kernel ClearBuffer
 #pragma kernel MedianAveragingFast
 #pragma kernel MedianAveragingNaive
+#pragma kernel EdgeInpainting
 
 // Size of the buffers
 #define WIDTH 640
@@ -25,6 +26,59 @@ int buffer_pos;
 bool activate;
 
 
+// EdgeInpainting
+[numthreads(16, 16, 1)]
+void EdgeInpainting(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupThreadID)
+{
+    int xIndex = groupId.x * 16 + threadId.x;
+    int yIndex = groupId.y * 16 + threadId.y;
+
+    int index = xIndex + yIndex * WIDTH;
+
+    if (xIndex > 0 && xIndex < WIDTH - 1 && yIndex > 0 && yIndex < HEIGHT - 1)
+    {
+        float currentValue = depth_ar[index];
+        if (currentValue == 0.0f)
+        {
+            float closestValue = 0.0f;
+            bool found = false;
+            int searchRadius = 1;
+
+            while (!found)
+            {
+                for (int dy = -searchRadius; dy <= searchRadius && !found; dy++)
+                {
+                    for (int dx = -searchRadius; dx <= searchRadius; dx++)
+                    {
+                        int nx = xIndex + dx;
+                        int ny = yIndex + dy;
+                        int nindex = nx + ny * WIDTH;
+
+                        // Check the boundaries
+                        if (nx >= 0 && nx < WIDTH && ny >= 0 && ny < HEIGHT)
+                        {
+                            float neighborValue = depth_ar[nindex];
+                            if (neighborValue != 0.0f)
+                            {
+                                closestValue = neighborValue;
+                                found = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                searchRadius++;
+            }
+            
+            if (found)
+            {
+                depth_ar[index] = closestValue;
+            }
+        }
+    }
+}
+
+
 // EdgeDetection
 [numthreads(16, 16, 1)]
 void EdgeDetection(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupThreadID)
@@ -39,21 +93,21 @@ void EdgeDetection(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupThreadID
         float gradX = depth_ar[(xIndex - 1) + (yIndex + 1) * WIDTH] * -1.0
                     //+ depth_ar[(xIndex    ) + (yIndex + 1) * WIDTH] * 0.0
                     + depth_ar[(xIndex + 1) + (yIndex + 1) * WIDTH] * 1.0
-                    + depth_ar[(xIndex    ) + (yIndex    ) * WIDTH] * -2.0
+                    + depth_ar[(xIndex) + (yIndex) * WIDTH] * -2.0
                     //+ depth_ar[(xIndex - 1) + (yIndex    ) * WIDTH] * 0.0
-                    + depth_ar[(xIndex + 1) + (yIndex    ) * WIDTH] * 2.0
+                    + depth_ar[(xIndex + 1) + (yIndex) * WIDTH] * 2.0
                     + depth_ar[(xIndex - 1) + (yIndex - 1) * WIDTH] * -1.0
                     //+ depth_ar[(xIndex    ) + (yIndex - 1) * WIDTH] * 0.0
                     + depth_ar[(xIndex + 1) + (yIndex - 1) * WIDTH] * 1.0;
             
         float gradY = depth_ar[(xIndex - 1) + (yIndex + 1) * WIDTH] * -1.0
-                    + depth_ar[(xIndex    ) + (yIndex + 1) * WIDTH] * -2.0
+                    + depth_ar[(xIndex) + (yIndex + 1) * WIDTH] * -2.0
                     + depth_ar[(xIndex + 1) + (yIndex + 1) * WIDTH] * -1.0
                     //+ depth_ar[(xIndex    ) + (yIndex    ) * WIDTH] * 0.0
                     //+ depth_ar[(xIndex - 1) + (yIndex    ) * WIDTH] * 0.0
                     //+ depth_ar[(xIndex + 1) + (yIndex    ) * WIDTH] * 0.0
                     + depth_ar[(xIndex - 1) + (yIndex - 1) * WIDTH] * 1.0
-                    + depth_ar[(xIndex    ) + (yIndex - 1) * WIDTH] * 2.0
+                    + depth_ar[(xIndex) + (yIndex - 1) * WIDTH] * 2.0
                     + depth_ar[(xIndex + 1) + (yIndex - 1) * WIDTH] * 1.0;
 
         float temp = gradX * gradX + gradY * gradY;
@@ -111,41 +165,51 @@ void MedianAveragingFast(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupTh
             int dir = -1;
             float count = 0.0;
             float count_z = 0.0;
-            if (old_value == 0 && depth_value > median_value) dir = 1;
-            else if (old_value < median_value && old_value > 0.0) dir = 1; 
-            else if (old_value == median_value && depth_value > median_value) dir = 1;
+            if (old_value == 0 && depth_value > median_value)
+                dir = 1;
+            else if (old_value < median_value && old_value > 0.0)
+                dir = 1;
+            else if (old_value == median_value && depth_value > median_value)
+                dir = 1;
 
             for (int i = 0; i < 19; i++)
             {
                 float depth_i = depth_buffer[i * WIDTH * HEIGHT + index];
-                if (depth_i == 0.0) count_z += 1.0;
+                if (depth_i == 0.0)
+                    count_z += 1.0;
                 else if (depth_i * dir > median_value * dir)
                 {
                     count += 1.0;
                     if (depth_i * dir < new_med * dir || new_med == -1)
-                    { 
-                        new_med = depth_i;  
+                    {
+                        new_med = depth_i;
                     }
                 }
             }
-            if (count > floor((19.0 - count_z) / 2.0)) 
+            if (count > floor((19.0 - count_z) / 2.0))
             {
-                depth_buffer[(num_frames - 1) * WIDTH * HEIGHT + index] = new_med;    
+                depth_buffer[(num_frames - 1) * WIDTH * HEIGHT + index] = new_med;
             }
-            else if (depth_value == 0.0 && old_value == median_value){
-                count = 0.0; new_med = -1.0; dir = dir * -1;
-                for (int i = 0; i < 19; i++){
+            else if (depth_value == 0.0 && old_value == median_value)
+            {
+                count = 0.0;
+                new_med = -1.0;
+                dir = dir * -1;
+                for (int i = 0; i < 19; i++)
+                {
                     float depth_i = depth_buffer[i * WIDTH * HEIGHT + index];
-                    if (depth_i * dir > median_value * dir){
+                    if (depth_i * dir > median_value * dir)
+                    {
                         count += 1.0;
-                        if (depth_i * dir < new_med * dir || new_med == -1){ 
-                            new_med = depth_i;  
+                        if (depth_i * dir < new_med * dir || new_med == -1)
+                        {
+                            new_med = depth_i;
                         }
                     }
                 }
-                if (count > floor((19.0 - count_z) / 2.0)) 
+                if (count > floor((19.0 - count_z) / 2.0))
                 {
-                    depth_buffer[(num_frames - 1) * WIDTH * HEIGHT + index] = new_med;    
+                    depth_buffer[(num_frames - 1) * WIDTH * HEIGHT + index] = new_med;
                 }
             }
 
@@ -182,19 +246,20 @@ void MedianAveragingNaive(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupT
             int idx = q * WIDTH * HEIGHT + index;
             if (depth_buffer[idx] > 0.0)
             {
-                tmp[n] = depth_buffer[idx]; 
+                tmp[n] = depth_buffer[idx];
                 n += 1;
             }
         }
 
         int i, j;
         float key;
-        for (i = 1; i < n; i++) 
+        for (i = 1; i < n; i++)
         {
             key = tmp[i];
             j = i - 1;
 
-            while (j >= 0 && tmp[j] > key) {
+            while (j >= 0 && tmp[j] > key)
+            {
                 tmp[j + 1] = tmp[j];
                 j = j - 1;
             }

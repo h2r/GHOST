@@ -6,6 +6,7 @@ public class DepthAveraging : MonoBehaviour
 {
     public ComputeShader average_shader;
 
+    int inpainting_kernel;
     int edge_kernel;
     int mean_kernel;
     int clear_kernel;
@@ -35,6 +36,7 @@ public class DepthAveraging : MonoBehaviour
     void Start()
     {
         // kernel
+        inpainting_kernel = average_shader.FindKernel("EdgeInpainting");
         edge_kernel = average_shader.FindKernel("EdgeDetection");
         mean_kernel = average_shader.FindKernel("MeanAveraging");
         clear_kernel = average_shader.FindKernel("ClearBuffer");
@@ -82,6 +84,8 @@ public class DepthAveraging : MonoBehaviour
             {
                 average_shader.SetFloat("edgeThreshold", edge_threshold);
                 average_shader.SetBuffer(edge_kernel, "depth_ar", depth_ar_buffer);
+
+                average_shader.SetBuffer(inpainting_kernel, "depth_ar", depth_ar_buffer);
             }
 
             if (median_averaging)
@@ -104,6 +108,7 @@ public class DepthAveraging : MonoBehaviour
             if (edge_detection && is_not_moving)
             {
                 average_shader.Dispatch(edge_kernel, groupsX, groupsY, 1);
+                average_shader.Dispatch(inpainting_kernel, groupsX, groupsY, 1);
             }
 
 

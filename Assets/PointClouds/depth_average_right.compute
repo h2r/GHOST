@@ -3,6 +3,7 @@
 #pragma kernel ClearBuffer
 #pragma kernel MedianAveragingFast
 #pragma kernel MedianAveragingNaive
+#pragma kernel EdgeInpainting
 
 // Size of the buffers
 #define WIDTH 640
@@ -23,6 +24,59 @@ int buffer_pos;
 
 // activate filter or not
 bool activate;
+
+
+// EdgeInpainting
+[numthreads(16, 16, 1)]
+void EdgeInpainting(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupThreadID)
+{
+    int xIndex = groupId.x * 16 + threadId.x;
+    int yIndex = groupId.y * 16 + threadId.y;
+
+    int index = xIndex + yIndex * WIDTH;
+
+    if (xIndex > 0 && xIndex < WIDTH - 1 && yIndex > 0 && yIndex < HEIGHT - 1)
+    {
+        float currentValue = depth_ar[index];
+        if (currentValue == 0.0f)
+        {
+            float closestValue = 0.0f;
+            bool found = false;
+            int searchRadius = 1;
+
+            while (!found)
+            {
+                for (int dy = -searchRadius; dy <= searchRadius && !found; dy++)
+                {
+                    for (int dx = -searchRadius; dx <= searchRadius; dx++)
+                    {
+                        int nx = xIndex + dx;
+                        int ny = yIndex + dy;
+                        int nindex = nx + ny * WIDTH;
+
+                        // Check the boundaries
+                        if (nx >= 0 && nx < WIDTH && ny >= 0 && ny < HEIGHT)
+                        {
+                            float neighborValue = depth_ar[nindex];
+                            if (neighborValue != 0.0f)
+                            {
+                                closestValue = neighborValue;
+                                found = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                searchRadius++;
+            }
+            
+            if (found)
+            {
+                depth_ar[index] = closestValue;
+            }
+        }
+    }
+}
 
 
 // EdgeDetection

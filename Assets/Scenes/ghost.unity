@@ -257,7 +257,7 @@ MonoBehaviour:
   mean_averaging: 0
   median_averaging: 0
   edge_detection: 0
-  edge_threshold: 0
+  edge_threshold: 0.4
   AveragerLeft: {fileID: 4523430}
   AveragerRight: {fileID: 4523429}
   Left_Depth_Renderer: {fileID: 409472602}
@@ -2835,6 +2835,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1045489891105447721, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1045489891880973971, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1137478773745686185, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
       value: ws://138.16.160.231:9090
@@ -2849,6 +2857,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1137478774281308965, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478774342878348, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: use_saved_meshes
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1137478774418001489, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
@@ -2902,6 +2914,10 @@ PrefabInstance:
     - target: {fileID: 1137478774429119365, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
       value: ws://138.16.160.231:9090
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478774599216621, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: use_saved_meshes
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1137478774821249048, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
