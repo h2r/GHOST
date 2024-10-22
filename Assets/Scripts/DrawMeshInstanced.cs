@@ -16,6 +16,8 @@ using Random = UnityEngine.Random;
 
 public class DrawMeshInstanced : MonoBehaviour
 {
+    public float min_estimation_dis;
+
     public bool freeze_without_action;
     public int latency_frames;
     bool ready_to_freeze = false;
@@ -81,6 +83,7 @@ public class DrawMeshInstanced : MonoBehaviour
     bool start_completion = true;
 
     ComputeBuffer depth_ar_buffer;
+    ComputeBuffer sparse_buffer;
 
     // Mesh Properties struct to be read from the GPU.
     // Size() is a convenience funciton which returns the stride of the struct.
@@ -137,6 +140,8 @@ public class DrawMeshInstanced : MonoBehaviour
         material.SetBuffer("_Properties", meshPropertiesBuffer);
         compute.SetBuffer(kernel, "_Properties", meshPropertiesBuffer);
         compute.SetBuffer(kernel, "_Depth", depth_ar_buffer);
+        compute.SetBuffer(kernel, "_SparseDepth", sparse_buffer);
+        compute.SetFloat("min_estimation_dis", min_estimation_dis);
     }
 
     private IEnumerator ToggleReadyToFreezeAfterDelay(float waitTime)
@@ -196,6 +201,7 @@ public class DrawMeshInstanced : MonoBehaviour
             depth_ar = depthSubscriber.getDepthArr();
         }
 
+        sparse_buffer.SetData(depth_ar);
         depth_ar_buffer = depthManager.update_depth_from_renderer(color_image, depth_ar, camera_index);
     }
 
@@ -224,11 +230,14 @@ public class DrawMeshInstanced : MonoBehaviour
             argsBuffer.Release();
         if (depth_ar_buffer != null)
             depth_ar_buffer.Release();
+        if (sparse_buffer != null)
+            sparse_buffer.Release();
 
         // Clear references to ensure garbage collector can reclaim memory.
         meshPropertiesBuffer = null;
         argsBuffer = null;
         depth_ar_buffer = null;
+        sparse_buffer = null;
     }
 
     private void OnDestroy()
@@ -238,8 +247,6 @@ public class DrawMeshInstanced : MonoBehaviour
 
     private void OnEnable()
     {
-        //depth_ar_buffer = new ComputeBuffer(480 * 640 * 20, sizeof(float));
-
         StartCoroutine(ToggleReadyToFreezeAfterDelay(5.0f));
 
         pS = 1.0f;
@@ -321,6 +328,7 @@ public class DrawMeshInstanced : MonoBehaviour
         meshPropertiesBuffer.SetData(globalProps);
 
         depth_ar_buffer = new ComputeBuffer((int)depth_ar.Length, sizeof(float));
+        sparse_buffer = new ComputeBuffer((int)depth_ar.Length, sizeof(float));
     }
 
     private void InitializeMaterials()
