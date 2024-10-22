@@ -28,6 +28,8 @@ float min_estimation_dis;
 float max_inpainting_dis;
 int size_of_new_points;
 
+bool activate_inpainting;
+
 float CalculateDistance(float4 a, float4 b)
 {
     float3 vecA = a.xyz;
@@ -100,7 +102,12 @@ void CSMain(uint3 id : SV_DispatchThreadID)
         uint xIndex = id.x % 640;
         uint yIndex = id.x / 640;
 
-        if (xIndex > 0 && xIndex < WIDTH - 1 && yIndex > 0 && yIndex < HEIGHT - 1)
+        for (int i = 1; i < size_of_new_points + 1; i++)
+        {
+            _Properties[id.x + i * 480 * 640].pos = zero_pos;
+        }
+
+        if (activate_inpainting && xIndex > 0 && xIndex < WIDTH - 1 && yIndex > 0 && yIndex < HEIGHT - 1)
         {
             float4 currentpos = _Properties[id.x].pos;
             float4 pos0 =  _Properties[xIndex + 1 + yIndex * WIDTH].pos;
@@ -144,13 +151,5 @@ void CSMain(uint3 id : SV_DispatchThreadID)
             _Properties[id.x + 2 * 480 * 640].pos = InterpolateFloat4(currentpos, maxValidPos, 0.50f);
             _Properties[id.x + 3 * 480 * 640].pos = InterpolateFloat4(currentpos, maxValidPos, 0.75f);
         }
-        else
-        {
-            for (int i = 0; i < size_of_new_points + 1; i++)
-            {
-                _Properties[id.x + i * 480 * 640].pos = zero_pos;
-            }
-        }
-
     }
 }

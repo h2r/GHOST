@@ -16,6 +16,7 @@ using Random = UnityEngine.Random;
 
 public class DrawMeshInstanced : MonoBehaviour
 {
+    public bool activate_inpainting;
     public float min_estimation_dis;
     public float max_inpainting_dis;
     public uint size_of_new_points;
@@ -146,6 +147,7 @@ public class DrawMeshInstanced : MonoBehaviour
         compute.SetFloat("min_estimation_dis", min_estimation_dis);
         compute.SetFloat("max_inpainting_dis", max_inpainting_dis);
         compute.SetFloat("size_of_new_points", (int)size_of_new_points);
+        compute.SetBool("activate_inpainting", activate_inpainting);
     }
 
     private IEnumerator ToggleReadyToFreezeAfterDelay(float waitTime)
