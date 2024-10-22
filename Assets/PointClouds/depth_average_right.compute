@@ -35,7 +35,7 @@ void EdgeInpainting(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupThreadI
 
     int index = xIndex + yIndex * WIDTH;
 
-    if (xIndex > 0 && xIndex < WIDTH - 1 && yIndex > 0 && yIndex < HEIGHT - 1)
+    if (xIndex > 20 && xIndex < WIDTH - 1 && yIndex > 45 && yIndex < HEIGHT - 1 - 45)
     {
         float currentValue = depth_ar[index];
         if (currentValue == 0.0f)
