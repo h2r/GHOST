@@ -5,6 +5,9 @@ struct MeshProperties
     float4 pos;
 };
 
+#define WIDTH 640
+#define HEIGHT 480
+
 RWStructuredBuffer<MeshProperties> _Properties;
 RWStructuredBuffer<float> _Depth;
 RWStructuredBuffer<float> _SparseDepth;
@@ -22,6 +25,23 @@ float dy;
 float dz;
 
 float min_estimation_dis;
+float max_inpainting_dis;
+int size_of_new_points;
+
+float CalculateDistance(float4 a, float4 b)
+{
+    float3 vecA = a.xyz;
+    float3 vecB = b.xyz;
+    float3 diff = vecA - vecB;
+    return length(diff);
+}
+
+float4 InterpolateFloat4(float4 a, float4 b, float factor)
+{
+    float3 interpolatedXYZ = lerp(a.xyz, b.xyz, factor);
+    
+    return float4(interpolatedXYZ, a.w);
+}
 
 // We used to just be able to use (1, 1, 1) threads for whatever population (not sure the old limit), but a Unity update
 // imposed a thread limit of 65535.  Now, to populations above that, we need to be more granular with our threads.
@@ -60,9 +80,7 @@ void CSMain(uint3 id : SV_DispatchThreadID)
 
         float4 final_pos = mul(_GOPose, pos);
 
-        final_pos.x = final_pos.x + dx;
-        final_pos.y = final_pos.y + dy;
-        final_pos.z = final_pos.z + dz;
+        final_pos = float4(final_pos.x + dx, final_pos.y + dy, final_pos.z + dz, final_pos.w);
 
         //if (final_pos.y < y_min || final_pos.z < -0.0f || final_pos.z > z_max)
         //{
@@ -76,5 +94,63 @@ void CSMain(uint3 id : SV_DispatchThreadID)
         _Properties[id.x].pos = final_pos;
         _Properties[id.x].pos.w = _Depth[depth_idx] * t + (1 - t);
         //_Properties[id.x].pos.w = abs(id.x * samplingSize - i);
+
+        float4 zero_pos = float4(0.0f, 0.0f, 0.0f, 0.0f);
+
+        uint xIndex = id.x % 640;
+        uint yIndex = id.x / 640;
+
+        if (xIndex > 0 && xIndex < WIDTH - 1 && yIndex > 0 && yIndex < HEIGHT - 1)
+        {
+            float4 currentpos = _Properties[id.x].pos;
+            float4 pos0 =  _Properties[xIndex + 1 + yIndex * WIDTH].pos;
+            float4 pos1 =  _Properties[xIndex - 1 + yIndex * WIDTH].pos;
+            float4 pos2 =  _Properties[xIndex + (yIndex + 1) * WIDTH].pos;
+            float4 pos3 =  _Properties[xIndex + (yIndex - 1) * WIDTH].pos;
+
+            float dis0 = CalculateDistance(currentpos, pos0);
+            float dis1 = CalculateDistance(currentpos, pos1);
+            float dis2 = CalculateDistance(currentpos, pos2);
+            float dis3 = CalculateDistance(currentpos, pos3);
+
+            float maxValidDis = -1.0f;
+            float4 maxValidPos = currentpos;
+    
+            if (dis0 <= max_inpainting_dis && dis0 > maxValidDis)
+            {
+                maxValidDis = dis0;
+                maxValidPos = pos0;
+            }
+    
+            if (dis1 <= max_inpainting_dis && dis1 > maxValidDis)
+            {
+                maxValidDis = dis1;
+                maxValidPos = pos1;
+            }
+    
+            if (dis2 <= max_inpainting_dis && dis2 > maxValidDis)
+            {
+                maxValidDis = dis2;
+                maxValidPos = pos2;
+            }
+    
+            if (dis3 <= max_inpainting_dis && dis3 > maxValidDis)
+            {
+                maxValidDis = dis3;
+                maxValidPos = pos3;
+            }
+
+            _Properties[id.x + 1 * 480 * 640].pos = InterpolateFloat4(currentpos, maxValidPos, 0.25f);
+            _Properties[id.x + 2 * 480 * 640].pos = InterpolateFloat4(currentpos, maxValidPos, 0.50f);
+            _Properties[id.x + 3 * 480 * 640].pos = InterpolateFloat4(currentpos, maxValidPos, 0.75f);
+        }
+        else
+        {
+            for (int i = 0; i < size_of_new_points + 1; i++)
+            {
+                _Properties[id.x + i * 480 * 640].pos = zero_pos;
+            }
+        }
+
     }
 }

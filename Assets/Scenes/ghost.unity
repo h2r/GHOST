@@ -2968,8 +2968,16 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775010377568, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: max_inpainting_dis
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478775010377568, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: min_estimation_dis
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478775010377568, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: size_of_new_points
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775010377574, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_IsActive
@@ -3016,8 +3024,16 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775515482002, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: max_inpainting_dis
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478775515482002, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: min_estimation_dis
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478775515482002, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: size_of_new_points
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775531494915, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
