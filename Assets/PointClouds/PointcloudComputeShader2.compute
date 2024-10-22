@@ -6,6 +6,8 @@ struct MeshProperties {
 
 RWStructuredBuffer<MeshProperties> _Properties;
 RWStructuredBuffer<float> _Depth;
+RWStructuredBuffer<float> _SparseDepth;
+
 float4x4 _GOPose;
 float4 intrinsics;
 float4 screenData;
@@ -17,6 +19,8 @@ float z_max;
 float dx;
 float dy;
 float dz;
+
+float min_estimation_dis;
 
 // We used to just be able to use (1, 1, 1) threads for whatever population (not sure the old limit), but a Unity update
 // imposed a thread limit of 65535.  Now, to populations above that, we need to be more granular with our threads.
@@ -34,8 +38,16 @@ void CSMain(uint3 id : SV_DispatchThreadID) {
         //_Properties[id.x].color.z = 1
 
         uint depth_idx = (screenData.x * (screenData.y - col_y - 1)) + (screenData.x - col_x - 1);
-    
-        pos.z = _Depth[depth_idx]  * t + (1 - t);
+        
+        if (_Depth[depth_idx] > min_estimation_dis)
+        {
+            pos.z = _Depth[depth_idx] * t + (1 - t);
+        }
+        else
+        {
+            pos.z = _SparseDepth[depth_idx] * t + (1 - t);
+        }
+        
 
         pos.x = (col_y - intrinsics.y) * pos.z / intrinsics.z;                 
         pos.y = (col_x - intrinsics.x) * pos.z / intrinsics.w;
