@@ -147,7 +147,16 @@ public class DrawMeshInstanced : MonoBehaviour
         compute.SetFloat("min_estimation_dis", min_estimation_dis);
         compute.SetFloat("max_inpainting_dis", max_inpainting_dis);
         compute.SetFloat("size_of_new_points", (int)size_of_new_points);
-        compute.SetBool("activate_inpainting", activate_inpainting);
+
+        if (start_completion)
+        {
+            compute.SetBool("activate_inpainting", activate_inpainting);
+        }
+        else
+        {
+            compute.SetBool("activate_inpainting", false);
+        }
+        
     }
 
     private IEnumerator ToggleReadyToFreezeAfterDelay(float waitTime)

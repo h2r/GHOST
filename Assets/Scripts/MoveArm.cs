@@ -108,10 +108,10 @@ public class MoveArm : MonoBehaviour
             }
 
             // Pause depth history for 1.5 seconds
-            foreach (DrawMeshInstanced ds in cloudsToFreeze)
-            {
-                ds.continue_update();
-            }
+            //foreach (DrawMeshInstanced ds in cloudsToFreeze)
+            //{
+            //    ds.continue_update();
+            //}
         }
        // Change the gripper percentage
         else if (OVRInput.Get(LT1))

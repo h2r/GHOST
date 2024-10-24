@@ -152,8 +152,8 @@ void CSMain(uint3 id : SV_DispatchThreadID)
                 maxValidPos = pos3;
             }
 
-            _Properties[id.x + 1 * 480 * 640].pos = InterpolateFloat4(currentpos, maxValidPos, 0.33f);
-            _Properties[id.x + 2 * 480 * 640].pos = InterpolateFloat4(currentpos, maxValidPos, 0.66f);
+            _Properties[id.x + 1 * 480 * 640].pos = InterpolateFloat4(currentpos, maxValidPos, 0.5f);
+            //_Properties[id.x + 2 * 480 * 640].pos = InterpolateFloat4(currentpos, maxValidPos, 0.66f);
             //_Properties[id.x + 3 * 480 * 640].pos = InterpolateFloat4(currentpos, maxValidPos, 0.75f);
         }
     }

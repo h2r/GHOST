@@ -61,6 +61,8 @@ public class DepthAveraging : MonoBehaviour
         //depthArCompute.Release();
     }
 
+    public void clear_buffer() { average_shader.Dispatch(clear_kernel, groupsX, groupsY, 1); }
+
     public ComputeBuffer averaging(ComputeBuffer depth_ar_buffer, bool is_not_moving, bool mean_averaging, bool median_averaging, bool edge_detection, float edge_threshold)
     {
         //float[] temp = new float[480 * 640];
