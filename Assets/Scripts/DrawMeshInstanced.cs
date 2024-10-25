@@ -16,7 +16,10 @@ using Random = UnityEngine.Random;
 
 public class DrawMeshInstanced : MonoBehaviour
 {
+    public bool activate_inpainting;
     public float min_estimation_dis;
+    public float max_inpainting_dis;
+    public uint size_of_new_points;
 
     public bool freeze_without_action;
     public int latency_frames;
@@ -142,6 +145,18 @@ public class DrawMeshInstanced : MonoBehaviour
         compute.SetBuffer(kernel, "_Depth", depth_ar_buffer);
         compute.SetBuffer(kernel, "_SparseDepth", sparse_buffer);
         compute.SetFloat("min_estimation_dis", min_estimation_dis);
+        compute.SetFloat("max_inpainting_dis", max_inpainting_dis);
+        compute.SetFloat("size_of_new_points", (int)size_of_new_points);
+
+        if (start_completion)
+        {
+            compute.SetBool("activate_inpainting", activate_inpainting);
+        }
+        else
+        {
+            compute.SetBool("activate_inpainting", false);
+        }
+        
     }
 
     private IEnumerator ToggleReadyToFreezeAfterDelay(float waitTime)
@@ -298,7 +313,7 @@ public class DrawMeshInstanced : MonoBehaviour
             depth_image = new Texture2D((int)width, (int)height, TextureFormat.RFloat, false, false);
         }
 
-        globalProps = new MeshProperties[population];
+        globalProps = new MeshProperties[population * (1 + size_of_new_points)];
 
         bounds = new Bounds(Vector3.zero, Vector3.one * (range + 1));
 
@@ -315,7 +330,7 @@ public class DrawMeshInstanced : MonoBehaviour
         // Arguments for drawing mesh.
         // 0 == number of triangle indices, 1 == population, others are only relevant if drawing submeshes.
         args[0] = mesh.GetIndexCount(0);
-        args[1] = population;
+        args[1] = population * (1 + size_of_new_points);
         args[2] = mesh.GetIndexStart(0);
         args[3] = mesh.GetBaseVertex(0);
         argsBuffer = new ComputeBuffer(1, args.Length * sizeof(uint), ComputeBufferType.IndirectArguments);
@@ -324,7 +339,7 @@ public class DrawMeshInstanced : MonoBehaviour
         // Initialize buffer with the given population.
         MeshProperties[] properties = new MeshProperties[population];
 
-        meshPropertiesBuffer = new ComputeBuffer((int)population, MeshProperties.Size());
+        meshPropertiesBuffer = new ComputeBuffer((int)population * (1 + (int)size_of_new_points), MeshProperties.Size());
         meshPropertiesBuffer.SetData(globalProps);
 
         depth_ar_buffer = new ComputeBuffer((int)depth_ar.Length, sizeof(float));

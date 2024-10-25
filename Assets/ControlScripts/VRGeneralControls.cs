@@ -10,6 +10,7 @@ public class VRGeneralControls : MonoBehaviour
     //public Canvas UI;
     //public Canvas hintUI;
     private bool UIShowing;
+    public controller depth_controller;
 
     public OVRInput.RawButton LX;
     public OVRInput.RawButton LT1;
@@ -100,6 +101,8 @@ public class VRGeneralControls : MonoBehaviour
             //{
             //    ds.continue_update();
             //}
+
+            depth_controller.overall_control = !depth_controller.overall_control;
         }
 
         /* Switch modes if A is pressed */
