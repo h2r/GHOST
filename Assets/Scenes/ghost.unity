@@ -11452,7 +11452,7 @@ MonoBehaviour:
   right_renderer: {fileID: 409472601}
   left_averager: {fileID: 4523430}
   right_averager: {fileID: 4523429}
-  overall_control: 1
+  overall_control: 0
   depth_completion: 0
   averaging: 0
   edge_detection: 0
