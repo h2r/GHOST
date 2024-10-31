@@ -1,0 +1,84 @@
+#pragma kernel CSMain
+
+// Size of the buffers
+#define WIDTH 640
+#define HEIGHT 480
+
+// Number of frames
+int num_frames;
+
+// Buffers
+RWStructuredBuffer<float> depth_ar;
+RWStructuredBuffer<float> optical_ar;
+RWStructuredBuffer<float> depth_buffer;
+RWStructuredBuffer<float> optical_buffer;
+
+// buffer pos
+int buffer_pos;
+
+int calc_pre_buffer_pos(int pos)
+{
+    if (pos == 0)
+    {
+        return num_frames - 1;
+    }
+    else
+    {
+       return pos - 1;
+    }
+}
+
+[numthreads(16, 16, 1)]
+void CSMain(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupThreadID)
+{
+    int xIndex = groupId.x * 16 + threadId.x;
+    int yIndex = groupId.y * 16 + threadId.y;
+    int index = xIndex + yIndex * WIDTH;
+    
+    optical_buffer[buffer_pos * WIDTH * HEIGHT + index] = optical_ar[index];
+    optical_buffer[(buffer_pos + num_frames) * WIDTH * HEIGHT + index] = optical_ar[index + WIDTH * HEIGHT];
+    
+    if (xIndex > 0 && xIndex < WIDTH - 1 && yIndex > 0 && yIndex < HEIGHT - 1)
+    {
+        float total_weight = 1.0f;
+        float total_depth = depth_ar[index];
+        int current_pos = buffer_pos;
+        int current_xindex = xIndex;
+        int current_yindex = yIndex;
+        
+        for (int i = 0; i < num_frames - 1; ++i)
+        {
+            int pre_pos = calc_pre_buffer_pos(current_pos);
+            
+            float optical_flow_x = optical_buffer[current_pos * WIDTH * HEIGHT + index];
+            float optical_flow_y = optical_buffer[(current_pos + num_frames) * WIDTH * HEIGHT + index];
+
+            int prev_x = current_xindex - int(optical_flow_x);
+            int prev_y = current_yindex - int(optical_flow_y);
+
+            if (prev_x > 0 && prev_x < WIDTH - 1 && prev_y > 0 && prev_y < HEIGHT - 1)
+            {
+                int prev_index = prev_x + prev_y * WIDTH;
+
+                float prev_depth = depth_buffer[pre_pos * WIDTH * HEIGHT + prev_index];
+
+                if (prev_depth >= 0.1f)
+                {
+                    total_weight = total_weight + 1.0f;
+                    total_depth = total_depth + prev_depth;
+                }
+            }
+            
+            current_xindex = prev_x;
+            current_yindex = prev_y;
+            current_pos = pre_pos;
+
+        }
+        
+        float final_depth = total_depth / total_weight;
+        
+        depth_ar[index] = final_depth;
+        depth_buffer[buffer_pos * WIDTH * HEIGHT + index] = final_depth;
+    }
+    
+}

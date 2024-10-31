@@ -73,6 +73,8 @@ public class DepthCompletion : MonoBehaviour
             depth_tensor_0.Dispose();
             depth_tensor_1.Dispose();
 
+            Debug.Log("Complete Depth return");
+
             return (computeTensorData0, computeTensorData1);
         }
         else

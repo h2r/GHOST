@@ -95,14 +95,14 @@ public class VRGeneralControls : MonoBehaviour
         /* Stow arm if left trigger (LT2) is pressed */
         if (OVRInput.GetDown(LT2))
         {
-            //stow.Stow();
+            stow.Stow();
             // Pause depth history for 1.5 seconds
             //foreach (DrawMeshInstanced ds in pointClouds)
             //{
             //    ds.continue_update();
             //}
 
-            depth_controller.overall_control = !depth_controller.overall_control;
+            //depth_controller.overall_control = !depth_controller.overall_control;
         }
 
         /* Switch modes if A is pressed */

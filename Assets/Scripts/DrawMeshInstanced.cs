@@ -217,6 +217,7 @@ public class DrawMeshInstanced : MonoBehaviour
         }
 
         sparse_buffer.SetData(depth_ar);
+
         depth_ar_buffer = depthManager.update_depth_from_renderer(color_image, depth_ar, camera_index);
     }
 

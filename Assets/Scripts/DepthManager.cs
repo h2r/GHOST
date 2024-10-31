@@ -7,11 +7,12 @@ using Unity.Sentis;
 public class DepthManager : MonoBehaviour
 {
     public bool activate_depth_estimation;
-    public bool mean_averaging;
-    public bool median_averaging;
-    public bool edge_detection;
+    public bool activate_optical_flow;
+    //public bool mean_averaging;
+    //public bool median_averaging;
+    //public bool edge_detection;
 
-    public float edge_threshold;
+    //public float edge_threshold;
 
     private Tensor<float> depth_left_t;
     private Tensor<float> rgb_left_t;
@@ -27,8 +28,8 @@ public class DepthManager : MonoBehaviour
 
     private bool depth_process_lock = false;
 
-    public DepthAveraging AveragerLeft;
-    public DepthAveraging AveragerRight;
+    //public DepthAveraging AveragerLeft;
+    //public DepthAveraging AveragerRight;
 
     public DrawMeshInstanced Left_Depth_Renderer;
     public DrawMeshInstanced Right_Depth_Renderer;
@@ -46,18 +47,30 @@ public class DepthManager : MonoBehaviour
     private int right_eye_data_timer_id;
 
     private DepthCompletion depth_completion;
-    private ComputeBuffer temp_output_left;
-    private ComputeBuffer temp_output_right;
+    //private ComputeBuffer temp_output_left;
+    //private ComputeBuffer temp_output_right;
+    private ComputeBuffer temp_depth_left;
+    private ComputeBuffer temp_depth_right;
+    private ComputeBuffer temp_optical_left;
+    private ComputeBuffer temp_optical_right;
 
     TensorShape depth_shape = new TensorShape(1, 1, 480, 640);
     TensorShape color_shape = new TensorShape(1, 3, 480, 640);
 
+    private CVDDataGenerator CVD_generator;
+    public ConsistentVideoDepth CVDLeft;
+    public ConsistentVideoDepth CVDRight;
+
     // Start is called before the first frame update
     void Start()
     {
+        CVD_generator = GetComponent<CVDDataGenerator>();
         depth_completion = GetComponent<DepthCompletion>();
-        temp_output_left = new ComputeBuffer(480 * 640, sizeof(float));
-        temp_output_right = new ComputeBuffer(480 * 640, sizeof(float));
+        temp_depth_left = new ComputeBuffer(480 * 640, sizeof(float));
+        temp_depth_right = new ComputeBuffer(480 * 640, sizeof(float));
+
+        temp_optical_left = new ComputeBuffer(480 * 640 * 2, sizeof(float));
+        temp_optical_right = new ComputeBuffer(480 * 640 * 2, sizeof(float));
 
         //fps_timer = FPSDisplayObject.GetComponent<FPSCounter>();
 
@@ -130,7 +143,7 @@ public class DepthManager : MonoBehaviour
             //bool not_moving = Left_Depth_Renderer.get_ready_to_freeze() && Right_Depth_Renderer.get_ready_to_freeze();
             bool not_moving = Left_Depth_Renderer.get_ready_to_freeze();
             //not_moving = true;
-            (temp_output_left, temp_output_right) = process_depth(depth_left_t, rgb_left_t, depth_right_t, rgb_right_t, not_moving);
+            (temp_depth_left, temp_depth_right) = process_depth(depth_left_t, rgb_left_t, depth_right_t, rgb_right_t, not_moving);
 
             received_left = false;
             received_right = false;
@@ -141,49 +154,60 @@ public class DepthManager : MonoBehaviour
 
         if (camera_index == 0)
         {
-            return temp_output_left;
+            return temp_depth_left;
         }
         else if (camera_index == 1)
         {
-            return temp_output_right;
+            return temp_depth_right;
         }
 
-        return temp_output_right;
+        return temp_depth_right;
     }
 
     private (ComputeBuffer, ComputeBuffer) process_depth(Tensor<float> depthL, Tensor<float> rgbL, Tensor<float> depthR, Tensor<float> rgbR, bool is_not_moving)
     {
-        if (median_averaging && mean_averaging)
-        {
-            mean_averaging = false;
-        }
+        //if (median_averaging && mean_averaging)
+        //{
+        //    mean_averaging = false;
+        //}
 
-        //float[] temp_output_left = depthL, temp_output_right = depthR;
+        ////float[] temp_output_left = depthL, temp_output_right = depthR;
 
-        // depth completion
-        //Debug.Log("depth completion");
-        if (activate_depth_estimation && is_not_moving)
-        {
-            //fps_timer.start(depth_completion_timer_id);
-            (temp_output_left, temp_output_right) = depth_completion.complete(depthL, rgbL, depthR, rgbR);
-            //fps_timer.end(depth_completion_timer_id);
-        }
-        else
-        {
-            temp_output_left = ComputeTensorData.Pin(depthL).buffer;
-            temp_output_right = ComputeTensorData.Pin(depthR).buffer;
-        }
+        //// depth completion
+        ////Debug.Log("depth completion");
+        //if (activate_depth_estimation && is_not_moving)
+        //{
+        //    //fps_timer.start(depth_completion_timer_id);
+        //    (temp_output_left, temp_output_right) = depth_completion.complete(depthL, rgbL, depthR, rgbR);
+        //    //fps_timer.end(depth_completion_timer_id);
+        //}
+        //else
+        //{
+        //    temp_output_left = ComputeTensorData.Pin(depthL).buffer;
+        //    temp_output_right = ComputeTensorData.Pin(depthR).buffer;
+        //}
 
-        //fps_timer.start(averaging_timer_id);
-        temp_output_left = AveragerLeft.averaging(temp_output_left, is_not_moving, mean_averaging, median_averaging, edge_detection, edge_threshold);
-        temp_output_right = AveragerRight.averaging(temp_output_right, is_not_moving, mean_averaging, median_averaging, edge_detection, edge_threshold);
-        //fps_timer.end(averaging_timer_id);
+        ////fps_timer.start(averaging_timer_id);
+        //temp_output_left = AveragerLeft.averaging(temp_output_left, is_not_moving, mean_averaging, median_averaging, edge_detection, edge_threshold);
+        //temp_output_right = AveragerRight.averaging(temp_output_right, is_not_moving, mean_averaging, median_averaging, edge_detection, edge_threshold);
+        ////fps_timer.end(averaging_timer_id);
 
-        //float[] ol = new float[480 * 640], or = new float[480 * 640];
+        ////float[] ol = new float[480 * 640], or = new float[480 * 640];
 
-        //temp_output_left.GetData(ol);
-        //temp_output_right.GetData(or);
+        ////temp_output_left.GetData(ol);
+        ////temp_output_right.GetData(or);
 
-        return (temp_output_left, temp_output_right);
+        //return (temp_output_left, temp_output_right);
+
+        Debug.Log("1 start manager");
+        (temp_depth_left, temp_depth_right, temp_optical_left, temp_optical_right) = CVD_generator.generateData(depthL, rgbL, depthR, rgbR, activate_depth_estimation, activate_optical_flow);
+
+        Debug.Log("2 generate data");
+        temp_depth_left = CVDLeft.consistent_depth(temp_depth_left, temp_optical_left, activate_optical_flow);
+        Debug.Log("2 kernel 1");
+        temp_depth_right = CVDRight.consistent_depth(temp_depth_right, temp_optical_right, activate_optical_flow);
+        Debug.Log("4 kernel 2");
+
+        return (temp_depth_left, temp_depth_right);
     }
 }
