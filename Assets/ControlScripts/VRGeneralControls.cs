@@ -3,12 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Diagnostics;
 using RosSharp.RosBridgeClient;
+using Unity.VisualScripting;
 
 public class VRGeneralControls : MonoBehaviour
 {
 
     //public Canvas UI;
     //public Canvas hintUI;
+
+    //create spot reference
+    public GameObject spot1;
+    public GameObject spot2;
+
     private bool UIShowing;
 
     public OVRInput.RawButton LX;
@@ -39,6 +45,9 @@ public class VRGeneralControls : MonoBehaviour
     private Stopwatch threed_time;
     private Stopwatch twod_time;
 
+    GameObject spot1RosConnector;
+    GameObject spot2RosConnector;
+
     void Start()
     {
         gripperOpen = false;
@@ -51,6 +60,13 @@ public class VRGeneralControls : MonoBehaviour
         point_cloud_t = 1;
         threed_time = new Stopwatch();
         twod_time = new Stopwatch();
+
+
+        UnityEngine.Debug.Log("vr general Start");
+
+        spot1RosConnector = spot1.transform.Find("RosParent/RosConnector").gameObject;
+        spot2RosConnector = spot2.transform.Find("RosParent/RosConnector").gameObject;
+
     }
 
     void Update()
@@ -94,7 +110,17 @@ public class VRGeneralControls : MonoBehaviour
         /* Stow arm if left trigger (LT2) is pressed */
         if (OVRInput.GetDown(LT2))
         {
-            stow.Stow();
+            if (spot1.activeSelf)
+            {
+                spot1RosConnector.GetComponent<StowArm>().Stow();
+            }
+            
+            if (spot2.activeSelf)
+            {
+                spot2RosConnector.GetComponent<StowArm>().Stow();
+            }
+            //stow.Stow();
+
             // Pause depth history for 1.5 seconds
             foreach (RawImageSubscriber ds in depthSubscribers)
             {
@@ -137,7 +163,7 @@ public class VRGeneralControls : MonoBehaviour
     /* Start the first stopwatch */
     public void beginTime()
     {
-        threed_time.Start();
+        //threed_time.Start();
     }
 
     private void OnApplicationQuit()

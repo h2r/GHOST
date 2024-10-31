@@ -15,6 +15,7 @@ public class ModeManager : MonoBehaviour
     public string hintTextString;
     public VRGeneralControls generalControlsScript;
     public SetFarPlane planePublisher;
+    public SetFarPlane planePublisher2;
 
     // Time tracking
     private Stopwatch[] stopwatches;
@@ -29,7 +30,7 @@ public class ModeManager : MonoBehaviour
         {
             stopwatches[i] = new Stopwatch();
         }
-        currMode = modes.Count - 1; // Second to last mode
+        currMode = 0;
 
         for (int i = 0; i < modes.Count; i++)
         {
@@ -37,7 +38,7 @@ public class ModeManager : MonoBehaviour
         }
 
         timeStarted = false;
-
+        UnityEngine.Debug.Log("currentMode"+ currMode);
     }
 
     void Update()
@@ -60,10 +61,10 @@ public class ModeManager : MonoBehaviour
         mode.enableMode();
 
         //update UI
-       // UpdateUI("Mode: " + currMode.ToString() + " - " + mode.ToString());
+        //UpdateUI("Mode: " + currMode.ToString() + " - " + mode.ToString());
         //if (hintText != null)
         //{
-            //hintText.text = " Mode: " + (currMode + 1).ToString() + " - " + mode.modeName + "\n";
+        //    hintText.text = " Mode: " + (currMode + 1).ToString() + " - " + mode.modeName + "\n";
         //}
 
         UnityEngine.Debug.Log(mode.name);
@@ -71,10 +72,12 @@ public class ModeManager : MonoBehaviour
         if (mode.name == "ControlMode - Dynamic Arm")
         {
             planePublisher.RequestFarPlane(2000f);
+            planePublisher2.RequestFarPlane(2000f);
         }
         else
         {
             planePublisher.RequestFarPlane(6000f);
+            planePublisher2.RequestFarPlane(6000f);
         }
     }
 

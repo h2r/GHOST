@@ -22,10 +22,10 @@ public class SpotSwitcher : MonoBehaviour
 {
     public GameObject spot;
     public GameObject spot2;
-    public GameObject ros;
+    /*public GameObject ros;
     public GameObject ros2;
     public GameObject con;
-    public GameObject con2;
+    public GameObject con2;*/
 
     private void Update()
     {
@@ -42,10 +42,10 @@ public class SpotSwitcher : MonoBehaviour
             bool isSpotActive = spot.activeSelf;
             spot.SetActive(!isSpotActive);
             spot2.SetActive(isSpotActive);
-            ros.SetActive(!isSpotActive);
+           /* ros.SetActive(!isSpotActive);
             ros2.SetActive(isSpotActive);
             con.SetActive(!isSpotActive);
-            con2.SetActive(isSpotActive);
+            con2.SetActive(isSpotActive);*/
         }
     }
 }

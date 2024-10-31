@@ -15,9 +15,11 @@ public class VRDriveSpot : MonoBehaviour
     public OVRInput.RawButton rightPress;
     public OVRInput.RawButton leftPress;
     public OVRInput.RawButton RT1;
+    public OVRInput.RawButton RB;
+
     public RosSharp.RosBridgeClient.MoveSpot drive;
-    //todo: add spot 2 drive
     public RosSharp.RosBridgeClient.MoveSpot drive2;
+
     public RawImageSubscriber[] depthSubscribers;
     public JPEGImageSubscriber[] colorSubscribers; // Must be in the same order as depthSubscribers
     public OdometrySubscriber odometrySubscriber;
@@ -34,6 +36,7 @@ public class VRDriveSpot : MonoBehaviour
     private const float HEIGHT_INC = 0.005f;
     private const float HEIGHT_MIN = -0.1f;
     private const float HEIGHT_MAX = 0.3f;
+    private int drive_mode = 0;
 
     void Start()
     {
@@ -65,6 +68,12 @@ public class VRDriveSpot : MonoBehaviour
         Quaternion newRot;
         bool heightChanged = false;
 
+        if (OVRInput.GetDown(RB))
+        {
+            // loop through 0-1-2
+            drive_mode = (drive_mode + 1) % 3;
+        }
+
         // Detect joystick press values
         if (OVRInput.Get(leftPress) && (height - HEIGHT_INC) > HEIGHT_MIN)
         {
@@ -91,14 +100,33 @@ public class VRDriveSpot : MonoBehaviour
             if (Mathf.Abs(leftMove.x) > Mathf.Abs(leftMove.y)) { leftMove.y = 0; }
             else if (Mathf.Abs(leftMove.y) > Mathf.Abs(leftMove.x)) { leftMove.x = 0; }
 
-            if (OVRInput.Get(RT1)) {
-                drive2.drive(leftMove, rightMove.x, height);
-            } else
+            /* if (OVRInput.Get(RT1))
+             {
+                 drive2.drive(leftMove, rightMove.x, height);
+                 //UnityEngine.Debug.Log("spot 2 is moving");
+             }
+             else
+             {
+                 drive.drive(leftMove, rightMove.x, height);
+             }*/
+
+
+            // move spot 1
+            if (drive_mode == 0)
             {
                 drive.drive(leftMove, rightMove.x, height);
             }
-                
-            //todo:add spot 2 drive
+            // move spot 2
+            if (drive_mode == 1)
+            {
+                drive2.drive(leftMove, rightMove.x, height);
+            }
+            // move together
+            if (drive_mode == 2)
+            {
+                drive.drive(leftMove, rightMove.x, height);
+                drive2.drive(leftMove, rightMove.x, height);
+            }
 
             // Pause depth history for 1.5 seconds
             foreach (RawImageSubscriber ds in depthSubscribers)

@@ -2250,6 +2250,52 @@ SkinnedMeshRenderer:
     m_Center: {x: 3.5085697, y: 0.084750324, z: -0.17565808}
     m_Extent: {x: 0.10651207, y: 0.1877416, z: 0.45612457}
   m_DirtyAABB: 0
+--- !u!1 &331195901
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 331195903}
+  - component: {fileID: 331195902}
+  m_Layer: 0
+  m_Name: SpotSwitcher
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &331195902
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 331195901}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afe01f66464dbb44bb68af5f044b1ace, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spot: {fileID: 887064789}
+  spot2: {fileID: 1637440001}
+--- !u!4 &331195903
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 331195901}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &331235448
 GameObject:
   m_ObjectHideFlags: 0
@@ -2760,6 +2806,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1137478775229705923, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1137478775393663287, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
       value: ws://138.16.160.231:9090
@@ -2772,9 +2822,113 @@ PrefabInstance:
       propertyPath: RosBridgeServerUrl
       value: ws://138.16.160.231:9090
       objectReference: {fileID: 0}
+    - target: {fileID: 3310871051605526706, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: RosBridgeServerUrl
+      value: ws://138.16.160.231:9090
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871051605526707, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: Topic
+      value: /spot/stream_image2/frontleft_depth_in_visual_frame/image
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871052575190400, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: Topic
+      value: /spot2/arm_pose_stamped
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871052575190401, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: Topic
+      value: /spot2/cmd_vel
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871052575190403, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: Topic
+      value: /spot2/odometry
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871052575190406, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: Topic
+      value: /spot2/kill_motor
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871052575190407, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: Topic
+      value: /spot2/arm_stow
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871052575190412, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: Topic
+      value: /spot2/set_gripper
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871052575190430, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: RosBridgeServerUrl
+      value: ws://138.16.160.231:9090
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871052575190431, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: Topic
+      value: /spot2/joint_states
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871052575190435, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: Topic
+      value: xy
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871052575190435, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871052575190436, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: Topic
+      value: /spot2/frontleft_fisheye_extrinsics
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871052575190441, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: Topic
+      value: /spot2/get_intrinsics
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871052575190442, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: Topic
+      value: /spot2/intrinsics
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871052575190443, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: Topic
+      value: /spot2/frontright_fisheye_extrinsics
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871052589847488, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: RosBridgeServerUrl
+      value: ws://138.16.160.231:9090
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871052589847489, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: Topic
+      value: /spot/stream_image2/frontright_depth_in_visual_frame/image
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871052589847489, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: printMessageProcRate
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871052589847489, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: printMessageReceiveRate
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871052718925108, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: RosBridgeServerUrl
+      value: ws://138.16.160.231:9090
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871052718925109, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: Topic
+      value: /spot/stream_image2/frontright_fisheye_image/image
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871052733856933, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: target
+      value: 
+      objectReference: {fileID: 1747440747}
     - target: {fileID: 3310871052953474548, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871053306987607, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: target
+      value: 
+      objectReference: {fileID: 1747440747}
+    - target: {fileID: 3310871053646093096, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: Topic
+      value: /spot/stream_image2/frontleft_fisheye_image/image
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871053646093103, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: RosBridgeServerUrl
+      value: ws://138.16.160.231:9090
       objectReference: {fileID: 0}
     - target: {fileID: 4598551965856578696, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: LAx
@@ -2804,6 +2958,22 @@ PrefabInstance:
       propertyPath: cameraOffset
       value: 
       objectReference: {fileID: 771285273}
+    - target: {fileID: 4598551965856578703, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4598551965991343975, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4598551965991344262, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: RA
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4598551965991344262, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: RB
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 4598551965991344262, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: LAx
       value: 1
@@ -2816,6 +2986,10 @@ PrefabInstance:
       propertyPath: RT1
       value: 67108864
       objectReference: {fileID: 0}
+    - target: {fileID: 4598551965991344262, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: drive2
+      value: 
+      objectReference: {fileID: 616808317}
     - target: {fileID: 4598551965991344262, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: leftPress
       value: 1024
@@ -2831,6 +3005,10 @@ PrefabInstance:
     - target: {fileID: 4598551965991344281, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: objectsOfModeToEnable.Array.data[0]
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4598551966875127978, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 4598551966875127979, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: LX
@@ -2853,9 +3031,25 @@ PrefabInstance:
       value: 134217728
       objectReference: {fileID: 0}
     - target: {fileID: 4598551966875127979, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: spot1
+      value: 
+      objectReference: {fileID: 887064789}
+    - target: {fileID: 4598551966875127979, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: spot2
+      value: 
+      objectReference: {fileID: 1637440001}
+    - target: {fileID: 4598551966875127979, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: stow2
+      value: 
+      objectReference: {fileID: 616808342}
+    - target: {fileID: 4598551966875127979, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4598551966875127982, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: planePublisher2
+      value: 
+      objectReference: {fileID: 616808292}
     - target: {fileID: 5050333314984075174, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
       value: ws://138.16.160.231:9090
@@ -2872,6 +3066,10 @@ PrefabInstance:
       propertyPath: objectsOfModeToEnable.Array.data[1]
       value: 
       objectReference: {fileID: 650754923}
+    - target: {fileID: 5143370623281230795, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5143370623281230805, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: LAx
       value: 1
@@ -3980,6 +4178,39 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1885647413}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &616808292 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3310871052575190440, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88939c1bdf2550342b6c7d1f2d5ef028, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &616808317 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3310871052575190401, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a52fc27a45e102f4887ead8f92259aa3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &616808342 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3310871052575190407, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2522203410d8cbc49bc44a343b404f3e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &631669219
 GameObject:
   m_ObjectHideFlags: 0
@@ -5139,6 +5370,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1785238087}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &887064789 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1137478775229705923, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &898987353
 GameObject:
   m_ObjectHideFlags: 0
@@ -8882,6 +9118,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1267056783}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1637440001 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3310871052953474548, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1642978338
 GameObject:
   m_ObjectHideFlags: 0
@@ -11405,3 +11646,4 @@ SceneRoots:
   - {fileID: 705507995}
   - {fileID: 409472599}
   - {fileID: 117133133}
+  - {fileID: 331195903}
