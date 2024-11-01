@@ -1,59 +1,95 @@
-/* General Body Styles */
-body {
-    background-color: #121212; /* Dark background */
-    color: #e0e0e0; /* Light text color for readability */
-    font-family: Arial, sans-serif; /* Font for the site */
-    line-height: 1.6; /* Improve line spacing */
-    margin: 0; /* Remove default margin */
-    padding: 0; /* Remove default padding */
+/* Reset some default styling */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-/* Header Styles */
+/* Basic Body Styling */
+body {
+    font-family: Arial, sans-serif;
+    color: #e0e0e0; /* Light text color for readability */
+    background-color: #121212; /* Dark background */
+    line-height: 1.6;
+}
+
+/* Header Section */
 header {
-    background-color: #1e1e1e; /* Slightly lighter than body */
-    padding: 20px; /* Padding around the header */
-    text-align: center; /* Center the text */
+    background-color: #1e1e1e; /* Darker header background */
+    color: #fff; /* White text */
+    padding: 2rem;
+    text-align: center;
 }
 
 header h1 {
-    color: #f9a825; /* Bright accent color for the header */
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
 }
 
-/* Section Styles */
+header p {
+    font-size: 1.2rem;
+}
+
+/* Section Styling */
 section {
-    padding: 20px; /* Padding around sections */
-    margin: 10px; /* Margin between sections */
-    background-color: #1e1e1e; /* Darker background for sections */
-    border-radius: 8px; /* Rounded corners */
+    padding: 2rem;
+    max-width: 800px;
+    margin: 1rem auto;
+    background: #1e1e1e; /* Dark background for sections */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Slightly darker shadow */
 }
 
-/* Link Styles */
+section h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #4A90E2; /* Retain accent color for headings */
+}
+
+section p {
+    margin-bottom: 1rem;
+}
+
+section ul {
+    list-style-type: disc;
+    margin-left: 1.5rem;
+}
+
+section ul li {
+    margin: 0.5rem 0;
+}
+
+/* Link Styling */
 a {
-    color: #bb86fc; /* Light purple for links */
-    text-decoration: none; /* Remove underline */
+    color: #4A90E2; /* Light blue for links */
+    text-decoration: none;
 }
 
 a:hover {
     text-decoration: underline; /* Underline on hover */
 }
 
-/* List Styles */
-ul {
-    list-style-type: disc; /* Bulleted lists */
-    padding-left: 20px; /* Indentation for lists */
-}
-
-/* Footer Styles */
+/* Footer Section */
 footer {
-    background-color: #1e1e1e; /* Dark footer */
-    padding: 10px; /* Padding for the footer */
-    text-align: center; /* Center the text */
-    position: relative; /* Positioning for the footer */
-    bottom: 0; /* Stick to the bottom of the page */
-    width: 100%; /* Full width */
+    background-color: #1e1e1e; /* Dark footer background */
+    color: #fff; /* White text */
+    text-align: center;
+    padding: 1rem;
+    font-size: 0.9rem;
 }
 
 footer p {
-    margin: 5px 0; /* Space between paragraphs */
-    color: #e0e0e0; /* Light text color for footer */
+    margin: 0.5rem 0;
+}
+
+/* Responsive Styling */
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 2rem;
+    }
+
+    header p,
+    section p {
+        font-size: 1rem;
+    }
 }
