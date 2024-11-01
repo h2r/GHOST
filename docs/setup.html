@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="GHOST System Setup Instructions">
+    <title>GHOST System Setup Instructions</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Header Section -->
+    <header class="header-container">
+        <h1>GHOST System Setup Instructions</h1>
+    </header>
+
+    <!-- Setup Instructions Section -->
+    <section id="setup-instructions">
+        <h2>Getting Started with GHOST</h2>
+        <p>Follow the steps below to set up the GHOST system for use:</p>
+        
+        <h3>Prerequisites</h3>
+        <ul>
+            <li>Unity 2021 or later</li>
+            <li>ROS Noetic (for Ubuntu 20.04)</li>
+            <li>Required dependencies installed (refer to the repositories)</li>
+        </ul>
+
+        <h3>Step 1: Clone the Repositories</h3>
+        <p>Clone the following repositories to your local machine:</p>
+        <ul>
+            <li><code>git clone https://github.com/yourusername/ghost-unity.git</code></li>
+            <li><code>git clone https://github.com/yourusername/robotdev.git</code></li>
+        </ul>
+
+        <h3>Step 2: Set Up the Unity Environment</h3>
+        <ol>
+            <li>Open the GHOST Unity repository in Unity.</li>
+            <li>Import any necessary packages as specified in the documentation.</li>
+            <li>Configure the scene settings according to your project needs.</li>
+        </ol>
+
+        <h3>Step 3: Configure ROS</h3>
+        <p>Follow these instructions to set up the ROS environment:</p>
+        <ol>
+            <li>Source your ROS workspace:</li>
+            <code>source /opt/ros/noetic/setup.bash</code>
+            <li>Build the robotdev package:</li>
+            <code>cd robotdev && catkin_make</code>
+        </ol>
+
+        <h3>Step 4: Running the System</h3>
+        <p>To start the GHOST system, run the following commands:</p>
+        <ol>
+            <li>Launch the ROS core:</li>
+            <code>roscore</code>
+            <li>In a new terminal, run the robot control node:</li>
+            <code>rosrun robotdev control_node</code>
+            <li>Open Unity and start the scene to begin interaction.</li>
+        </ol>
+    </section>
+
+    <!-- Footer Section -->
+    <footer>
+        <p>&copy; 2024 GHOST Project Team. All Rights Reserved.</p>
+    </footer>
+
+</body>
+</html>
