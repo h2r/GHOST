@@ -18,6 +18,8 @@ public class CVDDataGenerator : MonoBehaviour
     private DepthCompletion depth_completion;
     private OpticalFlowEstimator optical_flow_estimation;
 
+    ComputeBuffer buffer_depthL, buffer_depthR, buffer_opticalL, buffer_opticalR;
+
     void Start()
     {
         depth_completion = GetComponent<DepthCompletion>();
@@ -39,24 +41,32 @@ public class CVDDataGenerator : MonoBehaviour
             previous_rgbL = rgbL;
             previous_rgbR = rgbR;
 
-            ComputeBuffer buffer_depthL = ComputeTensorData.Pin(depthL).buffer;
-            ComputeBuffer buffer_depthR = ComputeTensorData.Pin(depthL).buffer;
-            ComputeBuffer buffer_opticalL = new ComputeBuffer(480 * 640 * 2, sizeof(float));
-            ComputeBuffer buffer_opticalR = new ComputeBuffer(480 * 640 * 2, sizeof(float));
+            //buffer_depthL?.Release();
+            //buffer_depthR?.Release();
+            //buffer_opticalL?.Release();
+            //buffer_opticalR?.Release();
 
-            Debug.Log("first run return");
+            buffer_depthL = ComputeTensorData.Pin(depthL).buffer;
+            buffer_depthR = ComputeTensorData.Pin(depthL).buffer;
+            buffer_opticalL = new ComputeBuffer(480 * 640 * 2, sizeof(float));
+            buffer_opticalR = new ComputeBuffer(480 * 640 * 2, sizeof(float));
+
+            //Debug.Log("first run return");
 
             return (buffer_depthL, buffer_depthR, buffer_opticalL, buffer_opticalR);
         }
         else
         {
-            ComputeBuffer buffer_depthL, buffer_depthR, buffer_opticalL, buffer_opticalR;
             if (activate_depth_completion)
             {
+                //buffer_opticalL?.Release();
+                //buffer_opticalR?.Release();
                 (buffer_depthL, buffer_depthR) = depth_completion.complete(depthL, rgbL, depthR, rgbR);
             }
             else
             {
+                //buffer_depthL?.Release();
+                //buffer_depthR?.Release();
                 buffer_depthL = ComputeTensorData.Pin(depthL).buffer;
                 buffer_depthR = ComputeTensorData.Pin(depthR).buffer;
             }
@@ -64,11 +74,15 @@ public class CVDDataGenerator : MonoBehaviour
 
             if (activate_optical_flow)
             {
-                Debug.Log("optical flow?");
+                //Debug.Log("optical flow?");
+                //buffer_opticalL?.Release();
+                //buffer_opticalR?.Release();
                 (buffer_opticalL, buffer_opticalR) = optical_flow_estimation.estimate_all(previous_rgbL, rgbL, previous_rgbR, rgbR);
             }
             else
             {
+                //buffer_opticalL?.Release();
+                //buffer_opticalR?.Release();
                 buffer_opticalL = new ComputeBuffer(480 * 640 * 2, sizeof(float));
                 buffer_opticalR = new ComputeBuffer(480 * 640 * 2, sizeof(float));
             }
@@ -77,7 +91,7 @@ public class CVDDataGenerator : MonoBehaviour
             previous_rgbL = rgbL;
             previous_rgbR = rgbR;
 
-            Debug.Log("not firstrun return");
+            //Debug.Log("not firstrun return");
 
             return (buffer_depthL, buffer_depthR, buffer_opticalL, buffer_opticalR);
         }

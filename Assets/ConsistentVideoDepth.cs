@@ -35,7 +35,7 @@ public class ConsistentVideoDepth : MonoBehaviour
         consistent_depth_shader.SetBuffer(kernel, "depth_buffer", depthBufferCompute);
 
         // Optical Buffer
-        opticalBufferCompute = new ComputeBuffer(480 * 640 * 10, sizeof(float));
+        opticalBufferCompute = new ComputeBuffer(480 * 640 * num_frames * 2, sizeof(float));
         opticalBufferCompute.SetData(optical_buffer);
 
         consistent_depth_shader.SetBuffer(kernel, "optical_buffer", opticalBufferCompute);
@@ -50,9 +50,10 @@ public class ConsistentVideoDepth : MonoBehaviour
     void OnDestroy()
     {
         depthBufferCompute.Release();
+        opticalBufferCompute.Release();
     }
 
-    public ComputeBuffer consistent_depth(ComputeBuffer depth_buffer, ComputeBuffer optical_buffer, bool activate_optical_flow)
+    public ComputeBuffer consistent_depth(ComputeBuffer depth_buffer, ComputeBuffer optical_buffer, bool activate_optical_flow, bool activate_mean_averaging)
     {
         if (activate_optical_flow)
         {
@@ -60,13 +61,15 @@ public class ConsistentVideoDepth : MonoBehaviour
             consistent_depth_shader.SetBuffer(kernel, "depth_ar", depth_buffer);
             consistent_depth_shader.SetBuffer(kernel, "optical_ar", optical_buffer);
 
+            consistent_depth_shader.SetBool("mean_averaging", activate_mean_averaging);
+
             consistent_depth_shader.Dispatch(kernel, groupsX, groupsY, 1);
 
-            buffer_pos = (buffer_pos + 1) % (num_frames - 1);
+            buffer_pos = (buffer_pos + 1) % num_frames;
 
-            Debug.Log("kernel optical flow");
+            //Debug.Log("kernel optical flow");
         }
-        Debug.Log("kernel optical flow return");
+        //Debug.Log("kernel optical flow return");
         return depth_buffer;
     }
 

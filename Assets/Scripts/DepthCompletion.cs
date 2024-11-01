@@ -68,10 +68,13 @@ public class DepthCompletion : MonoBehaviour
             //float[] output_depth_1 = depth_outputTensor_1.DownloadToArray();
             ComputeBuffer computeTensorData1 = ComputeTensorData.Pin(depth_outputTensor_1).buffer;
 
-            color_tensor_0.Dispose();
-            color_tensor_1.Dispose();
-            depth_tensor_0.Dispose();
-            depth_tensor_1.Dispose();
+            //color_tensor_0.Dispose();
+            //color_tensor_1.Dispose();
+            //depth_tensor_0.Dispose();
+            //depth_tensor_1.Dispose();
+
+            //depth_outputTensor_0.Dispose();
+            //depth_outputTensor_1.Dispose();
 
             Debug.Log("Complete Depth return");
 
@@ -93,10 +96,13 @@ public class DepthCompletion : MonoBehaviour
             //float[] output_depth_1 = depth_outputTensor_1.DownloadToArray();
             ComputeBuffer computeTensorData1 = ComputeTensorData.Pin(depth_outputTensor_1).buffer;
 
-            color_tensor_0.Dispose();
-            color_tensor_1.Dispose();
-            depth_tensor_0.Dispose();
-            depth_tensor_1.Dispose();
+            //depth_outputTensor_0.Dispose();
+            //depth_outputTensor_1.Dispose();
+
+            //color_tensor_0.Dispose();
+            //color_tensor_1.Dispose();
+            //depth_tensor_0.Dispose();
+            //depth_tensor_1.Dispose();
 
             return (computeTensorData0, computeTensorData1);
         }

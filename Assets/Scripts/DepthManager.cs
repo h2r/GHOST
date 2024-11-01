@@ -8,6 +8,7 @@ public class DepthManager : MonoBehaviour
 {
     public bool activate_depth_estimation;
     public bool activate_optical_flow;
+    public bool activate_mean_averaging;
     //public bool mean_averaging;
     //public bool median_averaging;
     //public bool edge_detection;
@@ -102,6 +103,7 @@ public class DepthManager : MonoBehaviour
 
     public ComputeBuffer update_depth_from_renderer(Texture2D rgb, float[] depth, int camera_index)
     {
+
         if (camera_index == 0 && !received_left)
         {
             //fps_timer.start(left_eye_data_timer_id);
@@ -199,14 +201,14 @@ public class DepthManager : MonoBehaviour
 
         //return (temp_output_left, temp_output_right);
 
-        Debug.Log("1 start manager");
+        //Debug.Log("1 start manager");
         (temp_depth_left, temp_depth_right, temp_optical_left, temp_optical_right) = CVD_generator.generateData(depthL, rgbL, depthR, rgbR, activate_depth_estimation, activate_optical_flow);
 
-        Debug.Log("2 generate data");
-        temp_depth_left = CVDLeft.consistent_depth(temp_depth_left, temp_optical_left, activate_optical_flow);
-        Debug.Log("2 kernel 1");
-        temp_depth_right = CVDRight.consistent_depth(temp_depth_right, temp_optical_right, activate_optical_flow);
-        Debug.Log("4 kernel 2");
+        //Debug.Log("2 generate data");
+        temp_depth_left = CVDLeft.consistent_depth(temp_depth_left, temp_optical_left, activate_optical_flow, activate_mean_averaging);
+        //Debug.Log("2 kernel 1");
+        temp_depth_right = CVDRight.consistent_depth(temp_depth_right, temp_optical_right, activate_optical_flow, activate_mean_averaging);
+        //Debug.Log("4 kernel 2");
 
         return (temp_depth_left, temp_depth_right);
     }
