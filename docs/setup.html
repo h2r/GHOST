@@ -23,72 +23,76 @@
         <h3>Setting Up GHOST with a Boston Dynamics Spot Robot</h3>
         <h4>System Overview</h4>
         <ol>
-            <li>For this setup, you will need a VR ready Windows machine to run the GHOST Unity scene. You will need a Meta/Oculus VR headset, our code is tested on the Meta Quest Pro and Touch controllers. You will also need an Ubuntu machine to run ROS.</li>
-            <li>The network pipeline for our system is a bi-directional pipeline: <\li>
-            <li>[Spot] |-Spot API Python gRPC Server-> <-SpotRos Python gRPC Client-| [Ubuntu Machine] |-RosBridge Server-> <-RosConnector-| [Unity - Windows Machine] |-Meta VR SDK-| [Meta Quest Pro]</li>
-            <li>The Ubuntu machine interacts with Spot using the Boston Dynamics Spot API, through gRPC, setting up a ROS environment, and broadcasting that environment to the Windows machine through a RosBridge server. The Windows machine subscribes to image/depth/transformation topics to construct and update the virtual scene, and publishes control messages that are passed back along the pipeline to control the robot. </li>
-            <li>For optimal performance, we recommend using a network switch and ethernet cables to connect the robot, Ubuntu machine, and Windows Machine together in a local network. This is recommended if using a Spot as onboard depth compression is currently not supported by the Spot API, and thus depth data can be a significant network bottleneck. On other customizable robots, this issue can be mitigated by compressing depth data on-robot before transmission.</li>
-            <li>Make sure that the Windows machine can ping the Ubuntu machine and the robot, and that the Ubuntu machine can ping the Windows machine and the robot.</li>
+            <li>You will need a VR-ready Windows machine to run the GHOST Unity scene, a Meta/Oculus VR headset (tested on the Meta Quest Pro with Touch controllers), and an Ubuntu machine to run ROS.</li>
+            <li>The network pipeline for our system is a bi-directional pipeline: 
+                <br>[Spot] |-Spot API Python gRPC Server-> <-SpotRos Python gRPC Client-| [Ubuntu Machine] |-RosBridge Server-> <-RosConnector-| [Unity - Windows Machine] |-Meta VR SDK-| [Meta Quest Pro]</li>
+            <li>The Ubuntu machine interacts with Spot using the Boston Dynamics Spot API through gRPC, setting up a ROS environment, and broadcasting that environment to the Windows machine through a RosBridge server. The Windows machine subscribes to image, depth, and transformation topics to construct and update the virtual scene, and publishes control messages passed back along the pipeline to control the robot.</li>
+            <li>For optimal performance, we recommend using a network switch and Ethernet cables to connect the robot, Ubuntu machine, and Windows machine together in a local network. This is advised because onboard depth compression is currently not supported by the Spot API, which can create a significant network bottleneck. On other customizable robots, this issue can be mitigated by compressing depth data on the robot before transmission.</li>
+            <li>Ensure the Windows machine can ping the Ubuntu machine and the robot, and that the Ubuntu machine can ping the Windows machine and the robot.</li>
         </ol>
+
         <h4>Unity Setup - Windows Machine</h4>
         <ol>
-            <li>On a VR ready Windows machine, install Unity 2022.3.40f1 or later.</li>
+            <li>On a VR-ready Windows machine, install Unity 2022.3.40f1 or later.</li>
             <li>Clone the GHOST repository:</li>
-            <code>git clone https://github.com/h2r/GHOST</code>
-            <li>In the Unity Hub, click <strong>Add</strong>, select <strong>Add project from disk</strong>, and choose the GHOST repo folder. Ensure that the editor version selected is 2022.3.40f1 or later.</li>
+            <pre><code>git clone https://github.com/h2r/GHOST</code></pre>
+            <li>In Unity Hub, click <strong>Add</strong>, select <strong>Add project from disk</strong>, and choose the GHOST repo folder. Ensure that the editor version selected is 2022.3.40f1 or later.</li>
             <li>Open the GHOST repository in Unity. It will automatically import the required packages and build out the environment.</li>
-            <li>In the Unity Editor, under <strong>Assets</strong>, navigate to the <strong>Scenes</strong> folder, and double click the 'ghost' scene to open it. Confirm that the scene was loaded correctly by checking that a virtual Spot is present in the scene.</li>
-            <li>Once the scene is loaded correctly, you can configure the RosConnector to speak with your robot over RosBridge. In the GameObject hierarchy, expand RosReality, then Spots, then SpotRos1, then RosParent to reveal the RosConnector nodes that handle data streaming between Unity and ROS.</li>
-            <li>Select the 5 enabled children of RosParent, and within their RosConnector Component, set their Ros Bridge Server URL to IP address and Port of the machine running your ROSBridge Server (The ROSBridge Server allows our Unity scene to interact with our ROS environment, subscribing and publishing to rostopics. Instructions for setting this up are below, under robotdev). By default, the port is 9090.</li>
+            <li>In the Unity Editor, under <strong>Assets</strong>, navigate to the <strong>Scenes</strong> folder and double-click the 'ghost' scene to open it. Confirm that the scene loads correctly by checking that a virtual Spot is present.</li>
+            <li>Once the scene is loaded, configure the RosConnector to communicate with your robot over RosBridge. In the GameObject hierarchy, expand RosReality, then Spots, then SpotRos1, then RosParent to reveal the RosConnector nodes that handle data streaming between Unity and ROS.</li>
+            <li>Select the five enabled children of RosParent. Within their RosConnector component, set their Ros Bridge Server URL to the IP address and port of the machine running your ROSBridge Server (the ROSBridge Server allows our Unity scene to interact with our ROS environment). By default, the port is 9090.</li>
             <li>Follow any additional configuration instructions specific to the Spot robot as provided in the GHOST documentation.</li>
         </ol>
+
         <h4>VR Setup</h4>
         <ol>
-            <li>On the same Windows machine, download the Meta Quest Link App (https://www.meta.com/help/quest/articles/headsets-and-accessories/oculus-rift-s/install-app-for-link/)</li>
+            <li>On the same Windows machine, download the Meta Quest Link App (this app allows you to connect your headset to your computer) from <a href="https://www.meta.com/help/quest/articles/headsets-and-accessories/oculus-rift-s/install-app-for-link/">Meta</a>.</li>
             <li>Set up and pair your Meta Quest Pro or comparable headset.</li>
-            <li>Follow instructions to enable developer mode on your headset, using the Meta Quest Phone app (https://knowledge.vr-expert.com/kb/how-to-activate-developer-mode-on-the-meta-quest-2-or-quest-pro/)</li>
-            <li>Make sure the Meta Quest Link app is running in the background with the headset successfully paired and recognized by the app</li>
-            <li>Connect the headset to the computer with a USB-C cable. Optionally, you can use AirLink instead, but at time of testing this feature wasn't well developed</li>
-            <li>Put on the headset, and in headset, enable Quest Link. Then, on the Windows machine with Unity, play the 'ghost' Unity Scene. This should let you view a virtual version of Spot. The point clouds will not be visible until ROS setup is finished, however.</li>
+            <li>Enable developer mode on your headset using the Meta Quest Phone app (instructions can be found <a href="https://knowledge.vr-expert.com/kb/how-to-activate-developer-mode-on-the-meta-quest-2-or-quest-pro/">here</a>).</li>
+            <li>Ensure the Meta Quest Link app is running in the background with the headset successfully paired and recognized.</li>
+            <li>Connect the headset to the computer with a USB-C cable. Optionally, you can use AirLink instead, but at the time of testing, this feature wasn't well developed.</li>
+            <li>Put on the headset and enable Quest Link. Then, on the Windows machine with Unity, play the 'ghost' Unity Scene. You should be able to view a virtual version of Spot, although the point clouds will not be visible until the ROS setup is finished.</li>
         </ol>
+
         <h4>ROS Setup - Ubuntu Machine</h4>
         <ol>
             <li>Prerequisites - Docker</li>
-            <li>On an Ubuntu Machine, clone the robotdev repo (https://github.com/h2r/robotdev) </li>
-            <li>Follow the instructions in repo for setting up a docker container from the docker image in the repo.</li>
-            <li>Once your docker container is set up, start and enter the container.</li>
-            <li>Change directories into repo/robotdev</li>
-            <li>Edit the setup_spot.bash script with the IP, names, and info for your robot(s). </li>
-            <li>In the ~/.bashrc file in the docker container, there are a number of helpful command aliases for starting different processes:</li>
+            <li>On an Ubuntu machine, clone the robotdev repo: <a href="https://github.com/h2r/robotdev">robotdev</a>.</li>
+            <li>Follow the instructions in the repo for setting up a Docker container from the Docker image in the repo.</li>
+            <li>Once your Docker container is set up, start and enter the container.</li>
+            <li>Change directories into repo/robotdev.</li>
+            <li>Edit the setup_spot.bash script with the IP, names, and info for your robot(s).</li>
+            <li>In the ~/.bashrc file in the Docker container, there are helpful command aliases for starting different processes:</li>
             <ul>
-                <li>sourcespot &lt Robot Name &rt : sources ROS environment and connects to the specified robot name (this name must be configured in the setup_spot.bash file). This must be done before running any of the below commands. </li>
-                <li>launchspot : starts RosMaster thread and ROS environment, is necessary for all other scripts and should be started first and given time to set up</li>
-                <li>launchserver : starts rosbridge server</li>
-                <li>allcams : starts rospublisher for image data</li>
-                <li>alldepths : starts rospublisher for depth data</li>
-                <li>allexts : starts rospublisher for camera extrinsics</li>
-                <li>These commands are all run automatically as part of our tmux environment, initiated by running 'dev &lt Robot Name &rt' (Tmux is a terminal multiplexor that lets us run all of these processes in a single terminal window, automatically. https://www.redhat.com/en/blog/introduction-tmux-linux)</li>
+                <li><code>sourcespot &lt;Robot Name&gt;</code>: Sources ROS environment and connects to the specified robot name (this name must be configured in the setup_spot.bash file). This must be done before running any of the below commands.</li>
+                <li><code>launchspot</code>: Starts RosMaster thread and ROS environment; this is necessary for all other scripts and should be started first and given time to set up.</li>
+                <li><code>launchserver</code>: Starts the rosbridge server.</li>
+                <li><code>allcams</code>: Starts rospublisher for image data.</li>
+                <li><code>alldepths</code>: Starts rospublisher for depth data.</li>
+                <li><code>allexts</code>: Starts rospublisher for camera extrinsics.</li>
+                <li>These commands are all run automatically as part of our tmux environment, initiated by running <code>dev &lt;Robot Name&gt;</code> (Tmux is a terminal multiplexor that lets us run all of these processes in a single terminal window automatically. More info can be found <a href="https://www.redhat.com/en/blog/introduction-tmux-linux">here</a>).</li>
             </ul>
-            <li>All of these processes running in a tmux window make up our ROS 'dev' environment, and with dev running successfully, you are now able to return to the Unity scene on the Windows machine</li>
+            <li>With all of these processes running in a tmux window, you are now able to return to the Unity scene on the Windows machine.</li>
             <li>In the Unity Scene, make sure that the active children of RosParent all have the correct Ros Bridge Server URL, as described in the Unity setup above.</li>
-            <li>Put on the headset and play the Unity scene, where you will be able to see a virtual spot with a point cloud representation of its environment. For instructions on how to operate Spot, please refer to the README instructions in the GHOST repository. </li>
+            <li>Put on the headset and play the Unity scene, where you will be able to see a virtual Spot with a point cloud representation of its environment. For instructions on how to operate Spot, please refer to the README instructions in the GHOST repository.</li>
         </ol>
 
         <!-- Section for Custom Robot -->
         <h3>Setting Up GHOST with a Custom Robot</h3>
-        <p>GHOST is a very flexible system and is compatible with any robot that has Inverse Kinematic end-effector movement and cameras with depth data. </p>
+        <p>GHOST is very flexible and is compatible with any robot that has inverse kinematic end-effector movement and cameras with depth data.</p>
         <p>To set up GHOST with a custom robot, the setup steps are largely the same as above, but you will need to do a few additional steps:</p>
-                <ul>
-                    <li>Transfer over a URDF of your robot from ROS (follow the instructions for Importing Robot Models (https://abhayraw1.github.io/blog/unity-with-ros))</li>
-                    <li>In the 'ghost' scene with our Spot robot, navigate the GameObject hierarchy to /ghost/RosReality/Spots/SpotRos1/spot/body/ where you will find at the bottom of the list of children a number of GameObjects named FL (front left), FR (front right), and so on. These are the point cloud objects and will be placed on your custom robot in the next step, and should be copied.</li>
-                    <li>In the robot GameObject hierarchy generated from your URDF, find the GameObject that best represents where your camera is on the robot, and drag in our point cloud GameObject as a child of that GameObject.</li>
-                    <li>On the ROS side, you can either modify our ROS environment for your custom robot, or connect your own ROS setup to GHOST's Unity environment using ROSBridge Server. If you don't use ROS, you can modify our Unity RosConnector code to accept data in a variety of different ways, and with some tweaks it should all still work the same.</li>
-                </ul>
+        <ul>
+            <li>Transfer over a URDF of your robot from ROS (follow the instructions for <a href="https://abhayraw1.github.io/blog/unity-with-ros">Importing Robot Models</a>).</li>
+            <li>In the 'ghost' scene with our Spot robot, navigate the GameObject hierarchy to /ghost/RosReality/Spots/SpotRos1/spot/body/, where you will find point cloud objects named FL (front left), FR (front right), etc. These should be copied and placed on your custom robot.</li>
+            <li>In the robot GameObject hierarchy generated from your URDF, find the GameObject that best represents your robot's camera position and drag in our point cloud GameObject as a child of that GameObject.</li>
+            <li>On the ROS side, either modify our ROS environment for your custom robot or connect your own ROS setup to GHOST's Unity environment using the ROSBridge Server. If you don't use ROS, you can modify our Unity RosConnector code to accept data in various ways, and with some tweaks, it should still work.</li>
+        </ul>
     </section>
 
     <!-- Footer Section -->
     <footer>
         <p>&copy; 2024 Brown University H2R Lab. All Rights Reserved.</p>
+        <p>Contact us at <a href="mailto:brown.vr.teleop@gmail.com">brown.vr.teleop@gmail.com</a></p>
     </footer>
 
 </body>
