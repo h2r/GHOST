@@ -1,98 +1,59 @@
-/* Reset some default styling */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-/* Basic Body Styling */
+/* General Body Styles */
 body {
-    font-family: Arial, sans-serif;
-    color: #333;
-    background-color: #f9f9f9;
-    line-height: 1.6;
+    background-color: #121212; /* Dark background */
+    color: #e0e0e0; /* Light text color for readability */
+    font-family: Arial, sans-serif; /* Font for the site */
+    line-height: 1.6; /* Improve line spacing */
+    margin: 0; /* Remove default margin */
+    padding: 0; /* Remove default padding */
 }
 
-/* Header Section */
+/* Header Styles */
 header {
-    background-color: #4A90E2;
-    color: #fff;
-    padding: 2rem;
-    text-align: center;
+    background-color: #1e1e1e; /* Slightly lighter than body */
+    padding: 20px; /* Padding around the header */
+    text-align: center; /* Center the text */
 }
 
 header h1 {
-    font-size: 2.5rem;
-    margin-bottom: 0.5rem;
+    color: #f9a825; /* Bright accent color for the header */
 }
 
-header p {
-    font-size: 1.2rem;
-}
-
-/* Section Styling */
+/* Section Styles */
 section {
-    padding: 2rem;
-    max-width: 800px;
-    margin: 1rem auto;
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px; /* Padding around sections */
+    margin: 10px; /* Margin between sections */
+    background-color: #1e1e1e; /* Darker background for sections */
+    border-radius: 8px; /* Rounded corners */
 }
 
-section h2 {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-    color: #4A90E2;
-}
-
-section p {
-    margin-bottom: 1rem;
-}
-
-section ul {
-    list-style-type: disc;
-    margin-left: 1.5rem;
-}
-
-section ul li {
-    margin: 0.5rem 0;
-}
-
-/* Link Styling */
+/* Link Styles */
 a {
-    color: #4A90E2;
-    text-decoration: none;
+    color: #bb86fc; /* Light purple for links */
+    text-decoration: none; /* Remove underline */
 }
 
 a:hover {
-    text-decoration: underline;
+    text-decoration: underline; /* Underline on hover */
 }
 
-/* Footer Section */
+/* List Styles */
+ul {
+    list-style-type: disc; /* Bulleted lists */
+    padding-left: 20px; /* Indentation for lists */
+}
+
+/* Footer Styles */
 footer {
-    background-color: #f1f1f1; /* Light grey background */
-    padding: 10px;
+    background-color: #1e1e1e; /* Dark footer */
+    padding: 10px; /* Padding for the footer */
     text-align: center; /* Center the text */
-    position: relative; /* Make sure it stays in the flow of the page */
+    position: relative; /* Positioning for the footer */
     bottom: 0; /* Stick to the bottom of the page */
     width: 100%; /* Full width */
 }
 
 footer p {
     margin: 5px 0; /* Space between paragraphs */
-    color: #333; /* Dark text color for contrast */
-}
-
-
-/* Responsive Styling */
-@media (max-width: 768px) {
-    header h1 {
-        font-size: 2rem;
-    }
-
-    header p,
-    section p {
-        font-size: 1rem;
-    }
+    color: #e0e0e0; /* Light text color for footer */
 }
