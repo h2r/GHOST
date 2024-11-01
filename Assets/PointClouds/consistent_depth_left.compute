@@ -83,7 +83,7 @@ void CSMain(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupThreadID)
                 {
                     int prev_index = prev_x + prev_y * WIDTH;
 
-                    float prev_depth = depth_buffer[current_pos * WIDTH * HEIGHT + prev_index];
+                    float prev_depth = depth_buffer[pre_pos * WIDTH * HEIGHT + prev_index];
 
                     if (prev_depth >= 0.1f)
                     {
