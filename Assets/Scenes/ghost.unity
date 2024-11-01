@@ -275,6 +275,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   activate_depth_estimation: 0
   activate_optical_flow: 0
+  activate_mean_averaging: 0
   Left_Depth_Renderer: {fileID: 409472602}
   Right_Depth_Renderer: {fileID: 409472601}
   CVDLeft: {fileID: 104794166}
@@ -2978,6 +2979,10 @@ PrefabInstance:
     - target: {fileID: 1137478773745686185, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
       value: ws://138.16.160.231:9090
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478773798299894, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: printMessageProcRate
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1137478773798299895, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
