@@ -196,17 +196,17 @@ public class DrawMeshInstanced : MonoBehaviour
 
         if (use_saved_meshes)
         {
-            //for (int i = 0; i < 480 * 640; i++)
-            //{
-            //    depth_ar[i] = depth_ar_saved[i];
-            //}
+            for (int i = 0; i < 480 * 640; i++)
+            {
+                depth_ar[i] = depth_ar_saved[i];
+            }
 
-            //float noiseMin = -0.0006f;
-            //float noiseMax = 0.0002f;
-            //for (int i = 0; i < depth_ar.Length; i++)
-            //{
-            //    depth_ar[i] += Random.Range(noiseMin, noiseMax);
-            //}
+            float noiseMin = -0.001f;
+            float noiseMax = 0.001f;
+            for (int i = 0; i < depth_ar.Length; i++)
+            {
+                depth_ar[i] += Random.Range(noiseMin, noiseMax);
+            }
             depth_ar = depth_ar_saved;
         }
         else

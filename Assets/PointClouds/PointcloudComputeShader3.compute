@@ -35,11 +35,6 @@ float CalculateDistance(float4 a, float4 b)
     float3 vecA = a.xyz;
     float3 vecB = b.xyz;
     float3 diff = vecA - vecB;
-    
-    if (a.x * a.y * a.z * b.x * b.y * b.z <= 0.001f)
-    {
-        return 100.0f;
-    }
     return length(diff);
 }
 
@@ -115,10 +110,10 @@ void CSMain(uint3 id : SV_DispatchThreadID)
         if (activate_inpainting && xIndex > 20 && xIndex < WIDTH - 1 && yIndex > 45 && yIndex < HEIGHT - 1 - 45 && final_pos.z > 0.8)
         {
             float4 currentpos = _Properties[id.x].pos;
-            float4 pos0 =  _Properties[xIndex + 1 + yIndex * WIDTH].pos;
-            float4 pos1 =  _Properties[xIndex - 1 + yIndex * WIDTH].pos;
-            float4 pos2 =  _Properties[xIndex + (yIndex + 1) * WIDTH].pos;
-            float4 pos3 =  _Properties[xIndex + (yIndex - 1) * WIDTH].pos;
+            float4 pos0 = _Properties[xIndex + 1 + yIndex * WIDTH].pos;
+            float4 pos1 = _Properties[xIndex - 1 + yIndex * WIDTH].pos;
+            float4 pos2 = _Properties[xIndex + (yIndex + 1) * WIDTH].pos;
+            float4 pos3 = _Properties[xIndex + (yIndex - 1) * WIDTH].pos;
 
             float dis0 = CalculateDistance(currentpos, pos0);
             float dis1 = CalculateDistance(currentpos, pos1);
@@ -152,8 +147,8 @@ void CSMain(uint3 id : SV_DispatchThreadID)
                 maxValidPos = pos3;
             }
 
-            _Properties[id.x + 1 * 480 * 640].pos = InterpolateFloat4(currentpos, maxValidPos, 0.5f);
-            //_Properties[id.x + 2 * 480 * 640].pos = InterpolateFloat4(currentpos, maxValidPos, 0.66f);
+            _Properties[id.x + 1 * 480 * 640].pos = InterpolateFloat4(currentpos, maxValidPos, 0.33f);
+            _Properties[id.x + 2 * 480 * 640].pos = InterpolateFloat4(currentpos, maxValidPos, 0.66f);
             //_Properties[id.x + 3 * 480 * 640].pos = InterpolateFloat4(currentpos, maxValidPos, 0.75f);
         }
     }

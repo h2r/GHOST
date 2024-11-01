@@ -69,7 +69,7 @@ void CSMain(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupThreadID)
             int current_xindex = xIndex;
             int current_yindex = yIndex;
         
-            for (int i = 0; i < 1; ++i)
+            for (int i = 0; i < num_frames - 1; ++i)
             {
                 int pre_pos = calc_pre_buffer_pos(current_pos);
             
