@@ -71,16 +71,19 @@ a:hover {
 
 /* Footer Section */
 footer {
-    background-color: #333;
-    color: #fff;
-    text-align: center;
-    padding: 1rem;
-    font-size: 0.9rem;
+    background-color: #f1f1f1; /* Light grey background */
+    padding: 10px;
+    text-align: center; /* Center the text */
+    position: relative; /* Make sure it stays in the flow of the page */
+    bottom: 0; /* Stick to the bottom of the page */
+    width: 100%; /* Full width */
 }
 
 footer p {
-    margin: 0.5rem 0;
+    margin: 5px 0; /* Space between paragraphs */
+    color: #333; /* Dark text color for contrast */
 }
+
 
 /* Responsive Styling */
 @media (max-width: 768px) {
