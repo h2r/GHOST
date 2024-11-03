@@ -343,7 +343,7 @@ public class DrawMeshInstanced : MonoBehaviour
         meshPropertiesBuffer = new ComputeBuffer((int)population * (1 + (int)size_of_new_points), MeshProperties.Size());
         meshPropertiesBuffer.SetData(globalProps);
 
-        depth_ar_buffer = new ComputeBuffer((int)depth_ar.Length, sizeof(float));
+        depth_ar_buffer = new ComputeBuffer((int)depth_ar.Length, sizeof(float) * 3);
         sparse_buffer = new ComputeBuffer((int)depth_ar.Length, sizeof(float));
     }
 

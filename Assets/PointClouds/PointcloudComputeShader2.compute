@@ -9,7 +9,7 @@ struct MeshProperties
 #define HEIGHT 480
 
 RWStructuredBuffer<MeshProperties> _Properties;
-RWStructuredBuffer<float> _Depth;
+RWStructuredBuffer<float3> _Depth;
 RWStructuredBuffer<float> _SparseDepth;
 
 float4x4 _GOPose;
@@ -52,35 +52,37 @@ void CSMain(uint3 id : SV_DispatchThreadID)
 {
     if (id.x < 480 * 640)
     {
-        float4 pos = _Properties[id.x].pos;
-
-        //float i = samplingSize * id.x;
-        float i = id.x * samplingSize;
-
-        float col_y = floor(i * screenData.z);
-        float col_x = i - floor(i * screenData.z) * screenData.x;
-        //_Properties[id.x].color.z = 1
-
-        uint depth_idx = (screenData.x * (screenData.y - col_y - 1)) + (screenData.x - col_x - 1);
+        //float4 pos = _Properties[id.x].pos;
         
-        if (_Depth[depth_idx] > min_estimation_dis)
-        {
-            pos.z = _Depth[depth_idx] * t + (1 - t);
-        }
-        else
-        {
-            pos.z = _SparseDepth[depth_idx] * t + (1 - t);
-        }
+        float3 pos = _Depth[id.x];
+
+        ////float i = samplingSize * id.x;
+        //float i = id.x * samplingSize;
+
+        //float col_y = floor(i * screenData.z);
+        //float col_x = i - floor(i * screenData.z) * screenData.x;
+        ////_Properties[id.x].color.z = 1
+
+        //uint depth_idx = (screenData.x * (screenData.y - col_y - 1)) + (screenData.x - col_x - 1);
+        
+        //if (_Depth[depth_idx] > min_estimation_dis)
+        //{
+        //    pos.z = _Depth[depth_idx] * t + (1 - t);
+        //}
+        //else
+        //{
+        //    pos.z = _SparseDepth[depth_idx] * t + (1 - t);
+        //}
         
 
-        pos.x = (col_y - intrinsics.y) * pos.z / intrinsics.z;
-        pos.y = (col_x - intrinsics.x) * pos.z / intrinsics.w;
+        //pos.x = (col_y - intrinsics.y) * pos.z / intrinsics.z;
+        //pos.y = (col_x - intrinsics.x) * pos.z / intrinsics.w;
 
-        //pos.z = _Depth[depth_idx];
-        pos.w = 1;
-        //float4 pos = {.x,_Properties[id.x].pos.y,_Properties[id.x].pos.z,1.0};
+        ////pos.z = _Depth[depth_idx];
+        //pos.w = 1;
+        ////float4 pos = {.x,_Properties[id.x].pos.y,_Properties[id.x].pos.z,1.0};
 
-        float4 final_pos = mul(_GOPose, pos);
+        float4 final_pos = mul(_GOPose, float4(pos, 1.0f));
 
         final_pos = float4(final_pos.x + dx, final_pos.y + dy, final_pos.z + dz, final_pos.w);
 
@@ -94,7 +96,8 @@ void CSMain(uint3 id : SV_DispatchThreadID)
     
         // Apply translation to existing matrix, which will be read in the shader.
         _Properties[id.x].pos = final_pos;
-        _Properties[id.x].pos.w = _Depth[depth_idx] * t + (1 - t);
+        _Properties[id.x].pos.w = pos.z;
+        //_Properties[id.x].pos.w = _Depth[depth_idx] * t + (1 - t);
         //_Properties[id.x].pos.w = abs(id.x * samplingSize - i);
 
         //float4 zero_pos = float4(0.0f, 0.0f, 0.0f, 0.0f);

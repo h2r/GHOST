@@ -52,8 +52,8 @@ public class OpticalFlowEstimator : MonoBehaviour
         //Debug.Log(depth_outputTensor_0);
 
         // right
-        workerNeuV2R.SetInput("input1", rgbL0);
-        workerNeuV2R.SetInput("input2", rgbL1);
+        workerNeuV2R.SetInput("input1", rgbR0);
+        workerNeuV2R.SetInput("input2", rgbR1);
         workerNeuV2R.Schedule();
 
         Tensor<float> depth_outputTensor_1 = workerNeuV2R.PeekOutput() as Tensor<float>;

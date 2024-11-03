@@ -1,0 +1,100 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class PoseConsistentVideoDepth : MonoBehaviour
+{
+    public ComputeShader pose_consistent_depth_shader;
+
+    int transformation_kernel;
+    int edge_kernel;
+    int cvd_kernel;
+
+    int num_frames = 10;
+
+    private ComputeBuffer depthBufferCompute;
+    private ComputeBuffer poseBufferCompute;
+
+    private ComputeBuffer depthReturnCompute;
+
+    int buffer_pos = 0;
+
+    int groupsX = (640 + 16 - 1) / 16;
+    int groupsY = (480 + 16 - 1) / 16;
+
+    // intrinsics
+    public float CX, CY, FX, FY;
+
+    void Start()
+    {
+        // kernel
+        transformation_kernel = pose_consistent_depth_shader.FindKernel("Transformation");
+        edge_kernel = pose_consistent_depth_shader.FindKernel("EdgeDetection");
+        cvd_kernel = pose_consistent_depth_shader.FindKernel("CVD");
+
+        // Depth Buffer
+        depthBufferCompute = new ComputeBuffer(480 * 640 * num_frames, sizeof(float) * 3);
+
+        //pose_consistent_depth_shader.SetBuffer(transformation_kernel, "depth_buffer", depthBufferCompute);
+        //pose_consistent_depth_shader.SetBuffer(edge_kernel, "depth_buffer", depthBufferCompute);
+        pose_consistent_depth_shader.SetBuffer(cvd_kernel, "depth_buffer", depthBufferCompute);
+
+        // Pose Buffer
+        poseBufferCompute = new ComputeBuffer(480 * 640 * num_frames, sizeof(float) * 16);
+        //pose_consistent_depth_shader.SetBuffer(transformation_kernel, "pose_buffer", poseBufferCompute);
+        pose_consistent_depth_shader.SetBuffer(cvd_kernel, "pose_buffer", poseBufferCompute);
+
+        // Return Ar Buffer
+        depthReturnCompute = new ComputeBuffer(480 * 640, sizeof(float) * 3);
+        pose_consistent_depth_shader.SetBuffer(transformation_kernel, "output_ar", depthReturnCompute);
+        pose_consistent_depth_shader.SetBuffer(edge_kernel, "output_ar", depthReturnCompute);
+        pose_consistent_depth_shader.SetBuffer(cvd_kernel, "output_ar", depthReturnCompute);
+
+        // others
+        pose_consistent_depth_shader.SetInt("num_frames", num_frames);
+
+        Vector4 intr = new Vector4(CX, CY, FX, FY);
+        pose_consistent_depth_shader.SetVector("intrinsics", intr);
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
+
+    void OnDestroy()
+    {
+        depthBufferCompute.Release();
+        poseBufferCompute.Release();
+    }
+
+    public ComputeBuffer consistent_depth(ComputeBuffer depth_buffer, Matrix4x4 pose_mat, bool activate_CVD, bool activate_mean_averaging, float edgethreshold, bool activate_edge_detection)
+    {
+        if (activate_CVD || activate_edge_detection)
+        {
+            pose_consistent_depth_shader.SetMatrix("pose", pose_mat);
+            pose_consistent_depth_shader.SetBuffer(transformation_kernel, "depth_ar", depth_buffer);
+            pose_consistent_depth_shader.Dispatch(transformation_kernel, groupsX, groupsY, 1);
+        }
+
+        if (activate_edge_detection)
+        {
+            //pose_consistent_depth_shader.SetBuffer(edge_kernel, "depth_ar", depth_buffer);
+            pose_consistent_depth_shader.SetFloat("edgethreshold", edgethreshold);
+            pose_consistent_depth_shader.Dispatch(edge_kernel, groupsX, groupsY, 1);
+        }
+
+        if (activate_CVD)
+        {
+            Matrix4x4 inverse_pose_mat = Matrix4x4.Inverse(pose_mat);
+            pose_consistent_depth_shader.SetMatrix("inverse_pose", inverse_pose_mat);
+            pose_consistent_depth_shader.Dispatch(cvd_kernel, groupsX, groupsY, 1);
+
+            buffer_pos = (buffer_pos + 1) % num_frames;
+        }
+
+        return depthReturnCompute;
+    }
+
+}

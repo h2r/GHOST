@@ -5,8 +5,10 @@ using UnityEngine;
 public class ConsistentVideoDepth : MonoBehaviour
 {
     public ComputeShader consistent_depth_shader;
+    public bool activate_edge_detection;
 
     int kernel;
+    int edge_kernel;
 
     int num_frames = 5;
 
@@ -26,6 +28,7 @@ public class ConsistentVideoDepth : MonoBehaviour
     {
         // kernel
         kernel = consistent_depth_shader.FindKernel("CSMain");
+        edge_kernel = consistent_depth_shader.FindKernel("EdgeDetection");
 
         // Depth Buffer
         depthBufferCompute = new ComputeBuffer(480 * 640 * num_frames, sizeof(float));
@@ -33,6 +36,7 @@ public class ConsistentVideoDepth : MonoBehaviour
         depthBufferCompute.SetData(depth_buffer);
 
         consistent_depth_shader.SetBuffer(kernel, "depth_buffer", depthBufferCompute);
+        consistent_depth_shader.SetBuffer(edge_kernel, "depth_buffer", depthBufferCompute);
 
         // Optical Buffer
         opticalBufferCompute = new ComputeBuffer(480 * 640 * num_frames * 2, sizeof(float));
@@ -66,6 +70,14 @@ public class ConsistentVideoDepth : MonoBehaviour
             consistent_depth_shader.Dispatch(kernel, groupsX, groupsY, 1);
 
             buffer_pos = (buffer_pos + 1) % num_frames;
+
+            //Debug.Log("kernel optical flow");
+        }
+
+        if (activate_edge_detection)
+        {
+            consistent_depth_shader.SetBuffer(edge_kernel, "depth_ar", depth_buffer);
+            consistent_depth_shader.Dispatch(edge_kernel, groupsX, groupsY, 1);
 
             //Debug.Log("kernel optical flow");
         }
