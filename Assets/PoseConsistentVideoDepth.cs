@@ -10,7 +10,7 @@ public class PoseConsistentVideoDepth : MonoBehaviour
     int edge_kernel;
     int cvd_kernel;
 
-    int num_frames = 5;
+    int num_frames = 10;
 
     private ComputeBuffer depthBufferCompute;
     private ComputeBuffer poseBufferCompute;

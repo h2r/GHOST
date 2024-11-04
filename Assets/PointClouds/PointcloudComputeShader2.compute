@@ -56,14 +56,14 @@ void CSMain(uint3 id : SV_DispatchThreadID)
         
         float3 pos = _Depth[id.x];
 
-        ////float i = samplingSize * id.x;
-        //float i = id.x * samplingSize;
+        //float i = samplingSize * id.x;
+        float i = id.x * samplingSize;
 
-        //float col_y = floor(i * screenData.z);
-        //float col_x = i - floor(i * screenData.z) * screenData.x;
-        ////_Properties[id.x].color.z = 1
+        float col_y = floor(i * screenData.z);
+        float col_x = i - floor(i * screenData.z) * screenData.x;
+        //_Properties[id.x].color.z = 1
 
-        //uint depth_idx = (screenData.x * (screenData.y - col_y - 1)) + (screenData.x - col_x - 1);
+        uint depth_idx = (screenData.x * (screenData.y - col_y - 1)) + (screenData.x - col_x - 1);
         
         //if (_Depth[depth_idx] > min_estimation_dis)
         //{
@@ -74,13 +74,12 @@ void CSMain(uint3 id : SV_DispatchThreadID)
         //    pos.z = _SparseDepth[depth_idx] * t + (1 - t);
         //}
         
+        pos.z = _Depth[depth_idx].z;
+        
 
-        //pos.x = (col_y - intrinsics.y) * pos.z / intrinsics.z;
-        //pos.y = (col_x - intrinsics.x) * pos.z / intrinsics.w;
+        pos.x = (col_y - intrinsics.y) * pos.z / intrinsics.z;
+        pos.y = (col_x - intrinsics.x) * pos.z / intrinsics.w;
 
-        ////pos.z = _Depth[depth_idx];
-        //pos.w = 1;
-        ////float4 pos = {.x,_Properties[id.x].pos.y,_Properties[id.x].pos.z,1.0};
 
         float4 final_pos = mul(_GOPose, float4(pos, 1.0f));
 
@@ -110,7 +109,7 @@ void CSMain(uint3 id : SV_DispatchThreadID)
         //    _Properties[id.x + i * 480 * 640].pos = zero_pos;
         //}
 
-        if (activate_inpainting && xIndex > 20 && xIndex < WIDTH - 1 && yIndex > 45 && yIndex < HEIGHT - 1 - 45 && final_pos.z > 0.8)
+        if (activate_inpainting && xIndex > 20 && xIndex < WIDTH - 1 && yIndex > 45 && yIndex < HEIGHT - 1 - 45 && final_pos.z > 0.3)
         {
             float4 currentpos = _Properties[id.x].pos;
             float4 pos0 = _Properties[xIndex + 1 + yIndex * WIDTH].pos;

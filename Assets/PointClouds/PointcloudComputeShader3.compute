@@ -74,7 +74,7 @@ void CSMain(uint3 id : SV_DispatchThreadID)
         //    pos.z = _SparseDepth[depth_idx] * t + (1 - t);
         //}
         
-        pos.z = _SparseDepth[depth_idx];
+        pos.z = _Depth[depth_idx].z;
         
 
         pos.x = (col_y - intrinsics.y) * pos.z / intrinsics.z;
@@ -109,7 +109,7 @@ void CSMain(uint3 id : SV_DispatchThreadID)
         //    _Properties[id.x + i * 480 * 640].pos = zero_pos;
         //}
 
-        if (activate_inpainting && xIndex > 20 && xIndex < WIDTH - 1 && yIndex > 45 && yIndex < HEIGHT - 1 - 45 && final_pos.z > 0.8)
+        if (activate_inpainting && xIndex > 20 && xIndex < WIDTH - 1 && yIndex > 45 && yIndex < HEIGHT - 1 - 45 && final_pos.z > 0.3)
         {
             float4 currentpos = _Properties[id.x].pos;
             float4 pos0 = _Properties[xIndex + 1 + yIndex * WIDTH].pos;
