@@ -281,13 +281,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   activate_depth_estimation: 1
   activate_CVD: 1
-  activate_mean_averaging: 0
   Left_Depth_Renderer: {fileID: 409472602}
   Right_Depth_Renderer: {fileID: 409472601}
   CVDLeft: {fileID: 943195280}
   CVDRight: {fileID: 1771154394}
   edgethreshold: 1
-  activate_edge_detection: 1
+  activate_edge_detection: 0
 --- !u!114 &4523432
 MonoBehaviour:
   m_ObjectHideFlags: 0

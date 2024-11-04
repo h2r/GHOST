@@ -11,8 +11,10 @@ int num_frames;
 
 // Buffers
 RWStructuredBuffer<float> depth_ar;
+RWStructuredBuffer<float> optical_ar;
 RWStructuredBuffer<float3> output_ar;
 RWStructuredBuffer<float3> depth_buffer;
+RWStructuredBuffer<float2> optical_buffer;
 RWStructuredBuffer<float4x4> pose_buffer;
 
 // pose mat
@@ -49,7 +51,17 @@ void Transformation(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupThreadI
         
         float4 final_pos = mul(pose, pos);
         
+        // output
         output_ar[index] = final_pos.xyz;
+        
+        // optical
+        float2 optical;
+        optical.x = optical_ar[index];
+        optical.y = optical_ar[index + WIDTH * HEIGHT];
+        optical_buffer[index] = optical;
+        
+        // pose
+        pose_buffer[buffer_pos] = pose;
     }
 }
 
@@ -90,61 +102,123 @@ void EdgeDetection(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupThreadID
 [numthreads(16, 16, 1)]
 void CVD(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupThreadID)
 {
-    int xIndex = groupId.x * 16 + threadId.x;
-    int yIndex = groupId.y * 16 + threadId.y;
+    int aimxIndex = groupId.x * 16 + threadId.x;
+    int aimyIndex = groupId.y * 16 + threadId.y;
 
-    int index = xIndex + yIndex * WIDTH;
+    int aimindex = aimxIndex + aimyIndex * WIDTH;
 
-    if (xIndex > 45 && xIndex < WIDTH - 1 - 45 && yIndex > 45 && yIndex < HEIGHT - 1 - 45)
+    if (aimxIndex > 5 && aimxIndex < WIDTH - 1 - 5 && aimyIndex > 5 && aimyIndex < HEIGHT - 1 - 5 && depth_ar[aimindex] > 0.01f)
     {
-        float3 currentPoint = output_ar[index];
+        //float3 aimPoint = output_ar[aimindex];
+        //float3 sumPoints = aimPoint;
+        //float total_weight = 1.0f;
         
-        float3 sumPoints = currentPoint;
-        float total_weight = 1.0f;
-        
-        for (int i = 0; i < num_frames; i++)
-        {
-            int frameIndex = (buffer_pos - i - 1 + num_frames) % num_frames;
+        //for (int dx = -1; dx < 2; ++dx)
+        //{
+        //    for (int dy = -1; dy < 2; ++dy)
+        //    {
+        //        int xIndex = aimxIndex + dx;
+        //        int yIndex = aimyIndex + dy;
 
-            // extrinsic
-            float4x4 historicalPose = pose_buffer[frameIndex];
-            float4x4 transform = mul(inverse_pose, historicalPose);
-            float4 currentPoint4 = float4(currentPoint, 1.0);
-            float4 transformedPoint4 = mul(transform, currentPoint4);
-
-            // intrinsic
-            float fx = intrinsics.x;
-            float fy = intrinsics.y;
-            float cx = intrinsics.z;
-            float cy = intrinsics.w;
-            float x = transformedPoint4.x / transformedPoint4.z * fx + cx;
-            float y = transformedPoint4.y / transformedPoint4.z * fy + cy;
-            int xPrev = (int) (x + 0.5);
-            int yPrev = (int) (y + 0.5);
-
-            if (xPrev > 45 && xPrev < WIDTH - 1 - 45 && yPrev > 45 && yPrev < HEIGHT - 1 - 45)
-            {
-                int prevIndex = xPrev + yPrev * WIDTH + frameIndex * WIDTH * HEIGHT;
-
-                float3 historicalPoint = depth_buffer[prevIndex];
-
-                if (abs(historicalPoint.z) > 0)
-                {
-                    sumPoints += historicalPoint * 1.0f;
-                    total_weight = total_weight + 1.0f;
-                }
+        //        int index = xIndex + yIndex * WIDTH;
+        //        int current_pos = buffer_pos;
                 
-                                    
-                sumPoints = float3(0.0f, 0.0f, 1.0f);
-                
-            }
-        }
-        
-        float3 final_point = sumPoints / total_weight;
-        depth_buffer[buffer_pos * WIDTH * HEIGHT + index] = final_point;
-        pose_buffer[buffer_pos] = pose;
-        
-        output_ar[index] = mul(inverse_pose, float4(final_point, 1.0f));
+        //        for (int i = 0; i < num_frames - 1; ++i)
+        //        {
+        //            int pre_pos = (buffer_pos - i - 1 + num_frames) % num_frames;
+        //            float2 optical_flow = optical_buffer[current_pos * WIDTH * HEIGHT + index];
+                    
+        //            int prev_x = xIndex - int(optical_flow.x);
+        //            int prev_y = yIndex - int(optical_flow.y);
 
+        //            if (prev_x > 5 && prev_x < WIDTH - 1 - 5 && prev_y > 5 && prev_y < HEIGHT - 1 - 5)
+        //            {
+        //                int prev_index = prev_x + prev_y * WIDTH;
+
+        //                float3 prev_depth = depth_buffer[pre_pos * WIDTH * HEIGHT + prev_index];
+                        
+        //                float4 mapped_depth = mul(inverse_pose, float4(prev_depth, 1.0f));
+
+        //                if (mapped_depth.z >= 0.1f)
+        //                {
+        //                    float ratio = max(aimPoint.z, prev_depth.z) / min(aimPoint.z, prev_depth.z) - 1.0f;
+        //                    float weight = exp(-3.0f * ratio);
+        //                    total_weight = total_weight + weight;
+        //                    sumPoints += prev_depth * weight;
+        //                }
+        //            }
+            
+        //            xIndex = prev_x;
+        //            yIndex = prev_y;
+        //            current_pos = pre_pos;
+        //        }
+
+        //    }
+        //}
+        
+        //float3 final_point = sumPoints / total_weight;
+        //depth_buffer[buffer_pos * WIDTH * HEIGHT + aimindex] = final_point;
+        
+        output_ar[aimindex] = mul(inverse_pose, float4(output_ar[aimindex], 1.0f));
     }
 }
+
+//// EdgeDetection
+//[numthreads(16, 16, 1)]
+//void CVD(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupThreadID)
+//{
+//    int xIndex = groupId.x * 16 + threadId.x;
+//    int yIndex = groupId.y * 16 + threadId.y;
+
+//    int index = xIndex + yIndex * WIDTH;
+
+//    if (xIndex > 45 && xIndex < WIDTH - 1 - 45 && yIndex > 45 && yIndex < HEIGHT - 1 - 45)
+//    {
+//        float3 currentPoint = output_ar[index];
+        
+//        float3 sumPoints = currentPoint;
+//        float total_weight = 1.0f;
+        
+//        for (int i = 0; i < num_frames; i++)
+//        {
+//            int frameIndex = (buffer_pos - i - 1 + num_frames) % num_frames;
+
+//            // extrinsic
+//            float4x4 historicalPose = pose_buffer[frameIndex];
+//            float4x4 transform = mul(inverse_pose, historicalPose);
+//            float4 currentPoint4 = float4(currentPoint, 1.0);
+//            float4 transformedPoint4 = mul(transform, currentPoint4);
+
+//            // intrinsic
+//            float fx = intrinsics.x;
+//            float fy = intrinsics.y;
+//            float cx = intrinsics.z;
+//            float cy = intrinsics.w;
+//            float x = transformedPoint4.x / transformedPoint4.z * fx + cx;
+//            float y = transformedPoint4.y / transformedPoint4.z * fy + cy;
+//            int xPrev = (int) (x + 0.5);
+//            int yPrev = (int) (y + 0.5);
+
+//            if (xPrev > 45 && xPrev < WIDTH - 1 - 45 && yPrev > 45 && yPrev < HEIGHT - 1 - 45)
+//            {
+//                int prevIndex = xPrev + yPrev * WIDTH + frameIndex * WIDTH * HEIGHT;
+
+//                float3 historicalPoint = depth_buffer[prevIndex];
+
+//                if (historicalPoint.z > 0)
+//                {
+//                    sumPoints += historicalPoint * 1.0f;
+//                    total_weight = total_weight + 1.0f;
+//                }
+                
+//            }
+//        }
+        
+//        float3 final_point = sumPoints / total_weight;
+//        depth_buffer[buffer_pos * WIDTH * HEIGHT + index] = final_point;
+//        pose_buffer[buffer_pos] = pose;
+        
+//        output_ar[index] = mul(inverse_pose, float4(final_point, 1.0f));
+
+//    }
+//}

@@ -118,12 +118,12 @@ public class CVDDataGenerator : MonoBehaviour
 
     //}
 
-    public (ComputeBuffer, ComputeBuffer, Matrix4x4, Matrix4x4) generatePoseData(Tensor<float> depthL, Tensor<float> rgbL, Tensor<float> depthR, Tensor<float> rgbR, bool activate_depth_completion, bool activate_CVD)
+    public (ComputeBuffer, ComputeBuffer, Matrix4x4, Matrix4x4, ComputeBuffer, ComputeBuffer) generatePoseData(Tensor<float> depthL, Tensor<float> rgbL, Tensor<float> depthR, Tensor<float> rgbR, bool activate_depth_completion, bool activate_CVD)
     {
         if (first_run)
         {
-            //previous_rgbL = rgbL;
-            //previous_rgbR = rgbR;
+            previous_rgbL = rgbL;
+            previous_rgbR = rgbR;
 
             //buffer_depthL?.Release();
             //buffer_depthR?.Release();
@@ -132,12 +132,12 @@ public class CVDDataGenerator : MonoBehaviour
 
             buffer_depthL = ComputeTensorData.Pin(depthL).buffer;
             buffer_depthR = ComputeTensorData.Pin(depthR).buffer;
-            //buffer_opticalL = new ComputeBuffer(480 * 640 * 2, sizeof(float));
-            //buffer_opticalR = new ComputeBuffer(480 * 640 * 2, sizeof(float));
+            buffer_opticalL = new ComputeBuffer(480 * 640 * 2, sizeof(float));
+            buffer_opticalR = new ComputeBuffer(480 * 640 * 2, sizeof(float));
 
             //Debug.Log("first run return");
 
-            return (buffer_depthL, buffer_depthR, mat_l, mat_r);
+            return (buffer_depthL, buffer_depthR, mat_l, mat_r, buffer_opticalL, buffer_opticalR);
         }
         else
         {
@@ -163,23 +163,23 @@ public class CVDDataGenerator : MonoBehaviour
                 //Debug.Log("optical flow?");
                 //buffer_opticalL?.Release();
                 //buffer_opticalR?.Release();
-                //(buffer_opticalL, buffer_opticalR) = optical_flow_estimation.estimate_all(previous_rgbL, rgbL, previous_rgbR, rgbR);
+                (buffer_opticalL, buffer_opticalR) = optical_flow_estimation.estimate_all(previous_rgbL, rgbL, previous_rgbR, rgbR);
             }
-            //else
-            //{
-            //    //buffer_opticalL?.Release();
-            //    //buffer_opticalR?.Release();
-            //    buffer_opticalL = new ComputeBuffer(480 * 640 * 2, sizeof(float));
-            //    buffer_opticalR = new ComputeBuffer(480 * 640 * 2, sizeof(float));
-            //}
+            else
+            {
+                //buffer_opticalL?.Release();
+                //buffer_opticalR?.Release();
+                buffer_opticalL = new ComputeBuffer(480 * 640 * 2, sizeof(float));
+                buffer_opticalR = new ComputeBuffer(480 * 640 * 2, sizeof(float));
+            }
 
 
-            //previous_rgbL = rgbL;
-            //previous_rgbR = rgbR;
+            previous_rgbL = rgbL;
+            previous_rgbR = rgbR;
 
             //Debug.Log("not firstrun return");
 
-            return (buffer_depthL, buffer_depthR, mat_l, mat_r);
+            return (buffer_depthL, buffer_depthR, mat_l, mat_r, buffer_opticalL, buffer_opticalR);
         }
 
 

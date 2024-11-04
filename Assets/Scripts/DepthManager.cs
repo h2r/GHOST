@@ -8,7 +8,7 @@ public class DepthManager : MonoBehaviour
 {
     public bool activate_depth_estimation;
     public bool activate_CVD;
-    public bool activate_mean_averaging;
+    //public bool activate_mean_averaging;
     //public bool mean_averaging;
     //public bool median_averaging;
     //public bool edge_detection;
@@ -74,7 +74,7 @@ public class DepthManager : MonoBehaviour
         depth_completion = GetComponent<DepthCompletion>();
         temp_depth_left = new ComputeBuffer(480 * 640, sizeof(float) * 3);
         temp_depth_right = new ComputeBuffer(480 * 640, sizeof(float) * 3);
-
+    
         temp_optical_left = new ComputeBuffer(480 * 640 * 2, sizeof(float));
         temp_optical_right = new ComputeBuffer(480 * 640 * 2, sizeof(float));
 
@@ -223,15 +223,17 @@ public class DepthManager : MonoBehaviour
         //Debug.Log("1 start manager");
         //(temp_depth_left, temp_depth_right, temp_optical_left, temp_optical_right) = CVD_generator.generateData(depthL, rgbL, depthR, rgbR, activate_depth_estimation, activate_CVD);
 
-        (temp_depth_left, temp_depth_right, mat_l, mat_r) = CVD_generator.generatePoseData(depthL, rgbL, depthR, rgbR, activate_depth_estimation, activate_CVD);
+        (temp_depth_left, temp_depth_right, mat_l, mat_r, temp_optical_left, temp_optical_right) = CVD_generator.generatePoseData(depthL, rgbL, depthR, rgbR, activate_depth_estimation, activate_CVD);
 
 
         //Debug.Log("2 generate data");
-        temp_depth_left = CVDLeft.consistent_depth(temp_depth_left, mat_l, activate_CVD, activate_mean_averaging, edgethreshold, activate_edge_detection);
+        temp_depth_left = CVDLeft.consistent_depth(temp_depth_left, mat_l, temp_optical_left, activate_CVD, edgethreshold, activate_edge_detection);
         //Debug.Log("2 kernel 1");
-        temp_depth_right = CVDRight.consistent_depth(temp_depth_right, mat_r, activate_CVD, activate_mean_averaging, edgethreshold, activate_edge_detection);
+        temp_depth_right = CVDRight.consistent_depth(temp_depth_right, mat_r, temp_optical_right, activate_CVD, edgethreshold, activate_edge_detection);
         //Debug.Log("4 kernel 2");
 
         return (temp_depth_left, temp_depth_right);
     }
 }
+
+
