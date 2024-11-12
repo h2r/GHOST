@@ -29,7 +29,7 @@ public class CVDDataGenerator : MonoBehaviour
     {
         depth_completion = GetComponent<DepthCompletion>();
         optical_flow_estimation = GetComponent<OpticalFlowEstimator>();
-        StartCoroutine(SetFirstRunFalseAfterDelay(5f));
+        StartCoroutine(SetFirstRunFalseAfterDelay(1f));
 
         mat_l = new Matrix4x4(
             new Vector4(0, 0, 0, 0),

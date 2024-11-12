@@ -123,11 +123,13 @@ void CVD(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupThreadID)
 
     if (aimxIndex > 0 && aimxIndex < WIDTH - 1 && aimyIndex > 0 && aimyIndex < HEIGHT - 1 && depth_buffer[aimindex].z > 0.01f)
     {
-        float z = depth_buffer[aimindex].z;
+        float3 aimPoint = depth_buffer[buffer_pos * HEIGHT * WIDTH + aimindex];
+        float z = aimPoint.z;
         float sumz = z;
+        float3 sumpoint = aimPoint;
         float total_weight = 1.0f;
         
-        float3 aimPoint = depth_buffer[buffer_pos * HEIGHT * WIDTH + aimindex];
+        
 
         
         for (int dx = -1; dx < 2; ++dx)
@@ -146,7 +148,7 @@ void CVD(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupThreadID)
                     float ratio = max(aimPoint.z, prev_point.z) / min(aimPoint.z, prev_point.z) - 1.0f;
                     float weight = exp(-6.0f * ratio);
                     total_weight = total_weight + weight;
-                    sumz += prev_point.z * weight;
+                    sumpoint += prev_point * weight;
                 }
                 
             }
@@ -185,7 +187,7 @@ void CVD(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupThreadID)
                             float ratio = max(aimPoint.z, mapped_point.z) / min(aimPoint.z, mapped_point.z) - 1.0f;
                             float weight = exp(-6.0f * ratio);
                             total_weight = total_weight + weight;
-                            sumz += mapped_point.z * weight;
+                            sumpoint += mapped_point * weight;
                         }
                     }
             
@@ -197,9 +199,11 @@ void CVD(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupThreadID)
             }
         }
         
-        float final_z = sumz / total_weight;
-        aimPoint.z = final_z;
+        float3 final_point = sumpoint / total_weight;
+        aimPoint = final_point;
         output_ar[aimindex] = aimPoint;
+        depth_buffer[buffer_pos * HEIGHT * WIDTH + aimindex] = aimPoint;
+
     }
 }
 
