@@ -225,6 +225,11 @@ public class DepthManager : MonoBehaviour
 
         (temp_depth_left, temp_depth_right, mat_l, mat_r, temp_optical_left, temp_optical_right) = CVD_generator.generatePoseData(depthL, rgbL, depthR, rgbR, activate_depth_estimation, activate_CVD);
 
+        depthL.ReleaseTensorData();
+        depthR.ReleaseTensorData();
+        rgbL.ReleaseTensorData();
+        rgbR.ReleaseTensorData();
+
 
         //Debug.Log("2 generate data");
         temp_depth_left = CVDLeft.consistent_depth(temp_depth_left, mat_l, temp_optical_left, activate_CVD, edgethreshold, activate_edge_detection);
