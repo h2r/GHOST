@@ -52,8 +52,8 @@ public class DepthManager : MonoBehaviour
     //private ComputeBuffer temp_output_right;
     private ComputeBuffer temp_depth_left;
     private ComputeBuffer temp_depth_right;
-    private ComputeBuffer temp_optical_left;
-    private ComputeBuffer temp_optical_right;
+    private ComputeBuffer temp_optical_left, temp_depth_left_return;
+    private ComputeBuffer temp_optical_right, temp_depth_right_return;
 
     TensorShape depth_shape = new TensorShape(1, 1, 480, 640);
     TensorShape color_shape = new TensorShape(1, 3, 480, 640);
@@ -136,6 +136,15 @@ public class DepthManager : MonoBehaviour
             //rgb_left = new Texture2D(rgb.width, rgb.height, rgb.format, rgb.mipmapCount > 1);
             //Graphics.CopyTexture(rgb, rgb_left);
 
+            if(depth_left_t != null)
+            {
+                depth_left_t.Dispose();
+            }
+            if (rgb_left_t != null)
+            {
+                rgb_left_t.Dispose();
+            }
+
             depth_left_t = new Tensor<float>(depth_shape, depth);
             rgb_left_t = TextureConverter.ToTensor(rgb, channels: 3);
             rgb_left_t.Reshape(color_shape);
@@ -147,6 +156,15 @@ public class DepthManager : MonoBehaviour
         else if (camera_index == 1 && !received_right)
         {
             //fps_timer.start(right_eye_data_timer_id);
+
+            if (depth_right_t != null)
+            {
+                depth_right_t.Dispose();
+            }
+            if (rgb_right_t != null)
+            {
+                rgb_right_t.Dispose();
+            }
 
             depth_right_t = new Tensor<float>(depth_shape, depth);
             rgb_right_t = TextureConverter.ToTensor(rgb, channels: 3);
@@ -164,7 +182,7 @@ public class DepthManager : MonoBehaviour
             //bool not_moving = Left_Depth_Renderer.get_ready_to_freeze() && Right_Depth_Renderer.get_ready_to_freeze();
             bool not_moving = Left_Depth_Renderer.get_ready_to_freeze();
             //not_moving = true;
-            (temp_depth_left, temp_depth_right) = process_depth(depth_left_t, rgb_left_t, depth_right_t, rgb_right_t, not_moving);
+            (temp_depth_left_return, temp_depth_right_return) = process_depth(depth_left_t, rgb_left_t, depth_right_t, rgb_right_t, not_moving);
 
             received_left = false;
             received_right = false;
@@ -175,14 +193,14 @@ public class DepthManager : MonoBehaviour
 
         if (camera_index == 0)
         {
-            return temp_depth_left;
+            return temp_depth_left_return;
         }
         else if (camera_index == 1)
         {
-            return temp_depth_right;
+            return temp_depth_right_return;
         }
 
-        return temp_depth_right;
+        return temp_depth_right_return;
     }
 
     private (ComputeBuffer, ComputeBuffer) process_depth(Tensor<float> depthL, Tensor<float> rgbL, Tensor<float> depthR, Tensor<float> rgbR, bool is_not_moving)
@@ -225,19 +243,15 @@ public class DepthManager : MonoBehaviour
 
         (temp_depth_left, temp_depth_right, mat_l, mat_r, temp_optical_left, temp_optical_right) = CVD_generator.generatePoseData(depthL, rgbL, depthR, rgbR, activate_depth_estimation, activate_CVD);
 
-        depthL.ReleaseTensorData();
-        depthR.ReleaseTensorData();
-        rgbL.ReleaseTensorData();
-        rgbR.ReleaseTensorData();
-
 
         //Debug.Log("2 generate data");
-        temp_depth_left = CVDLeft.consistent_depth(temp_depth_left, mat_l, temp_optical_left, activate_CVD, edgethreshold, activate_edge_detection);
+        temp_depth_left_return = CVDLeft.consistent_depth(temp_depth_left, mat_l, temp_optical_left, activate_CVD, edgethreshold, activate_edge_detection);
         //Debug.Log("2 kernel 1");
-        temp_depth_right = CVDRight.consistent_depth(temp_depth_right, mat_r, temp_optical_right, activate_CVD, edgethreshold, activate_edge_detection);
+        temp_depth_right_return = CVDRight.consistent_depth(temp_depth_right, mat_r, temp_optical_right, activate_CVD, edgethreshold, activate_edge_detection);
         //Debug.Log("4 kernel 2");
 
-        return (temp_depth_left, temp_depth_right);
+
+        return (temp_depth_left_return, temp_depth_right_return);
     }
 }
 

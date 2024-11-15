@@ -173,7 +173,8 @@ public class CVDDataGenerator : MonoBehaviour
                 buffer_opticalR = new ComputeBuffer(480 * 640 * 2, sizeof(float));
             }
 
-
+            previous_rgbL.ReleaseTensorData();
+            previous_rgbR.ReleaseTensorData();
             previous_rgbL = rgbL;
             previous_rgbR = rgbR;
 
