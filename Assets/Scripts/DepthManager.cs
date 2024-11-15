@@ -136,14 +136,14 @@ public class DepthManager : MonoBehaviour
             //rgb_left = new Texture2D(rgb.width, rgb.height, rgb.format, rgb.mipmapCount > 1);
             //Graphics.CopyTexture(rgb, rgb_left);
 
-            if(depth_left_t != null)
-            {
-                depth_left_t.Dispose();
-            }
-            if (rgb_left_t != null)
-            {
-                rgb_left_t.Dispose();
-            }
+            //if (depth_left_t != null)
+            //{
+            //    depth_left_t.Dispose();
+            //}
+            //if (rgb_left_t != null)
+            //{
+            //    rgb_left_t.Dispose();
+            //}
 
             depth_left_t = new Tensor<float>(depth_shape, depth);
             rgb_left_t = TextureConverter.ToTensor(rgb, channels: 3);
@@ -157,14 +157,14 @@ public class DepthManager : MonoBehaviour
         {
             //fps_timer.start(right_eye_data_timer_id);
 
-            if (depth_right_t != null)
-            {
-                depth_right_t.Dispose();
-            }
-            if (rgb_right_t != null)
-            {
-                rgb_right_t.Dispose();
-            }
+            //if (depth_right_t != null)
+            //{
+            //    depth_right_t.Dispose();
+            //}
+            //if (rgb_right_t != null)
+            //{
+            //    rgb_right_t.Dispose();
+            //}
 
             depth_right_t = new Tensor<float>(depth_shape, depth);
             rgb_right_t = TextureConverter.ToTensor(rgb, channels: 3);
@@ -183,6 +183,23 @@ public class DepthManager : MonoBehaviour
             bool not_moving = Left_Depth_Renderer.get_ready_to_freeze();
             //not_moving = true;
             (temp_depth_left_return, temp_depth_right_return) = process_depth(depth_left_t, rgb_left_t, depth_right_t, rgb_right_t, not_moving);
+
+            if (depth_left_t != null)
+            {
+                depth_left_t.Dispose();
+            }
+            if (rgb_left_t != null)
+            {
+                rgb_left_t.Dispose();
+            }
+            if (depth_right_t != null)
+            {
+                depth_right_t.Dispose();
+            }
+            if (rgb_right_t != null)
+            {
+                rgb_right_t.Dispose();
+            }
 
             received_left = false;
             received_right = false;
