@@ -85,6 +85,8 @@ public class DrawMeshInstanced : MonoBehaviour
     public DepthManager depthManager;
     bool start_completion = true;
 
+    int point_cloud_kernel;
+
     ComputeBuffer depth_ar_buffer;
     ComputeBuffer sparse_buffer;
 
@@ -98,7 +100,10 @@ public class DrawMeshInstanced : MonoBehaviour
         {
             return sizeof(float) * 4; // position;
         }
+
     }
+
+
 
     private void Update()
     {
@@ -108,10 +113,9 @@ public class DrawMeshInstanced : MonoBehaviour
 
         //float t1 = Time.realtimeSinceStartup;
 
-        int kernel = compute.FindKernel("CSMain");
         SetProperties();
         compute.SetMatrix("_GOPose", Matrix4x4.TRS(transform.position, transform.rotation, new Vector3(1, 1, 1)));
-        compute.Dispatch(kernel, Mathf.CeilToInt(population / 256), 1, 1);
+        compute.Dispatch(point_cloud_kernel, Mathf.CeilToInt(population / 256), 1, 1);
 
 
         //float t2 = Time.realtimeSinceStartup;
@@ -132,7 +136,6 @@ public class DrawMeshInstanced : MonoBehaviour
 
     private void SetProperties()
     {
-        int kernel = compute.FindKernel("CSMain");
         material.SetFloat("a", target.eulerAngles.y * 0.00872f * 2.0f);
         material.SetFloat("pS", pS);
         material.SetTexture("_colorMap", color_image);
@@ -141,9 +144,9 @@ public class DrawMeshInstanced : MonoBehaviour
         meshPropertiesBuffer.SetData(globalProps);
 
         material.SetBuffer("_Properties", meshPropertiesBuffer);
-        compute.SetBuffer(kernel, "_Properties", meshPropertiesBuffer);
-        compute.SetBuffer(kernel, "_Depth", depth_ar_buffer);
-        compute.SetBuffer(kernel, "_SparseDepth", sparse_buffer);
+        compute.SetBuffer(point_cloud_kernel, "_Properties", meshPropertiesBuffer);
+        compute.SetBuffer(point_cloud_kernel, "_Depth", depth_ar_buffer);
+        compute.SetBuffer(point_cloud_kernel, "_SparseDepth", sparse_buffer);
         compute.SetFloat("min_estimation_dis", min_estimation_dis);
         compute.SetFloat("max_inpainting_dis", max_inpainting_dis);
         compute.SetFloat("size_of_new_points", (int)size_of_new_points);
@@ -211,14 +214,14 @@ public class DrawMeshInstanced : MonoBehaviour
         }
         else
         {
-            DestroyImmediate(color_image, true);
-            color_image = copy_texture(colorSubscriber.texture2D);
+            //DestroyImmediate(color_image, true);
+            //color_image = copy_texture(colorSubscriber.texture2D);
             depth_ar = depthSubscriber.getDepthArr();
         }
 
         sparse_buffer.SetData(depth_ar);
 
-        depth_ar_buffer = depthManager.update_depth_from_renderer(color_image, depth_ar, camera_index);
+        depth_ar_buffer = depthManager.update_depth_from_renderer(colorSubscriber.texture2D, depth_ar, camera_index);
     }
 
     private Texture2D copy_texture(Texture2D input_texture)
@@ -318,14 +321,14 @@ public class DrawMeshInstanced : MonoBehaviour
 
         bounds = new Bounds(Vector3.zero, Vector3.one * (range + 1));
 
+        point_cloud_kernel = compute.FindKernel("CSMain");
+
         InitializeMaterials();
         InitializeBuffers();
     }
 
     private void InitializeBuffers()
     {
-        int kernel = compute.FindKernel("CSMain");
-
         // Argument buffer used by DrawMeshInstancedIndirect.
         uint[] args = new uint[5] { 0, 0, 0, 0, 0 };
         // Arguments for drawing mesh.

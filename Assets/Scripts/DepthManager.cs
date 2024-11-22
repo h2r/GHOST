@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Unity.Sentis;
+using static RosSharp.Urdf.Link.Visual.Material;
 
 public class DepthManager : MonoBehaviour
 {
@@ -99,20 +100,13 @@ public class DepthManager : MonoBehaviour
             new Vector4(0, 0, 0, 0)
         );
 
+        // Setup depth-completion input tensors
+        depth_left_t = new Tensor<float>(depth_shape, data: null);
+        depth_right_t = new Tensor<float>(depth_shape, data: null);
 
-        if (activate_depth_estimation)
-        {
-            StartCoroutine(ResetActivateDepthEstimation());
-        }
+        rgb_left_t = new Tensor<float>(color_shape, data: null);
+        rgb_right_t = new Tensor<float>(color_shape, data: null);
 
-    }
-
-
-    private IEnumerator ResetActivateDepthEstimation()
-    {
-        activate_depth_estimation = false;
-        yield return new WaitForSeconds(0.1f);
-        activate_depth_estimation = true;
     }
 
     // Update is called once per frame
@@ -122,6 +116,9 @@ public class DepthManager : MonoBehaviour
 
     public ComputeBuffer update_depth_from_renderer(Texture2D rgb, float[] depth, int camera_index)
     {
+        Debug.LogWarning("depth.Length = " + depth.Length);
+        TextureTransform tform = new();
+        tform.SetDimensions(rgb.width, rgb.height, 3);
 
         if (camera_index == 0 && !received_left)
         {
@@ -146,7 +143,7 @@ public class DepthManager : MonoBehaviour
             //}
 
             depth_left_t = new Tensor<float>(depth_shape, depth);
-            rgb_left_t = TextureConverter.ToTensor(rgb, channels: 3);
+            TextureConverter.ToTensor(rgb, rgb_left_t, tform);
             rgb_left_t.Reshape(color_shape);
 
             received_left = true;
@@ -167,7 +164,7 @@ public class DepthManager : MonoBehaviour
             //}
 
             depth_right_t = new Tensor<float>(depth_shape, depth);
-            rgb_right_t = TextureConverter.ToTensor(rgb, channels: 3);
+            TextureConverter.ToTensor(rgb, rgb_right_t, tform);
             rgb_right_t.Reshape(color_shape);
 
             received_right = true;
