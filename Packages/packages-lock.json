@@ -95,6 +95,13 @@
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
+    "com.siemens.ros-sharp": {
+      "version": "https://github.com/siemens/ros-sharp.git?path=/com.siemens.ros-sharp",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "2d817a602563e5fbbf3707c156efeb4e6a41a85d"
+    },
     "com.unity.ai.navigation": {
       "version": "1.1.5",
       "depth": 2,
