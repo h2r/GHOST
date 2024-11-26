@@ -139,7 +139,7 @@ public class DepthManager : MonoBehaviour
             //    rgb_left_t.Dispose();
             //}
 
-            depth_right_t = new Tensor<float>(depth_shape, depth);
+            depth_left_t = new Tensor<float>(depth_shape, depth);
             // depth_right_t.Upload(depth);
             TextureConverter.ToTensor(rgb, rgb_left_t, tform);
             rgb_left_t.Reshape(color_shape);
