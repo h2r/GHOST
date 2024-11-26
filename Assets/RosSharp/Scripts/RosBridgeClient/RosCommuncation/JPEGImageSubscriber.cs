@@ -139,7 +139,7 @@ namespace RosSharp.RosBridgeClient
             // Look at the timestamp of each image in the buffer
             for (int i = 0; i < imgBuffer.Length; i++)
             {
-                if (imgBuffer[i].header != null)
+                if (imgBuffer[i] != null && imgBuffer[i].header != null)
                 {
                     imgTime = imgBuffer[i].header.stamp.secs + imgBuffer[i].header.stamp.nsecs * 0.000000001;
                     disparity = Math.Abs(depthTime - imgTime);

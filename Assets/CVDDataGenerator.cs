@@ -49,7 +49,7 @@ public class CVDDataGenerator : MonoBehaviour
     IEnumerator SetFirstRunFalseAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
-        first_run = false;
+        //first_run = false;
         Debug.Log("first_run set to false");
     }
 
@@ -135,6 +135,7 @@ public class CVDDataGenerator : MonoBehaviour
             buffer_opticalL = new ComputeBuffer(480 * 640 * 2, sizeof(float));
             buffer_opticalR = new ComputeBuffer(480 * 640 * 2, sizeof(float));
 
+            first_run = false;
             //Debug.Log("first run return");
 
             return (buffer_depthL, buffer_depthR, mat_l, mat_r, buffer_opticalL, buffer_opticalR);
@@ -167,14 +168,14 @@ public class CVDDataGenerator : MonoBehaviour
             }
             else
             {
-                //buffer_opticalL?.Release();
-                //buffer_opticalR?.Release();
+                buffer_opticalL?.Dispose();
+                buffer_opticalR?.Dispose();
                 buffer_opticalL = new ComputeBuffer(480 * 640 * 2, sizeof(float));
                 buffer_opticalR = new ComputeBuffer(480 * 640 * 2, sizeof(float));
             }
 
-            previous_rgbL.ReleaseTensorData();
-            previous_rgbR.ReleaseTensorData();
+            previous_rgbL.Dispose();
+            previous_rgbR.Dispose();
             previous_rgbL = rgbL;
             previous_rgbR = rgbR;
 
@@ -182,8 +183,6 @@ public class CVDDataGenerator : MonoBehaviour
 
             return (buffer_depthL, buffer_depthR, mat_l, mat_r, buffer_opticalL, buffer_opticalR);
         }
-
-
     }
 
 }

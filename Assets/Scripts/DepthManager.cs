@@ -73,11 +73,6 @@ public class DepthManager : MonoBehaviour
     {
         CVD_generator = GetComponent<CVDDataGenerator>();
         depth_completion = GetComponent<DepthCompletion>();
-        temp_depth_left = new ComputeBuffer(480 * 640, sizeof(float) * 3);
-        temp_depth_right = new ComputeBuffer(480 * 640, sizeof(float) * 3);
-    
-        temp_optical_left = new ComputeBuffer(480 * 640 * 2, sizeof(float));
-        temp_optical_right = new ComputeBuffer(480 * 640 * 2, sizeof(float));
 
         //fps_timer = FPSDisplayObject.GetComponent<FPSCounter>();
 
@@ -117,6 +112,8 @@ public class DepthManager : MonoBehaviour
     public ComputeBuffer update_depth_from_renderer(Texture2D rgb, float[] depth, int camera_index)
     {
         Debug.LogWarning("depth.Length = " + depth.Length);
+        Debug.LogWarning("depth_shape.length = " + depth_shape.length);
+
         TextureTransform tform = new();
         tform.SetDimensions(rgb.width, rgb.height, 3);
 
@@ -142,7 +139,8 @@ public class DepthManager : MonoBehaviour
             //    rgb_left_t.Dispose();
             //}
 
-            depth_left_t = new Tensor<float>(depth_shape, depth);
+            depth_right_t = new Tensor<float>(depth_shape, depth);
+            // depth_right_t.Upload(depth);
             TextureConverter.ToTensor(rgb, rgb_left_t, tform);
             rgb_left_t.Reshape(color_shape);
 
@@ -162,8 +160,9 @@ public class DepthManager : MonoBehaviour
             //{
             //    rgb_right_t.Dispose();
             //}
-
+            
             depth_right_t = new Tensor<float>(depth_shape, depth);
+            //depth_right_t.Upload(depth);
             TextureConverter.ToTensor(rgb, rgb_right_t, tform);
             rgb_right_t.Reshape(color_shape);
 
@@ -179,6 +178,8 @@ public class DepthManager : MonoBehaviour
             //bool not_moving = Left_Depth_Renderer.get_ready_to_freeze() && Right_Depth_Renderer.get_ready_to_freeze();
             bool not_moving = Left_Depth_Renderer.get_ready_to_freeze();
             //not_moving = true;
+
+            Debug.LogWarning("Processing depth");
             (temp_depth_left_return, temp_depth_right_return) = process_depth(depth_left_t, rgb_left_t, depth_right_t, rgb_right_t, not_moving);
 
             if (depth_left_t != null)
@@ -203,6 +204,16 @@ public class DepthManager : MonoBehaviour
 
             depth_process_lock = false;
             //first_run = true;
+        }
+
+        if (temp_depth_left_return == null)
+        {
+            Debug.LogWarning("temp_depth_left_return is null");
+        }
+
+        if (temp_depth_right_return == null)
+        {
+            Debug.LogWarning("temp_depth_right_return is null");
         }
 
         if (camera_index == 0)
@@ -254,6 +265,13 @@ public class DepthManager : MonoBehaviour
 
         //Debug.Log("1 start manager");
         //(temp_depth_left, temp_depth_right, temp_optical_left, temp_optical_right) = CVD_generator.generateData(depthL, rgbL, depthR, rgbR, activate_depth_estimation, activate_CVD);
+        Debug.LogWarning("calling CVD generator with: ");
+        Debug.LogWarning("depthL = " + depthL +
+                         " rgbL = " + rgbL +
+                         " depthR = " + depthR +
+                         " rgbR = " + rgbR +
+                         " activate_depth_estimation = " + activate_depth_estimation +
+                         " actvate_CVD = " + activate_CVD);
 
         (temp_depth_left, temp_depth_right, mat_l, mat_r, temp_optical_left, temp_optical_right) = CVD_generator.generatePoseData(depthL, rgbL, depthR, rgbR, activate_depth_estimation, activate_CVD);
 
