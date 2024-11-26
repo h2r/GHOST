@@ -10,7 +10,7 @@ public class PoseConsistentVideoDepth : MonoBehaviour
     int edge_kernel;
     int cvd_kernel;
 
-    int num_frames = 5;
+    int num_frames = 2;
 
     private ComputeBuffer depthBufferCompute;
     private ComputeBuffer poseBufferCompute;
@@ -21,7 +21,7 @@ public class PoseConsistentVideoDepth : MonoBehaviour
     int buffer_pos = 0;
 
     int groupsX = (640 + 16 - 1) / 16;
-    int groupsY = (480 + 16 - 1) / 16;
+    int groupsY = (480 + 8 - 1) / 8;
 
     // intrinsics
     public float CX, CY, FX, FY;

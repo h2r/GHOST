@@ -31,11 +31,11 @@ float4 intrinsics;
 float edgethreshold;
 
 // EdgeDetection
-[numthreads(16, 16, 1)]
+[numthreads(16, 8, 1)]
 void Transformation(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupThreadID)
 {
     int xIndex = groupId.x * 16 + threadId.x;
-    int yIndex = groupId.y * 16 + threadId.y;
+    int yIndex = groupId.y * 8 + threadId.y;
 
     int index = xIndex + yIndex * WIDTH;
 
@@ -69,11 +69,11 @@ void Transformation(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupThreadI
 
 
 // EdgeDetection
-[numthreads(16, 16, 1)]
+[numthreads(16, 8, 1)]
 void EdgeDetection(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupThreadID)
 {
     int xIndex = groupId.x * 16 + threadId.x;
-    int yIndex = groupId.y * 16 + threadId.y;
+    int yIndex = groupId.y * 8 + threadId.y;
 
     int index = xIndex + yIndex * WIDTH;
 
@@ -113,11 +113,11 @@ int calc_pre_buffer_pos(int pos)
 }
 
 // EdgeDetection
-[numthreads(16, 16, 1)]
+[numthreads(16, 8, 1)]
 void CVD(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupThreadID)
 {
     int aimxIndex = groupId.x * 16 + threadId.x;
-    int aimyIndex = groupId.y * 16 + threadId.y;
+    int aimyIndex = groupId.y * 8 + threadId.y;
 
     int aimindex = aimxIndex + aimyIndex * WIDTH;
 
@@ -131,73 +131,70 @@ void CVD(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupThreadID)
         
         
 
-        
-        for (int dx = -1; dx < 2; ++dx)
-        {
-            for (int dy = -1; dy < 2; ++dy)
-            {
-                int xIndex = aimxIndex + dx;
-                int yIndex = aimyIndex + dy;
+        //[unroll]
+        //for (int dx = -1; dx < 2; ++dx)
+        //{
+        //    [unroll]
+        //    for (int dy = -1; dy < 2; ++dy)
+        //    {
 
-                int index = xIndex + yIndex * WIDTH;
+        //        float3 prev_point = depth_buffer[buffer_pos * WIDTH * HEIGHT + aimxIndex + dx + aimyIndex + dy * WIDTH];
 
-                float3 prev_point = depth_buffer[buffer_pos * WIDTH * HEIGHT + index];
-
-                if (prev_point.z >= 0.01f)
-                {
-                    float ratio = max(aimPoint.z, prev_point.z) / min(aimPoint.z, prev_point.z) - 1.0f;
-                    float weight = exp(-6.0f * ratio);
-                    total_weight = total_weight + weight;
-                    sumpoint += prev_point * weight;
-                }
+        //        if (prev_point.z >= 0.01f)
+        //        {
+        //            float weight = exp(-8.0f * (max(aimPoint.z, prev_point.z) / min(aimPoint.z, prev_point.z) - 1.0f));
+        //            total_weight = total_weight + weight;
+        //            sumpoint += prev_point * weight;
+        //        }
                 
-            }
-        }
+        //    }
+        //}
         
-        
-        for (int dx = -1; dx < 2; ++dx)
-        {
-            for (int dy = -1; dy < 2; ++dy)
-            {
-                int xIndex = aimxIndex + dx;
-                int yIndex = aimyIndex + dy;
+        //[unroll]
+        //for (int dx1 = -1; dx1 < 2; ++dx1)
+        //{
+        //    [unroll]
+        //    for (int dy1 = -1; dy1 < 2; ++dy1)
+        //    {
+        //        int xIndex = aimxIndex + dx1;
+        //        int yIndex = aimyIndex + dy1;
 
-                int index = xIndex + yIndex * WIDTH;
-                int current_pos = buffer_pos;
+        //        int index = xIndex + yIndex * WIDTH;
+        //        int current_pos = buffer_pos;
                 
-                for (int i = 0; i < num_frames - 1; ++i)
-                {
-                    int pre_pos = calc_pre_buffer_pos(current_pos);
-                    float2 optical_flow = optical_buffer[current_pos * WIDTH * HEIGHT + xIndex + yIndex * WIDTH];
+        //        for (int i = 0; i < num_frames - 1; ++i)
+        //        {
+        //            int pre_pos = calc_pre_buffer_pos(current_pos);
+        //            float2 optical_flow = optical_buffer[current_pos * WIDTH * HEIGHT + xIndex + yIndex * WIDTH];
                     
-                    int prev_x = xIndex - int(optical_flow.x);
-                    int prev_y = yIndex - int(optical_flow.y);
+        //            int prev_x = xIndex - int(optical_flow.x);
+        //            int prev_y = yIndex - int(optical_flow.y);
 
-                    if (prev_x > 0 && prev_x < WIDTH - 1 && prev_y > 0 && prev_y < HEIGHT - 1)
-                    {
-                        int prev_index = prev_x + prev_y * WIDTH;
+        //            if (prev_x > 0 && prev_x < WIDTH - 1 && prev_y > 0 && prev_y < HEIGHT - 1)
+        //            {
+        //                int prev_index = prev_x + prev_y * WIDTH;
 
-                        float3 prev_point = depth_buffer[pre_pos * WIDTH * HEIGHT + prev_index];
-                        float4x4 transform = mul(inverse_pose, pose_buffer[pre_pos]);
-                        float3 mapped_point = mul(transform, float4(prev_point, 1.0f));
+        //                float3 prev_point = depth_buffer[pre_pos * WIDTH * HEIGHT + prev_index];
+        //                float4x4 transform = mul(inverse_pose, pose_buffer[pre_pos]);
+        //                float3 mapped_point = mul(transform, float4(prev_point, 1.0f));
 
-                        if (mapped_point.z >= 0.01f)
-                        {
-                            //float weight = 0.3f;
-                            float ratio = max(aimPoint.z, mapped_point.z) / min(aimPoint.z, mapped_point.z) - 1.0f;
-                            float weight = exp(-6.0f * ratio);
-                            total_weight = total_weight + weight;
-                            sumpoint += mapped_point * weight;
-                        }
-                    }
+        //                if (mapped_point.z >= 0.01f)
+        //                {
+        //                    //float weight = 0.3f;
+        //                    float ratio = max(aimPoint.z, mapped_point.z) / min(aimPoint.z, mapped_point.z) - 1.0f;
+        //                    float weight = exp(-8.0f * ratio);
+        //                    total_weight = total_weight + weight;
+        //                    sumpoint += mapped_point * weight;
+        //                }
+        //            }
             
-                    xIndex = prev_x;
-                    yIndex = prev_y;
-                    current_pos = pre_pos;
-                }
+        //            xIndex = prev_x;
+        //            yIndex = prev_y;
+        //            current_pos = pre_pos;
+        //        }
 
-            }
-        }
+        //    }
+        //}
         
         float3 final_point = sumpoint / total_weight;
         aimPoint = final_point;

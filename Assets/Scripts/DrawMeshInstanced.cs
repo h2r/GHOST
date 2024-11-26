@@ -222,8 +222,8 @@ public class DrawMeshInstanced : MonoBehaviour
         }
         else
         {
-            //DestroyImmediate(color_image, true);
-            //color_image = copy_texture(colorSubscriber.texture2D);
+            DestroyImmediate(color_image, true);
+            color_image = copy_texture(colorSubscriber.texture2D);
             depth_ar = depthSubscriber.getDepthArr();
         }
         Debug.LogWarning("depth_ar.Length = " + depth_ar.Length);
@@ -235,7 +235,7 @@ public class DrawMeshInstanced : MonoBehaviour
         }
         sparse_buffer.SetData(depth_ar);
 
-        depth_ar_buffer = depthManager.update_depth_from_renderer(colorSubscriber.texture2D, depth_ar, camera_index);
+        depth_ar_buffer = depthManager.update_depth_from_renderer(color_image, depth_ar, camera_index);
         if (depth_ar_buffer == null)
         {
             Debug.LogWarning("depth_ar_buffer is null!");
