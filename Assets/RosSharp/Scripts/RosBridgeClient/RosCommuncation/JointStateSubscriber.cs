@@ -21,13 +21,15 @@ namespace RosSharp.RosBridgeClient
     {
         public List<string> JointNames;
         public List<JointStateWriter> JointStateWriters;
+        public string prefix;
 
         protected override void ReceiveMessage(MessageTypes.Sensor.JointState message)
         {
             int index;
             for (int i = 0; i < message.name.Length; i++)
             {
-                index = JointNames.IndexOf(message.name[i]);
+                
+                index = JointNames.IndexOf(message.name[i].Replace(prefix, ""));
                 if (index != -1)
                     JointStateWriters[index].Write((float) message.position[i]);
             }

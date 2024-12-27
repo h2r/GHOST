@@ -443,6 +443,11 @@ public class DrawMeshInstanced : MonoBehaviour
         // We used to just be able to use `population` here, but it looks like a Unity update imposed a thread limit (65535) on my device.
         // This is probably for the best, but we have to do some more calculation.  Divide population by numthreads.x (declared in compute shader).
         compute.Dispatch(kernel, Mathf.CeilToInt(population / 64f), 1, 1);
+        // TODO: Merge the two point cloud using ICP
+        // Question:
+        //          - where is the point cloud? -> stored at where
+        //          - what is the format of the point cloud after calling the compute shader
+        //          - How to access the 2 point cloud from 2 spots?        
         Graphics.DrawMeshInstancedIndirect(mesh, 0, material, bounds, argsBuffer);
         //numUpdates += 1;
     }
