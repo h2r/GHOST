@@ -194,10 +194,20 @@ public class DrawMeshInstanced : MonoBehaviour
         {
             DestroyImmediate(color_image, true);
             color_image = copy_texture(colorSubscriber.texture2D);
+
             depth_ar = depthSubscriber.getDepthArr();
+            Debug.Log(depth_ar.Length);
         }
 
-        depth_ar_buffer = depthManager.update_depth_from_renderer(color_image, depth_ar, camera_index);
+        if (depth_ar.Length == 480 * 640)
+        {
+            depth_ar_buffer = depthManager.update_depth_from_renderer(color_image, depth_ar, camera_index);
+        }
+        else
+        {
+            depth_ar_buffer = new ComputeBuffer(480 * 640, sizeof(float));
+        }
+        Debug.Log("Return!");
     }
 
     private Texture2D copy_texture(Texture2D input_texture)
@@ -321,7 +331,7 @@ public class DrawMeshInstanced : MonoBehaviour
         meshPropertiesBuffer = new ComputeBuffer((int)population, MeshProperties.Size());
         meshPropertiesBuffer.SetData(globalProps);
 
-        depth_ar_buffer = new ComputeBuffer((int)depth_ar.Length, sizeof(float));
+        depth_ar_buffer = new ComputeBuffer(480 * 640, sizeof(float));
     }
 
     private void InitializeMaterials()

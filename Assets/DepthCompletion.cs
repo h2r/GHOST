@@ -90,15 +90,17 @@ public class DepthCompletion : MonoBehaviour
             //float[] output_depth_1 = depth_outputTensor_1.DownloadToArray();
             ComputeBuffer computeTensorData3 = ComputeTensorData.Pin(depth_outputTensor_3).buffer;
 
-            color_tensor_0.Dispose();
-            color_tensor_1.Dispose();
-            color_tensor_2.Dispose();
-            color_tensor_3.Dispose();
+            //color_tensor_0.Dispose();
+            //color_tensor_1.Dispose();
+            //color_tensor_2.Dispose();
+            //color_tensor_3.Dispose();
 
-            depth_tensor_0.Dispose();
-            depth_tensor_1.Dispose();
-            depth_tensor_2.Dispose();
-            depth_tensor_3.Dispose();
+            //depth_tensor_0.Dispose();
+            //depth_tensor_1.Dispose();
+            //depth_tensor_2.Dispose();
+            //depth_tensor_3.Dispose();
+
+            Debug.Log("Run Model");
 
             return (computeTensorData0, computeTensorData1, computeTensorData2, computeTensorData3);
         //}
