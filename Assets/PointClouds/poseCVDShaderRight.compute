@@ -64,6 +64,9 @@ void Transformation(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupThreadI
         
         // pose
         pose_buffer[buffer_pos] = pose;
+        
+        output_ar[index] = pos;
+
     }
 }
 

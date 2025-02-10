@@ -277,9 +277,9 @@ public class DepthManager : MonoBehaviour
 
 
         //Debug.Log("2 generate data");
-        temp_depth_left_return = CVDLeft.consistent_depth(temp_depth_left, mat_l, temp_optical_left, activate_CVD, edgethreshold, activate_edge_detection);
+        temp_depth_left_return = CVDLeft.consistent_depth(temp_depth_left, mat_l, temp_optical_left, activate_CVD, edgethreshold, activate_edge_detection, activate_depth_estimation);
         //Debug.Log("2 kernel 1");
-        temp_depth_right_return = CVDRight.consistent_depth(temp_depth_right, mat_r, temp_optical_right, activate_CVD, edgethreshold, activate_edge_detection);
+        temp_depth_right_return = CVDRight.consistent_depth(temp_depth_right, mat_r, temp_optical_right, activate_CVD, edgethreshold, activate_edge_detection, activate_depth_estimation);
         //Debug.Log("4 kernel 2");
 
 

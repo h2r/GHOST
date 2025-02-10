@@ -168,8 +168,8 @@ public class CVDDataGenerator : MonoBehaviour
             }
             else
             {
-                buffer_opticalL?.Dispose();
-                buffer_opticalR?.Dispose();
+                //buffer_opticalL?.Dispose();
+                //buffer_opticalR?.Dispose();
                 buffer_opticalL = new ComputeBuffer(480 * 640 * 2, sizeof(float));
                 buffer_opticalR = new ComputeBuffer(480 * 640 * 2, sizeof(float));
             }

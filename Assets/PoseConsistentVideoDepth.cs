@@ -76,10 +76,10 @@ public class PoseConsistentVideoDepth : MonoBehaviour
         poseBufferCompute.Release();
     }
 
-    public ComputeBuffer consistent_depth(ComputeBuffer depth_buffer, Matrix4x4 pose_mat, ComputeBuffer optical_buffer, bool activate_CVD, float edgethreshold, bool activate_edge_detection)
+    public ComputeBuffer consistent_depth(ComputeBuffer depth_buffer, Matrix4x4 pose_mat, ComputeBuffer optical_buffer, bool activate_CVD, float edgethreshold, bool activate_edge_detection, bool activate_depth_completion)
     {
         pose_consistent_depth_shader.SetInt("buffer_pos", buffer_pos);
-        if (activate_CVD || activate_edge_detection)
+        if (activate_CVD || activate_edge_detection || activate_depth_completion)
         {
             pose_consistent_depth_shader.SetBuffer(transformation_kernel, "optical_ar", optical_buffer);
             pose_consistent_depth_shader.SetMatrix("pose", pose_mat);
