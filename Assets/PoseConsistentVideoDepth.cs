@@ -76,10 +76,11 @@ public class PoseConsistentVideoDepth : MonoBehaviour
         poseBufferCompute.Release();
     }
 
-    public ComputeBuffer consistent_depth(ComputeBuffer depth_buffer, Matrix4x4 pose_mat, ComputeBuffer optical_buffer, bool activate_CVD, float edgethreshold, bool activate_edge_detection, bool activate_depth_completion)
+    public ComputeBuffer consistent_depth(ComputeBuffer depth_buffer, Matrix4x4 pose_mat, ComputeBuffer optical_buffer, bool activate_CVD, float edgethreshold, bool activate_edge_detection, bool activate_depth_completion, float cvd_weight)
     {
         pose_consistent_depth_shader.SetInt("buffer_pos", buffer_pos);
-        if (activate_CVD || activate_edge_detection || activate_depth_completion)
+        //if (activate_CVD || activate_edge_detection || activate_depth_completion)
+        if (true)
         {
             pose_consistent_depth_shader.SetBuffer(transformation_kernel, "optical_ar", optical_buffer);
             pose_consistent_depth_shader.SetMatrix("pose", pose_mat);
@@ -94,7 +95,9 @@ public class PoseConsistentVideoDepth : MonoBehaviour
             pose_consistent_depth_shader.Dispatch(edge_kernel, groupsX, groupsY, 1);
         }
 
-        if (activate_CVD)
+        pose_consistent_depth_shader.SetFloat("cvd_weight", cvd_weight);
+
+        if (activate_CVD && cvd_weight < 99)
         {
             pose_consistent_depth_shader.SetBuffer(cvd_kernel, "depth_ar", depth_buffer);
             Matrix4x4 inverse_pose_mat = Matrix4x4.Inverse(pose_mat);
@@ -102,6 +105,8 @@ public class PoseConsistentVideoDepth : MonoBehaviour
             pose_consistent_depth_shader.SetBuffer(cvd_kernel, "optical_ar", optical_buffer);
             pose_consistent_depth_shader.Dispatch(cvd_kernel, groupsX, groupsY, 1);
         }
+
+        
 
         buffer_pos = (buffer_pos + 1) % num_frames;
 

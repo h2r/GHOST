@@ -68,6 +68,10 @@ public class DepthManager : MonoBehaviour
     public float edgethreshold;
     public bool activate_edge_detection;
 
+    float cvd_weight;
+    public float weight_not_move;
+    public float weight_moving;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -230,6 +234,16 @@ public class DepthManager : MonoBehaviour
 
     private (ComputeBuffer, ComputeBuffer) process_depth(Tensor<float> depthL, Tensor<float> rgbL, Tensor<float> depthR, Tensor<float> rgbR, bool is_not_moving)
     {
+        if (is_not_moving)
+        {
+            cvd_weight = weight_not_move;
+        }
+        else
+        {
+            cvd_weight = weight_moving;
+        }
+
+        Debug.Log(cvd_weight);
         //if (median_averaging && mean_averaging)
         //{
         //    mean_averaging = false;
@@ -277,9 +291,9 @@ public class DepthManager : MonoBehaviour
 
 
         //Debug.Log("2 generate data");
-        temp_depth_left_return = CVDLeft.consistent_depth(temp_depth_left, mat_l, temp_optical_left, activate_CVD, edgethreshold, activate_edge_detection, activate_depth_estimation);
+        temp_depth_left_return = CVDLeft.consistent_depth(temp_depth_left, mat_l, temp_optical_left, activate_CVD, edgethreshold, activate_edge_detection, activate_depth_estimation, cvd_weight);
         //Debug.Log("2 kernel 1");
-        temp_depth_right_return = CVDRight.consistent_depth(temp_depth_right, mat_r, temp_optical_right, activate_CVD, edgethreshold, activate_edge_detection, activate_depth_estimation);
+        temp_depth_right_return = CVDRight.consistent_depth(temp_depth_right, mat_r, temp_optical_right, activate_CVD, edgethreshold, activate_edge_detection, activate_depth_estimation, cvd_weight);
         //Debug.Log("4 kernel 2");
 
 

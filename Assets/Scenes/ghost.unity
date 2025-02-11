@@ -287,6 +287,8 @@ MonoBehaviour:
   CVDRight: {fileID: 1771154394}
   edgethreshold: 1
   activate_edge_detection: 0
+  weight_not_move: 8
+  weight_moving: 100
 --- !u!114 &4523432
 MonoBehaviour:
   m_ObjectHideFlags: 0

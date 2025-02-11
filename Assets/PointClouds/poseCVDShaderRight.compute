@@ -30,6 +30,9 @@ float4 intrinsics;
 // edge detection
 float edgethreshold;
 
+// weight
+float cvd_weight;
+
 // EdgeDetection
 [numthreads(16, 8, 1)]
 void Transformation(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupThreadID)
@@ -145,7 +148,7 @@ void CVD(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupThreadID)
 
                 if (prev_point.z >= 0.01f)
                 {
-                    float weight = exp(-8.0f * (max(aimPoint.z, prev_point.z) / min(aimPoint.z, prev_point.z) - 1.0f));
+                    float weight = exp(-cvd_weight * (max(aimPoint.z, prev_point.z) / min(aimPoint.z, prev_point.z) - 1.0f));
                     total_weight = total_weight + weight;
                     sumpoint += prev_point * weight;
                 }
@@ -185,7 +188,7 @@ void CVD(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupThreadID)
                         {
                             //float weight = 0.3f;
                             float ratio = max(aimPoint.z, mapped_point.z) / min(aimPoint.z, mapped_point.z) - 1.0f;
-                            float weight = exp(-8.0f * ratio);
+                            float weight = exp(-cvd_weight * ratio);
                             total_weight = total_weight + weight;
                             sumpoint += mapped_point * weight;
                         }
@@ -200,7 +203,12 @@ void CVD(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupThreadID)
         }
         
         float3 final_point = sumpoint / total_weight;
-        aimPoint = final_point;
+        
+        if (cvd_weight < 100)
+        {
+            aimPoint = final_point;
+        }
+            
         output_ar[aimindex] = aimPoint;
         depth_buffer[buffer_pos * HEIGHT * WIDTH + aimindex] = aimPoint;
 
@@ -239,7 +247,7 @@ void CVD(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupThreadID)
 //            float cx = intrinsics.z;
 //            float cy = intrinsics.w;
 //            float x = transformedPoint4.x / transformedPoint4.z * fx + cx;
-//            float y = transformedPoint4.y / transformedPoint4.z * fy + cy;
+//            float y = transformedPoint4.y / transformedPoint4.z * fy + cy;s
 //            int xPrev = (int) (x + 0.5);
 //            int yPrev = (int) (y + 0.5);
 
