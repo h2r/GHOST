@@ -11,17 +11,11 @@ public class VRGeneralControls : MonoBehaviour
     //public Canvas UI;
     //public Canvas hintUI;
 
-    //create spot reference
-    public GameObject spot1;
-    public GameObject spot2;
-
-    private bool UIShowing;
-
-    public OVRInput.RawButton LX;
-    public OVRInput.RawButton LT1;
-    public OVRInput.RawButton LT2;
-    public OVRInput.RawButton RA;
-    public OVRInput.RawButton RT2;
+    //public OVRInput.RawButton LX;
+    //public OVRInput.RawButton LT1;
+    public OVRInput.RawButton Stow;
+    public OVRInput.RawButton ModeSwitch;
+    public OVRInput.RawButton GripperControl;
 
     /* To be accessed by MoveArm script */
     public bool gripperOpen;
@@ -32,7 +26,7 @@ public class VRGeneralControls : MonoBehaviour
     public RosSharp.RosBridgeClient.SetGripper gripper;
     public ModeManager manager;
 
-    /* Toggle Point Cloud */
+    /* Toggle Point Cloud - not using for multispot project 2/12/2025 */ 
     public GameObject body;
     public DrawMeshInstanced[] pointClouds;
     public GameObject[] toggleObjects;
@@ -45,13 +39,10 @@ public class VRGeneralControls : MonoBehaviour
     private Stopwatch threed_time;
     private Stopwatch twod_time;
 
-    GameObject spot1RosConnector;
-    GameObject spot2RosConnector;
-
     void Start()
     {
         gripperOpen = false;
-        gripper.closeGripper();
+        //gripper.closeGripper();
         //hintUI.enabled = true;
         //UI.enabled = false;
         //UIShowing = false;
@@ -64,62 +55,52 @@ public class VRGeneralControls : MonoBehaviour
 
         UnityEngine.Debug.Log("vr general Start");
 
-        spot1RosConnector = spot1.transform.Find("RosParent/RosConnector").gameObject;
-        spot2RosConnector = spot2.transform.Find("RosParent/RosConnector").gameObject;
 
     }
 
     void Update()
     {
-        /* LX commands */
-        if (OVRInput.GetDown(LX))
-        {
-            /* Toggle every point cloud */
-            point_cloud_t = point_cloud_t == 1f ? 0f : 1f;
-            foreach (DrawMeshInstanced cloud in pointClouds)
-            {
-                cloud.t = point_cloud_t;
-            }
+        ///* LX commands */
+        //if (OVRInput.GetDown(LX))
+        //{
+        //    /* Toggle every point cloud */
+        //    point_cloud_t = point_cloud_t == 1f ? 0f : 1f;
+        //    foreach (DrawMeshInstanced cloud in pointClouds)
+        //    {
+        //        cloud.t = point_cloud_t;
+        //    }
 
-            /* Toggle whether the left and right are enabled at all */
-            foreach (GameObject gameObject in toggleObjects)
-            {
-                gameObject.SetActive(point_cloud_t == 0f);
-            }
+        //    /* Toggle whether the left and right are enabled at all */
+        //    foreach (GameObject gameObject in toggleObjects)
+        //    {
+        //        gameObject.SetActive(point_cloud_t == 0f);
+        //    }
 
-            if (point_cloud_t == 1f)
-            {
-                /* Turn on 3D stopwatch */
-                twod_time.Stop();
-                threed_time.Start();
-            }
-            else
-            {
-                /* Turn on 2D stopwatch */
-                threed_time.Stop();
-                twod_time.Start();
-            }
+        //    if (point_cloud_t == 1f)
+        //    {
+        //        /* Turn on 3D stopwatch */
+        //        twod_time.Stop();
+        //        threed_time.Start();
+        //    }
+        //    else
+        //    {
+        //        /* Turn on 2D stopwatch */
+        //        threed_time.Stop();
+        //        twod_time.Start();
+        //    }
 
-            /* Kill left gripper (LT1) and left trigger (LT2) are also pressed */
-            if (OVRInput.Get(LT1) && OVRInput.Get(LT2))
-            {
-                killSpot.killSpot();
-            }
-        }
+        //    /* Kill left gripper (LT1) and left trigger (LT2) are also pressed */
+        //    if (OVRInput.Get(LT1) && OVRInput.Get(LT2))
+        //    {
+        //        killSpot.killSpot();
+        //    }
+        //}
 
         /* Stow arm if left trigger (LT2) is pressed */
-        if (OVRInput.GetDown(LT2))
+        if (OVRInput.GetDown(Stow))
         {
-            if (spot1.activeSelf)
-            {
-                spot1RosConnector.GetComponent<StowArm>().Stow();
-            }
-            
-            if (spot2.activeSelf)
-            {
-                spot2RosConnector.GetComponent<StowArm>().Stow();
-            }
-            //stow.Stow();
+
+            stow.Stow();
 
             // Pause depth history for 1.5 seconds
             foreach (RawImageSubscriber ds in depthSubscribers)
@@ -129,13 +110,13 @@ public class VRGeneralControls : MonoBehaviour
         }
 
         /* Switch modes if A is pressed */
-        if (OVRInput.GetDown(RA))
+        if (OVRInput.GetDown(ModeSwitch))
         {
             manager.nextMode();
         }
 
         /* Fully open/close gripper if right trigger (RT2) is pressed */
-        if (OVRInput.GetDown(RT2))
+        if (OVRInput.GetDown(GripperControl))
         {
             if (gripperOpen)
             {

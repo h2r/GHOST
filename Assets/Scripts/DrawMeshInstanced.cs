@@ -105,7 +105,13 @@ public class DrawMeshInstanced : MonoBehaviour
 
         int kernel = compute.FindKernel("CSMain");
         SetProperties();
+        if (camera_index == 0) 
+        {
+            Debug.Log(transform.position);
+            Debug.Log(transform.rotation);
+        }
         compute.SetMatrix("_GOPose", Matrix4x4.TRS(transform.position, transform.rotation, new Vector3(1, 1, 1)));
+
         compute.Dispatch(kernel, Mathf.CeilToInt(population / 256), 1, 1);
 
 
@@ -199,15 +205,20 @@ public class DrawMeshInstanced : MonoBehaviour
             Debug.Log(depth_ar.Length);
         }
 
-        if (depth_ar.Length == 480 * 640)
-        {
-            depth_ar_buffer = depthManager.update_depth_from_renderer(color_image, depth_ar, camera_index);
-        }
-        else
-        {
-            depth_ar_buffer = new ComputeBuffer(480 * 640, sizeof(float));
-        }
-        Debug.Log("Return!");
+
+        depth_ar_buffer.SetData(depth_ar);
+
+        //if (depth_ar.Length == 480 * 640)
+        //{
+        //    //depth_ar_buffer = depthManager.update_depth_from_renderer(color_image, depth_ar, camera_index);
+
+        //    depth_ar_buffer.SetData(depth_ar);
+        //}
+        //else
+        //{
+        //    depth_ar_buffer = new ComputeBuffer(480 * 640, sizeof(float));
+        //}
+        //Debug.Log("Return!");
     }
 
     private Texture2D copy_texture(Texture2D input_texture)

@@ -8,14 +8,14 @@ using UnityEngine.Experimental.GlobalIllumination;
 public class MoveArm : MonoBehaviour
 {
     public RosSharp.RosBridgeClient.PoseStampedRelativePublisher armPublisher; // Reference to RosConnnector's arm publisher
-    public GameObject rightController; // Reference to right controller object
+    public GameObject CurrentController; // Reference to right controller object
     public Transform dummyHandTransform; // Reference to dummy hand object
     public Transform realHandTransform; // Reference to real hand
 
-    public OVRInput.RawButton RT1; // Changing how input actions are received
-    public OVRInput.RawButton LT1; // Toggle for slow open and close
+    public OVRInput.RawButton HandTracking; // Changing how input actions are received
+    //public OVRInput.RawButton LT1; // Toggle for slow open and close
     public OVRInput.RawAxis2D LAx; // Left joystick controls slow close and open with LT1 toggle
-    public OVRInput.RawButton bButton;
+    //public OVRInput.RawButton bButton;
     public Transform spotBody;
     public DrawMeshInstanced[] cloudsToFreeze;
     public TransformUpdater handExtUpdater;
@@ -65,7 +65,7 @@ public class MoveArm : MonoBehaviour
         Quaternion rotationChange;
 
         // If the trigger is pressed, we want to start tracking the position of the arm and sending it to Spot
-        if (OVRInput.Get(RT1))
+        if (OVRInput.Get(HandTracking))
         {
             // If trigger is just now getting pressed, save the location but don't send a command
             // Also turn on the publisher to track the dummy hand
@@ -73,18 +73,18 @@ public class MoveArm : MonoBehaviour
             {
                 triggerWasPressed = true;
                 armPublisher.enabled = true;
-                initialHandRotation = rightController.transform.rotation;
+                initialHandRotation = CurrentController.transform.rotation;
                 initialDummyRotation = dummyHandTransform.rotation;
             }
             else
             {
                 // Change the location of the hand the same way
-                locationChange = (rightController.transform.position - lastHandLocation);
-                rotationChange = rightController.transform.rotation * Quaternion.Inverse(initialHandRotation);
+                locationChange = (CurrentController.transform.position - lastHandLocation);
+                rotationChange = CurrentController.transform.rotation * Quaternion.Inverse(initialHandRotation);
                 dummyHandTransform.position += locationChange;
                 dummyHandTransform.rotation = rotationChange * initialDummyRotation;
             }
-            lastHandLocation = rightController.transform.position;
+            lastHandLocation = CurrentController.transform.position;
             // Change ghost gripper color if it is out of bounds            
             if ((dummyHandTransform.position - armBase.position).magnitude > maxArmLength)
             {
@@ -113,31 +113,31 @@ public class MoveArm : MonoBehaviour
                 ds.pauseDepthHistory(1.5f);
             }
         }
-       // Change the gripper percentage
-        else if (OVRInput.Get(LT1))
-        {
-            Vector2 leftMove = OVRInput.Get(LAx);
-            if (leftMove.y < 0)
-            {
-                if (generalControls.gripperPercentage > 0)
-                {
-                    generalControls.gripperPercentage -= 0.25f;
-                    gripper.setGripperPercentage(generalControls.gripperPercentage);
-                    generalControls.gripperOpen = false;
-                }
+       //// Change the gripper percentage
+       // else if (OVRInput.Get(LT1))
+       // {
+       //     Vector2 leftMove = OVRInput.Get(LAx);
+       //     if (leftMove.y < 0)
+       //     {
+       //         if (generalControls.gripperPercentage > 0)
+       //         {
+       //             generalControls.gripperPercentage -= 0.25f;
+       //             gripper.setGripperPercentage(generalControls.gripperPercentage);
+       //             generalControls.gripperOpen = false;
+       //         }
 
-            }
-            if (leftMove.y > 0)
-            {
-                if (generalControls.gripperPercentage < 100.0f)
-                {
-                    generalControls.gripperPercentage += 0.25f;
-                    gripper.setGripperPercentage(generalControls.gripperPercentage);
-                    generalControls.gripperOpen = true;
-                }
-            }
+       //     }
+       //     if (leftMove.y > 0)
+       //     {
+       //         if (generalControls.gripperPercentage < 100.0f)
+       //         {
+       //             generalControls.gripperPercentage += 0.25f;
+       //             gripper.setGripperPercentage(generalControls.gripperPercentage);
+       //             generalControls.gripperOpen = true;
+       //         }
+       //     }
 
-        }
+       // }
         else
         {
             // trigger is not pressed
@@ -148,19 +148,19 @@ public class MoveArm : MonoBehaviour
         }
 
         // Freeze or unfreeze the hand point cloud
-        if (OVRInput.GetDown(bButton))
-        {
-            //// Switch visibility
-            //showSpotBody = !showSpotBody;
+        //if (OVRInput.GetDown(bButton))
+        //{
+        //    //// Switch visibility
+        //    //showSpotBody = !showSpotBody;
 
-            //// Set invisible or visible
-            //setSpotVisible(spotBody, showSpotBody);
+        //    //// Set invisible or visible
+        //    //setSpotVisible(spotBody, showSpotBody);
 
-            foreach(DrawMeshInstanced cloud in cloudsToFreeze)
-            {
-                cloud.toggleFreezeCloud();
-            }
-        }
+        //    foreach(DrawMeshInstanced cloud in cloudsToFreeze)
+        //    {
+        //        cloud.toggleFreezeCloud();
+        //    }
+        //}
     }
 
     // Recursive function to get all children of the parent that have the name "unnamed" and are children of "Visuals"

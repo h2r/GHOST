@@ -15,7 +15,6 @@ public class ModeManager : MonoBehaviour
     public string hintTextString;
     public VRGeneralControls generalControlsScript;
     public SetFarPlane planePublisher;
-    public SetFarPlane planePublisher2;
 
     // Time tracking
     private Stopwatch[] stopwatches;
@@ -72,12 +71,10 @@ public class ModeManager : MonoBehaviour
         if (mode.name == "ControlMode - Dynamic Arm")
         {
             planePublisher.RequestFarPlane(2000f);
-            planePublisher2.RequestFarPlane(2000f);
         }
         else
         {
             planePublisher.RequestFarPlane(6000f);
-            planePublisher2.RequestFarPlane(6000f);
         }
     }
 
