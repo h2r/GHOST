@@ -14,6 +14,9 @@ using Debug = UnityEngine.Debug;
 
 public class DrawMeshInstanced : MonoBehaviour
 {
+    public DepthManager depthManager;
+    public int camera_index;
+
     public float range;
 
     public Texture2D color_image;
@@ -64,7 +67,9 @@ public class DrawMeshInstanced : MonoBehaviour
     private MeshProperties[] globalProps;
 
     //private MeshProperties[] generalUseProps;
-    
+
+    ComputeBuffer depth_ar_buffer;
+
 
     // Mesh Properties struct to be read from the GPU.
     // Size() is a convenience funciton which returns the stride of the struct.
@@ -316,6 +321,8 @@ public class DrawMeshInstanced : MonoBehaviour
 
     private void InitializeBuffers()
     {
+
+        depth_ar_buffer = new ComputeBuffer(480 * 640, sizeof(float));
         int kernel = compute.FindKernel("CSMain");
 
         // Argument buffer used by DrawMeshInstancedIndirect.
@@ -362,11 +369,12 @@ public class DrawMeshInstanced : MonoBehaviour
         meshPropertiesBuffer.SetData(globalProps);
         material.SetFloat("a", get_target_rota());
         material.SetFloat("pS", pS);
-        depthBuffer.SetData(depth_ar);
+        //depthBuffer.SetData(depth_ar);
         material.SetBuffer("_Properties", meshPropertiesBuffer);
         material.SetTexture("_colorMap",color_image);
         compute.SetBuffer(kernel, "_Properties", meshPropertiesBuffer);
-        compute.SetBuffer(kernel, "_Depth", depthBuffer);
+        //compute.SetBuffer(kernel, "_Depth", depthBuffer);
+        compute.SetBuffer(kernel, "_Depth", depth_ar_buffer);
 
         Vector4 intr = new Vector4((float)CX, (float)CY, FX, FY);
         compute.SetVector("intrinsics", intr);
@@ -397,6 +405,16 @@ public class DrawMeshInstanced : MonoBehaviour
         else
         {
             depth_ar = depthSubscriber.getDepthArr();
+            if (depth_ar.Length == 480 * 640)
+            {
+                depth_ar_buffer = depthManager.update_depth_from_renderer(color_image, depth_ar, camera_index);
+
+                //depth_ar_buffer.SetData(depth_ar);
+            }
+            else
+            {
+                depth_ar_buffer = new ComputeBuffer(480 * 640, sizeof(float));
+            }
         }
 
         // save the point cloud if desired
@@ -668,6 +686,11 @@ public class DrawMeshInstanced : MonoBehaviour
             argsBuffer.Release();
         }
         argsBuffer = null;
+
+        if (depth_ar_buffer != null)
+            depth_ar_buffer.Release();
+
+        depth_ar_buffer = null;
     }
 
     private void OnEnable()
