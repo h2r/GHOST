@@ -263,10 +263,6 @@ namespace RosSharp.RosBridgeClient
         // Get the most recently calculated depth array
         public float[] getDepthArr()
         {
-<<<<<<< HEAD
-            //UnityEngine.Debug.Log(globalData.Length);
-=======
->>>>>>> multiDev-debug
             float[] copyOfData = new float[globalData.Length];
             Array.Copy(globalData, copyOfData, globalData.Length);
             return copyOfData;

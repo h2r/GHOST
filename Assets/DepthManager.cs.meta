@@ -1,7 +1,4 @@
 fileFormatVersion: 2
-<<<<<<< HEAD
-guid: f190e8275558feb4db1d0e1788ab8612
-=======
 guid: f91acdd68ae8fb440bb7ce87f9b6a346
 MonoImporter:
   externalObjects: {}
@@ -12,4 +9,3 @@ MonoImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
->>>>>>> multiDev-debug
