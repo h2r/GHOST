@@ -1232,8 +1232,6 @@ MonoBehaviour:
   Stow: 512
   ModeSwitch: 256
   GripperControl: 536870912
-  dummyHandTransform: {fileID: 244727980}
-  realHandTransform: {fileID: 914083446}
   gripperOpen: 0
   gripperPercentage: 0
   killSpot: {fileID: 693475759}
@@ -2741,7 +2739,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f190e8275558feb4db1d0e1788ab8612, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  activate_depth_estimation: 1
+  activate_depth_estimation: 0
   Left_Depth_Renderer_1: {fileID: 409472605}
   Right_Depth_Renderer_1: {fileID: 409472604}
   Left_Depth_Renderer_2: {fileID: 409472603}
@@ -3438,6 +3436,10 @@ PrefabInstance:
       propertyPath: latency_frames
       value: 60
       objectReference: {fileID: 0}
+    - target: {fileID: 1137478775010377568, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: use_saved_meshes
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1137478775010377574, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -3485,6 +3487,10 @@ PrefabInstance:
     - target: {fileID: 1137478775515482002, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: latency_frames
       value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478775515482002, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: use_saved_meshes
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775531494915, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
@@ -13187,8 +13193,6 @@ MonoBehaviour:
   Stow: 2
   ModeSwitch: 1
   GripperControl: 134217728
-  dummyHandTransform: {fileID: 1681050001}
-  realHandTransform: {fileID: 689239495}
   gripperOpen: 0
   gripperPercentage: 0
   killSpot: {fileID: 669083967}
