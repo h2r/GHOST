@@ -17,12 +17,17 @@ using Random = UnityEngine.Random;
 
 public class DrawMeshInstanced : MonoBehaviour
 {
+<<<<<<< HEAD
     public bool freeze_without_action;
     public int latency_frames;
     bool ready_to_freeze = false;
 
     public float y_min;
     public float z_max;
+=======
+    public DepthManager depthManager;
+    public int camera_index;
+>>>>>>> multiDev-debug
 
     public float range;
 
@@ -71,6 +76,7 @@ public class DrawMeshInstanced : MonoBehaviour
 
     private MeshProperties[] globalProps;
 
+<<<<<<< HEAD
     public float delta_x;
     public float delta_y;
     public float delta_z;
@@ -82,6 +88,12 @@ public class DrawMeshInstanced : MonoBehaviour
     bool start_completion = true;
 
     ComputeBuffer depth_ar_buffer;
+=======
+    //private MeshProperties[] generalUseProps;
+
+    ComputeBuffer depth_ar_buffer;
+
+>>>>>>> multiDev-debug
 
     // Mesh Properties struct to be read from the GPU.
     // Size() is a convenience funciton which returns the stride of the struct.
@@ -323,6 +335,8 @@ public class DrawMeshInstanced : MonoBehaviour
 
     private void InitializeBuffers()
     {
+
+        depth_ar_buffer = new ComputeBuffer(480 * 640, sizeof(float));
         int kernel = compute.FindKernel("CSMain");
 
         // Argument buffer used by DrawMeshInstancedIndirect.
@@ -354,6 +368,15 @@ public class DrawMeshInstanced : MonoBehaviour
         material.SetInt("w", (int)width);
         material.SetFloat("a", target.eulerAngles.y * 0.00872f * 2.0f);
         material.SetFloat("pS", pS);
+<<<<<<< HEAD
+=======
+        //depthBuffer.SetData(depth_ar);
+        material.SetBuffer("_Properties", meshPropertiesBuffer);
+        material.SetTexture("_colorMap",color_image);
+        compute.SetBuffer(kernel, "_Properties", meshPropertiesBuffer);
+        //compute.SetBuffer(kernel, "_Depth", depthBuffer);
+        compute.SetBuffer(kernel, "_Depth", depth_ar_buffer);
+>>>>>>> multiDev-debug
 
         Vector4 intr = new Vector4((float)CX, (float)CY, FX, FY);
         compute.SetVector("intrinsics", intr);
@@ -375,6 +398,178 @@ public class DrawMeshInstanced : MonoBehaviour
         compute.SetFloat("dz", delta_z);
     }
 
+<<<<<<< HEAD
+=======
+    private void UpdateTexture()
+    {
+        if (use_saved_meshes || freezeCloud) {
+            //Debug.Log("use_saved_meshes");
+            //Debug.Log("UpdateTexture, Time: " + UnityEngine.Time.realtimeSinceStartup);
+            return;
+        }
+
+        // Get the depth and color
+        color_image = colorSubscriber.texture2D;
+        if (t == 0)
+        {
+            depth_ar = new float[width * height];
+        }
+        else
+        {
+            depth_ar = depthSubscriber.getDepthArr();
+            if (depth_ar.Length == 480 * 640)
+            {
+                depth_ar_buffer = depthManager.update_depth_from_renderer(color_image, depth_ar, camera_index);
+
+                //depth_ar_buffer.SetData(depth_ar);
+            }
+            else
+            {
+                depth_ar_buffer = new ComputeBuffer(480 * 640, sizeof(float));
+            }
+        }
+
+        // save the point cloud if desired
+        if (savePointCloud)
+        {
+            using (FileStream file = File.Create("Assets/PointClouds/mesh_array_" + imageScriptIndex))
+            {
+                using (BinaryWriter writer = new BinaryWriter(file))
+                {
+                    writer.Write((int)depth_ar.Length);
+                    foreach (float value in depth_ar)
+                    {
+                        writer.Write(value);
+                    }
+                }
+            }
+
+            byte[] bytes = color_image.EncodeToPNG();
+            File.WriteAllBytes("Assets/PointClouds/Color_" + imageScriptIndex + ".png", bytes);
+        }
+
+    }
+
+    private void Update()
+    {
+        
+        //Debug.Log("UPDATE");
+        int kernel = compute.FindKernel("CSMain");
+        //SetProperties enables point cloud to move when game object moves, but is laggier due to redrawing. Just comment it out for performance improvement;
+        //transform.LookAt(target);
+        SetProperties();
+        SetGOPosition();
+        compute.SetFloat("t",t);
+
+        //update the color image
+        //counter += 1;
+        UpdateTexture();
+        //Debug.Log("UPDATE");
+        //DateTime localTime = DateTime.Now;
+        //float deltaTime = Time.deltaTime;
+        //long microseconds = localTime.Ticks / (TimeSpan.TicksPerMillisecond / 1000);
+        //Debug.Log("updates per second: " + (counter/Time.realtimeSinceStartup).ToString() + " updates: " + counter.ToString() + " deltaTime: " + Time.realtimeSinceStartup.ToString());
+
+        // We used to just be able to use `population` here, but it looks like a Unity update imposed a thread limit (65535) on my device.
+        // This is probably for the best, but we have to do some more calculation.  Divide population by numthreads.x (declared in compute shader).
+        compute.Dispatch(kernel, Mathf.CeilToInt(population / 64f), 1, 1);
+        // TODO: Merge the two point cloud using ICP
+        // Question:
+        //          - where is the point cloud? -> stored at where
+        //          - what is the format of the point cloud after calling the compute shader
+        //          - How to access the 2 point cloud from 2 spots?        
+        Graphics.DrawMeshInstancedIndirect(mesh, 0, material, bounds, argsBuffer);
+        //numUpdates += 1;
+    }
+
+    private Vector4 pixel_to_vision_frame(uint i, uint j, float depth)
+    {
+        //int CX = 320;
+        //int CY = 240;
+        
+        //float FX = (float)552.029101;
+        //float FY = (float)552.029101;
+
+        float x = (j - CX) * depth / FX;
+        float y = (i - CY) * depth / FY;
+
+        Vector4 ret = new Vector4(x, y, depth,1f);
+        return (ret);
+
+    }
+
+    //private Mesh CreateQuad(float width = 1f, float height = 1f, float depth = 1f)
+    //{
+    //    // Create a quad mesh.
+    //    var mesh = new Mesh();
+
+    //    float w = width * .5f;
+    //    float h = height * .5f;
+    //    float d = depth * .5f;
+
+    //    var vertices = new Vector3[8] {
+    //        new Vector3(-w, -h, -d),
+    //        new Vector3(w, -h, -d),
+    //        new Vector3(w, h, -d),
+    //        new Vector3(-w, h, -d),
+    //        new Vector3(-w, -h, d),
+    //        new Vector3(w, -h, d),
+    //        new Vector3(w, h, d),
+    //        new Vector3(-w, h, d)
+    //    };
+
+    //    var tris = new int[3 * 2 * 6] {
+    //        0, 3, 1,
+    //        3, 2, 1,
+
+    //        0,4,5,
+    //        0,5,1,
+
+    //        1,5,2,
+    //        2,5,6,
+
+    //        7,3,6,
+    //        3,6,2,
+
+    //        0,4,3,
+    //        4,7,3,
+
+    //        4,7,5,
+    //        7,5,6
+    //    };
+
+    //    var normals = new Vector3[8] {
+    //        -Vector3.forward,
+    //        -Vector3.forward,
+    //        -Vector3.forward,
+    //        -Vector3.forward,
+    //        -Vector3.forward,
+    //        -Vector3.forward,
+    //        -Vector3.forward,
+    //        -Vector3.forward,
+
+    //    };
+
+    //    var uv = new Vector2[8] {
+    //        new Vector2(0, 0),
+    //        new Vector2(1, 0),
+    //        new Vector2(1, 1),
+    //        new Vector2(0, 1),
+    //        new Vector2(0, 0),
+    //        new Vector2(1, 0),
+    //        new Vector2(1, 1),
+    //        new Vector2(0, 1),
+    //    };
+
+    //    mesh.vertices = vertices;
+    //    mesh.triangles = tris;
+    //    mesh.normals = normals;
+    //    mesh.uv = uv;
+
+    //    return mesh;
+    //}
+
+>>>>>>> multiDev-debug
     // Actually a cube, not a quad
     private Mesh CreateQuad(float width = 1f, float height = 1f)
     {
@@ -443,4 +638,44 @@ public class DrawMeshInstanced : MonoBehaviour
             color_image = temp_texture;
         }
     }
+<<<<<<< HEAD
+=======
+
+    public void setCloudFreeze(bool freeze)
+    {
+        freezeCloud = freeze;
+    }
+
+    private void Start()
+    {
+        // See OnEnable
+    }
+
+
+    private void OnDisable()
+    {
+        // Release gracefully.
+        if (meshPropertiesBuffer != null)
+        {
+            meshPropertiesBuffer.Release();
+        }
+        meshPropertiesBuffer = null;
+
+        if (argsBuffer != null)
+        {
+            argsBuffer.Release();
+        }
+        argsBuffer = null;
+
+        if (depth_ar_buffer != null)
+            depth_ar_buffer.Release();
+
+        depth_ar_buffer = null;
+    }
+
+    private void OnEnable()
+    {
+        Setup();
+    }
+>>>>>>> multiDev-debug
 }

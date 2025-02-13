@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetDeviceTypes: 01000000020000000300000004000000
   allowOptional3DofHeadTracking: 0
-  handTrackingSupport: 1
+  handTrackingSupport: 0
   handTrackingFrequency: 0
-  handTrackingVersion: 2
-  anchorSupport: 1
+  handTrackingVersion: 0
+  anchorSupport: 0
   sharedAnchorSupport: 0
   renderModelSupport: 0
   trackedKeyboardSupport: 0
@@ -25,7 +25,7 @@ MonoBehaviour:
   faceTrackingSupport: 0
   eyeTrackingSupport: 0
   virtualKeyboardSupport: 0
-  sceneSupport: 2
+  sceneSupport: 0
   boundaryVisibilitySupport: 0
   disableBackups: 1
   enableNSCConfig: 1
@@ -41,5 +41,5 @@ MonoBehaviour:
   systemSplashScreen: {fileID: 0}
   systemSplashScreenType: 0
   _systemLoadingScreenBackground: 0
-  ovrPluginMd5Win64: aa662cdf2f901973cc80422bf87a766d78129523e5c97329b2aeb473a3352098
-  ovrPluginMd5Android: b191da349d7c05c640e5f41721d8abdfa5b3b0d20f5c5be8d038abb28375ede2
+  ovrPluginMd5Win64: 
+  ovrPluginMd5Android: 

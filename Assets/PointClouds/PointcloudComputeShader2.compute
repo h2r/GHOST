@@ -61,9 +61,24 @@ void CSMain(uint3 id : SV_DispatchThreadID)
         //    final_pos.w = 0.0f;
         //}
     
+<<<<<<< HEAD
         // Apply translation to existing matrix, which will be read in the shader.
         _Properties[id.x].pos = final_pos;
         _Properties[id.x].pos.w = _Depth[depth_idx] * t + (1 - t);
         //_Properties[id.x].pos.w = abs(id.x * samplingSize - i);
     }
+=======
+    //if (pos.y < 0.5f || pos.z < -0.0f)
+    //{
+    //    pos.y = 0.0f;
+    //    pos.z = 0.0f;
+    //    pos.x = 0.0f;
+    //    pos.w = 0.0f;
+    //}
+    
+    // Apply translation to existing matrix, which will be read in the shader.
+    _Properties[id.x].pos = mul(_GOPose, pos);
+    _Properties[id.x].pos.w = _Depth[depth_idx] * t + (1 - t);
+    //_Properties[id.x].pos.w = abs(id.x * samplingSize - i);
+>>>>>>> multiDev-debug
 }

@@ -287,7 +287,11 @@ public class DepthManager : MonoBehaviour
         //temp_output_left.GetData(ol);
         //temp_output_right.GetData(or);
 
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> multiDev-debug
 
         return (temp_output_left_1, temp_output_right_1, temp_output_left_2, temp_output_right_2);
     }

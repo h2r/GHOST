@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<< HEAD
 guid: 6377a75cd2e75d04b8b58447deaf4ed8
+=======
+guid: 73b42ac8a2deae749b58f2298a7e0f4a
+>>>>>>> multiDev-debug
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}
