@@ -5577,6 +5577,7 @@ GameObject:
   - component: {fileID: 638278052}
   - component: {fileID: 638278051}
   - component: {fileID: 638278050}
+  - component: {fileID: 638278053}
   m_Layer: 0
   m_Name: DepthManager
   m_TagString: Untagged
@@ -5612,8 +5613,8 @@ MonoBehaviour:
   activate_depth_estimation: 0
   Left_Depth_Renderer_1: {fileID: 326679877}
   Right_Depth_Renderer_1: {fileID: 107554149}
-  Left_Depth_Renderer_2: {fileID: 0}
-  Right_Depth_Renderer_2: {fileID: 0}
+  Left_Depth_Renderer_2: {fileID: 409472603}
+  Right_Depth_Renderer_2: {fileID: 409472602}
 --- !u!4 &638278052
 Transform:
   m_ObjectHideFlags: 0
@@ -5629,6 +5630,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &638278053
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 638278049}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2df5584cadb0564ba70a8849a70df5e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &645022056
 GameObject:
   m_ObjectHideFlags: 0

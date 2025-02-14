@@ -1,0 +1,121 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel MergeDownsample
+#pragma kernel FindCorrespondence
+
+RWStructuredBuffer<float> depth0; // 480 * 640
+RWStructuredBuffer<float> depth1;
+
+RWStructuredBuffer<float> depth2;
+RWStructuredBuffer<float> depth3;
+
+RWStructuredBuffer<float3> depth3d_downsampled0; // 60 * 80 * 2 apply transform to this
+RWStructuredBuffer<float3> depth3d_downsampled1;
+
+float4x4 _GOPose0;
+float4x4 _GOPose1;
+
+float samplingSize;
+float t;
+
+float4 intrinsics0;
+float4 screenData0;
+float4 intrinsics1;
+float4 screenData1;
+float4 intrinsics2;
+float4 screenData2;
+float4 intrinsics3;
+float4 screenData3;
+
+// ===========================================================
+RWStructuredBuffer<int> correspondence;
+
+
+[numthreads(256, 1, 1)]
+void MergeDownsample(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x < 60 * 80)
+    {
+        float4 res1;
+        float4 res2;
+
+        float i = id.x * samplingSize;
+        float col_y = floor(i * screenData0.z);
+        float col_x = i - floor(i * screenData0.z) * screenData0.x;
+        uint depth_idx = (screenData0.x * (screenData0.y - col_y - 1)) + (screenData0.x - col_x - 1);
+        res1.z = depth0[depth_idx] * t + (1 - t);
+        res1.x = (col_y - intrinsics0.y) * res1.z / intrinsics0.z;
+        res1.y = (col_x - intrinsics0.x) * res1.z / intrinsics0.w;
+        res1.w = 1;
+        float4 final_pos1 = mul(_GOPose0, res1);
+        
+        float col_y1 = floor(i * screenData2.z);
+        float col_x1 = i - floor(i * screenData2.z) * screenData2.x;
+        uint depth_idx1 = (screenData2.x * (screenData2.y - col_y - 1)) + (screenData2.x - col_x - 1);
+        res2.z = depth2[depth_idx] * t + (1 - t);
+        res2.x = (col_y - intrinsics2.y) * res1.z / intrinsics2.z;
+        res2.y = (col_x - intrinsics2.x) * res1.z / intrinsics2.w;
+        res2.w = 1;
+        float4 final_pos2 = mul(_GOPose1, res2);
+        
+        depth3d_downsampled0[id.x] = float3(final_pos1.x, final_pos1.y, final_pos1.z);
+        depth3d_downsampled1[id.x] = float3(final_pos2.x, final_pos2.y, final_pos2.z);
+    }
+    
+    if (id.x > 60 * 80 - 1 && id.x < 60 * 80 * 2)
+    {
+        float4 res1;
+        float4 res2;
+
+        float i = id.x * samplingSize;
+        float col_y = floor(i * screenData1.z);
+        float col_x = i - floor(i * screenData1.z) * screenData1.x;
+        uint depth_idx = (screenData1.x * (screenData1.y - col_y - 1)) + (screenData1.x - col_x - 1);
+        res1.z = depth1[depth_idx] * t + (1 - t);
+        res1.x = (col_y - intrinsics1.y) * res1.z / intrinsics1.z;
+        res1.y = (col_x - intrinsics1.x) * res1.z / intrinsics1.w;
+        res1.w = 1;
+        float4 final_pos1 = mul(_GOPose0, res1);
+        
+        float col_y1 = floor(i * screenData3.z);
+        float col_x1 = i - floor(i * screenData3.z) * screenData3.x;
+        uint depth_idx1 = (screenData3.x * (screenData3.y - col_y - 1)) + (screenData3.x - col_x - 1);
+        res2.z = depth3[depth_idx] * t + (1 - t);
+        res2.x = (col_y - intrinsics3.y) * res1.z / intrinsics3.z;
+        res2.y = (col_x - intrinsics3.x) * res1.z / intrinsics3.w;
+        res2.w = 1;
+        float4 final_pos2 = mul(_GOPose1, res2);
+        
+        depth3d_downsampled0[id.x + 60 * 80] = float3(final_pos1.x, final_pos1.y, final_pos1.z);
+        depth3d_downsampled1[id.x + 60 * 80] = float3(final_pos2.x, final_pos2.y, final_pos2.z);
+    }
+}
+
+
+
+[numthreads(256, 1, 1)]
+void FindCorrespondence(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x < 60 * 80 * 2)
+    {
+        uint index = id.x;
+        float3 currentPoint = depth3d_downsampled0[index];
+        
+        float minDist = 3.8e+38;
+        int minIndex = -1;
+        
+        [loop]
+        for (int i = 0; i < 60 * 80 * 2; i++)
+        {
+            float3 otherPoint = depth3d_downsampled1[i];
+            float dist = distance(currentPoint, otherPoint);
+            if (dist < minDist)
+            {
+                minDist = dist;
+                minIndex = i;
+            }
+        }
+        
+        correspondence[index] = minIndex;
+    }
+}
+

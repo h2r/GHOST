@@ -14,6 +14,8 @@ using Debug = UnityEngine.Debug;
 
 public class DrawMeshInstanced : MonoBehaviour
 {
+    private Matrix4x4 icp_trans;
+
     public DepthManager depthManager;
     public int camera_index;
 
@@ -354,6 +356,7 @@ public class DrawMeshInstanced : MonoBehaviour
     private void SetGOPosition()
     {
         compute.SetMatrix("_GOPose", Matrix4x4.TRS(transform.position, transform.rotation, new Vector3(1, 1, 1)));
+        compute.SetMatrix("_ICPTrans", icp_trans);
         // compute.SetMatrix("_GOPose", Matrix4x4.TRS(Vector3.zero, transform.rotation, new Vector3(1, 1, 1)));
     }
 
@@ -409,7 +412,8 @@ public class DrawMeshInstanced : MonoBehaviour
             depth_ar = depthSubscriber.getDepthArr();
             if (depth_ar.Length == 480 * 640)
             {
-                depth_ar_buffer = depthManager.update_depth_from_renderer(color_image, depth_ar, camera_index);
+                (depth_ar_buffer, icp_trans) = depthManager.update_depth_from_renderer(color_image, depth_ar, camera_index);
+                if (camera_index > 1) { icp_trans = Matrix4x4.identity; }
 
                 //depth_ar_buffer.SetData(depth_ar);
             }

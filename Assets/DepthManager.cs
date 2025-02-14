@@ -54,6 +54,7 @@ public class DepthManager : MonoBehaviour
     //private int right_eye_data_timer_id;
 
     private DepthCompletion depth_completion;
+    private ICPLauncher ICP_launcher;
     private ComputeBuffer temp_output_left_1;
     private ComputeBuffer temp_output_right_1;
     private ComputeBuffer temp_output_left_2;
@@ -62,10 +63,14 @@ public class DepthManager : MonoBehaviour
     TensorShape depth_shape = new TensorShape(1, 1, 480, 640);
     TensorShape color_shape = new TensorShape(1, 3, 480, 640);
 
+    Matrix4x4 ICP_trans = Matrix4x4.identity;
+    Matrix4x4 icp_trans_temp = Matrix4x4.identity;
+
     // Start is called before the first frame update
     void Start()
     {
         depth_completion = GetComponent<DepthCompletion>();
+        ICP_launcher = GetComponent<ICPLauncher>();
 
         temp_output_left_1 = new ComputeBuffer(480 * 640, sizeof(float));
         temp_output_right_1 = new ComputeBuffer(480 * 640, sizeof(float));
@@ -109,28 +114,30 @@ public class DepthManager : MonoBehaviour
     {
     }
 
-    public ComputeBuffer update_depth_from_renderer(Texture2D rgb, float[] depth, int camera_index)
+    public (ComputeBuffer, Matrix4x4) update_depth_from_renderer(Texture2D rgb, float[] depth, int camera_index)
     {
         TextureTransform tform = new();
         tform.SetDimensions(rgb.width, rgb.height, 3);
+
+        
 
         if (depth.Length != 480 * 640) 
         {
             if (camera_index == 0)
             {
-                return temp_output_left_1;
+                return (temp_output_left_1, icp_trans_temp);
             }
             else if (camera_index == 1)
             {
-                return temp_output_right_1;
+                return (temp_output_right_1, icp_trans_temp);
             }
             else if (camera_index == 2)
             {
-                return temp_output_left_2;
+                return (temp_output_left_2, icp_trans_temp);
             }
             else if (camera_index == 3)
             {
-                return temp_output_right_2;
+                return (temp_output_right_2, icp_trans_temp);
             }
         }
         //Debug.Log("GO");
@@ -204,7 +211,7 @@ public class DepthManager : MonoBehaviour
             //bool not_moving = Left_Depth_Renderer_1.get_ready_to_freeze();
             bool not_moving = true;
             //not_moving = true;
-            (temp_output_left_1, temp_output_right_1, temp_output_left_2, temp_output_right_2) = process_depth(depth_left_t_1, rgb_left_t_1, depth_right_t_1, rgb_right_t_1, depth_left_t_2, rgb_left_t_2, depth_right_t_2, rgb_right_t_2, not_moving);
+            (temp_output_left_1, temp_output_right_1, temp_output_left_2, temp_output_right_2, icp_trans_temp) = process_depth(depth_left_t_1, rgb_left_t_1, depth_right_t_1, rgb_right_t_1, depth_left_t_2, rgb_left_t_2, depth_right_t_2, rgb_right_t_2, not_moving);
             Debug.Log("hihi");
 
             //if (depth_left_t_1  != null) { depth_left_t_1.Dispose();  }
@@ -227,25 +234,25 @@ public class DepthManager : MonoBehaviour
 
         if (camera_index == 0)
         {
-            return temp_output_left_1;
+            return (temp_output_left_1, icp_trans_temp);
         }
         else if (camera_index == 1)
         {
-            return temp_output_right_1;
+            return (temp_output_right_1, icp_trans_temp);
         }
         else if (camera_index == 2)
         {
-            return temp_output_left_2;
+            return (temp_output_left_2, icp_trans_temp);
         }
         else if (camera_index == 3)
         {
-            return temp_output_right_2;
+            return (temp_output_right_2, icp_trans_temp);
         }
 
-        return temp_output_right_1;
+        return (temp_output_right_1, icp_trans_temp);
     }
 
-    private (ComputeBuffer, ComputeBuffer, ComputeBuffer, ComputeBuffer) process_depth(Tensor<float> depthL_1, Tensor<float> rgbL_1, Tensor<float> depthR_1, Tensor<float> rgbR_1, Tensor<float> depthL_2, Tensor<float> rgbL_2, Tensor<float> depthR_2, Tensor<float> rgbR_2, bool is_not_moving)
+    private (ComputeBuffer, ComputeBuffer, ComputeBuffer, ComputeBuffer, Matrix4x4) process_depth(Tensor<float> depthL_1, Tensor<float> rgbL_1, Tensor<float> depthR_1, Tensor<float> rgbR_1, Tensor<float> depthL_2, Tensor<float> rgbL_2, Tensor<float> depthR_2, Tensor<float> rgbR_2, bool is_not_moving)
     {
         //if (median_averaging && mean_averaging)
         //{
@@ -265,7 +272,6 @@ public class DepthManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("nono");
             print(depthL_1.shape);
             print(depthR_1.shape);
             print(depthL_2.shape);
@@ -288,6 +294,16 @@ public class DepthManager : MonoBehaviour
         //temp_output_right.GetData(or);
 
 
-        return (temp_output_left_1, temp_output_right_1, temp_output_left_2, temp_output_right_2);
+        // merge and downsample
+        // find correspondence
+        // calculate center of mass
+        // accumulate
+        // return transformation
+
+
+        ICP_trans = ICP_launcher.run_ICP(temp_output_left_1, temp_output_right_1, temp_output_left_2, temp_output_right_2);
+
+
+        return (temp_output_left_1, temp_output_right_1, temp_output_left_2, temp_output_right_2, ICP_trans);
     }
 }
