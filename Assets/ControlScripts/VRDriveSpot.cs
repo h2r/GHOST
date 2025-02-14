@@ -10,7 +10,7 @@ using UnityEngine.XR;
 
 public class VRDriveSpot : MonoBehaviour
 {
-    public OVRInput.RawAxis2D LAx;
+    public OVRInput.RawAxis2D MoveTranslation;
     public OVRInput.RawAxis2D RAx;
     public OVRInput.RawButton rightPress;
     public OVRInput.RawButton leftPress;
@@ -90,7 +90,7 @@ public class VRDriveSpot : MonoBehaviour
 
         // Read base movement values, adjust speeds
         rightMove = OVRInput.Get(RAx) * 0.75f;
-        leftMove = OVRInput.Get(LAx) * 0.5f;
+        leftMove = OVRInput.Get(MoveTranslation) * 0.5f;
         leftMove.x *= 0.5f;
 
         // Move the robot if any adjustments have been made
