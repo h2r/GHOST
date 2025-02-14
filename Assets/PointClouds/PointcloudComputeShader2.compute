@@ -8,6 +8,7 @@ struct MeshProperties
 RWStructuredBuffer<MeshProperties> _Properties;
 RWStructuredBuffer<float> _Depth;
 float4x4 _GOPose;
+float4x4 _ICPTrans;
 float4 intrinsics;
 float4 screenData;
 float samplingSize;
@@ -47,6 +48,7 @@ void CSMain(uint3 id : SV_DispatchThreadID)
         //float4 pos = {.x,_Properties[id.x].pos.y,_Properties[id.x].pos.z,1.0};
 
         float4 final_pos = mul(_GOPose, pos);
+        float4 final_pos1 = mul(_ICPTrans, final_pos);
         //float4 final_pos = pos;
 
         //final_pos.x = final_pos.x + dx;
@@ -70,7 +72,7 @@ void CSMain(uint3 id : SV_DispatchThreadID)
     //}
     
     // Apply translation to existing matrix, which will be read in the shader.
-        _Properties[id.x].pos = mul(_GOPose, pos);
+        _Properties[id.x].pos = final_pos1;
         _Properties[id.x].pos.w = _Depth[depth_idx] * t + (1 - t);
     //_Properties[id.x].pos.w = abs(id.x * samplingSize - i);
     }
