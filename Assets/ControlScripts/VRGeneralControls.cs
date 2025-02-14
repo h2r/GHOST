@@ -17,6 +17,9 @@ public class VRGeneralControls : MonoBehaviour
     public OVRInput.RawButton ModeSwitch;
     public OVRInput.RawButton GripperControl;
 
+    public Transform dummyHandTransform; // Reference to dummy hand object
+    public Transform realHandTransform; // Reference to real hand
+
     /* To be accessed by MoveArm script */
     public bool gripperOpen;
     public float gripperPercentage;
@@ -102,11 +105,15 @@ public class VRGeneralControls : MonoBehaviour
 
             stow.Stow();
 
-            // Pause depth history for 1.5 seconds
-            foreach (RawImageSubscriber ds in depthSubscribers)
-            {
-                ds.pauseDepthHistory(1.5f);
-            }
+            // Set the dummy hand to the same location as the real hand  (click again to reset dummyhand after stow)
+            dummyHandTransform.position = realHandTransform.position;
+            dummyHandTransform.rotation = realHandTransform.rotation;
+
+            //// Pause depth history for 1.5 seconds
+            //foreach (RawImageSubscriber ds in depthSubscribers)
+            //{
+            //    ds.pauseDepthHistory(1.5f);
+            //}
         }
 
         /* Switch modes if A is pressed */
