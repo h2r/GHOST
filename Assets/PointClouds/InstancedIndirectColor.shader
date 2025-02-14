@@ -79,6 +79,8 @@ Shader "Custom/InstancedIndirectColor" {
                 //float4 pos = mul(mat, i.vertex);
                 o.vertex = UnityObjectToClipPos(pos);
 
+                // o.vertex = _Properties[instanceID].pos;
+
                 //o.color = _Properties[instanceID].color;
                 //o.color.r = instanceID * 0.000003;
                 

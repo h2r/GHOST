@@ -13,6 +13,7 @@ RWStructuredBuffer<float3> depth3d_downsampled1;
 
 float4x4 _GOPose0;
 float4x4 _GOPose1;
+float4x4 _RESTrans;
 
 float samplingSize;
 float t;
@@ -38,22 +39,23 @@ void MergeDownsample(uint3 id : SV_DispatchThreadID)
         float4 res1;
         float4 res2;
 
-        float i = id.x * samplingSize;
+        float i = id.x * samplingSize * samplingSize;
         float col_y = floor(i * screenData0.z);
         float col_x = i - floor(i * screenData0.z) * screenData0.x;
-        uint depth_idx = (screenData0.x * (screenData0.y - col_y - 1)) + (screenData0.x - col_x - 1);
+        uint depth_idx = (screenData0.x * (screenData0.y - col_y - 1)) + (screenData0.x - col_x - 1);      
         res1.z = depth0[depth_idx] * t + (1 - t);
         res1.x = (col_y - intrinsics0.y) * res1.z / intrinsics0.z;
         res1.y = (col_x - intrinsics0.x) * res1.z / intrinsics0.w;
         res1.w = 1;
-        float4 final_pos1 = mul(_GOPose0, res1);
+        float4 final_pos10 = mul(_GOPose0, res1);
+        float4 final_pos1 = mul(_RESTrans, final_pos10);
         
         float col_y1 = floor(i * screenData2.z);
         float col_x1 = i - floor(i * screenData2.z) * screenData2.x;
-        uint depth_idx1 = (screenData2.x * (screenData2.y - col_y - 1)) + (screenData2.x - col_x - 1);
-        res2.z = depth2[depth_idx] * t + (1 - t);
-        res2.x = (col_y - intrinsics2.y) * res1.z / intrinsics2.z;
-        res2.y = (col_x - intrinsics2.x) * res1.z / intrinsics2.w;
+        uint depth_idx1 = (screenData2.x * (screenData2.y - col_y1 - 1)) + (screenData2.x - col_x1 - 1);
+        res2.z = depth2[depth_idx1] * t + (1 - t);
+        res2.x = (col_y1 - intrinsics2.y) * res2.z / intrinsics2.z;
+        res2.y = (col_x1 - intrinsics2.x) * res2.z / intrinsics2.w;
         res2.w = 1;
         float4 final_pos2 = mul(_GOPose1, res2);
         
@@ -66,7 +68,7 @@ void MergeDownsample(uint3 id : SV_DispatchThreadID)
         float4 res1;
         float4 res2;
 
-        float i = id.x * samplingSize;
+        float i = id.x * samplingSize * samplingSize;
         float col_y = floor(i * screenData1.z);
         float col_x = i - floor(i * screenData1.z) * screenData1.x;
         uint depth_idx = (screenData1.x * (screenData1.y - col_y - 1)) + (screenData1.x - col_x - 1);
@@ -74,19 +76,20 @@ void MergeDownsample(uint3 id : SV_DispatchThreadID)
         res1.x = (col_y - intrinsics1.y) * res1.z / intrinsics1.z;
         res1.y = (col_x - intrinsics1.x) * res1.z / intrinsics1.w;
         res1.w = 1;
-        float4 final_pos1 = mul(_GOPose0, res1);
+        float4 final_pos10 = mul(_GOPose0, res1);
+        float4 final_pos1 = mul(_RESTrans, final_pos10);
         
         float col_y1 = floor(i * screenData3.z);
         float col_x1 = i - floor(i * screenData3.z) * screenData3.x;
-        uint depth_idx1 = (screenData3.x * (screenData3.y - col_y - 1)) + (screenData3.x - col_x - 1);
-        res2.z = depth3[depth_idx] * t + (1 - t);
-        res2.x = (col_y - intrinsics3.y) * res1.z / intrinsics3.z;
-        res2.y = (col_x - intrinsics3.x) * res1.z / intrinsics3.w;
+        uint depth_idx1 = (screenData3.x * (screenData3.y - col_y1 - 1)) + (screenData3.x - col_x1 - 1);
+        res2.z = depth3[depth_idx1] * t + (1 - t);
+        res2.x = (col_y1 - intrinsics3.y) * res2.z / intrinsics3.z;
+        res2.y = (col_x1 - intrinsics3.x) * res2.z / intrinsics3.w;
         res2.w = 1;
         float4 final_pos2 = mul(_GOPose1, res2);
         
-        depth3d_downsampled0[id.x + 60 * 80] = float3(final_pos1.x, final_pos1.y, final_pos1.z);
-        depth3d_downsampled1[id.x + 60 * 80] = float3(final_pos2.x, final_pos2.y, final_pos2.z);
+        depth3d_downsampled0[id.x] = float3(final_pos1.x, final_pos1.y, final_pos1.z);
+        depth3d_downsampled1[id.x] = float3(final_pos2.x, final_pos2.y, final_pos2.z);
     }
 }
 

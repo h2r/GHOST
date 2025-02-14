@@ -5593,6 +5593,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   activate_depth_estimation: 0
+  activate_ICP: 0
   Left_Depth_Renderer_1: {fileID: 326679877}
   Right_Depth_Renderer_1: {fileID: 107554149}
   Left_Depth_Renderer_2: {fileID: 409472603}
@@ -5624,6 +5625,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2df5584cadb0564ba70a8849a70df5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  icp_shader: {fileID: 7200000, guid: 554d4ca3d1bda7a42ac84c03b623f26c, type: 3}
+  renderer0: {fileID: 326679877}
+  renderer1: {fileID: 107554149}
+  renderer2: {fileID: 409472603}
+  renderer3: {fileID: 409472602}
+  frames_per_icp: 1
 --- !u!1 &645022056
 GameObject:
   m_ObjectHideFlags: 0

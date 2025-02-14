@@ -7,6 +7,7 @@ using Unity.Sentis;
 public class DepthManager : MonoBehaviour
 {
     public bool activate_depth_estimation;
+    public bool activate_ICP;
     //public bool mean_averaging;
     //public bool median_averaging;
     //public bool edge_detection;
@@ -301,7 +302,7 @@ public class DepthManager : MonoBehaviour
         // return transformation
 
 
-        ICP_trans = ICP_launcher.run_ICP(temp_output_left_1, temp_output_right_1, temp_output_left_2, temp_output_right_2);
+        ICP_trans = ICP_launcher.run_ICP(temp_output_left_1, temp_output_right_1, temp_output_left_2, temp_output_right_2, activate_ICP);
 
 
         return (temp_output_left_1, temp_output_right_1, temp_output_left_2, temp_output_right_2, ICP_trans);

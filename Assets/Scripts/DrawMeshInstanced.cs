@@ -10,6 +10,8 @@ using System;
 using JetBrains.Annotations;
 using System.Diagnostics;
 using Debug = UnityEngine.Debug;
+using Unity.Mathematics;
+using static Meta.XR.MRUtilityKit.Data;
 //using System;
 
 public class DrawMeshInstanced : MonoBehaviour
@@ -490,6 +492,21 @@ public class DrawMeshInstanced : MonoBehaviour
         Vector4 ret = new Vector4(x, y, depth, 1f);
         return (ret);
 
+    }
+
+    public Matrix4x4 get_current_pose()
+    {
+        return Matrix4x4.TRS(transform.position, transform.rotation, new Vector3(1, 1, 1));
+    }
+
+    public Vector4 get_screenData()
+    {
+        return new Vector4((float)width, (float)height, 1 / (float)width, FY);
+    }
+
+    public Vector4 get_intrinsics()
+    {
+        return new Vector4((float)CX, (float)CY, FX, FY);
     }
 
     //private Mesh CreateQuad(float width = 1f, float height = 1f, float depth = 1f)
