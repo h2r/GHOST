@@ -30,10 +30,10 @@ public class VRGeneralControls : MonoBehaviour
     public ModeManager manager;
 
     /* Toggle Point Cloud - not using for multispot project 2/12/2025 */ 
-    public GameObject body;
-    public DrawMeshInstanced[] pointClouds;
-    public GameObject[] toggleObjects;
-    private float point_cloud_t;
+    //public GameObject body;
+    //public DrawMeshInstanced[] pointClouds;
+    //public GameObject[] toggleObjects;
+    //private float point_cloud_t;
 
     /* Raw Image Subscribers */
     public RawImageSubscriber[] depthSubscribers;
@@ -51,9 +51,9 @@ public class VRGeneralControls : MonoBehaviour
         //UIShowing = false;
         gripperPercentage = 0f;
 
-        point_cloud_t = 1;
-        threed_time = new Stopwatch();
-        twod_time = new Stopwatch();
+        //point_cloud_t = 1;
+        //threed_time = new Stopwatch();
+        //twod_time = new Stopwatch();
 
 
         UnityEngine.Debug.Log("vr general Start");
@@ -157,7 +157,7 @@ public class VRGeneralControls : MonoBehaviour
     private void OnApplicationQuit()
     {
         /* Log time */
-        UnityEngine.Debug.Log("2D mode time elapsed: " + System.Math.Round(twod_time.Elapsed.TotalSeconds, 2) + " seconds");
-        UnityEngine.Debug.Log("3D mode time elapsed: " + System.Math.Round(threed_time.Elapsed.TotalSeconds, 2) + " seconds");
+        //UnityEngine.Debug.Log("2D mode time elapsed: " + System.Math.Round(twod_time.Elapsed.TotalSeconds, 2) + " seconds");
+        //UnityEngine.Debug.Log("3D mode time elapsed: " + System.Math.Round(threed_time.Elapsed.TotalSeconds, 2) + " seconds");
     }
 }

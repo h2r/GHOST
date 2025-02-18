@@ -9,10 +9,10 @@ public class ModeManager : MonoBehaviour
 {
     [SerializeField]
     private int currMode; // currMode is set to value from 0-modes.Count      
-    public List<ControlMode> modes; 
+    public List<ControlMode> modes;
     //public List<TextMeshProUGUI> UICanvases;
-    //public TextMeshProUGUI hintText;
-    public string hintTextString;
+    public string UISpotID;
+    public TextMeshProUGUI curModeTextMesh;
     public VRGeneralControls generalControlsScript;
     public SetFarPlane planePublisher;
 
@@ -29,7 +29,7 @@ public class ModeManager : MonoBehaviour
         {
             stopwatches[i] = new Stopwatch();
         }
-        currMode = 0;
+        currMode = modes.Count - 1; // Second to last mode
 
         for (int i = 0; i < modes.Count; i++)
         {
@@ -61,10 +61,10 @@ public class ModeManager : MonoBehaviour
 
         //update UI
         //UpdateUI("Mode: " + currMode.ToString() + " - " + mode.ToString());
-        //if (hintText != null)
-        //{
-        //    hintText.text = " Mode: " + (currMode + 1).ToString() + " - " + mode.modeName + "\n";
-        //}
+        if (curModeTextMesh != null)
+        {
+            curModeTextMesh.text = UISpotID + " Mode: " + (currMode + 1).ToString() + " - " + mode.modeName + "\n";
+        }
 
         UnityEngine.Debug.Log(mode.name);
         // Send far plane request
@@ -114,9 +114,9 @@ public class ModeManager : MonoBehaviour
 
     private void OnApplicationQuit()
     {
-        for (int i = 0; i < modes.Count; i++)
-        {
-            UnityEngine.Debug.Log(modes[i].modeName + " mode time elapsed: " + System.Math.Round(stopwatches[i].Elapsed.TotalSeconds, 2) + " seconds");
-        }
+        //for (int i = 0; i < modes.Count; i++)
+        //{
+        //    UnityEngine.Debug.Log(modes[i].modeName + " mode time elapsed: " + System.Math.Round(stopwatches[i].Elapsed.TotalSeconds, 2) + " seconds");
+        //}
     }
 }
