@@ -51,6 +51,8 @@ void CSMain(uint3 id : SV_DispatchThreadID)
         if (pos.y < 0.5f || pos.z < 0.3f)
         {
             pos.z = _Sparse[depth_idx] * t + (1 - t);
+            pos.x = (col_y - intrinsics.y) * pos.z / intrinsics.z;
+            pos.y = (col_x - intrinsics.x) * pos.z / intrinsics.w;
         }
 
         float4 final_pos = mul(_GOPose, pos);
