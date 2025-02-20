@@ -121,9 +121,6 @@ namespace RosSharp.RosBridgeClient
 
         private void processMessageThreaded()
         {
-
-            if (data.Length < 100) { return; }
-
             float depthVal;
             DateTime end;
             double totalSeconds;
@@ -235,7 +232,7 @@ namespace RosSharp.RosBridgeClient
             {
                 end = DateTime.Now;
                 totalSeconds = (end - threadStart).TotalSeconds;
-                //UnityEngine.Debug.Log("Depth retrieval took " + totalSeconds.ToString("0.0000") + " seconds, " + (1 / totalSeconds).ToString("0.00") + " hz");
+                UnityEngine.Debug.Log("Depth retrieval took " + totalSeconds.ToString("0.0000") + " seconds, " + (1 / totalSeconds).ToString("0.00") + " hz");
             }
         }
 

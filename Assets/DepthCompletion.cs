@@ -42,6 +42,7 @@ public class DepthCompletion : MonoBehaviour
     void OnDestroy()
     {
         workerBaseline.Dispose();
+        workerBaseline2.Dispose();
         //workerMaskBaseline.Dispose();
         if (runtimeModelBaseline != null)
         {
