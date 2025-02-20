@@ -73,6 +73,27 @@ public class ICPLauncher : MonoBehaviour
         correspondence = new int[60 * 80 * 2];
     }
 
+    void OnDestroy()
+    {
+        if (depth3d_downsampled0Buffer != null)
+        {
+            depth3d_downsampled0Buffer.Release();
+            depth3d_downsampled0Buffer = null;
+        }
+
+        if (depth3d_downsampled1Buffer != null)
+        {
+            depth3d_downsampled1Buffer.Release();
+            depth3d_downsampled1Buffer = null;
+        }
+
+        if (correspondenceBuffer != null)
+        {
+            correspondenceBuffer.Release();
+            correspondenceBuffer = null;
+        }
+    }
+
     public Matrix4x4 run_ICP(ComputeBuffer depth0, ComputeBuffer depth1, ComputeBuffer depth2, ComputeBuffer depth3, bool activate_ICP)
     {
         if (!activate_ICP)
