@@ -8,6 +8,9 @@ public class DepthManager : MonoBehaviour
 {
     public bool activate_depth_estimation;
     public bool activate_ICP;
+    public bool activate_edge_detection;
+
+    public float edgeThreshold;
     //public bool mean_averaging;
     //public bool median_averaging;
     //public bool edge_detection;
@@ -60,6 +63,11 @@ public class DepthManager : MonoBehaviour
     private ComputeBuffer temp_output_right_1;
     private ComputeBuffer temp_output_left_2;
     private ComputeBuffer temp_output_right_2;
+
+    private ComputeBuffer complete_output_left_1;
+    private ComputeBuffer complete_output_right_1;
+    private ComputeBuffer complete_output_left_2;
+    private ComputeBuffer complete_output_right_2;
 
     TensorShape depth_shape = new TensorShape(1, 1, 480, 640);
     TensorShape color_shape = new TensorShape(1, 3, 480, 640);
@@ -218,14 +226,17 @@ public class DepthManager : MonoBehaviour
             (temp_output_left_1, temp_output_right_1, temp_output_left_2, temp_output_right_2, icp_trans_temp) = process_depth(depth_left_t_1, rgb_left_t_1, depth_right_t_1, rgb_right_t_1, depth_left_t_2, rgb_left_t_2, depth_right_t_2, rgb_right_t_2, not_moving);
             Debug.Log("hihi");
 
-            if (depth_left_t_1 != null) { depth_left_t_1.Dispose(); }
-            if (rgb_left_t_1 != null) { rgb_left_t_1.Dispose(); }
-            if (depth_right_t_1 != null) { depth_right_t_1.Dispose(); }
-            if (rgb_right_t_1 != null) { rgb_right_t_1.Dispose(); }
-            if (depth_left_t_2 != null) { depth_left_t_2.Dispose(); }
-            if (rgb_left_t_2 != null) { rgb_left_t_2.Dispose(); }
-            if (depth_right_t_2 != null) { depth_right_t_2.Dispose(); }
-            if (rgb_right_t_2 != null) { rgb_right_t_2.Dispose(); }
+            if (activate_depth_estimation)
+            {
+                if (depth_left_t_1 != null) { depth_left_t_1.Dispose(); }
+                if (rgb_left_t_1 != null) { rgb_left_t_1.Dispose(); }
+                if (depth_right_t_1 != null) { depth_right_t_1.Dispose(); }
+                if (rgb_right_t_1 != null) { rgb_right_t_1.Dispose(); }
+                if (depth_left_t_2 != null) { depth_left_t_2.Dispose(); }
+                if (rgb_left_t_2 != null) { rgb_left_t_2.Dispose(); }
+                if (depth_right_t_2 != null) { depth_right_t_2.Dispose(); }
+                if (rgb_right_t_2 != null) { rgb_right_t_2.Dispose(); }
+            }
 
             received_left_1 = false;
             received_right_1 = false;
@@ -271,20 +282,15 @@ public class DepthManager : MonoBehaviour
         if (activate_depth_estimation && is_not_moving)
         {
             //fps_timer.start(depth_completion_timer_id);
-            (temp_output_left_1, temp_output_right_1, temp_output_left_2, temp_output_right_2) = depth_completion.complete(depthL_1, rgbL_1, depthR_1, rgbR_1, depthL_2, rgbL_2, depthR_2, rgbR_2);
+            (complete_output_left_1, complete_output_right_1, complete_output_left_2, complete_output_right_2) = depth_completion.complete(depthL_1, rgbL_1, depthR_1, rgbR_1, depthL_2, rgbL_2, depthR_2, rgbR_2);
             //fps_timer.end(depth_completion_timer_id);
         }
         else
         {
-            print(depthL_1.shape);
-            print(depthR_1.shape);
-            print(depthL_2.shape);
-            print(depthR_2.shape);
-
-            temp_output_left_1 = ComputeTensorData.Pin(depthL_1).buffer;
-            temp_output_right_1 = ComputeTensorData.Pin(depthR_1).buffer;
-            temp_output_left_2 = ComputeTensorData.Pin(depthL_2).buffer;
-            temp_output_right_2 = ComputeTensorData.Pin(depthR_2).buffer;
+            complete_output_left_1 = ComputeTensorData.Pin(depthL_1).buffer;
+            complete_output_right_1 = ComputeTensorData.Pin(depthR_1).buffer;
+            complete_output_left_2 = ComputeTensorData.Pin(depthL_2).buffer;
+            complete_output_right_2 = ComputeTensorData.Pin(depthR_2).buffer;
         }
 
         //fps_timer.start(averaging_timer_id);
@@ -305,9 +311,9 @@ public class DepthManager : MonoBehaviour
         // return transformation
 
 
-        ICP_trans = ICP_launcher.run_ICP(temp_output_left_1, temp_output_right_1, temp_output_left_2, temp_output_right_2, activate_ICP);
+        ICP_trans = ICP_launcher.run_ICP(complete_output_left_1, complete_output_right_1, complete_output_left_2, complete_output_right_2, activate_ICP);
 
 
-        return (temp_output_left_1, temp_output_right_1, temp_output_left_2, temp_output_right_2, ICP_trans);
+        return (complete_output_left_1, complete_output_right_1, complete_output_left_2, complete_output_right_2, ICP_trans);
     }
 }

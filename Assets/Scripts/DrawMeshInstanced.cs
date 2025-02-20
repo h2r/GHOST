@@ -498,9 +498,12 @@ public class DrawMeshInstanced : MonoBehaviour
         compute.SetFloat("y_max", depthManager.y_max);
         compute.SetFloat("z_max", depthManager.z_max);
 
+        compute.SetFloat("edgeThreshold", depthManager.edgeThreshold);
+        compute.SetBool("activate_edge_detection", depthManager.activate_edge_detection);
+
         //update the color image
         //counter += 1;
-        
+
         //Debug.Log("UPDATE");
         //DateTime localTime = DateTime.Now;
         //float deltaTime = Time.deltaTime;
