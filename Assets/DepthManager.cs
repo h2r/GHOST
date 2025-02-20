@@ -218,14 +218,14 @@ public class DepthManager : MonoBehaviour
             (temp_output_left_1, temp_output_right_1, temp_output_left_2, temp_output_right_2, icp_trans_temp) = process_depth(depth_left_t_1, rgb_left_t_1, depth_right_t_1, rgb_right_t_1, depth_left_t_2, rgb_left_t_2, depth_right_t_2, rgb_right_t_2, not_moving);
             Debug.Log("hihi");
 
-            //if (depth_left_t_1  != null) { depth_left_t_1.Dispose();  }
-            //if (rgb_left_t_1    != null) { rgb_left_t_1.Dispose();    }
-            //if (depth_right_t_1 != null) { depth_right_t_1.Dispose(); }
-            //if (rgb_right_t_1   != null) { rgb_right_t_1.Dispose();   }
-            //if (depth_left_t_2  != null) { depth_left_t_2.Dispose();  }
-            //if (rgb_left_t_2    != null) { rgb_left_t_2.Dispose();    }
-            //if (depth_right_t_2 != null) { depth_right_t_2.Dispose(); }
-            //if (rgb_right_t_2   != null) { rgb_right_t_2.Dispose();   }
+            if (depth_left_t_1 != null) { depth_left_t_1.Dispose(); }
+            if (rgb_left_t_1 != null) { rgb_left_t_1.Dispose(); }
+            if (depth_right_t_1 != null) { depth_right_t_1.Dispose(); }
+            if (rgb_right_t_1 != null) { rgb_right_t_1.Dispose(); }
+            if (depth_left_t_2 != null) { depth_left_t_2.Dispose(); }
+            if (rgb_left_t_2 != null) { rgb_left_t_2.Dispose(); }
+            if (depth_right_t_2 != null) { depth_right_t_2.Dispose(); }
+            if (rgb_right_t_2 != null) { rgb_right_t_2.Dispose(); }
 
             received_left_1 = false;
             received_right_1 = false;
