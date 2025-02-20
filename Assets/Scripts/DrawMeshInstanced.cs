@@ -75,6 +75,7 @@ public class DrawMeshInstanced : MonoBehaviour
 
     ComputeBuffer depth_ar_buffer;
 
+    int kernel;
 
     // Mesh Properties struct to be read from the GPU.
     // Size() is a convenience funciton which returns the stride of the struct.
@@ -92,6 +93,8 @@ public class DrawMeshInstanced : MonoBehaviour
     private void Setup()
     {
         pS = 1.0f;
+        kernel = compute.FindKernel("CSMain");
+        compute.SetFloat("t", t);
 
         //size_scale = 0.002f;
         //width = 640;
@@ -176,6 +179,7 @@ public class DrawMeshInstanced : MonoBehaviour
         }
 
         globalProps = GetProperties();
+        
 
 
         //inp_stm.Close();
@@ -207,6 +211,7 @@ public class DrawMeshInstanced : MonoBehaviour
 
         InitializeBuffers();
 
+        meshPropertiesBuffer.SetData(globalProps);
     }
 
     private float get_target_rota()
@@ -329,7 +334,7 @@ public class DrawMeshInstanced : MonoBehaviour
     {
 
         depth_ar_buffer = new ComputeBuffer(480 * 640, sizeof(float));
-        int kernel = compute.FindKernel("CSMain");
+        //int kernel = compute.FindKernel("CSMain");
 
         // Argument buffer used by DrawMeshInstancedIndirect.
         uint[] args = new uint[5] { 0, 0, 0, 0, 0 };
@@ -366,7 +371,7 @@ public class DrawMeshInstanced : MonoBehaviour
 
     private void SetProperties()
     {
-        int kernel = compute.FindKernel("CSMain");
+        //int kernel = compute.FindKernel("CSMain");
 
         //if (globalProps == null)// && use_saved_meshes)
         //{
@@ -374,99 +379,128 @@ public class DrawMeshInstanced : MonoBehaviour
         //}
 
 
-        meshPropertiesBuffer.SetData(globalProps);
-        material.SetFloat("a", get_target_rota());
-        material.SetFloat("pS", pS);
+        
+        //material.SetFloat("a", get_target_rota());
+        //material.SetFloat("pS", pS);
         //depthBuffer.SetData(depth_ar);
         material.SetBuffer("_Properties", meshPropertiesBuffer);
-        material.SetTexture("_colorMap", color_image);
         compute.SetBuffer(kernel, "_Properties", meshPropertiesBuffer);
-        //compute.SetBuffer(kernel, "_Depth", depthBuffer);
         compute.SetBuffer(kernel, "_Depth", depth_ar_buffer);
         compute.SetBuffer(kernel, "_Sparse", sparseBuffer);
 
-        Vector4 intr = new Vector4((float)CX, (float)CY, FX, FY);
-        compute.SetVector("intrinsics", intr);
-        material.SetVector("intrinsics", intr);
 
-        Vector4 screenData = new Vector4((float)width, (float)height, 1 / (float)width, FY);
-        compute.SetVector("screenData", screenData);
-        material.SetVector("screenData", screenData);
+        material.SetTexture("_colorMap", color_image);
+        
+        //compute.SetBuffer(kernel, "_Depth", depthBuffer);
 
-        compute.SetFloat("samplingSize", downsample);
-        material.SetFloat("samplingSize", downsample);
+
+        //Vector4 intr = new Vector4((float)CX, (float)CY, FX, FY);
+        //compute.SetVector("intrinsics", intr);
+        //material.SetVector("intrinsics", intr);
+
+        //Vector4 screenData = new Vector4((float)width, (float)height, 1 / (float)width, FY);
+        //compute.SetVector("screenData", screenData);
+        //material.SetVector("screenData", screenData);
+
+        //compute.SetFloat("samplingSize", downsample);
+        //material.SetFloat("samplingSize", downsample);
+    }
+
+    private Texture2D copy_texture(Texture2D input_texture)
+    {
+        if (input_texture == null)
+            return null;
+
+        Texture2D copy = new Texture2D(input_texture.width, input_texture.height, input_texture.format, input_texture.mipmapCount > 1);
+        Graphics.CopyTexture(input_texture, copy);
+
+        return copy;
     }
 
     private void UpdateTexture()
     {
-        if (use_saved_meshes || freezeCloud)
+        DestroyImmediate(color_image, true);
+        color_image = copy_texture(colorSubscriber.texture2D);
+        depth_ar = depthSubscriber.getDepthArr();
+
+        if (depth_ar.Length < 640 * 480)
         {
-            //Debug.Log("use_saved_meshes");
-            //Debug.Log("UpdateTexture, Time: " + UnityEngine.Time.realtimeSinceStartup);
             return;
         }
+        sparseBuffer.SetData(depth_ar);
 
-        // Get the depth and color
-        color_image = colorSubscriber.texture2D;
-        if (t == 0)
-        {
-            depth_ar = new float[width * height];
-        }
-        else
-        {
-            depth_ar = depthSubscriber.getDepthArr();
-            sparseBuffer.SetData(depth_ar);
-            if (depth_ar.Length == 480 * 640)
-            {
-                (depth_ar_buffer, icp_trans) = depthManager.update_depth_from_renderer(color_image, depth_ar, camera_index);
-                if (camera_index > 1) { icp_trans = Matrix4x4.identity; }
+        (depth_ar_buffer, icp_trans) = depthManager.update_depth_from_renderer(color_image, depth_ar, camera_index);
+        if (camera_index > 1) { icp_trans = Matrix4x4.identity; }
 
-                //depth_ar_buffer.SetData(depth_ar);
-            }
-            else
-            {
-                depth_ar_buffer = new ComputeBuffer(480 * 640, sizeof(float));
-            }
-        }
+        //if (use_saved_meshes || freezeCloud)
+        //{
+        //    //Debug.Log("use_saved_meshes");
+        //    //Debug.Log("UpdateTexture, Time: " + UnityEngine.Time.realtimeSinceStartup);
+        //    return;
+        //}
 
-        // save the point cloud if desired
-        if (savePointCloud)
-        {
-            using (FileStream file = File.Create("Assets/PointClouds/mesh_array_" + imageScriptIndex))
-            {
-                using (BinaryWriter writer = new BinaryWriter(file))
-                {
-                    writer.Write((int)depth_ar.Length);
-                    foreach (float value in depth_ar)
-                    {
-                        writer.Write(value);
-                    }
-                }
-            }
+        //// Get the depth and color
+        //color_image = colorSubscriber.texture2D;
+        //if (t == 0)
+        //{
+        //    depth_ar = new float[width * height];
+        //}
+        //else
+        //{
+        //    depth_ar = depthSubscriber.getDepthArr();
+        //    sparseBuffer.SetData(depth_ar);
+        //    if (depth_ar.Length == 480 * 640)
+        //    {
+        //        (depth_ar_buffer, icp_trans) = depthManager.update_depth_from_renderer(color_image, depth_ar, camera_index);
+        //        if (camera_index > 1) { icp_trans = Matrix4x4.identity; }
 
-            byte[] bytes = color_image.EncodeToPNG();
-            File.WriteAllBytes("Assets/PointClouds/Color_" + imageScriptIndex + ".png", bytes);
-        }
+        //        //depth_ar_buffer.SetData(depth_ar);
+        //    }
+        //    else
+        //    {
+        //        depth_ar_buffer = new ComputeBuffer(480 * 640, sizeof(float));
+        //    }
+        //}
+
+        //// save the point cloud if desired
+        //if (savePointCloud)
+        //{
+        //    using (FileStream file = File.Create("Assets/PointClouds/mesh_array_" + imageScriptIndex))
+        //    {
+        //        using (BinaryWriter writer = new BinaryWriter(file))
+        //        {
+        //            writer.Write((int)depth_ar.Length);
+        //            foreach (float value in depth_ar)
+        //            {
+        //                writer.Write(value);
+        //            }
+        //        }
+        //    }
+
+        //    byte[] bytes = color_image.EncodeToPNG();
+        //    File.WriteAllBytes("Assets/PointClouds/Color_" + imageScriptIndex + ".png", bytes);
+        //}
 
     }
 
     private void Update()
     {
+        UpdateTexture();
 
         //Debug.Log("UPDATE");
-        int kernel = compute.FindKernel("CSMain");
+
         //SetProperties enables point cloud to move when game object moves, but is laggier due to redrawing. Just comment it out for performance improvement;
         //transform.LookAt(target);
         SetProperties();
         SetGOPosition();
-        compute.SetFloat("t", t);
+
 
         compute.SetFloat("y_max", depthManager.y_max);
         compute.SetFloat("z_max", depthManager.z_max);
 
         //update the color image
         //counter += 1;
-        UpdateTexture();
+        
         //Debug.Log("UPDATE");
         //DateTime localTime = DateTime.Now;
         //float deltaTime = Time.deltaTime;
@@ -720,6 +754,24 @@ public class DrawMeshInstanced : MonoBehaviour
         if (depth_ar_buffer != null)
             depth_ar_buffer.Release();
 
+        depth_ar_buffer = null;
+
+        if (depthBuffer != null)
+        {
+            depthBuffer.Release();
+        }
+        depthBuffer = null;
+
+        if (sparseBuffer != null)
+        {
+            sparseBuffer.Release();
+        }
+        sparseBuffer = null;
+
+        if (depth_ar_buffer != null)
+        {
+            depth_ar_buffer.Release();
+        }
         depth_ar_buffer = null;
     }
 
