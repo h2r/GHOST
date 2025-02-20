@@ -38,6 +38,7 @@ public class DrawMeshInstanced : MonoBehaviour
     private ComputeBuffer meshPropertiesBuffer;
     private ComputeBuffer argsBuffer;
     private ComputeBuffer depthBuffer;
+    private ComputeBuffer sparseBuffer;
 
     public Transform target;
     public Transform auxTarget; // In case someone changes the offset rotation
@@ -349,6 +350,7 @@ public class DrawMeshInstanced : MonoBehaviour
         meshPropertiesBuffer.SetData(GetProperties());
 
         depthBuffer = new ComputeBuffer((int)depth_ar.Length, sizeof(float));
+        sparseBuffer = new ComputeBuffer((int)(480 * 640), sizeof(float));
         depthBuffer.SetData(depth_ar);
 
         SetProperties();
@@ -381,6 +383,7 @@ public class DrawMeshInstanced : MonoBehaviour
         compute.SetBuffer(kernel, "_Properties", meshPropertiesBuffer);
         //compute.SetBuffer(kernel, "_Depth", depthBuffer);
         compute.SetBuffer(kernel, "_Depth", depth_ar_buffer);
+        compute.SetBuffer(kernel, "_Sparse", sparseBuffer);
 
         Vector4 intr = new Vector4((float)CX, (float)CY, FX, FY);
         compute.SetVector("intrinsics", intr);
@@ -412,6 +415,7 @@ public class DrawMeshInstanced : MonoBehaviour
         else
         {
             depth_ar = depthSubscriber.getDepthArr();
+            sparseBuffer.SetData(depth_ar);
             if (depth_ar.Length == 480 * 640)
             {
                 (depth_ar_buffer, icp_trans) = depthManager.update_depth_from_renderer(color_image, depth_ar, camera_index);

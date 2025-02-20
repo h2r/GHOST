@@ -7,6 +7,7 @@ struct MeshProperties
 
 RWStructuredBuffer<MeshProperties> _Properties;
 RWStructuredBuffer<float> _Depth;
+RWStructuredBuffer<float> _Sparse;
 float4x4 _GOPose;
 float4x4 _ICPTrans;
 float4 intrinsics;
@@ -46,6 +47,11 @@ void CSMain(uint3 id : SV_DispatchThreadID)
         //pos.z = _Depth[depth_idx];
         pos.w = 1;
         //float4 pos = {.x,_Properties[id.x].pos.y,_Properties[id.x].pos.z,1.0};
+        
+        if (pos.y < 0.5f || pos.z < 0.3f)
+        {
+            pos.z = _Sparse[depth_idx] * t + (1 - t);
+        }
 
         float4 final_pos = mul(_GOPose, pos);
         float4 final_pos1 = mul(_ICPTrans, final_pos);
@@ -55,13 +61,7 @@ void CSMain(uint3 id : SV_DispatchThreadID)
         //final_pos.y = final_pos.y + dy;
         //final_pos.z = final_pos.z + dz;
 
-        //if (final_pos.y < y_min || final_pos.z < -0.0f || final_pos.z > z_max)
-        //{
-        //    final_pos.y = 0.0f;
-        //    final_pos.z = 0.0f;
-        //    final_pos.x = 0.0f;
-        //    final_pos.w = 0.0f;
-        //}
+
     
     //if (pos.y < 0.5f || pos.z < -0.0f)
     //{
