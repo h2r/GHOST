@@ -461,6 +461,9 @@ public class DrawMeshInstanced : MonoBehaviour
         SetGOPosition();
         compute.SetFloat("t", t);
 
+        compute.SetFloat("y_max", depthManager.y_max);
+        compute.SetFloat("z_max", depthManager.z_max);
+
         //update the color image
         //counter += 1;
         UpdateTexture();

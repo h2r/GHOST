@@ -67,6 +67,9 @@ public class DepthManager : MonoBehaviour
     Matrix4x4 ICP_trans = Matrix4x4.identity;
     Matrix4x4 icp_trans_temp = Matrix4x4.identity;
 
+    public float y_max;
+    public float z_max;
+
     // Start is called before the first frame update
     void Start()
     {

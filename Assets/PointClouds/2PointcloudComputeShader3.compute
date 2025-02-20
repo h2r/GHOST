@@ -14,12 +14,12 @@ float4 intrinsics;
 float4 screenData;
 float samplingSize;
 float t;
-float y_min;
+float y_max;
 float z_max;
 
-float dx;
-float dy;
-float dz;
+//float dx;
+//float dy;
+//float dz;
 
 // We used to just be able to use (1, 1, 1) threads for whatever population (not sure the old limit), but a Unity update
 // imposed a thread limit of 65535.  Now, to populations above that, we need to be more granular with our threads.
@@ -47,12 +47,16 @@ void CSMain(uint3 id : SV_DispatchThreadID)
         //pos.z = _Depth[depth_idx];
         pos.w = 1;
         //float4 pos = {.x,_Properties[id.x].pos.y,_Properties[id.x].pos.z,1.0};
+
+        float flg = 0.0f;
         
-        if (pos.y < 0.5f || pos.z < 0.3f)
+        if (pos.y < y_max || pos.z < z_max)
         {
             pos.z = _Sparse[depth_idx] * t + (1 - t);
             pos.x = (col_y - intrinsics.y) * pos.z / intrinsics.z;
             pos.y = (col_x - intrinsics.x) * pos.z / intrinsics.w;
+
+            flg = 1.0f;
         }
 
         float4 final_pos = mul(_GOPose, pos);
@@ -75,7 +79,17 @@ void CSMain(uint3 id : SV_DispatchThreadID)
     
     // Apply translation to existing matrix, which will be read in the shader.
         _Properties[id.x].pos = final_pos1;
-        _Properties[id.x].pos.w = _Depth[depth_idx] * t + (1 - t);
+
+        if (flg < 0.5f)
+        {
+            _Properties[id.x].pos.w = _Depth[depth_idx] * t + (1 - t);
+        }
+        else
+        {
+            _Properties[id.x].pos.w = _Sparse[depth_idx] * t + (1 - t);
+        }
+
+        
     //_Properties[id.x].pos.w = abs(id.x * samplingSize - i);
     }
 }

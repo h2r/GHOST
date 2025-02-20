@@ -3640,6 +3640,10 @@ PrefabInstance:
       propertyPath: Topic
       value: /spot/stream_image2/frontleft_depth_in_visual_frame/image
       objectReference: {fileID: 0}
+    - target: {fileID: 3310871051789667126, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: Mass
+      value: 1.904699
+      objectReference: {fileID: 0}
     - target: {fileID: 3310871052421458295, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Mass
       value: 1.904699
@@ -5811,6 +5815,8 @@ MonoBehaviour:
   Right_Depth_Renderer_1: {fileID: 107554149}
   Left_Depth_Renderer_2: {fileID: 409472603}
   Right_Depth_Renderer_2: {fileID: 409472602}
+  y_max: -0.25
+  z_max: 0.5
 --- !u!4 &638278052
 Transform:
   m_ObjectHideFlags: 0
