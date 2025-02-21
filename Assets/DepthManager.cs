@@ -227,7 +227,7 @@ public class DepthManager : MonoBehaviour
             bool not_moving = true;
             //not_moving = true;
             (temp_output_left_1, temp_output_right_1, temp_output_left_2, temp_output_right_2, icp_trans_temp) = process_depth(depth_left_t_1, rgb_left_t_1, depth_right_t_1, rgb_right_t_1, depth_left_t_2, rgb_left_t_2, depth_right_t_2, rgb_right_t_2, not_moving);
-            Debug.Log("hihi");
+            //Debug.Log("hihi");
 
             if (activate_depth_estimation)
             {

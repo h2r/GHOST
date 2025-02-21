@@ -11,6 +11,7 @@ using Meta.WitAi;
 public class ICPLauncher : MonoBehaviour
 {
     public float distanceThreshold;
+    public int max_iterations;
 
     public ComputeShader icp_shader;
 
@@ -62,6 +63,7 @@ public class ICPLauncher : MonoBehaviour
         icp_shader.SetVector("screenData3", renderer3.get_screenData());
 
         icp_shader.SetFloat("samplingSize", 8);
+        icp_shader.SetFloat("distanceThreshold", distanceThreshold);
         icp_shader.SetFloat("t", 1);
 
         // compute buffers
@@ -110,107 +112,127 @@ public class ICPLauncher : MonoBehaviour
             return Matrix4x4.identity;
         }
 
+        frame_count++;
         if (frame_count % frames_per_icp != 0)
         {
+            Debug.Log("ICP");
             return res_trans;
         }
-
-        // ============================================================== //
 
         //pose
         icp_shader.SetMatrix("_GOPose0", renderer0.get_current_pose());
         icp_shader.SetMatrix("_GOPose1", renderer2.get_current_pose());
-        icp_shader.SetMatrix("_RESTrans", res_trans);
-
         //depth
         icp_shader.SetBuffer(downsample_kernel, "depth0", depth0);
         icp_shader.SetBuffer(downsample_kernel, "depth1", depth1);
         icp_shader.SetBuffer(downsample_kernel, "depth2", depth2);
         icp_shader.SetBuffer(downsample_kernel, "depth3", depth3);
 
-        //dispatch
-        icp_shader.Dispatch(downsample_kernel, groupsX, 1, 1);
+        R_all = float3x3.identity;
+        t_all = new float3(0.0f, 0.0f, 0.0f);
 
-        // ============================================================== //
+        res_trans = Matrix4x4.identity;
 
-        //dispatch
-        icp_shader.Dispatch(correspondence_kernel, groupsX, 1, 1);
-
-        // ============================================================== //
-
-        depth3d_downsampled0Buffer.GetData(depth3d_downsampled0);
-        depth3d_downsampled1Buffer.GetData(depth3d_downsampled1);
-        correspondenceBuffer.GetData(correspondence);
-
-        // ============================================================== //
-
-        float3 mu0 = new float3(0.0f, 0.0f, 0.0f);
-        float3 mu1 = new float3(0.0f, 0.0f, 0.0f);
-        float3x3 m = float3x3.zero;
-
-        for (int i = 0; i < 60 * 80 * 2; i++)
+        for (int j = 0; j < max_iterations; j++)
         {
-            mu0 += depth3d_downsampled0[i];
-            mu1 += depth3d_downsampled1[i];
-        }
-        mu0 = mu0 / (80.0f * 60.0f * 2.0f);
-        mu1 = mu1 / (80.0f * 60.0f * 2.0f);
 
-        int min_index;
-        for (int i = 0; i < 60 * 80 * 2; i++)
-        {
-            min_index = correspondence[i];
-            if (min_index >= 0 && min_index < 60 * 80 * 2 && depth3d_downsampled0[i].z > -1000.0f && depth3d_downsampled1[min_index].z > -1000.0f)
-            {
-                m += OuterProduct(depth3d_downsampled0[i] - mu0, depth3d_downsampled1[min_index] - mu1);
-            }
-        }
+            // ============================================================== //
+
+
+            icp_shader.SetMatrix("_RESTrans", res_trans);
+
             
 
-        // ============================================================== //
+            //dispatch
+            icp_shader.Dispatch(downsample_kernel, groupsX, 1, 1);
 
-        float[,] rawData = new float[,]
-        {
-            { m.c0.x, m.c1.x, m.c2.x },
-            { m.c0.y, m.c1.y, m.c2.y },
-            { m.c0.z, m.c1.z, m.c2.z },
-        };
+            // ============================================================== //
 
-        Matrix<float> mathNetM = DenseMatrix.OfArray(rawData);
+            //dispatch
+            icp_shader.Dispatch(correspondence_kernel, groupsX, 1, 1);
 
-        var svd = mathNetM.Svd(computeVectors: true);
-        Matrix<float> U = svd.U;
-        //Vector<float> S = svd.S;
-        Matrix<float> VT = svd.VT;
-        Matrix<float> V = VT.Transpose();
-        Matrix<float> UT = U.Transpose();
+            // ============================================================== //
 
-        // ============================================================= //
+            depth3d_downsampled0Buffer.GetData(depth3d_downsampled0);
+            depth3d_downsampled1Buffer.GetData(depth3d_downsampled1);
+            correspondenceBuffer.GetData(correspondence);
 
-        Matrix<float> Rmat = V * UT;
+            // ============================================================== //
 
-        var Rdet = Rmat.Determinant();
-        if (Rdet < 0)
-        {
-            for (int row = 0; row < 3; row++)
-                V[row, 2] = -V[row, 2];
-            Rmat = V * UT;
+            float3 mu0 = new float3(0.0f, 0.0f, 0.0f);
+            float3 mu1 = new float3(0.0f, 0.0f, 0.0f);
+            float3x3 m = float3x3.zero;
+
+            int count = 0;
+
+            int min_index;
+            for (int i = 0; i < 80 * 60 * 2; i++)
+            {
+                min_index = correspondence[i];
+                if (min_index >= 0 && min_index < 60 * 80 * 2 && depth3d_downsampled0[i].z > -1000.0f && depth3d_downsampled1[min_index].z > -1000.0f)
+                {
+                    mu0 += depth3d_downsampled0[i];
+                    mu1 += depth3d_downsampled1[min_index];
+                    count++;
+                }
+            }
+            mu0 = mu0 / (float)count;
+            mu1 = mu1 / (float)count;
+
+
+            for (int i = 0; i < 60 * 80 * 2; i++)
+            {
+                min_index = correspondence[i];
+                if (min_index >= 0 && min_index < 60 * 80 * 2 && depth3d_downsampled0[i].z > -1000.0f && depth3d_downsampled1[min_index].z > -1000.0f)
+                {
+                    m += OuterProduct(depth3d_downsampled0[i] - mu0, depth3d_downsampled1[min_index] - mu1);
+                }
+            }
+
+
+            // ============================================================== //
+
+            float[,] result = new float[3, 3];
+            result[0, 0] = m.c0.x; result[0, 1] = m.c1.x; result[0, 2] = m.c2.x;
+            result[1, 0] = m.c0.y; result[1, 1] = m.c1.y; result[1, 2] = m.c2.y;
+            result[2, 0] = m.c0.z; result[2, 1] = m.c1.z; result[2, 2] = m.c2.z;
+
+            Matrix<float> mathNetM = DenseMatrix.OfArray(result);
+
+            var svd = mathNetM.Svd(computeVectors: true);
+            Matrix<float> U = svd.U;
+            //Vector<float> S = svd.S;
+            Matrix<float> VT = svd.VT;
+            Matrix<float> V = VT.Transpose();
+            Matrix<float> UT = U.Transpose();
+
+            // ============================================================= //
+
+            Matrix<float> Rmat = V * UT;
+
+            var Rdet = Rmat.Determinant();
+            if (Rdet < 0)
+            {
+                for (int row = 0; row < 3; row++)
+                    V[row, 2] = -V[row, 2];
+                Rmat = V * UT;
+            }
+
+            float3x3 R_new = new float3x3(
+                Rmat[0, 0], Rmat[0, 1], Rmat[0, 2],
+                Rmat[1, 0], Rmat[1, 1], Rmat[1, 2],
+                Rmat[2, 0], Rmat[2, 1], Rmat[2, 2]
+            );
+            float3 t_new = mu1 - math.mul(R_new, mu0);
+
+            R_all = math.mul(R_new, R_all);
+            t_all = math.mul(R_new, t_all) + t_new;
+
+            res_trans.SetColumn(0, new Vector4(R_all.c0.x, R_all.c0.y, R_all.c0.z, 0.0f));
+            res_trans.SetColumn(1, new Vector4(R_all.c1.x, R_all.c1.y, R_all.c1.z, 0.0f));
+            res_trans.SetColumn(2, new Vector4(R_all.c2.x, R_all.c2.y, R_all.c2.z, 0.0f));
+            res_trans.SetColumn(3, new Vector4(t_all.x, t_all.y, t_all.z, 1.0f));
         }
-
-        float3x3 R_new = new float3x3(
-            Rmat[0, 0], Rmat[0, 1], Rmat[0, 2],
-            Rmat[1, 0], Rmat[1, 1], Rmat[1, 2],
-            Rmat[2, 0], Rmat[2, 1], Rmat[2, 2]
-        );
-        float3 t_new = mu1 - math.mul(R_new, mu0);
-
-        R_all = math.mul(R_new, R_all);
-        t_all = math.mul(R_new, t_all) + t_new;
-
-        res_trans.SetColumn(0, new Vector4(R_all.c0.x, R_all.c0.y, R_all.c0.z, 0.0f));
-        res_trans.SetColumn(1, new Vector4(R_all.c1.x, R_all.c1.y, R_all.c1.z, 0.0f));
-        res_trans.SetColumn(2, new Vector4(R_all.c2.x, R_all.c2.y, R_all.c2.z, 0.0f));
-        res_trans.SetColumn(3, new Vector4(t_all.x, t_all.y, t_all.z, 1.0f));
 
         return res_trans;
     }

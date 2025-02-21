@@ -129,7 +129,7 @@ public class DrawMeshInstanced : MonoBehaviour
 
             if (camera_index == 0)
             {
-                for (int y = 10; y < 10 + 200; y++)
+                for (int y = 10; y < 10 + 300; y++)
                 {
                     for (int x = 10; x < 10 + (int)width - 20; x++)
                     {
@@ -141,7 +141,7 @@ public class DrawMeshInstanced : MonoBehaviour
 
             if (camera_index == 3)
             {
-                for (int y = (int)height - 200; y < (int)height; y++)
+                for (int y = (int)height - 300; y < (int)height; y++)
                 {
                     for (int x = 10; x < 10 + (int)width - 20; x++)
                     {

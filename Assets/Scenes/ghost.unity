@@ -3655,7 +3655,7 @@ PrefabInstance:
       objectReference: {fileID: 638278051}
     - target: {fileID: 1137478775010377568, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: use_saved_meshes
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775010377574, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_IsActive
@@ -3715,7 +3715,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775515482002, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: use_saved_meshes
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775531494915, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
@@ -3817,6 +3817,10 @@ PrefabInstance:
       propertyPath: printMessageReceiveRate
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3310871052620369301, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: Mass
+      value: 1.904699
+      objectReference: {fileID: 0}
     - target: {fileID: 3310871052690497871, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -3895,7 +3899,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052733856933, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: use_saved_meshes
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052733856935, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_IsActive
@@ -3967,7 +3971,7 @@ PrefabInstance:
       objectReference: {fileID: 638278051}
     - target: {fileID: 3310871053306987607, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: use_saved_meshes
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3310871053646093096, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Topic
@@ -5952,13 +5956,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2df5584cadb0564ba70a8849a70df5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  distanceThreshold: 0
+  distanceThreshold: 0.5
+  max_iterations: 30
   icp_shader: {fileID: 7200000, guid: 554d4ca3d1bda7a42ac84c03b623f26c, type: 3}
   renderer0: {fileID: 326679877}
   renderer1: {fileID: 107554149}
   renderer2: {fileID: 409472603}
   renderer3: {fileID: 409472602}
-  frames_per_icp: 1
+  frames_per_icp: 20
 --- !u!1 &645022056
 GameObject:
   m_ObjectHideFlags: 0

@@ -27,6 +27,8 @@ float4 screenData2;
 float4 intrinsics3;
 float4 screenData3;
 
+float distanceThreshold;
+
 // ===========================================================
 RWStructuredBuffer<int> correspondence;
 
@@ -59,6 +61,15 @@ void MergeDownsample(uint3 id : SV_DispatchThreadID)
         res2.w = 1;
         float4 final_pos2 = mul(_GOPose1, res2);
         
+        if (depth0[depth_idx] < 0.3f)
+        {
+            final_pos1.z = -1000.0f;
+        }
+        if (depth2[depth_idx1] < 0.3f)
+        {
+            final_pos2.z = -1000.0f;
+        }
+        
         depth3d_downsampled0[id.x] = float3(final_pos1.x, final_pos1.y, final_pos1.z);
         depth3d_downsampled1[id.x] = float3(final_pos2.x, final_pos2.y, final_pos2.z);
     }
@@ -88,6 +99,15 @@ void MergeDownsample(uint3 id : SV_DispatchThreadID)
         res2.w = 1;
         float4 final_pos2 = mul(_GOPose1, res2);
         
+        if (depth1[depth_idx] < 0.3f)
+        {
+            final_pos1.z = -1000.0f;
+        }
+        if (depth3[depth_idx1] < 0.3f)
+        {
+            final_pos2.z = -1000.0f;
+        }
+        
         depth3d_downsampled0[id.x] = float3(final_pos1.x, final_pos1.y, final_pos1.z);
         depth3d_downsampled1[id.x] = float3(final_pos2.x, final_pos2.y, final_pos2.z);
     }
@@ -106,15 +126,21 @@ void FindCorrespondence(uint3 id : SV_DispatchThreadID)
         float minDist = 3.8e+38;
         int minIndex = -1;
         
-        [loop]
-        for (int i = 0; i < 60 * 80 * 2; i++)
+        if (currentPoint.z > -1000.0f)
         {
-            float3 otherPoint = depth3d_downsampled1[i];
-            float dist = distance(currentPoint, otherPoint);
-            if (dist < minDist)
+            [loop]
+            for (int i = 0; i < 80 * 60 * 2; i++)
             {
-                minDist = dist;
-                minIndex = i;
+                float3 otherPoint = depth3d_downsampled1[i];
+                if (otherPoint.z > -1000.0f)
+                {
+                    float dist = distance(currentPoint, otherPoint);
+                    if (dist < minDist && dist < distanceThreshold)
+                    {
+                        minDist = dist;
+                        minIndex = i;
+                    }
+                }
             }
         }
         
