@@ -126,11 +126,33 @@ public class DrawMeshInstanced : MonoBehaviour
                     }
                 }
             }
-            // [2023-10-30][JHT] TODO Complete. What is the depth width/height? Is it really 'width' and 'height'?
-            depth_image = new Texture2D((int)width, (int)height, TextureFormat.RFloat, false, false);
-            depth_image.SetPixelData(depth_ar, 0);
 
-            // read the texture 2D
+            if (camera_index == 0)
+            {
+                for (int y = 10; y < 10 + 200; y++)
+                {
+                    for (int x = 10; x < 10 + (int)width - 20; x++)
+                    {
+                        int index = y * (int)width + x;
+                        depth_ar[index] = -0.0f;
+                    }
+                }
+            }
+
+            if (camera_index == 3)
+            {
+                for (int y = (int)height - 200; y < (int)height; y++)
+                {
+                    for (int x = 10; x < 10 + (int)width - 20; x++)
+                    {
+                        int index = y * (int)width + x;
+                        depth_ar[index] = -0.0f;
+                    }
+                }
+            }
+
+
+
             byte[] bytes;
             using (var stream = File.Open("Assets/PointClouds/Color_" + imageScriptIndex + ".png", FileMode.Open))
             {
@@ -142,40 +164,14 @@ public class DrawMeshInstanced : MonoBehaviour
             color_image = new Texture2D(1, 1);
             color_image.LoadImage(bytes);
 
-            //color_image = Resources.Load<Texture2D>("Assets/PointClouds/Color_" + imageScriptIndex + ".png");
-        }
-        else if (false)// Read in new scene data from ROS? 
-        {
-            depth_ar = new float[height * width];
-            // [2023-10-30][JHT] TODO Complete. What is the depth width/height? Is it really 'width' and 'height'?
             depth_image = new Texture2D((int)width, (int)height, TextureFormat.RFloat, false, false);
             depth_image.SetPixelData(depth_ar, 0);
-            int counter = 0;
-
-            StreamReader inp_stm = new StreamReader("./Assets/PointClouds/color2_depth_unity.txt");
-
-            GameObject rosConnector = GameObject.Find("RosConnector");
-            //ImageSubscriber imageScript = rosConnector.GetComponents<ImageSubscriber>()[2];
-
-            while (!inp_stm.EndOfStream)
-            {
-                string inp_ln = inp_stm.ReadLine();
-                string[] split_arr = inp_ln.Split(',');
-                foreach (var spli in split_arr)
-                {
-                    depth_ar[counter] = float.Parse(spli);
-                    counter += 1;
-                    //Debug.Log(spli);
-                }
-                // Do Something with the input. 
-            }
         }
         else
         {
+            Destroy(depth_image);
             depth_ar = new float[height * width];
-            // [2023-10-30][JHT] TODO Complete. What is the depth width/height? Is it really 'width' and 'height'?
             depth_image = new Texture2D((int)width, (int)height, TextureFormat.RFloat, false, false);
-            depth_image.SetPixelData(depth_ar, 0);
         }
 
         globalProps = GetProperties();
@@ -419,9 +415,15 @@ public class DrawMeshInstanced : MonoBehaviour
 
     private void UpdateTexture()
     {
-        DestroyImmediate(color_image, true);
-        color_image = copy_texture(colorSubscriber.texture2D);
-        depth_ar = depthSubscriber.getDepthArr();
+        if (use_saved_meshes)
+        {
+        }
+        else
+        {
+            DestroyImmediate(color_image, true);
+            color_image = copy_texture(colorSubscriber.texture2D);
+            depth_ar = depthSubscriber.getDepthArr();
+        }
 
         if (depth_ar.Length < 640 * 480)
         {
@@ -432,59 +434,21 @@ public class DrawMeshInstanced : MonoBehaviour
         (depth_ar_buffer, icp_trans) = depthManager.update_depth_from_renderer(color_image, depth_ar, camera_index);
         if (camera_index > 1) { icp_trans = Matrix4x4.identity; }
 
-        //if (use_saved_meshes || freezeCloud)
-        //{
-        //    //Debug.Log("use_saved_meshes");
-        //    //Debug.Log("UpdateTexture, Time: " + UnityEngine.Time.realtimeSinceStartup);
-        //    return;
-        //}
-
-        //// Get the depth and color
-        //color_image = colorSubscriber.texture2D;
-        //if (t == 0)
-        //{
-        //    depth_ar = new float[width * height];
-        //}
-        //else
-        //{
-        //    depth_ar = depthSubscriber.getDepthArr();
-        //    sparseBuffer.SetData(depth_ar);
-        //    if (depth_ar.Length == 480 * 640)
-        //    {
-        //        (depth_ar_buffer, icp_trans) = depthManager.update_depth_from_renderer(color_image, depth_ar, camera_index);
-        //        if (camera_index > 1) { icp_trans = Matrix4x4.identity; }
-
-        //        //depth_ar_buffer.SetData(depth_ar);
-        //    }
-        //    else
-        //    {
-        //        depth_ar_buffer = new ComputeBuffer(480 * 640, sizeof(float));
-        //    }
-        //}
-
-        //// save the point cloud if desired
-        //if (savePointCloud)
-        //{
-        //    using (FileStream file = File.Create("Assets/PointClouds/mesh_array_" + imageScriptIndex))
-        //    {
-        //        using (BinaryWriter writer = new BinaryWriter(file))
-        //        {
-        //            writer.Write((int)depth_ar.Length);
-        //            foreach (float value in depth_ar)
-        //            {
-        //                writer.Write(value);
-        //            }
-        //        }
-        //    }
-
-        //    byte[] bytes = color_image.EncodeToPNG();
-        //    File.WriteAllBytes("Assets/PointClouds/Color_" + imageScriptIndex + ".png", bytes);
-        //}
-
     }
 
     private void Update()
     {
+        if (!depthManager.show_spot_1 && camera_index < 2)
+        {
+            return;
+        }
+
+
+        if (!depthManager.show_spot_2 && camera_index > 1)
+        {
+            return;
+        }
+        
         UpdateTexture();
 
         //Debug.Log("UPDATE");

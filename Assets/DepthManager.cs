@@ -6,6 +6,9 @@ using Unity.Sentis;
 
 public class DepthManager : MonoBehaviour
 {
+    public bool show_spot_1;
+    public bool show_spot_2;
+
     public bool activate_depth_estimation;
     public bool activate_ICP;
     public bool activate_edge_detection;
@@ -131,9 +134,9 @@ public class DepthManager : MonoBehaviour
         TextureTransform tform = new();
         tform.SetDimensions(rgb.width, rgb.height, 3);
 
-        
 
-        if (depth.Length != 480 * 640) 
+
+        if (depth.Length != 480 * 640)
         {
             if (camera_index == 0)
             {

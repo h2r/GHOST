@@ -6,9 +6,12 @@ using Unity.Mathematics;
 using UnityEngine;
 using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.LinearAlgebra.Single;
+using Meta.WitAi;
 
 public class ICPLauncher : MonoBehaviour
 {
+    public float distanceThreshold;
+
     public ComputeShader icp_shader;
 
     int downsample_kernel;
@@ -34,8 +37,14 @@ public class ICPLauncher : MonoBehaviour
     private int frame_count;
     public int frames_per_icp;
 
+    float3x3 R_all;
+    float3 t_all;
+
     void Start()
     {
+        R_all = float3x3.identity;
+        t_all = new float3(0.0f, 0.0f, 0.0f);
+
         res_trans = Matrix4x4.identity;
         frame_count = 0;
 
@@ -147,9 +156,14 @@ public class ICPLauncher : MonoBehaviour
         mu0 = mu0 / (80.0f * 60.0f * 2.0f);
         mu1 = mu1 / (80.0f * 60.0f * 2.0f);
 
+        int min_index;
         for (int i = 0; i < 60 * 80 * 2; i++)
         {
-            m += OuterProduct(depth3d_downsampled0[i] - mu0, depth3d_downsampled1[i] - mu1);
+            min_index = correspondence[i];
+            if (min_index >= 0 && min_index < 60 * 80 * 2 && depth3d_downsampled0[i].z > -1000.0f && depth3d_downsampled1[min_index].z > -1000.0f)
+            {
+                m += OuterProduct(depth3d_downsampled0[i] - mu0, depth3d_downsampled1[min_index] - mu1);
+            }
         }
             
 
@@ -183,22 +197,20 @@ public class ICPLauncher : MonoBehaviour
             Rmat = V * UT;
         }
 
-        float3x3 R = new float3x3(
+        float3x3 R_new = new float3x3(
             Rmat[0, 0], Rmat[0, 1], Rmat[0, 2],
             Rmat[1, 0], Rmat[1, 1], Rmat[1, 2],
             Rmat[2, 0], Rmat[2, 1], Rmat[2, 2]
         );
-        float3 t = mu1 - math.mul(R, mu0);
+        float3 t_new = mu1 - math.mul(R_new, mu0);
 
-        Matrix4x4 T = new Matrix4x4(
-            new Vector4(R.c0.x, R.c0.y, R.c0.z, 0f),
-            new Vector4(R.c1.x, R.c1.y, R.c1.z, 0f),
-            new Vector4(R.c2.x, R.c2.y, R.c2.z, 0f),
-            new Vector4(t.x, t.y, t.z, 1f)
-        );
+        R_all = math.mul(R_new, R_all);
+        t_all = math.mul(R_new, t_all) + t_new;
 
-        res_trans = math.mul(T, res_trans);
-        //res_trans = math.mul(res_trans, T);
+        res_trans.SetColumn(0, new Vector4(R_all.c0.x, R_all.c0.y, R_all.c0.z, 0.0f));
+        res_trans.SetColumn(1, new Vector4(R_all.c1.x, R_all.c1.y, R_all.c1.z, 0.0f));
+        res_trans.SetColumn(2, new Vector4(R_all.c2.x, R_all.c2.y, R_all.c2.z, 0.0f));
+        res_trans.SetColumn(3, new Vector4(t_all.x, t_all.y, t_all.z, 1.0f));
 
         return res_trans;
     }
