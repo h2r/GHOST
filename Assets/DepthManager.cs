@@ -67,6 +67,11 @@ public class DepthManager : MonoBehaviour
     private ComputeBuffer temp_output_left_2;
     private ComputeBuffer temp_output_right_2;
 
+    private ComputeBuffer normal_temp_output_left_1;
+    private ComputeBuffer normal_temp_output_right_1;
+    private ComputeBuffer normal_temp_output_left_2;
+    private ComputeBuffer normal_temp_output_right_2;
+
     private ComputeBuffer complete_output_left_1;
     private ComputeBuffer complete_output_right_1;
     private ComputeBuffer complete_output_left_2;
@@ -91,6 +96,11 @@ public class DepthManager : MonoBehaviour
         temp_output_right_1 = new ComputeBuffer(480 * 640, sizeof(float));
         temp_output_left_2 = new ComputeBuffer(480 * 640, sizeof(float));
         temp_output_right_2 = new ComputeBuffer(480 * 640, sizeof(float));
+
+        normal_temp_output_left_1 = new ComputeBuffer(480 * 640, sizeof(float));
+        normal_temp_output_right_1 = new ComputeBuffer(480 * 640, sizeof(float));
+        normal_temp_output_left_2 = new ComputeBuffer(480 * 640, sizeof(float));
+        normal_temp_output_right_2 = new ComputeBuffer(480 * 640, sizeof(float));
 
         //fps_timer = FPSDisplayObject.GetComponent<FPSCounter>();
 
@@ -135,7 +145,6 @@ public class DepthManager : MonoBehaviour
         tform.SetDimensions(rgb.width, rgb.height, 3);
 
 
-
         if (depth.Length != 480 * 640)
         {
             if (camera_index == 0)
@@ -174,6 +183,8 @@ public class DepthManager : MonoBehaviour
             TextureConverter.ToTensor(rgb, rgb_left_t_1, tform);
             rgb_left_t_1.Reshape(color_shape);
 
+            normal_temp_output_left_1.SetData(depth);
+
             received_left_1 = true;
 
             //fps_timer.end(left_eye_data_timer_id);
@@ -185,6 +196,8 @@ public class DepthManager : MonoBehaviour
             depth_right_t_1 = new Tensor<float>(depth_shape, depth);
             TextureConverter.ToTensor(rgb, rgb_right_t_1, tform);
             rgb_right_t_1.Reshape(color_shape);
+
+            normal_temp_output_right_1.SetData(depth);
 
             received_right_1 = true;
 
@@ -198,6 +211,8 @@ public class DepthManager : MonoBehaviour
             TextureConverter.ToTensor(rgb, rgb_left_t_2, tform);
             rgb_left_t_2.Reshape(color_shape);
 
+            normal_temp_output_left_2.SetData(depth);
+
             received_left_2 = true;
 
             //fps_timer.end(right_eye_data_timer_id);
@@ -209,6 +224,8 @@ public class DepthManager : MonoBehaviour
             depth_right_t_2 = new Tensor<float>(depth_shape, depth);
             TextureConverter.ToTensor(rgb, rgb_right_t_2, tform);
             rgb_right_t_2.Reshape(color_shape);
+
+            normal_temp_output_right_2.SetData(depth);
 
             received_right_2 = true;
 
@@ -229,17 +246,14 @@ public class DepthManager : MonoBehaviour
             (temp_output_left_1, temp_output_right_1, temp_output_left_2, temp_output_right_2, icp_trans_temp) = process_depth(depth_left_t_1, rgb_left_t_1, depth_right_t_1, rgb_right_t_1, depth_left_t_2, rgb_left_t_2, depth_right_t_2, rgb_right_t_2, not_moving);
             //Debug.Log("hihi");
 
-            if (activate_depth_estimation)
-            {
-                if (depth_left_t_1 != null) { depth_left_t_1.Dispose(); }
-                if (rgb_left_t_1 != null) { rgb_left_t_1.Dispose(); }
-                if (depth_right_t_1 != null) { depth_right_t_1.Dispose(); }
-                if (rgb_right_t_1 != null) { rgb_right_t_1.Dispose(); }
-                if (depth_left_t_2 != null) { depth_left_t_2.Dispose(); }
-                if (rgb_left_t_2 != null) { rgb_left_t_2.Dispose(); }
-                if (depth_right_t_2 != null) { depth_right_t_2.Dispose(); }
-                if (rgb_right_t_2 != null) { rgb_right_t_2.Dispose(); }
-            }
+            if (depth_left_t_1 != null) { depth_left_t_1.Dispose(); }
+            if (rgb_left_t_1 != null) { rgb_left_t_1.Dispose(); }
+            if (depth_right_t_1 != null) { depth_right_t_1.Dispose(); }
+            if (rgb_right_t_1 != null) { rgb_right_t_1.Dispose(); }
+            if (depth_left_t_2 != null) { depth_left_t_2.Dispose(); }
+            if (rgb_left_t_2 != null) { rgb_left_t_2.Dispose(); }
+            if (depth_right_t_2 != null) { depth_right_t_2.Dispose(); }
+            if (rgb_right_t_2 != null) { rgb_right_t_2.Dispose(); }
 
             received_left_1 = false;
             received_right_1 = false;
@@ -250,22 +264,45 @@ public class DepthManager : MonoBehaviour
             //first_run = true;
         }
 
-        if (camera_index == 0)
+        if (activate_depth_estimation)
         {
-            return (temp_output_left_1, icp_trans_temp);
+            if (camera_index == 0)
+            {
+                return (temp_output_left_1, icp_trans_temp);
+            }
+            else if (camera_index == 1)
+            {
+                return (temp_output_right_1, icp_trans_temp);
+            }
+            else if (camera_index == 2)
+            {
+                return (temp_output_left_2, icp_trans_temp);
+            }
+            else if (camera_index == 3)
+            {
+                return (temp_output_right_2, icp_trans_temp);
+            }
         }
-        else if (camera_index == 1)
+        else
         {
-            return (temp_output_right_1, icp_trans_temp);
+            if (camera_index == 0)
+            {
+                return (normal_temp_output_left_1, icp_trans_temp);
+            }
+            else if (camera_index == 1)
+            {
+                return (normal_temp_output_right_1, icp_trans_temp);
+            }
+            else if (camera_index == 2)
+            {
+                return (normal_temp_output_left_2, icp_trans_temp);
+            }
+            else if (camera_index == 3)
+            {
+                return (normal_temp_output_right_2, icp_trans_temp);
+            }
         }
-        else if (camera_index == 2)
-        {
-            return (temp_output_left_2, icp_trans_temp);
-        }
-        else if (camera_index == 3)
-        {
-            return (temp_output_right_2, icp_trans_temp);
-        }
+        
 
         return (temp_output_right_1, icp_trans_temp);
     }

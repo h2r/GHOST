@@ -5919,7 +5919,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   show_spot_1: 1
   show_spot_2: 1
-  activate_depth_estimation: 0
+  activate_depth_estimation: 1
   activate_ICP: 0
   activate_edge_detection: 0
   edgeThreshold: 0
