@@ -381,7 +381,9 @@ public class DrawMeshInstanced : MonoBehaviour
         //depthBuffer.SetData(depth_ar);
         material.SetBuffer("_Properties", meshPropertiesBuffer);
         compute.SetBuffer(kernel, "_Properties", meshPropertiesBuffer);
+
         compute.SetBuffer(kernel, "_Depth", depth_ar_buffer);
+        
         compute.SetBuffer(kernel, "_Sparse", sparseBuffer);
 
 

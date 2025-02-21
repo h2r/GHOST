@@ -77,6 +77,8 @@ public class DepthManager : MonoBehaviour
     private ComputeBuffer complete_output_left_2;
     private ComputeBuffer complete_output_right_2;
 
+    private ComputeBuffer final_out;
+
     TensorShape depth_shape = new TensorShape(1, 1, 480, 640);
     TensorShape color_shape = new TensorShape(1, 3, 480, 640);
 
@@ -101,6 +103,8 @@ public class DepthManager : MonoBehaviour
         normal_temp_output_right_1 = new ComputeBuffer(480 * 640, sizeof(float));
         normal_temp_output_left_2 = new ComputeBuffer(480 * 640, sizeof(float));
         normal_temp_output_right_2 = new ComputeBuffer(480 * 640, sizeof(float));
+
+        final_out = new ComputeBuffer(480 * 640, sizeof(float));
 
         //fps_timer = FPSDisplayObject.GetComponent<FPSCounter>();
 
@@ -282,7 +286,7 @@ public class DepthManager : MonoBehaviour
             {
                 return (temp_output_right_2, icp_trans_temp);
             }
-            return (new ComputeBuffer(480 * 640, sizeof(float)), icp_trans_temp);
+            return (final_out, icp_trans_temp);
         }
         else
         {
@@ -302,7 +306,7 @@ public class DepthManager : MonoBehaviour
             {
                 return (normal_temp_output_right_2, icp_trans_temp);
             }
-            return (new ComputeBuffer(480 * 640, sizeof(float)), icp_trans_temp);
+            return (final_out, icp_trans_temp);
         }
         
     }
@@ -316,6 +320,15 @@ public class DepthManager : MonoBehaviour
 
         //float[] temp_output_left = depthL, temp_output_right = depthR;
 
+        //complete_output_left_1 = ComputeTensorData.Pin(depthL_1).buffer;
+        //complete_output_right_1 = ComputeTensorData.Pin(depthR_1).buffer;
+        //complete_output_left_2 = ComputeTensorData.Pin(depthL_2).buffer;
+        //complete_output_right_2 = ComputeTensorData.Pin(depthR_2).buffer;
+
+        ICP_trans = ICP_launcher.run_ICP(depthL_1, depthR_1, depthL_2, depthR_2, activate_ICP);
+
+
+
         // depth completion
         Debug.Log("depth completion");
         is_not_moving = true;
@@ -327,11 +340,13 @@ public class DepthManager : MonoBehaviour
         }
         else
         {
-            complete_output_left_1 = ComputeTensorData.Pin(depthL_1).buffer;
-            complete_output_right_1 = ComputeTensorData.Pin(depthR_1).buffer;
-            complete_output_left_2 = ComputeTensorData.Pin(depthL_2).buffer;
-            complete_output_right_2 = ComputeTensorData.Pin(depthR_2).buffer;
+            //complete_output_left_1 = ComputeTensorData.Pin(depthL_1).buffer;
+            //complete_output_right_1 = ComputeTensorData.Pin(depthR_1).buffer;
+            //complete_output_left_2 = ComputeTensorData.Pin(depthL_2).buffer;
+            //complete_output_right_2 = ComputeTensorData.Pin(depthR_2).buffer;
         }
+
+        
 
         //fps_timer.start(averaging_timer_id);
         //temp_output_left = AveragerLeft.averaging(temp_output_left, is_not_moving, mean_averaging, median_averaging, edge_detection, edge_threshold);
@@ -351,7 +366,7 @@ public class DepthManager : MonoBehaviour
         // return transformation
 
 
-        ICP_trans = ICP_launcher.run_ICP(complete_output_left_1, complete_output_right_1, complete_output_left_2, complete_output_right_2, activate_ICP);
+
 
 
         return (complete_output_left_1, complete_output_right_1, complete_output_left_2, complete_output_right_2, ICP_trans);

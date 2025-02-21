@@ -7,6 +7,7 @@ using UnityEngine;
 using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.LinearAlgebra.Single;
 using Meta.WitAi;
+using Unity.Sentis;
 
 public class ICPLauncher : MonoBehaviour
 {
@@ -63,7 +64,7 @@ public class ICPLauncher : MonoBehaviour
         icp_shader.SetVector("screenData3", renderer3.get_screenData());
 
         icp_shader.SetFloat("samplingSize", 4);
-        icp_shader.SetFloat("distanceThreshold", distanceThreshold);
+        
         icp_shader.SetFloat("t", 1);
 
         // compute buffers
@@ -105,7 +106,7 @@ public class ICPLauncher : MonoBehaviour
         }
     }
 
-    public Matrix4x4 run_ICP(ComputeBuffer depth0, ComputeBuffer depth1, ComputeBuffer depth2, ComputeBuffer depth3, bool activate_ICP)
+    public Matrix4x4 run_ICP(Tensor<float> depth0, Tensor<float> depth1, Tensor<float> depth2, Tensor<float> depth3, bool activate_ICP)
     {
         if (!activate_ICP)
         {
@@ -123,10 +124,10 @@ public class ICPLauncher : MonoBehaviour
         icp_shader.SetMatrix("_GOPose0", renderer0.get_current_pose());
         icp_shader.SetMatrix("_GOPose1", renderer2.get_current_pose());
         //depth
-        icp_shader.SetBuffer(downsample_kernel, "depth0", depth0);
-        icp_shader.SetBuffer(downsample_kernel, "depth1", depth1);
-        icp_shader.SetBuffer(downsample_kernel, "depth2", depth2);
-        icp_shader.SetBuffer(downsample_kernel, "depth3", depth3);
+        icp_shader.SetBuffer(downsample_kernel, "depth0", ComputeTensorData.Pin(depth0).buffer);
+        icp_shader.SetBuffer(downsample_kernel, "depth1", ComputeTensorData.Pin(depth1).buffer);
+        icp_shader.SetBuffer(downsample_kernel, "depth2", ComputeTensorData.Pin(depth2).buffer);
+        icp_shader.SetBuffer(downsample_kernel, "depth3", ComputeTensorData.Pin(depth3).buffer);
 
         R_all = float3x3.identity;
         t_all = new float3(0.0f, 0.0f, 0.0f);
@@ -140,8 +141,8 @@ public class ICPLauncher : MonoBehaviour
 
 
             icp_shader.SetMatrix("_RESTrans", res_trans);
+            icp_shader.SetFloat("distanceThreshold", distanceThreshold);
 
-            
 
             //dispatch
             icp_shader.Dispatch(downsample_kernel, groupsX, 1, 1);
@@ -231,13 +232,14 @@ public class ICPLauncher : MonoBehaviour
             //R_all = float3x3.identity;
             //t_all = t_all + mu1 - mu0;
 
+            res_trans.SetColumn(0, new Vector4(R_all.c0.x, R_all.c0.y, R_all.c0.z, 0.0f));
+            res_trans.SetColumn(1, new Vector4(R_all.c1.x, R_all.c1.y, R_all.c1.z, 0.0f));
+            res_trans.SetColumn(2, new Vector4(R_all.c2.x, R_all.c2.y, R_all.c2.z, 0.0f));
+            res_trans.SetColumn(3, new Vector4(t_all.x, t_all.y, t_all.z, 1.0f));
 
         }
 
-        res_trans.SetColumn(0, new Vector4(R_all.c0.x, R_all.c0.y, R_all.c0.z, 0.0f));
-        res_trans.SetColumn(1, new Vector4(R_all.c1.x, R_all.c1.y, R_all.c1.z, 0.0f));
-        res_trans.SetColumn(2, new Vector4(R_all.c2.x, R_all.c2.y, R_all.c2.z, 0.0f));
-        res_trans.SetColumn(3, new Vector4(t_all.x, t_all.y, t_all.z, 1.0f));
+
 
         return res_trans;
     }
