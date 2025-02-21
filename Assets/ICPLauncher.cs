@@ -18,7 +18,7 @@ public class ICPLauncher : MonoBehaviour
     int downsample_kernel;
     int correspondence_kernel;
 
-    int groupsX = Mathf.CeilToInt(80.0f * 60.0f * 2.0f / 256.0f);
+    int groupsX = Mathf.CeilToInt(160.0f * 120.0f * 2.0f / 256.0f);
 
 
     public DrawMeshInstanced renderer0;
@@ -62,14 +62,14 @@ public class ICPLauncher : MonoBehaviour
         icp_shader.SetVector("screenData2", renderer2.get_screenData());
         icp_shader.SetVector("screenData3", renderer3.get_screenData());
 
-        icp_shader.SetFloat("samplingSize", 8);
+        icp_shader.SetFloat("samplingSize", 4);
         icp_shader.SetFloat("distanceThreshold", distanceThreshold);
         icp_shader.SetFloat("t", 1);
 
         // compute buffers
-        depth3d_downsampled0Buffer = new ComputeBuffer(60 * 80 * 2, sizeof(float) * 3);
-        depth3d_downsampled1Buffer = new ComputeBuffer(60 * 80 * 2, sizeof(float) * 3);
-        correspondenceBuffer = new ComputeBuffer(60 * 80 * 2, sizeof(int));
+        depth3d_downsampled0Buffer = new ComputeBuffer(120 * 160 * 2, sizeof(float) * 3);
+        depth3d_downsampled1Buffer = new ComputeBuffer(120 * 160 * 2, sizeof(float) * 3);
+        correspondenceBuffer = new ComputeBuffer(120 * 160 * 2, sizeof(int));
 
         icp_shader.SetBuffer(downsample_kernel, "depth3d_downsampled0", depth3d_downsampled0Buffer);
         icp_shader.SetBuffer(downsample_kernel, "depth3d_downsampled1", depth3d_downsampled1Buffer);
@@ -79,9 +79,9 @@ public class ICPLauncher : MonoBehaviour
         icp_shader.SetBuffer(correspondence_kernel, "correspondence", correspondenceBuffer);
 
         // datas
-        depth3d_downsampled0 = new float3[60 * 80 * 2];
-        depth3d_downsampled1 = new float3[60 * 80 * 2];
-        correspondence = new int[60 * 80 * 2];
+        depth3d_downsampled0 = new float3[120 * 160 * 2];
+        depth3d_downsampled1 = new float3[120 * 160 * 2];
+        correspondence = new int[120 * 160 * 2];
     }
 
     void OnDestroy()
@@ -166,10 +166,10 @@ public class ICPLauncher : MonoBehaviour
             int count = 0;
 
             int min_index;
-            for (int i = 0; i < 80 * 60 * 2; i++)
+            for (int i = 0; i < 160 * 120 * 2; i++)
             {
                 min_index = correspondence[i];
-                if (min_index >= 0 && min_index < 60 * 80 * 2 && depth3d_downsampled0[i].z > -1000.0f && depth3d_downsampled1[min_index].z > -1000.0f)
+                if (min_index >= 0 && min_index < 120 * 160 * 2 && depth3d_downsampled0[i].z > -1000.0f && depth3d_downsampled1[min_index].z > -1000.0f)
                 {
                     mu0 += depth3d_downsampled0[i];
                     mu1 += depth3d_downsampled1[min_index];
@@ -180,10 +180,10 @@ public class ICPLauncher : MonoBehaviour
             mu1 = mu1 / (float)count;
 
 
-            for (int i = 0; i < 60 * 80 * 2; i++)
+            for (int i = 0; i < 120 * 160 * 2; i++)
             {
                 min_index = correspondence[i];
-                if (min_index >= 0 && min_index < 60 * 80 * 2 && depth3d_downsampled0[i].z > -1000.0f && depth3d_downsampled1[min_index].z > -1000.0f)
+                if (min_index >= 0 && min_index < 120 * 160 * 2 && depth3d_downsampled0[i].z > -1000.0f && depth3d_downsampled1[min_index].z > -1000.0f)
                 {
                     m += OuterProduct(depth3d_downsampled0[i] - mu0, depth3d_downsampled1[min_index] - mu1);
                 }
@@ -228,11 +228,16 @@ public class ICPLauncher : MonoBehaviour
             R_all = math.mul(R_new, R_all);
             t_all = math.mul(R_new, t_all) + t_new;
 
-            res_trans.SetColumn(0, new Vector4(R_all.c0.x, R_all.c0.y, R_all.c0.z, 0.0f));
-            res_trans.SetColumn(1, new Vector4(R_all.c1.x, R_all.c1.y, R_all.c1.z, 0.0f));
-            res_trans.SetColumn(2, new Vector4(R_all.c2.x, R_all.c2.y, R_all.c2.z, 0.0f));
-            res_trans.SetColumn(3, new Vector4(t_all.x, t_all.y, t_all.z, 1.0f));
+            //R_all = float3x3.identity;
+            //t_all = t_all + mu1 - mu0;
+
+
         }
+
+        res_trans.SetColumn(0, new Vector4(R_all.c0.x, R_all.c0.y, R_all.c0.z, 0.0f));
+        res_trans.SetColumn(1, new Vector4(R_all.c1.x, R_all.c1.y, R_all.c1.z, 0.0f));
+        res_trans.SetColumn(2, new Vector4(R_all.c2.x, R_all.c2.y, R_all.c2.z, 0.0f));
+        res_trans.SetColumn(3, new Vector4(t_all.x, t_all.y, t_all.z, 1.0f));
 
         return res_trans;
     }

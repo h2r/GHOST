@@ -36,10 +36,12 @@ RWStructuredBuffer<int> correspondence;
 [numthreads(256, 1, 1)]
 void MergeDownsample(uint3 id : SV_DispatchThreadID)
 {
-    if (id.x < 60 * 80)
+    if (id.x < 120 * 160)
     {
         float4 res1;
         float4 res2;
+        float flg1 = 1.0f;
+        float flg2 = 1.0f;
 
         float i = id.x * samplingSize * samplingSize;
         float col_y = floor(i * screenData0.z);
@@ -49,6 +51,11 @@ void MergeDownsample(uint3 id : SV_DispatchThreadID)
         res1.x = (col_y - intrinsics0.y) * res1.z / intrinsics0.z;
         res1.y = (col_x - intrinsics0.x) * res1.z / intrinsics0.w;
         res1.w = 1;
+        //if (res1.y > 0.6f)
+        //{
+        //    flg1 = 0.0f;
+        //}
+        
         float4 final_pos10 = mul(_GOPose0, res1);
         float4 final_pos1 = mul(_RESTrans, final_pos10);
         
@@ -59,13 +66,18 @@ void MergeDownsample(uint3 id : SV_DispatchThreadID)
         res2.x = (col_y1 - intrinsics2.y) * res2.z / intrinsics2.z;
         res2.y = (col_x1 - intrinsics2.x) * res2.z / intrinsics2.w;
         res2.w = 1;
+        //if (res2.y > 0.6f)
+        //{
+        //    flg2 = 0.0f;
+        //}
+        
         float4 final_pos2 = mul(_GOPose1, res2);
         
-        if (depth0[depth_idx] < 0.3f)
+        if (depth0[depth_idx] < 0.3f || flg1 < 0.5f)
         {
             final_pos1.z = -1000.0f;
         }
-        if (depth2[depth_idx1] < 0.3f)
+        if (depth2[depth_idx1] < 0.3f || flg2 < 0.5f)
         {
             final_pos2.z = -1000.0f;
         }
@@ -74,10 +86,12 @@ void MergeDownsample(uint3 id : SV_DispatchThreadID)
         depth3d_downsampled1[id.x] = float3(final_pos2.x, final_pos2.y, final_pos2.z);
     }
     
-    if (id.x > 60 * 80 - 1 && id.x < 60 * 80 * 2)
+    if (id.x > 120 * 160 - 1 && id.x < 120 * 160 * 2)
     {
         float4 res1;
         float4 res2;
+        float flg3 = 1.0f;
+        float flg4 = 1.0f;
 
         float i = id.x * samplingSize * samplingSize;
         float col_y = floor(i * screenData1.z);
@@ -87,6 +101,11 @@ void MergeDownsample(uint3 id : SV_DispatchThreadID)
         res1.x = (col_y - intrinsics1.y) * res1.z / intrinsics1.z;
         res1.y = (col_x - intrinsics1.x) * res1.z / intrinsics1.w;
         res1.w = 1;
+        //if (res1.y > 0.6f)
+        //{
+        //    flg3 = 0.0f;
+        //}
+        
         float4 final_pos10 = mul(_GOPose0, res1);
         float4 final_pos1 = mul(_RESTrans, final_pos10);
         
@@ -97,13 +116,18 @@ void MergeDownsample(uint3 id : SV_DispatchThreadID)
         res2.x = (col_y1 - intrinsics3.y) * res2.z / intrinsics3.z;
         res2.y = (col_x1 - intrinsics3.x) * res2.z / intrinsics3.w;
         res2.w = 1;
+        //if (res2.y > 0.6f)
+        //{
+        //    flg4 = 0.0f;
+        //}
+        
         float4 final_pos2 = mul(_GOPose1, res2);
         
-        if (depth1[depth_idx] < 0.3f)
+        if (depth1[depth_idx] < 0.3f || flg3 < 0.5f)
         {
             final_pos1.z = -1000.0f;
         }
-        if (depth3[depth_idx1] < 0.3f)
+        if (depth3[depth_idx1] < 0.3f || flg4 < 0.5f)
         {
             final_pos2.z = -1000.0f;
         }
@@ -118,7 +142,7 @@ void MergeDownsample(uint3 id : SV_DispatchThreadID)
 [numthreads(256, 1, 1)]
 void FindCorrespondence(uint3 id : SV_DispatchThreadID)
 {
-    if (id.x < 60 * 80 * 2)
+    if (id.x < 120 * 160 * 2)
     {
         uint index = id.x;
         float3 currentPoint = depth3d_downsampled0[index];
@@ -129,7 +153,7 @@ void FindCorrespondence(uint3 id : SV_DispatchThreadID)
         if (currentPoint.z > -1000.0f)
         {
             [loop]
-            for (int i = 0; i < 80 * 60 * 2; i++)
+            for (int i = 0; i < 160 * 120 * 2; i++)
             {
                 float3 otherPoint = depth3d_downsampled1[i];
                 if (otherPoint.z > -1000.0f)
