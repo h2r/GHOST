@@ -5919,7 +5919,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   show_spot_1: 1
   show_spot_2: 1
-  activate_depth_estimation: 1
+  activate_depth_estimation: 0
   activate_ICP: 0
   activate_edge_detection: 0
   edgeThreshold: 0
@@ -5956,7 +5956,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2df5584cadb0564ba70a8849a70df5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  distanceThreshold: 0.5
+  distanceThreshold: 0.1
   max_iterations: 30
   icp_shader: {fileID: 7200000, guid: 554d4ca3d1bda7a42ac84c03b623f26c, type: 3}
   renderer0: {fileID: 326679877}

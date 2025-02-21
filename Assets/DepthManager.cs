@@ -266,45 +266,45 @@ public class DepthManager : MonoBehaviour
 
         if (activate_depth_estimation)
         {
-            if (camera_index == 0)
+            if (camera_index == 0 && temp_output_left_1 != null)
             {
                 return (temp_output_left_1, icp_trans_temp);
             }
-            else if (camera_index == 1)
+            else if (camera_index == 1 && temp_output_right_1 != null)
             {
                 return (temp_output_right_1, icp_trans_temp);
             }
-            else if (camera_index == 2)
+            else if (camera_index == 2 && temp_output_left_2 != null)
             {
                 return (temp_output_left_2, icp_trans_temp);
             }
-            else if (camera_index == 3)
+            else if (camera_index == 3 && temp_output_right_2 != null)
             {
                 return (temp_output_right_2, icp_trans_temp);
             }
+            return (new ComputeBuffer(480 * 640, sizeof(float)), icp_trans_temp);
         }
         else
         {
-            if (camera_index == 0)
+            if (camera_index == 0 && normal_temp_output_left_1 != null)
             {
                 return (normal_temp_output_left_1, icp_trans_temp);
             }
-            else if (camera_index == 1)
+            else if (camera_index == 1 && normal_temp_output_right_1 != null)
             {
                 return (normal_temp_output_right_1, icp_trans_temp);
             }
-            else if (camera_index == 2)
+            else if (camera_index == 2 && normal_temp_output_left_2 != null)
             {
                 return (normal_temp_output_left_2, icp_trans_temp);
             }
-            else if (camera_index == 3)
+            else if (camera_index == 3 && normal_temp_output_right_2 != null)
             {
                 return (normal_temp_output_right_2, icp_trans_temp);
             }
+            return (new ComputeBuffer(480 * 640, sizeof(float)), icp_trans_temp);
         }
         
-
-        return (temp_output_right_1, icp_trans_temp);
     }
 
     private (ComputeBuffer, ComputeBuffer, ComputeBuffer, ComputeBuffer, Matrix4x4) process_depth(Tensor<float> depthL_1, Tensor<float> rgbL_1, Tensor<float> depthR_1, Tensor<float> rgbR_1, Tensor<float> depthL_2, Tensor<float> rgbL_2, Tensor<float> depthR_2, Tensor<float> rgbR_2, bool is_not_moving)
