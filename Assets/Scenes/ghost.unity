@@ -3477,6 +3477,7 @@ GameObject:
   - component: {fileID: 407861665}
   - component: {fileID: 407861667}
   - component: {fileID: 407861666}
+  - component: {fileID: 407861668}
   m_Layer: 0
   m_Name: ControlMode - Joystick Arm
   m_TagString: Untagged
@@ -3506,7 +3507,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 407861664}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 60425e4b829bad44aac5896d3876163d, type: 3}
   m_Name: 
@@ -3540,7 +3541,24 @@ MonoBehaviour:
   listOfControlMappings: 
   objectsOfModeToEnable: []
   scriptsOfModeToEnable:
-  - {fileID: 407861667}
+  - {fileID: 407861668}
+--- !u!114 &407861668
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 407861664}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e79e0d138f9e604395df3f0e9a54e36, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LT1: 268435456
+  LHandTrigger: 536870912
+  LAx: 1
+  LThumbstickPress: 1024
+  joyArmPublisher: {fileID: 2123763374}
 --- !u!1001 &409472599
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3655,7 +3673,7 @@ PrefabInstance:
       objectReference: {fileID: 638278051}
     - target: {fileID: 1137478775010377568, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: use_saved_meshes
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775010377574, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_IsActive
@@ -3715,7 +3733,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775515482002, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: use_saved_meshes
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775531494915, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
@@ -3899,7 +3917,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052733856933, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: use_saved_meshes
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052733856935, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_IsActive
@@ -3971,7 +3989,7 @@ PrefabInstance:
       objectReference: {fileID: 638278051}
     - target: {fileID: 3310871053306987607, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: use_saved_meshes
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3310871053646093096, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Topic
@@ -4186,6 +4204,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3310871052575190424, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 669083943}
+    - targetCorrespondingSourceObject: {fileID: 3310871052575190424, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 669083999}
   m_SourcePrefab: {fileID: 100100000, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
 --- !u!4 &409472600 stripped
 Transform:
@@ -6264,6 +6285,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd956d9f8c3a37d4a9bc58d12f905fe4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &669083999
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 669083912}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b16a9f8f243305042a753c6cf2bc02e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Topic: /spot2/joystick_arm_pose_stamped
+  FrameId: Unity
 --- !u!1 &671513986
 GameObject:
   m_ObjectHideFlags: 0
@@ -13767,6 +13802,7 @@ Transform:
   - {fileID: 2010952379}
   - {fileID: 216091792}
   - {fileID: 177092881}
+  - {fileID: 2025026147}
   m_Father: {fileID: 1637440002}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1834046044
@@ -13809,6 +13845,7 @@ MonoBehaviour:
   modes:
   - {fileID: 718889042}
   - {fileID: 655561110}
+  - {fileID: 2025026150}
   UISpotID: Spot 2
   curModeTextMesh: {fileID: 327316659}
   generalControlsScript: {fileID: 1834046044}
@@ -14765,6 +14802,99 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 7560624518031176789, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
   m_PrefabInstance: {fileID: 409472599}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2025026146
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2025026147}
+  - component: {fileID: 2025026150}
+  - component: {fileID: 2025026149}
+  - component: {fileID: 2025026148}
+  m_Layer: 0
+  m_Name: ControlMode - Joystick Arm
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2025026147
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2025026146}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1834046043}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2025026148
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2025026146}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e79e0d138f9e604395df3f0e9a54e36, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LT1: 67108864
+  LHandTrigger: 134217728
+  LAx: 2
+  LThumbstickPress: 4
+  joyArmPublisher: {fileID: 669083999}
+--- !u!114 &2025026149
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2025026146}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60425e4b829bad44aac5896d3876163d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  RT1: 67108864
+  LT1: 268435456
+  LAx: 1
+  RAx: 2
+  spotBody: {fileID: 1939202892}
+  gripper: {fileID: 693475758}
+  generalControls: {fileID: 164802372}
+  joyArmPublisher: {fileID: 2123763374}
+  translucentSpotMaterial: {fileID: 2100000, guid: 3a64d6ad8489c3d47a28f38d7928c8f8, type: 2}
+  opaqueSpotMaterial: {fileID: 2100000, guid: c1ca4f08be289874c86dbfa1786350e9, type: 2}
+  opaqueSpotArmMaterial: {fileID: 2100000, guid: 1009aa728b6bccd49a5691c631816ea4, type: 2}
+  translucentSpotArmMaterial: {fileID: 2100000, guid: 86f42008a474fbf4aba6368837fb6993, type: 2}
+--- !u!114 &2025026150
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2025026146}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a85251ed4bea18343bb5e932eee53687, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  modeName: Joystick Arm
+  description: Arm movement using the joysticks
+  listOfControlMappings: 
+  objectsOfModeToEnable: []
+  scriptsOfModeToEnable:
+  - {fileID: 2025026148}
 --- !u!1 &2040759651
 GameObject:
   m_ObjectHideFlags: 0

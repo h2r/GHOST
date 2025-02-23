@@ -34,6 +34,7 @@ void CSMain(uint3 id : SV_DispatchThreadID)
 {
     if (id.x < 480 * 640)
     {
+        
         float4 pos = _Properties[id.x].pos;
 
         //float i = samplingSize * id.x;
@@ -58,27 +59,29 @@ void CSMain(uint3 id : SV_DispatchThreadID)
 
         if (activate_edge_detection)
         {
-            int xIndex = int(col_x);
-            int yIndex = int(col_y);
-            float gradX = _Depth[(xIndex - 1) + (yIndex + 1) * WIDTH] * -1.0
+            int xIndex = int(col_y);
+            int yIndex = int(col_x);
+            int bias = 2;
+            
+            float gradX = _Depth[(xIndex - bias) + (yIndex + bias) * WIDTH] * -1.0
                 //+ depth_ar[(xIndex    ) + (yIndex + 1) * WIDTH] * 0.0
-                + _Depth[(xIndex + 1) + (yIndex + 1) * WIDTH] * 1.0
+                + _Depth[(xIndex + bias) + (yIndex + bias) * WIDTH] * 1.0
                 + _Depth[(xIndex) + (yIndex) * WIDTH] * -2.0
                 //+ depth_ar[(xIndex - 1) + (yIndex    ) * WIDTH] * 0.0
-                + _Depth[(xIndex + 1) + (yIndex) * WIDTH] * 2.0
-                + _Depth[(xIndex - 1) + (yIndex - 1) * WIDTH] * -1.0
+                + _Depth[(xIndex + bias) + (yIndex) * WIDTH] * 2.0
+                + _Depth[(xIndex - bias) + (yIndex - bias) * WIDTH] * -1.0
                 //+ depth_ar[(xIndex    ) + (yIndex - 1) * WIDTH] * 0.0
-                + _Depth[(xIndex + 1) + (yIndex - 1) * WIDTH] * 1.0;
+                + _Depth[(xIndex + bias) + (yIndex - bias) * WIDTH] * 1.0;
             
-            float gradY = _Depth[(xIndex - 1) + (yIndex + 1) * WIDTH] * -1.0
-                + _Depth[(xIndex) + (yIndex + 1) * WIDTH] * -2.0
-                + _Depth[(xIndex + 1) + (yIndex + 1) * WIDTH] * -1.0
+            float gradY = _Depth[(xIndex - bias) + (yIndex + bias) * WIDTH] * -1.0
+                + _Depth[(xIndex) + (yIndex + bias) * WIDTH] * -2.0
+                + _Depth[(xIndex + bias) + (yIndex + bias) * WIDTH] * -1.0
                 //+ depth_ar[(xIndex    ) + (yIndex    ) * WIDTH] * 0.0
                 //+ depth_ar[(xIndex - 1) + (yIndex    ) * WIDTH] * 0.0
                 //+ depth_ar[(xIndex + 1) + (yIndex    ) * WIDTH] * 0.0
-                + _Depth[(xIndex - 1) + (yIndex - 1) * WIDTH] * 1.0
-                + _Depth[(xIndex) + (yIndex - 1) * WIDTH] * 2.0
-                + _Depth[(xIndex + 1) + (yIndex - 1) * WIDTH] * 1.0;
+                + _Depth[(xIndex - bias) + (yIndex - bias) * WIDTH] * 1.0
+                + _Depth[(xIndex) + (yIndex - bias) * WIDTH] * 2.0
+                + _Depth[(xIndex + bias) + (yIndex - bias) * WIDTH] * 1.0;
 
             float temp = gradX * gradX + gradY * gradY;
 
