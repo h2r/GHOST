@@ -4139,6 +4139,18 @@ PrefabInstance:
       propertyPath: planePublisher2
       value: 
       objectReference: {fileID: 616808292}
+    - target: {fileID: 5050333314984075172, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.02
+      objectReference: {fileID: 0}
+    - target: {fileID: 5050333314984075172, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.02
+      objectReference: {fileID: 0}
+    - target: {fileID: 5050333314984075172, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.02
+      objectReference: {fileID: 0}
     - target: {fileID: 5050333314984075174, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
       value: ws://138.16.160.231:9090
