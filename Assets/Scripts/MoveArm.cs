@@ -47,6 +47,8 @@ public class MoveArm : MonoBehaviour
     public Material opaqueSpotMaterial;
     public Material opaqueSpotArmMaterial;
     public Material translucentSpotArmMaterial;
+
+    public Material spot1_indicator;
     
 
 
@@ -189,7 +191,15 @@ public class MoveArm : MonoBehaviour
                     {
                         if (child.gameObject.name.Contains("arm"))
                         {
-                            child.gameObject.GetComponent<MeshRenderer>().material = opaqueSpotArmMaterial;
+
+                            if (child.gameObject.name == "arm0_link_el1" || child.gameObject.name == "arm0_link_wr0")
+                            {
+                                child.gameObject.GetComponent<MeshRenderer>().material = spot1_indicator;
+                            }
+                            else
+                            {
+                                child.gameObject.GetComponent<MeshRenderer>().material = opaqueSpotArmMaterial;
+                            }
                         }
                         else
                         {
