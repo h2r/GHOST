@@ -1,6 +1,7 @@
 using System;  // for Math.Tan, Math.Sign, etc.
 using UnityEngine;
 using RosSharp.RosBridgeClient; // if needed for ROS functionality
+using TMPro;
 
 public class MultiJoystickArm : MonoBehaviour
 {
@@ -9,9 +10,11 @@ public class MultiJoystickArm : MonoBehaviour
     public OVRInput.RawButton ThumbstickPress;  // thumbstick press
 
     public JoyArmPublisher joyArmPublisher;
+    public TextMeshProUGUI curModeTextMesh;
 
-    // Operation modes: 0 = Arm movement, 1 = Gripper rotation, 2 = Gripper nod/swing
+    // Operation modes: 0 = Gripper Translation, 1 = Gripper rotation, 2 = Gripper nod/swing
     private int currentMode = 0;
+    private readonly string[] modeTexts = { "Gripper Translation", "Gripper Nod", "Gripper Rotate" };
 
     // Speed/angle constants
     private const float ARM_SPEED = 0.01f;
@@ -23,6 +26,14 @@ public class MultiJoystickArm : MonoBehaviour
     private float lastLT1PressTime = 0f;
     private const float doubleClickInterval = 0.5f; // Adjust as needed
 
+    void OnEnable()
+    {
+        if (curModeTextMesh != null)
+        {
+            curModeTextMesh.text = modeTexts[currentMode];
+        }
+    }
+
     void Update()
     {
         Quaternion rotationChange = Quaternion.identity;
@@ -30,10 +41,6 @@ public class MultiJoystickArm : MonoBehaviour
         // Get thumbstick and button inputs
         Vector2 laxMove = OVRInput.Get(Ax);
 
-        // 'GetDown' only true on the exact frame the user presses the thumbstick
-        // We keep this if you still want to detect a single momentary press (e.g. for some other logic).
-        // If you're not using it for anything else, you can remove it.
-        bool isJoystickPressDown = OVRInput.GetDown(ThumbstickPress);
 
         // This returns true while LT1 is held down (every frame until released)
         bool isLT1Pressed = OVRInput.Get(T1);
@@ -48,6 +55,7 @@ public class MultiJoystickArm : MonoBehaviour
             {
                 // Double-click detected => switch mode
                 currentMode = (currentMode + 1) % 3;
+                curModeTextMesh.text = modeTexts[currentMode];
                 Debug.Log("Mode switched (LT1 double-click) -> " + currentMode);
             }
             // Update the timestamp
@@ -87,16 +95,7 @@ public class MultiJoystickArm : MonoBehaviour
                     break;
 
                 case 1:
-                    // Mode 1: Gripper rotation
-                    // Reason for using System.MathF here is because the Unity's Mathf.sign(0) will return 1
-                    gripperRotate = System.MathF.Sign(laxMove.y) * GRIPPER_ROTATE_ANGLE;
-                    Debug.Log("gripper rotation: " + gripperRotate);
-                    Debug.Log("old rotation change: " + rotationChange.x);
-                    rotationChange.x = gripperRotate;
-                    break;
-
-                case 2:
-                    // Mode 2: Gripper nod (up/down) and swing (left/right)
+                    // Mode 1: Gripper nod (up/down) and swing (left/right)
                     // Not using swing for now, found it useless
 
                     gripperNod = System.MathF.Sign(laxMove.y) * GRIPPER_SWING_ANGLE;
@@ -104,6 +103,16 @@ public class MultiJoystickArm : MonoBehaviour
 
                     //gripperSwing = System.MathF.Sign(laxMove.x) * GRIPPER_SWING_ANGLE;
                     //rotationChange.z = -gripperSwing;
+
+                    break;
+
+
+                case 2:
+                    // Mode 2: Gripper rotation
+                    // Reason for using System.MathF here is because the Unity's Mathf.sign(0) will return 1
+                    gripperRotate = System.MathF.Sign(laxMove.y) * GRIPPER_ROTATE_ANGLE;
+                    rotationChange.x = gripperRotate;
+
                     break;
             }
         }
