@@ -3663,10 +3663,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e79e0d138f9e604395df3f0e9a54e36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LT1: 268435456
-  LHandTrigger: 536870912
-  LAx: 1
-  LThumbstickPress: 1024
+  T1: 268435456
+  Ax: 1
+  ThumbstickPress: 1024
   joyArmPublisher: {fileID: 2123763374}
 --- !u!1001 &409472599
 PrefabInstance:
@@ -15138,10 +15137,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e79e0d138f9e604395df3f0e9a54e36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LT1: 67108864
-  LHandTrigger: 134217728
-  LAx: 2
-  LThumbstickPress: 4
+  T1: 67108864
+  Ax: 2
+  ThumbstickPress: 4
   joyArmPublisher: {fileID: 669083999}
 --- !u!114 &2025026149
 MonoBehaviour:
