@@ -4238,6 +4238,14 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4598551965856578696, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: spot
+      value: 
+      objectReference: {fileID: 164802370}
+    - target: {fileID: 4598551965856578696, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: spot2
+      value: 
+      objectReference: {fileID: 1834046042}
+    - target: {fileID: 4598551965856578696, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: goLower
       value: 1024
       objectReference: {fileID: 0}
@@ -4246,6 +4254,14 @@ PrefabInstance:
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 4598551965856578696, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: moveArm1
+      value: 
+      objectReference: {fileID: 947366006}
+    - target: {fileID: 4598551965856578696, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: moveArm2
+      value: 
+      objectReference: {fileID: 655561109}
+    - target: {fileID: 4598551965856578696, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: mainCamera
       value: 
       objectReference: {fileID: 1747440747}
@@ -4253,6 +4269,14 @@ PrefabInstance:
       propertyPath: cameraOffset
       value: 
       objectReference: {fileID: 771285273}
+    - target: {fileID: 4598551965856578696, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: control_system1
+      value: 
+      objectReference: {fileID: 947366004}
+    - target: {fileID: 4598551965856578696, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: control_system2
+      value: 
+      objectReference: {fileID: 655561107}
     - target: {fileID: 4598551965856578703, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -8778,6 +8802,8 @@ MonoBehaviour:
   cameraOffset: {fileID: 771285273}
   mainCamera: {fileID: 1747440747}
   speed: 0.01
+  moveArm1: {fileID: 0}
+  moveArm2: {fileID: 0}
 --- !u!4 &992590980
 Transform:
   m_ObjectHideFlags: 0
@@ -15748,6 +15774,8 @@ MonoBehaviour:
   cameraOffset: {fileID: 771285273}
   mainCamera: {fileID: 1747440747}
   speed: 0.01
+  moveArm1: {fileID: 0}
+  moveArm2: {fileID: 0}
 --- !u!4 &2044625702
 Transform:
   m_ObjectHideFlags: 0

@@ -15,6 +15,9 @@ public class HeightAdjuster : MonoBehaviour
     public Transform mainCamera;
     public float speed;
 
+    public MoveArm moveArm1;
+    public MoveArm moveArm2;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -35,43 +38,48 @@ public class HeightAdjuster : MonoBehaviour
         low = OVRInput.Get(goLower);
         high = OVRInput.Get(goHigher);
 
-        /* Go lower */
-        if (low && !high)
-        {
-            cameraOffset.position = new Vector3(cameraOffset.position.x, cameraOffset.position.y - speed, cameraOffset.position.z);
-        }
-        /* Go higher */
-        else if(!low && high)
-        {
-            cameraOffset.position = new Vector3(cameraOffset.position.x, cameraOffset.position.y + speed, cameraOffset.position.z);
-        }
-
-        if (!OVRInput.Get(LT1))
-        {
-            /* Move camera position around according to left stick */
-            leftMove = OVRInput.Get(LAx) / 50f;
-            relativeRot = Quaternion.Euler(0f, mainCamera.rotation.eulerAngles.y, 0f);// cameraTransform.rotation;
-            cameraOffset.position += relativeRot * new Vector3(leftMove.x, 0f, leftMove.y);
-
-            /* Adjust camera rotation according to right stick*/
-            rightMove = OVRInput.Get(RAx);
-            if (rightMove.magnitude > 0f)
+        // the camera should be moved when both spots are in dynamic arm mode.
+        if (moveArm1.enabled && moveArm2.enabled) {
+            if (low && !high)
             {
-                /* Only change one axis at a time */
-                if (Math.Abs(rightMove.x) > Math.Abs(rightMove.y))
+                cameraOffset.position = new Vector3(cameraOffset.position.x, cameraOffset.position.y - speed, cameraOffset.position.z);
+            }
+            /* Go higher */
+            else if (!low && high)
+            {
+                cameraOffset.position = new Vector3(cameraOffset.position.x, cameraOffset.position.y + speed, cameraOffset.position.z);
+            }
+
+            if (!OVRInput.Get(LT1))
+            {
+                /* Move camera position around according to left stick */
+                leftMove = OVRInput.Get(LAx) / 50f;
+                relativeRot = Quaternion.Euler(0f, mainCamera.rotation.eulerAngles.y, 0f);// cameraTransform.rotation;
+                cameraOffset.position += relativeRot * new Vector3(leftMove.x, 0f, leftMove.y);
+
+                /* Adjust camera rotation according to right stick*/
+                rightMove = OVRInput.Get(RAx);
+                if (rightMove.magnitude > 0f)
                 {
-                    /* Rotate left/right relative to world space */
-                    cameraOffset.Rotate(new Vector3(0f, rightMove.x, 0f), Space.World);
+                    /* Only change one axis at a time */
+                    if (Math.Abs(rightMove.x) > Math.Abs(rightMove.y))
+                    {
+                        /* Rotate left/right relative to world space */
+                        cameraOffset.Rotate(new Vector3(0f, rightMove.x, 0f), Space.World);
+                    }
+                    else
+                    {
+                        /* Rotate up/down relative to world space */
+                        /* Disabled for now */
+                        // cameraTransform.Rotate(new Vector3(rightMove.y * 0.5f, 0f, 0f), Space.World);
+                    }
+                    /* Don't allow z rotation to change */
+                    cameraOffset.rotation = Quaternion.Euler(new Vector3(cameraOffset.rotation.eulerAngles.x, cameraOffset.rotation.eulerAngles.y, 0f));
                 }
-                else
-                {
-                    /* Rotate up/down relative to world space */
-                    /* Disabled for now */
-                    // cameraTransform.Rotate(new Vector3(rightMove.y * 0.5f, 0f, 0f), Space.World);
-                }
-                /* Don't allow z rotation to change */
-                cameraOffset.rotation = Quaternion.Euler(new Vector3(cameraOffset.rotation.eulerAngles.x, cameraOffset.rotation.eulerAngles.y, 0f));
             }
         }
+
+        /* Go lower */
+        
     }
 }
