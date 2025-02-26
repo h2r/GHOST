@@ -1,4 +1,5 @@
 #pragma kernel CSMain
+#pragma kernel EdgeDetector
 
 struct MeshProperties
 {
@@ -11,6 +12,7 @@ struct MeshProperties
 RWStructuredBuffer<MeshProperties> _Properties;
 RWStructuredBuffer<float> _Depth;
 RWStructuredBuffer<float> _Sparse;
+RWStructuredBuffer<float> _Edge;
 float4x4 _GOPose;
 float4x4 _ICPTrans;
 float4 intrinsics;
@@ -21,7 +23,75 @@ float y_max;
 float z_max;
 
 float edgeThreshold;
+int maxNeighbourNum;
 bool activate_edge_detection;
+
+[numthreads(256, 1, 1)]
+void EdgeDetector(uint3 id : SV_DispatchThreadID)
+{
+    uint indexX = id.x % WIDTH;
+    uint indexY = id.x / WIDTH;
+    uint index = indexY * WIDTH + indexX;
+    
+    if (indexX > 5 && indexX < WIDTH - 5 && indexY > 5 && indexY < HEIGHT - 5)
+    {
+        if (activate_edge_detection && _Depth[index] > 0.0f)
+        {
+            const float kX[5][5] =
+            {
+                { 1, 2, 0, -2, -1 },
+                { 4, 8, 0, -8, -4 },
+                { 6, 12, 0, -12, -6 },
+                { 4, 8, 0, -8, -4 },
+                { 1, 2, 0, -2, -1 }
+            };
+
+            const float kY[5][5] =
+            {
+                { 1, 4, 6, 4, 1 },
+                { 2, 8, 12, 8, 2 },
+                { 0, 0, 0, 0, 0 },
+                { -2, -8, -12, -8, -2 },
+                { -1, -4, -6, -4, -1 }
+            };
+
+            float Gx = 0.0;
+            float Gy = 0.0;
+
+            for (int i = -2; i <= 2; i++)
+            {
+                for (int j = -2; j <= 2; j++)
+                {
+                    uint sampleX = indexX + j;
+                    uint sampleY = indexY + i;
+                    uint sampleIndex = sampleY * WIDTH + sampleX;
+
+                    float depthValue = _Depth[sampleIndex];
+
+                    Gx += depthValue * kX[i + 2][j + 2];
+                    Gy += depthValue * kY[i + 2][j + 2];
+                }
+            }
+            
+            if (sqrt(Gx * Gx + Gy * Gy) > edgeThreshold)
+            {
+                _Edge[id.x] = 1.0f;
+            }
+            else
+            {
+                _Edge[id.x] = 0.0f;
+            }
+        }
+        else
+        {
+            _Edge[id.x] = 0.0f;
+        }
+    }
+    else
+    {
+        _Edge[id.x] = 1.0f;
+    }
+}
 
 //float dx;
 //float dy;
@@ -56,38 +126,6 @@ void CSMain(uint3 id : SV_DispatchThreadID)
         //pos.z = _Depth[depth_idx];
         pos.w = 1;
         //float4 pos = {.x,_Properties[id.x].pos.y,_Properties[id.x].pos.z,1.0};
-
-        if (activate_edge_detection)
-        {
-            int xIndex = int(col_y);
-            int yIndex = int(col_x);
-            float gradX = _Depth[(xIndex - 1) + (yIndex + 1) * WIDTH] * -1.0
-                //+ depth_ar[(xIndex    ) + (yIndex + 1) * WIDTH] * 0.0
-                + _Depth[(xIndex + 1) + (yIndex + 1) * WIDTH] * 1.0
-                + _Depth[(xIndex) + (yIndex) * WIDTH] * -2.0
-                //+ depth_ar[(xIndex - 1) + (yIndex    ) * WIDTH] * 0.0
-                + _Depth[(xIndex + 1) + (yIndex) * WIDTH] * 2.0
-                + _Depth[(xIndex - 1) + (yIndex - 1) * WIDTH] * -1.0
-                //+ depth_ar[(xIndex    ) + (yIndex - 1) * WIDTH] * 0.0
-                + _Depth[(xIndex + 1) + (yIndex - 1) * WIDTH] * 1.0;
-            
-            float gradY = _Depth[(xIndex - 1) + (yIndex + 1) * WIDTH] * -1.0
-                + _Depth[(xIndex) + (yIndex + 1) * WIDTH] * -2.0
-                + _Depth[(xIndex + 1) + (yIndex + 1) * WIDTH] * -1.0
-                //+ depth_ar[(xIndex    ) + (yIndex    ) * WIDTH] * 0.0
-                //+ depth_ar[(xIndex - 1) + (yIndex    ) * WIDTH] * 0.0
-                //+ depth_ar[(xIndex + 1) + (yIndex    ) * WIDTH] * 0.0
-                + _Depth[(xIndex - 1) + (yIndex - 1) * WIDTH] * 1.0
-                + _Depth[(xIndex) + (yIndex - 1) * WIDTH] * 2.0
-                + _Depth[(xIndex + 1) + (yIndex - 1) * WIDTH] * 1.0;
-
-            float temp = gradX * gradX + gradY * gradY;
-
-            if (temp >= 0.0 && sqrt(temp) > edgeThreshold)
-            {
-                flg = 1.0f;
-            }
-        }
         
         if (pos.y < y_max || pos.z < z_max)
         {
@@ -95,6 +133,11 @@ void CSMain(uint3 id : SV_DispatchThreadID)
             pos.x = (col_y - intrinsics.y) * pos.z / intrinsics.z;
             pos.y = (col_x - intrinsics.x) * pos.z / intrinsics.w;
 
+            flg = 1.0f;
+        }
+        
+        if (_Edge[depth_idx] > 0.5f)
+        {
             flg = 1.0f;
         }
 

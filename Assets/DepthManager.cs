@@ -14,6 +14,7 @@ public class DepthManager : MonoBehaviour
     public bool activate_edge_detection;
 
     public float edgeThreshold;
+    public int maxNeighbourNum;
     //public bool mean_averaging;
     //public bool median_averaging;
     //public bool edge_detection;

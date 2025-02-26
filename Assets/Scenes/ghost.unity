@@ -3863,7 +3863,7 @@ PrefabInstance:
       objectReference: {fileID: 638278051}
     - target: {fileID: 1137478775010377568, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: use_saved_meshes
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775010377574, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_IsActive
@@ -3923,7 +3923,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775515482002, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: use_saved_meshes
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775531494915, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
@@ -4123,7 +4123,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052733856933, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: use_saved_meshes
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052733856935, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_IsActive
@@ -4195,7 +4195,7 @@ PrefabInstance:
       objectReference: {fileID: 638278051}
     - target: {fileID: 3310871053306987607, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: use_saved_meshes
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3310871053646093096, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Topic
@@ -6223,10 +6223,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   show_spot_1: 1
   show_spot_2: 1
-  activate_depth_estimation: 0
+  activate_depth_estimation: 1
   activate_ICP: 0
   activate_edge_detection: 0
-  edgeThreshold: 0.3
+  edgeThreshold: 0.5
+  maxNeighbourNum: 10
   Left_Depth_Renderer_1: {fileID: 326679877}
   Right_Depth_Renderer_1: {fileID: 107554149}
   Left_Depth_Renderer_2: {fileID: 409472603}

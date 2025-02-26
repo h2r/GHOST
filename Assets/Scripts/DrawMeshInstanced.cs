@@ -39,6 +39,7 @@ public class DrawMeshInstanced : MonoBehaviour
     private ComputeBuffer argsBuffer;
     private ComputeBuffer depthBuffer;
     private ComputeBuffer sparseBuffer;
+    private ComputeBuffer edge_buffer;
 
     public Transform target;
     public Transform auxTarget; // In case someone changes the offset rotation
@@ -76,6 +77,7 @@ public class DrawMeshInstanced : MonoBehaviour
     ComputeBuffer depth_ar_buffer;
 
     int kernel;
+    int edge_kernel;
 
     // Mesh Properties struct to be read from the GPU.
     // Size() is a convenience funciton which returns the stride of the struct.
@@ -94,6 +96,7 @@ public class DrawMeshInstanced : MonoBehaviour
     {
         pS = 1.0f;
         kernel = compute.FindKernel("CSMain");
+        edge_kernel = compute.FindKernel("EdgeDetector");
         compute.SetFloat("t", t);
 
         //size_scale = 0.002f;
@@ -127,29 +130,29 @@ public class DrawMeshInstanced : MonoBehaviour
                 }
             }
 
-            if (camera_index == 0)
-            {
-                for (int y = 10; y < 10 + 300; y++)
-                {
-                    for (int x = 10; x < 10 + (int)width - 20; x++)
-                    {
-                        int index = y * (int)width + x;
-                        depth_ar[index] = -0.0f;
-                    }
-                }
-            }
+            //if (camera_index == 0)
+            //{
+            //    for (int y = 10; y < 10 + 300; y++)
+            //    {
+            //        for (int x = 10; x < 10 + (int)width - 20; x++)
+            //        {
+            //            int index = y * (int)width + x;
+            //            depth_ar[index] = -0.0f;
+            //        }
+            //    }
+            //}
 
-            if (camera_index == 3)
-            {
-                for (int y = (int)height - 300; y < (int)height; y++)
-                {
-                    for (int x = 10; x < 10 + (int)width - 20; x++)
-                    {
-                        int index = y * (int)width + x;
-                        depth_ar[index] = -0.0f;
-                    }
-                }
-            }
+            //if (camera_index == 3)
+            //{
+            //    for (int y = (int)height - 300; y < (int)height; y++)
+            //    {
+            //        for (int x = 10; x < 10 + (int)width - 20; x++)
+            //        {
+            //            int index = y * (int)width + x;
+            //            depth_ar[index] = -0.0f;
+            //        }
+            //    }
+            //}
 
 
 
@@ -352,6 +355,7 @@ public class DrawMeshInstanced : MonoBehaviour
 
         depthBuffer = new ComputeBuffer((int)depth_ar.Length, sizeof(float));
         sparseBuffer = new ComputeBuffer((int)(480 * 640), sizeof(float));
+        edge_buffer = new ComputeBuffer((int)(480 * 640), sizeof(float));
         depthBuffer.SetData(depth_ar);
 
         SetProperties();
@@ -383,7 +387,10 @@ public class DrawMeshInstanced : MonoBehaviour
         compute.SetBuffer(kernel, "_Properties", meshPropertiesBuffer);
 
         compute.SetBuffer(kernel, "_Depth", depth_ar_buffer);
-        
+        compute.SetBuffer(edge_kernel, "_Depth", depth_ar_buffer);
+        compute.SetBuffer(edge_kernel, "_Edge", edge_buffer);
+        compute.SetBuffer(kernel, "_Edge", edge_buffer);
+
         compute.SetBuffer(kernel, "_Sparse", sparseBuffer);
 
 
@@ -465,6 +472,7 @@ public class DrawMeshInstanced : MonoBehaviour
         compute.SetFloat("z_max", depthManager.z_max);
 
         compute.SetFloat("edgeThreshold", depthManager.edgeThreshold);
+        compute.SetInt("maxNeighbourNum", depthManager.maxNeighbourNum);
         compute.SetBool("activate_edge_detection", depthManager.activate_edge_detection);
 
         //update the color image
@@ -478,6 +486,7 @@ public class DrawMeshInstanced : MonoBehaviour
 
         // We used to just be able to use `population` here, but it looks like a Unity update imposed a thread limit (65535) on my device.
         // This is probably for the best, but we have to do some more calculation.  Divide population by numthreads.x (declared in compute shader).
+        compute.Dispatch(edge_kernel, Mathf.CeilToInt(population / 64f), 1, 1);
         compute.Dispatch(kernel, Mathf.CeilToInt(population / 64f), 1, 1);
         // TODO: Merge the two point cloud using ICP
         // Question:
