@@ -65,7 +65,8 @@ public class HeightAdjuster : MonoBehaviour
                     if (Math.Abs(rightMove.x) > Math.Abs(rightMove.y))
                     {
                         /* Rotate left/right relative to world space */
-                        cameraOffset.Rotate(new Vector3(0f, rightMove.x, 0f), Space.World);
+                        Vector3 p = cameraOffset.position;
+                        cameraOffset.RotateAround(p, Vector3.up, rightMove.x);
                     }
                     else
                     {

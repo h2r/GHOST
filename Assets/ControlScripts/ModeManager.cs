@@ -8,7 +8,7 @@ using RosSharp.RosBridgeClient;
 public class ModeManager : MonoBehaviour
 {
     [SerializeField]
-    private int currMode; // currMode is set to value from 0-modes.Count      
+    public int currMode; // currMode is set to value from 0-modes.Count      
     public List<ControlMode> modes;
     //public List<TextMeshProUGUI> UICanvases;
     public string UISpotID;
@@ -24,19 +24,20 @@ public class ModeManager : MonoBehaviour
     // TODO: Default mode: LOOK THIS UP
     void Start()
     {
-        stopwatches = new Stopwatch[modes.Count];
-        for (int i = 0; i < modes.Count; i++)
-        {
-            stopwatches[i] = new Stopwatch();
-        }
-        currMode = modes.Count - 1; // Second to last mode
+        //stopwatches = new Stopwatch[modes.Count];
+        //for (int i = 0; i < modes.Count; i++)
+        //{
+        //    stopwatches[i] = new Stopwatch();
+        //}
+        //currMode = modes.Count - 1; // Second to last mode
 
-        for (int i = 0; i < modes.Count; i++)
-        {
+        currMode = -1; // LOOK THIS UP
+
+        for (int i = 0; i < modes.Count; i++) { 
             modes[i].disableMode();
         }
 
-        timeStarted = false;
+        //timeStarted = false;
         UnityEngine.Debug.Log("currentMode"+ currMode);
     }
 
@@ -49,26 +50,25 @@ public class ModeManager : MonoBehaviour
 
     public void switchToMode(int newMode)
     {
-        //disable previous mode
-        ControlMode mode = modes[currMode];
-        mode.disableMode();
-
-        currMode = newMode;
-
-        //enable current mode
-        mode = modes[currMode];
-        mode.enableMode();
-
-        //update UI
-        //UpdateUI("Mode: " + currMode.ToString() + " - " + mode.ToString());
-        if (curModeTextMesh != null)
+        if (currMode != -1) // only when the pre mode is a actual mode, then disable it.
         {
-            curModeTextMesh.text = UISpotID + " Mode: " + (currMode + 1).ToString() + " - " + mode.modeName + "\n";
+            modes[currMode].disableMode();
         }
 
-        UnityEngine.Debug.Log(mode.name);
+        ////disable previous mode
+        //ControlMode mode = modes[currMode];
+        //mode.disableMode();
+
+        currMode = newMode;
+        modes[currMode].enableMode();
+
+        if (curModeTextMesh != null)
+        {
+            curModeTextMesh.text = UISpotID + " Mode: " + (currMode + 1).ToString() + " - " + modes[currMode].modeName + "\n";
+        }
+
         // Send far plane request
-        if (mode.name == "ControlMode - Dynamic Arm")
+        if (modes[currMode].name == "ControlMode - Dynamic Arm")
         {
             planePublisher.RequestFarPlane(2000f);
         }
@@ -83,23 +83,31 @@ public class ModeManager : MonoBehaviour
         //iterate mode number
         int newMode;
 
-        // Time tracking, end stopwatch for old mode
-        if (timeStarted)
+        //// Time tracking, end stopwatch for old mode
+        //if (timeStarted)
+        //{
+        //    stopwatches[currMode].Stop();
+        //}
+        //else
+        //{
+        //    // First time a mode is activated, start other stopwatch
+        //    generalControlsScript.beginTime();
+        //    timeStarted = true;
+        //}
+
+        if (currMode == -1)
         {
-            stopwatches[currMode].Stop();
+            newMode = 0;
         }
         else
         {
-            // First time a mode is activated, start other stopwatch
-            generalControlsScript.beginTime();
-            timeStarted = true;
+            // normal 
+            newMode = (currMode + 1) % modes.Count;
         }
 
-        newMode = currMode + 1;
-        newMode %= modes.Count;
 
-        // Begin stopwatch for next mode
-        stopwatches[newMode].Start();
+        //// Begin stopwatch for next mode
+        //stopwatches[newMode].Start();
 
         switchToMode(newMode);
     }

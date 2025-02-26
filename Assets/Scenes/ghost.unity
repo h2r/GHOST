@@ -1234,6 +1234,7 @@ MonoBehaviour:
   Stow: 512
   ModeSwitch: 256
   GripperControl: 536870912
+  UserInstruction: 0
   dummyHandTransform: {fileID: 244727980}
   realHandTransform: {fileID: 914083446}
   gripperOpen: 0
@@ -3863,7 +3864,7 @@ PrefabInstance:
       objectReference: {fileID: 638278051}
     - target: {fileID: 1137478775010377568, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: use_saved_meshes
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775010377574, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_IsActive
@@ -3923,7 +3924,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775515482002, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: use_saved_meshes
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775531494915, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
@@ -4123,7 +4124,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052733856933, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: use_saved_meshes
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052733856935, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_IsActive
@@ -4195,7 +4196,7 @@ PrefabInstance:
       objectReference: {fileID: 638278051}
     - target: {fileID: 3310871053306987607, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: use_saved_meshes
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3310871053646093096, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Topic
@@ -14567,6 +14568,7 @@ MonoBehaviour:
   Stow: 2
   ModeSwitch: 1
   GripperControl: 134217728
+  UserInstruction: 0
   dummyHandTransform: {fileID: 1681050001}
   realHandTransform: {fileID: 689239495}
   gripperOpen: 0
