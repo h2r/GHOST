@@ -16,7 +16,6 @@ public class VRGeneralControls : MonoBehaviour
     public OVRInput.RawButton Stow;
     public OVRInput.RawButton ModeSwitch;
     public OVRInput.RawButton GripperControl;
-    public OVRInput.RawButton UserInstruction;
 
     public Transform dummyHandTransform; // Reference to dummy hand object
     public Transform realHandTransform; // Reference to real hand
@@ -30,7 +29,7 @@ public class VRGeneralControls : MonoBehaviour
     public RosSharp.RosBridgeClient.SetGripper gripper;
     public ModeManager manager;
 
-    /* Toggle Point Cloud - not using for multispot project 2/12/2025 */ 
+    /* Toggle Point Cloud - not using for multispot project 2/12/2025 */
     //public GameObject body;
     //public DrawMeshInstanced[] pointClouds;
     //public GameObject[] toggleObjects;
@@ -99,11 +98,6 @@ public class VRGeneralControls : MonoBehaviour
         //        killSpot.killSpot();
         //    }
         //}
-
-        if (OVRInput.GetDown(UserInstruction))
-        {
-            UnityEngine.Debug.Log("Start button press");
-        }
 
         /* Stow arm if left trigger (LT2) is pressed */
         if (OVRInput.GetDown(Stow))
