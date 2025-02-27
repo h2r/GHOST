@@ -447,16 +447,11 @@ public class DrawMeshInstanced : MonoBehaviour
 
     private void Update()
     {
-        if (!depthManager.show_spot_1 && camera_index < 2)
+        if (!depthManager.show_spot)
         {
             return;
         }
 
-
-        if (!depthManager.show_spot_2 && camera_index > 1)
-        {
-            return;
-        }
         
         UpdateTexture();
 

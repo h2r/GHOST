@@ -4116,12 +4116,12 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 69e79fe9793df704ba76e0155c83285d, type: 2}
     - target: {fileID: 3310871052733856933, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: camera_index
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052733856933, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: depthManager
       value: 
-      objectReference: {fileID: 638278051}
+      objectReference: {fileID: 1639569377}
     - target: {fileID: 3310871052733856933, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: imageScriptIndex
       value: 1
@@ -4192,12 +4192,12 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: bff9913c7b35a5b41ad8d916573e25a9, type: 2}
     - target: {fileID: 3310871053306987607, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: camera_index
-      value: 2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3310871053306987607, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: depthManager
       value: 
-      objectReference: {fileID: 638278051}
+      objectReference: {fileID: 1639569377}
     - target: {fileID: 3310871053306987607, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: use_saved_meshes
       value: 0
@@ -6410,7 +6410,7 @@ GameObject:
   - component: {fileID: 638278050}
   - component: {fileID: 638278053}
   m_Layer: 0
-  m_Name: DepthManager
+  m_Name: DepthManager1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6428,7 +6428,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a02a2ba34d563204fa10a9e25c7ccb98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Baseline: {fileID: 5022602860645237092, guid: 61dcb3c6126aff14c91a999568428a23, type: 3}
+  Baseline: {fileID: 5022602860645237092, guid: 5c0adad9409f35a498f591972a8c1bec, type: 3}
 --- !u!114 &638278051
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6441,8 +6441,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f91acdd68ae8fb440bb7ce87f9b6a346, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  show_spot_1: 1
-  show_spot_2: 1
+  show_spot: 1
   activate_depth_estimation: 1
   activate_ICP: 0
   activate_edge_detection: 0
@@ -6450,8 +6449,6 @@ MonoBehaviour:
   maxNeighbourNum: 10
   Left_Depth_Renderer_1: {fileID: 326679877}
   Right_Depth_Renderer_1: {fileID: 107554149}
-  Left_Depth_Renderer_2: {fileID: 409472603}
-  Right_Depth_Renderer_2: {fileID: 409472602}
   y_max: -0.25
   z_max: 0.5
 --- !u!4 &638278052
@@ -13123,6 +13120,95 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3310871052953474555, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
   m_PrefabInstance: {fileID: 409472599}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1639569374
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1639569378}
+  - component: {fileID: 1639569377}
+  - component: {fileID: 1639569376}
+  - component: {fileID: 1639569375}
+  m_Layer: 0
+  m_Name: DepthManager2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1639569375
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1639569374}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2df5584cadb0564ba70a8849a70df5e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  distanceThreshold: 0.5
+  max_iterations: 20
+  icp_shader: {fileID: 7200000, guid: 554d4ca3d1bda7a42ac84c03b623f26c, type: 3}
+  renderer0: {fileID: 326679877}
+  renderer1: {fileID: 107554149}
+  renderer2: {fileID: 409472603}
+  renderer3: {fileID: 409472602}
+  frames_per_icp: 10
+--- !u!114 &1639569376
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1639569374}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a02a2ba34d563204fa10a9e25c7ccb98, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Baseline: {fileID: 5022602860645237092, guid: 5c0adad9409f35a498f591972a8c1bec, type: 3}
+--- !u!114 &1639569377
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1639569374}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f91acdd68ae8fb440bb7ce87f9b6a346, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  show_spot: 1
+  activate_depth_estimation: 1
+  activate_ICP: 0
+  activate_edge_detection: 0
+  edgeThreshold: 0.5
+  maxNeighbourNum: 10
+  Left_Depth_Renderer_1: {fileID: 409472603}
+  Right_Depth_Renderer_1: {fileID: 409472602}
+  y_max: -0.25
+  z_max: 0.5
+--- !u!4 &1639569378
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1639569374}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.29661953, y: 0.30952892, z: 11.031868}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1642978338
 GameObject:
   m_ObjectHideFlags: 0
@@ -16715,4 +16801,5 @@ SceneRoots:
   - {fileID: 117133133}
   - {fileID: 331195903}
   - {fileID: 638278052}
+  - {fileID: 1639569378}
   - {fileID: 1526506750}
