@@ -39,11 +39,24 @@ public class ICPLauncher : MonoBehaviour
     private int frame_count;
     public int frames_per_icp;
 
+    private ComputeBuffer buffer0;
+    private ComputeBuffer buffer1;
+    private ComputeBuffer buffer2;
+    private ComputeBuffer buffer3;
+
     float3x3 R_all;
     float3 t_all;
 
+    TensorShape depth_shape;
+
     void Start()
     {
+        depth_shape = new TensorShape(1, 1, 480, 640);
+        buffer0 = new ComputeBuffer(480 * 640, sizeof(float));
+        buffer1 = new ComputeBuffer(480 * 640, sizeof(float));
+        buffer2 = new ComputeBuffer(480 * 640, sizeof(float));
+        buffer3 = new ComputeBuffer(480 * 640, sizeof(float));
+
         R_all = float3x3.identity;
         t_all = new float3(0.0f, 0.0f, 0.0f);
 
@@ -83,6 +96,12 @@ public class ICPLauncher : MonoBehaviour
         depth3d_downsampled0 = new float3[120 * 160 * 2];
         depth3d_downsampled1 = new float3[120 * 160 * 2];
         correspondence = new int[120 * 160 * 2];
+
+        icp_shader.SetBuffer(downsample_kernel, "depth0", buffer0);
+        icp_shader.SetBuffer(downsample_kernel, "depth1", buffer1);
+        icp_shader.SetBuffer(downsample_kernel, "depth2", buffer2);
+        icp_shader.SetBuffer(downsample_kernel, "depth3", buffer3);
+
     }
 
     void OnDestroy()
@@ -106,12 +125,8 @@ public class ICPLauncher : MonoBehaviour
         }
     }
 
-    public Matrix4x4 run_ICP(Tensor<float> depth0, Tensor<float> depth1, Tensor<float> depth2, Tensor<float> depth3, bool activate_ICP)
+    public Matrix4x4 run_ICP()
     {
-        if (!activate_ICP)
-        {
-            return Matrix4x4.identity;
-        }
 
         frame_count++;
         if (frame_count % frames_per_icp != 0)
@@ -124,10 +139,11 @@ public class ICPLauncher : MonoBehaviour
         icp_shader.SetMatrix("_GOPose0", renderer0.get_current_pose());
         icp_shader.SetMatrix("_GOPose1", renderer2.get_current_pose());
         //depth
-        icp_shader.SetBuffer(downsample_kernel, "depth0", ComputeTensorData.Pin(depth0).buffer);
-        icp_shader.SetBuffer(downsample_kernel, "depth1", ComputeTensorData.Pin(depth1).buffer);
-        icp_shader.SetBuffer(downsample_kernel, "depth2", ComputeTensorData.Pin(depth2).buffer);
-        icp_shader.SetBuffer(downsample_kernel, "depth3", ComputeTensorData.Pin(depth3).buffer);
+        buffer0.SetData(renderer0.get_depth());
+        buffer1.SetData(renderer1.get_depth());
+        buffer2.SetData(renderer2.get_depth());
+        buffer3.SetData(renderer3.get_depth());
+
 
         R_all = float3x3.identity;
         t_all = new float3(0.0f, 0.0f, 0.0f);
@@ -180,13 +196,37 @@ public class ICPLauncher : MonoBehaviour
             mu0 = mu0 / (float)count;
             mu1 = mu1 / (float)count;
 
+            float dis_threshold = 3 * math.distance(mu0, mu1);
+            float dis_all = 0.0f;
 
+            count = 0;
             for (int i = 0; i < 120 * 160 * 2; i++)
             {
                 min_index = correspondence[i];
                 if (min_index >= 0 && min_index < 120 * 160 * 2 && depth3d_downsampled0[i].z > -1000.0f && depth3d_downsampled1[min_index].z > -1000.0f)
                 {
-                    m += OuterProduct(depth3d_downsampled0[i] - mu0, depth3d_downsampled1[min_index] - mu1);
+                    dis_all += math.distance(depth3d_downsampled0[i], depth3d_downsampled1[min_index]);
+                    count ++;
+                }
+            }
+            dis_all = dis_all / (float)count;
+
+
+            for (int i = 0; i < 120 * 160 * 2; i++)
+            {
+                min_index = correspondence[i];
+
+                var p1 = depth3d_downsampled0[i];
+
+                if (min_index >= 0 && min_index < 120 * 160 * 2 && p1.z > -1000.0f && depth3d_downsampled1[min_index].z > -1000.0f)
+                {
+                    ;
+                    var p2 = depth3d_downsampled1[min_index];
+                    float curr_dis = math.distance(p1, p2);
+                    if (curr_dis < dis_all && curr_dis < dis_threshold && math.distance(p1, mu0) < 1.0f && math.distance(p2, mu1) < 1.0f)
+                    {
+                        m += OuterProduct(p1 - mu0, p2 - mu1);
+                    }
                 }
             }
 
@@ -238,7 +278,6 @@ public class ICPLauncher : MonoBehaviour
             res_trans.SetColumn(3, new Vector4(t_all.x, t_all.y, t_all.z, 1.0f));
 
         }
-
 
 
         return res_trans;

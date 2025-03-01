@@ -63,6 +63,7 @@ public class DrawMeshInstanced : MonoBehaviour
     public float pS;    // point scalar
     //public uint counter;
     //private uint numUpdates;
+    private bool calculate_icp = true;
 
     public float size_scale; //hack to current pointcloud viewing
 
@@ -142,7 +143,7 @@ public class DrawMeshInstanced : MonoBehaviour
             //    }
             //}
 
-            //if (camera_index == 3)
+            //if (camera_index == 1)
             //{
             //    for (int y = (int)height - 300; y < (int)height; y++)
             //    {
@@ -422,6 +423,11 @@ public class DrawMeshInstanced : MonoBehaviour
         return copy;
     }
 
+    public float[] get_depth()
+    {
+        return depth_ar;
+    }
+
     private void UpdateTexture()
     {
         if (use_saved_meshes)
@@ -440,8 +446,10 @@ public class DrawMeshInstanced : MonoBehaviour
         }
         sparseBuffer.SetData(depth_ar);
 
-        (depth_ar_buffer, icp_trans) = depthManager.update_depth_from_renderer(color_image, depth_ar, camera_index);
-        if (camera_index > 1) { icp_trans = Matrix4x4.identity; }
+        calculate_icp = true;
+        if (imageScriptIndex > 1) { calculate_icp = false; } // depth manager 2
+        (depth_ar_buffer, icp_trans) = depthManager.update_depth_from_renderer(color_image, depth_ar, camera_index, calculate_icp);
+        if (imageScriptIndex > 1) { icp_trans = Matrix4x4.identity; } // depth manager 2
 
     }
 

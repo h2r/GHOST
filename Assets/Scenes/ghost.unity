@@ -3846,6 +3846,10 @@ PrefabInstance:
       propertyPath: RosBridgeServerUrl
       value: ws://138.16.160.231:9090
       objectReference: {fileID: 0}
+    - target: {fileID: 1137478774876305373, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: Mass
+      value: 1.904699
+      objectReference: {fileID: 0}
     - target: {fileID: 1137478774957855930, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Mass
       value: 1.904699
@@ -3868,7 +3872,7 @@ PrefabInstance:
       objectReference: {fileID: 638278051}
     - target: {fileID: 1137478775010377568, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: use_saved_meshes
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775010377574, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_IsActive
@@ -3928,7 +3932,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775515482002, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: use_saved_meshes
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775531494915, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
@@ -4124,11 +4128,11 @@ PrefabInstance:
       objectReference: {fileID: 1639569377}
     - target: {fileID: 3310871052733856933, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: imageScriptIndex
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052733856933, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: use_saved_meshes
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052733856935, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_IsActive
@@ -4199,8 +4203,12 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1639569377}
     - target: {fileID: 3310871053306987607, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: imageScriptIndex
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871053306987607, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: use_saved_meshes
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3310871053646093096, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Topic
@@ -6442,7 +6450,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   show_spot: 1
-  activate_depth_estimation: 1
+  another_manager: {fileID: 1639569377}
+  activate_depth_estimation: 0
   activate_ICP: 0
   activate_edge_detection: 0
   edgeThreshold: 0.5
@@ -13131,7 +13140,7 @@ GameObject:
   - component: {fileID: 1639569378}
   - component: {fileID: 1639569377}
   - component: {fileID: 1639569376}
-  - component: {fileID: 1639569375}
+  - component: {fileID: 1639569379}
   m_Layer: 0
   m_Name: DepthManager2
   m_TagString: Untagged
@@ -13139,26 +13148,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1639569375
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1639569374}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d2df5584cadb0564ba70a8849a70df5e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  distanceThreshold: 0.5
-  max_iterations: 20
-  icp_shader: {fileID: 7200000, guid: 554d4ca3d1bda7a42ac84c03b623f26c, type: 3}
-  renderer0: {fileID: 326679877}
-  renderer1: {fileID: 107554149}
-  renderer2: {fileID: 409472603}
-  renderer3: {fileID: 409472602}
-  frames_per_icp: 10
 --- !u!114 &1639569376
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13185,7 +13174,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   show_spot: 1
-  activate_depth_estimation: 1
+  another_manager: {fileID: 638278051}
+  activate_depth_estimation: 0
   activate_ICP: 0
   activate_edge_detection: 0
   edgeThreshold: 0.5
@@ -13209,6 +13199,26 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1639569379
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1639569374}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2df5584cadb0564ba70a8849a70df5e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  distanceThreshold: 0.5
+  max_iterations: 20
+  icp_shader: {fileID: 7200000, guid: 554d4ca3d1bda7a42ac84c03b623f26c, type: 3}
+  renderer0: {fileID: 326679877}
+  renderer1: {fileID: 107554149}
+  renderer2: {fileID: 409472603}
+  renderer3: {fileID: 409472602}
+  frames_per_icp: 10
 --- !u!1 &1642978338
 GameObject:
   m_ObjectHideFlags: 0

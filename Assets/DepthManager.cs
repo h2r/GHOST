@@ -7,6 +7,7 @@ using Unity.Sentis;
 public class DepthManager : MonoBehaviour
 {
     public bool show_spot;
+    public DepthManager another_manager;
 
     public bool activate_depth_estimation;
     public bool activate_ICP;
@@ -121,7 +122,7 @@ public class DepthManager : MonoBehaviour
     {
     }
 
-    public (ComputeBuffer, Matrix4x4) update_depth_from_renderer(Texture2D rgb, float[] depth, int camera_index)
+    public (ComputeBuffer, Matrix4x4) update_depth_from_renderer(Texture2D rgb, float[] depth, int camera_index, bool calculate_icp)
     {
         TextureTransform tform = new();
         tform.SetDimensions(rgb.width, rgb.height, 3);
@@ -189,7 +190,7 @@ public class DepthManager : MonoBehaviour
             //bool not_moving = Left_Depth_Renderer_1.get_ready_to_freeze();
             bool not_moving = true;
             //not_moving = true;
-            (temp_output_left_1, temp_output_right_1, icp_trans_temp) = process_depth(depth_left_t_1, rgb_left_t_1, depth_right_t_1, rgb_right_t_1, not_moving);
+            (temp_output_left_1, temp_output_right_1, icp_trans_temp) = process_depth(depth_left_t_1, rgb_left_t_1, depth_right_t_1, rgb_right_t_1, not_moving, calculate_icp);
             //Debug.Log("hihi");
 
             if (depth_left_t_1 != null) { depth_left_t_1.Dispose(); }
@@ -231,7 +232,7 @@ public class DepthManager : MonoBehaviour
         
     }
 
-    private (ComputeBuffer, ComputeBuffer, Matrix4x4) process_depth(Tensor<float> depthL_1, Tensor<float> rgbL_1, Tensor<float> depthR_1, Tensor<float> rgbR_1, bool is_not_moving)
+    private (ComputeBuffer, ComputeBuffer, Matrix4x4) process_depth(Tensor<float> depthL_1, Tensor<float> rgbL_1, Tensor<float> depthR_1, Tensor<float> rgbR_1, bool is_not_moving, bool calculate_icp)
     {
         //if (median_averaging && mean_averaging)
         //{
@@ -245,10 +246,11 @@ public class DepthManager : MonoBehaviour
         //complete_output_left_2 = ComputeTensorData.Pin(depthL_2).buffer;
         //complete_output_right_2 = ComputeTensorData.Pin(depthR_2).buffer;
 
-        //ICP_trans = ICP_launcher.run_ICP(depthL_1, depthR_1, depthL_2, depthR_2, activate_ICP);
         ICP_trans = Matrix4x4.identity;
-
-
+        if (calculate_icp && activate_ICP) 
+        {
+            ICP_trans = ICP_launcher.run_ICP();
+        }
 
         // depth completion
         Debug.Log("depth completion");
