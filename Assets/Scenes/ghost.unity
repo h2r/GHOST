@@ -3867,9 +3867,17 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1747440747}
     - target: {fileID: 1137478775010377568, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: size_scale
+      value: 0.004
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478775010377568, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: depthManager
       value: 
       objectReference: {fileID: 638278051}
+    - target: {fileID: 1137478775010377568, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: icp_launcher
+      value: 
+      objectReference: {fileID: 638278053}
     - target: {fileID: 1137478775010377568, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: use_saved_meshes
       value: 1
@@ -3919,6 +3927,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1747440747}
     - target: {fileID: 1137478775515482002, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: size_scale
+      value: 0.004
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478775515482002, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: camera_index
       value: 1
       objectReference: {fileID: 0}
@@ -3926,6 +3938,10 @@ PrefabInstance:
       propertyPath: depthManager
       value: 
       objectReference: {fileID: 638278051}
+    - target: {fileID: 1137478775515482002, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: icp_launcher
+      value: 
+      objectReference: {fileID: 638278053}
     - target: {fileID: 1137478775515482002, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: imageScriptIndex
       value: 1
@@ -4119,6 +4135,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2100000, guid: 69e79fe9793df704ba76e0155c83285d, type: 2}
     - target: {fileID: 3310871052733856933, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: size_scale
+      value: 0.004
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871052733856933, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: camera_index
       value: 1
       objectReference: {fileID: 0}
@@ -4126,6 +4146,10 @@ PrefabInstance:
       propertyPath: depthManager
       value: 
       objectReference: {fileID: 1639569377}
+    - target: {fileID: 3310871052733856933, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: icp_launcher
+      value: 
+      objectReference: {fileID: 638278053}
     - target: {fileID: 3310871052733856933, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: imageScriptIndex
       value: 3
@@ -4195,6 +4219,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2100000, guid: bff9913c7b35a5b41ad8d916573e25a9, type: 2}
     - target: {fileID: 3310871053306987607, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: size_scale
+      value: 0.004
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871053306987607, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: camera_index
       value: 0
       objectReference: {fileID: 0}
@@ -4202,6 +4230,10 @@ PrefabInstance:
       propertyPath: depthManager
       value: 
       objectReference: {fileID: 1639569377}
+    - target: {fileID: 3310871053306987607, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: icp_launcher
+      value: 
+      objectReference: {fileID: 638278053}
     - target: {fileID: 3310871053306987607, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: imageScriptIndex
       value: 2
@@ -6487,8 +6519,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2df5584cadb0564ba70a8849a70df5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  distanceThreshold: 0.5
-  max_iterations: 20
+  distanceThreshold: 5
+  max_iterations: 30
   icp_shader: {fileID: 7200000, guid: 554d4ca3d1bda7a42ac84c03b623f26c, type: 3}
   renderer0: {fileID: 326679877}
   renderer1: {fileID: 107554149}

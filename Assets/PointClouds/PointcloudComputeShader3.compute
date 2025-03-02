@@ -13,6 +13,7 @@ RWStructuredBuffer<MeshProperties> _Properties;
 RWStructuredBuffer<float> _Depth;
 RWStructuredBuffer<float> _Sparse;
 RWStructuredBuffer<float> _Edge;
+RWStructuredBuffer<float3> _ICP_Res;
 float4x4 _GOPose;
 float4x4 _ICPTrans;
 float4 intrinsics;
@@ -170,6 +171,37 @@ void CSMain(uint3 id : SV_DispatchThreadID)
         {
             _Properties[id.x].pos.w = _Sparse[depth_idx] * t + (1 - t);
         }
+        
+        //int widthF2 = 640;
+        //int widthF1 = 160;
+    
+        //int startRow = (480 - 120) / 2; // 180
+        //int startCol = (640 - 160) / 2; // 240
+
+        //int r = id.x / widthF2;
+        //int c = id.x % widthF2;
+        
+    
+        
+        
+        //if (r < startRow || r >= startRow + 120 || c < startCol || c >= startCol + 16)
+        //{
+        //    int rPrime = r - startRow;
+        //    int cPrime = c - startCol;
+        //    uint idxx = rPrime * widthF1 + cPrime;
+            
+        //    _Properties[id.x].pos.x = _ICP_Res[idxx].x;
+        //    _Properties[id.x].pos.y = _ICP_Res[idxx].y;
+        //    _Properties[id.x].pos.z = _ICP_Res[idxx].z;
+        //    _Properties[id.x].pos.w = _Sparse[depth_idx] * t + (1 - t);
+        //}
+        //else
+        //{
+        //    _Properties[id.x].pos.x = 1000.0f;
+        //    _Properties[id.x].pos.y = 1000.0f;
+        //    _Properties[id.x].pos.z = 1000.0f;
+        //    _Properties[id.x].pos.w = 0.0f;
+        //}
 
         
     //_Properties[id.x].pos.w = abs(id.x * samplingSize - i);

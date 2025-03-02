@@ -16,6 +16,8 @@ using static Meta.XR.MRUtilityKit.Data;
 
 public class DrawMeshInstanced : MonoBehaviour
 {
+    public ICPLauncher icp_launcher;
+    float3[] current_icp_res;
     private Matrix4x4 icp_trans;
 
     public DepthManager depthManager;
@@ -40,6 +42,7 @@ public class DrawMeshInstanced : MonoBehaviour
     private ComputeBuffer depthBuffer;
     private ComputeBuffer sparseBuffer;
     private ComputeBuffer edge_buffer;
+    private ComputeBuffer icp_res_buffer;
 
     public Transform target;
     public Transform auxTarget; // In case someone changes the offset rotation
@@ -131,7 +134,7 @@ public class DrawMeshInstanced : MonoBehaviour
                 }
             }
 
-            //if (camera_index == 0)
+            //if (imageScriptIndex == 0)
             //{
             //    for (int y = 10; y < 10 + 300; y++)
             //    {
@@ -334,6 +337,7 @@ public class DrawMeshInstanced : MonoBehaviour
     {
 
         depth_ar_buffer = new ComputeBuffer(480 * 640, sizeof(float));
+        icp_res_buffer = new ComputeBuffer(120 * 160, sizeof(float) * 3);
         //int kernel = compute.FindKernel("CSMain");
 
         // Argument buffer used by DrawMeshInstancedIndirect.
@@ -391,6 +395,11 @@ public class DrawMeshInstanced : MonoBehaviour
         compute.SetBuffer(edge_kernel, "_Depth", depth_ar_buffer);
         compute.SetBuffer(edge_kernel, "_Edge", edge_buffer);
         compute.SetBuffer(kernel, "_Edge", edge_buffer);
+
+        current_icp_res = icp_launcher.get_current_float3(imageScriptIndex);
+        icp_res_buffer.SetData(current_icp_res);
+
+        compute.SetBuffer(kernel, "_ICP_Res", icp_res_buffer);
 
         compute.SetBuffer(kernel, "_Sparse", sparseBuffer);
 

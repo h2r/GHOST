@@ -8,6 +8,8 @@ using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.LinearAlgebra.Single;
 using Meta.WitAi;
 using Unity.Sentis;
+using System.IO;
+using System;
 
 public class ICPLauncher : MonoBehaviour
 {
@@ -33,6 +35,7 @@ public class ICPLauncher : MonoBehaviour
 
     private float3[] depth3d_downsampled0;
     private float3[] depth3d_downsampled1;
+    private float3[] depth3d_return;
     private int[] correspondence;
 
     Matrix4x4 res_trans;
@@ -49,8 +52,63 @@ public class ICPLauncher : MonoBehaviour
 
     TensorShape depth_shape;
 
+    //public float3[] get_d0()
+    //{
+    //    return depth3d_downsampled0;
+    //}
+    //public float3[] get_d1()
+    //{
+    //    return depth3d_downsampled1;
+    //}
+
+    public float3[] get_current_float3(int image_index)
+    {
+        if (image_index == 0)
+        {
+            for (int i = 0; i < 120 * 160; i++)
+            {
+                depth3d_return[i] = depth3d_downsampled0[i];
+            }
+        }
+        if (image_index == 1)
+        {
+            for (int i = 0; i < 120 * 160; i++)
+            {
+                depth3d_return[i] = depth3d_downsampled0[i + 120 * 160];
+            }
+        }
+        if (image_index == 2)
+        {
+            for (int i = 0; i < 120 * 160; i++)
+            {
+                depth3d_return[i] = depth3d_downsampled1[i];
+            }
+        }
+        if (image_index == 3)
+        {
+            for (int i = 0; i < 120 * 160; i++)
+            {
+                depth3d_return[i] = depth3d_downsampled1[i + 120 * 160];
+            }
+        }
+        //string path = "Assets/PointClouds/dedpth3d_icp_return_" + image_index + ".txt";
+
+        //// Use StreamWriter to write to the file. Overwrites old content by default.
+        //using (StreamWriter writer = new StreamWriter(path, false))
+        //{
+        //    foreach (float3 data in depth3d_return)
+        //    {
+        //        // Write each float3 as "x, y, z" on its own line.
+        //        writer.WriteLine($"{data.x}, {data.y}, {data.z}");
+        //    }
+        //}
+        return depth3d_return;
+    }
+
     void Start()
     {
+        depth3d_return = new float3[120 * 160];
+
         depth_shape = new TensorShape(1, 1, 480, 640);
         buffer0 = new ComputeBuffer(480 * 640, sizeof(float));
         buffer1 = new ComputeBuffer(480 * 640, sizeof(float));
@@ -137,7 +195,9 @@ public class ICPLauncher : MonoBehaviour
 
         //pose
         icp_shader.SetMatrix("_GOPose0", renderer0.get_current_pose());
-        icp_shader.SetMatrix("_GOPose1", renderer2.get_current_pose());
+        icp_shader.SetMatrix("_GOPose1", renderer1.get_current_pose());
+        icp_shader.SetMatrix("_GOPose2", renderer2.get_current_pose());
+        icp_shader.SetMatrix("_GOPose3", renderer3.get_current_pose());
         //depth
         buffer0.SetData(renderer0.get_depth());
         buffer1.SetData(renderer1.get_depth());
@@ -196,6 +256,8 @@ public class ICPLauncher : MonoBehaviour
             mu0 = mu0 / (float)count;
             mu1 = mu1 / (float)count;
 
+            print(count);
+
             float dis_threshold = 3 * math.distance(mu0, mu1);
             float dis_all = 0.0f;
 
@@ -220,7 +282,6 @@ public class ICPLauncher : MonoBehaviour
 
                 if (min_index >= 0 && min_index < 120 * 160 * 2 && p1.z > -1000.0f && depth3d_downsampled1[min_index].z > -1000.0f)
                 {
-                    ;
                     var p2 = depth3d_downsampled1[min_index];
                     float curr_dis = math.distance(p1, p2);
                     if (curr_dis < dis_all && curr_dis < dis_threshold && math.distance(p1, mu0) < 1.0f && math.distance(p2, mu1) < 1.0f)
