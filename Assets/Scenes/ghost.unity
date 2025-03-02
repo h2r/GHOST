@@ -3880,7 +3880,7 @@ PrefabInstance:
       objectReference: {fileID: 638278053}
     - target: {fileID: 1137478775010377568, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: use_saved_meshes
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775010377574, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_IsActive
@@ -3948,7 +3948,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775515482002, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: use_saved_meshes
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775531494915, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
@@ -4156,7 +4156,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052733856933, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: use_saved_meshes
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052733856935, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_IsActive
@@ -4197,6 +4197,10 @@ PrefabInstance:
     - target: {fileID: 3310871052953474555, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871053294454782, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: Mass
+      value: 1.904699
       objectReference: {fileID: 0}
     - target: {fileID: 3310871053306987601, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_IsActive
@@ -4240,7 +4244,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3310871053306987607, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: use_saved_meshes
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3310871053646093096, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Topic
@@ -6484,7 +6488,7 @@ MonoBehaviour:
   show_spot: 1
   another_manager: {fileID: 1639569377}
   activate_depth_estimation: 0
-  activate_ICP: 0
+  activate_ICP: 1
   activate_edge_detection: 0
   edgeThreshold: 0.5
   maxNeighbourNum: 10
@@ -6492,6 +6496,7 @@ MonoBehaviour:
   Right_Depth_Renderer_1: {fileID: 107554149}
   y_max: -0.25
   z_max: 0.5
+  show_sampling_res: 0
 --- !u!4 &638278052
 Transform:
   m_ObjectHideFlags: 0
@@ -6519,14 +6524,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2df5584cadb0564ba70a8849a70df5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  distanceThreshold: 5
-  max_iterations: 30
+  distanceThreshold: 1
+  max_iterations: 20
   icp_shader: {fileID: 7200000, guid: 554d4ca3d1bda7a42ac84c03b623f26c, type: 3}
   renderer0: {fileID: 326679877}
   renderer1: {fileID: 107554149}
   renderer2: {fileID: 409472603}
   renderer3: {fileID: 409472602}
-  frames_per_icp: 10
+  frames_per_icp: 5
 --- !u!1 &645022056
 GameObject:
   m_ObjectHideFlags: 0
@@ -13216,6 +13221,7 @@ MonoBehaviour:
   Right_Depth_Renderer_1: {fileID: 409472602}
   y_max: -0.25
   z_max: 0.5
+  show_sampling_res: 0
 --- !u!4 &1639569378
 Transform:
   m_ObjectHideFlags: 0

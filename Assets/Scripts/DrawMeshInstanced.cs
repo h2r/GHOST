@@ -396,10 +396,14 @@ public class DrawMeshInstanced : MonoBehaviour
         compute.SetBuffer(edge_kernel, "_Edge", edge_buffer);
         compute.SetBuffer(kernel, "_Edge", edge_buffer);
 
-        current_icp_res = icp_launcher.get_current_float3(imageScriptIndex);
-        icp_res_buffer.SetData(current_icp_res);
+        compute.SetBool("show_sampling_res", depthManager.show_sampling_res);
+        if (depthManager.show_sampling_res)
+        {
+            current_icp_res = icp_launcher.get_current_float3(imageScriptIndex);
+            icp_res_buffer.SetData(current_icp_res);
 
-        compute.SetBuffer(kernel, "_ICP_Res", icp_res_buffer);
+            compute.SetBuffer(kernel, "_ICP_Res", icp_res_buffer);
+        }
 
         compute.SetBuffer(kernel, "_Sparse", sparseBuffer);
 

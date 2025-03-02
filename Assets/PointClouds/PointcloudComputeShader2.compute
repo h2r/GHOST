@@ -22,6 +22,7 @@ float samplingSize;
 float t;
 float y_max;
 float z_max;
+bool show_sampling_res;
 
 float edgeThreshold;
 int maxNeighbourNum;
@@ -172,36 +173,27 @@ void CSMain(uint3 id : SV_DispatchThreadID)
             _Properties[id.x].pos.w = _Sparse[depth_idx] * t + (1 - t);
         }
         
-        //int widthF2 = 640;
-        //int widthF1 = 160;
-    
-        //int startRow = (480 - 120) / 2; // 180
-        //int startCol = (640 - 160) / 2; // 240
-
-        //int r = id.x / widthF2;
-        //int c = id.x % widthF2;
-        
     
         
-        
-        //if (r < startRow || r >= startRow + 120 || c < startCol || c >= startCol + 16)
-        //{
-        //    int rPrime = r - startRow;
-        //    int cPrime = c - startCol;
-        //    uint idxx = rPrime * widthF1 + cPrime;
+        if (show_sampling_res)
+        {
+            if (id.x % 16 == 0)
+            {
             
-        //    _Properties[id.x].pos.x = _ICP_Res[idxx].x;
-        //    _Properties[id.x].pos.y = _ICP_Res[idxx].y;
-        //    _Properties[id.x].pos.z = _ICP_Res[idxx].z;
-        //    _Properties[id.x].pos.w = _Sparse[depth_idx] * t + (1 - t);
-        //}
-        //else
-        //{
-        //    _Properties[id.x].pos.x = 1000.0f;
-        //    _Properties[id.x].pos.y = 1000.0f;
-        //    _Properties[id.x].pos.z = 1000.0f;
-        //    _Properties[id.x].pos.w = 0.0f;
-        //}
+                _Properties[id.x].pos.x = _ICP_Res[id.x / 16].x;
+                _Properties[id.x].pos.y = _ICP_Res[id.x / 16].y;
+                _Properties[id.x].pos.z = _ICP_Res[id.x / 16].z;
+                _Properties[id.x].pos.w = _Sparse[depth_idx] * t + (1 - t);
+            }
+            else
+            {
+                _Properties[id.x].pos.x = 1000.0f;
+                _Properties[id.x].pos.y = 1000.0f;
+                _Properties[id.x].pos.z = 1000.0f;
+                _Properties[id.x].pos.w = 0.0f;
+            }
+        }
+
 
         
     //_Properties[id.x].pos.w = abs(id.x * samplingSize - i);

@@ -75,6 +75,8 @@ public class DepthManager : MonoBehaviour
     public float y_max;
     public float z_max;
 
+    public bool show_sampling_res;
+
     // Start is called before the first frame update
     void Start()
     {

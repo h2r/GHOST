@@ -67,10 +67,10 @@ namespace RosSharp.RosBridgeClient
         {
             if (message == null || targetObject == null)
                 return;
-            Debug.Log(message.header.frame_id + "  " + message.child_frame_id);
+            //Debug.Log(message.header.frame_id + "  " + message.child_frame_id);
             if (message.header.frame_id == target && message.child_frame_id == source)
             {
-                Debug.Log("xyz: " + message.transform.translation.y.ToString());
+                //Debug.Log("xyz: " + message.transform.translation.y.ToString());
                 UnityEngine.Vector3 position = GetPosition(message).Ros2Unity();
                 UnityEngine.Quaternion rotation = GetRotation(message).Ros2Unity();
 

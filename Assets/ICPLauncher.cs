@@ -256,38 +256,40 @@ public class ICPLauncher : MonoBehaviour
             mu0 = mu0 / (float)count;
             mu1 = mu1 / (float)count;
 
-            print(count);
+            Debug.Log(count);
 
-            float dis_threshold = 3 * math.distance(mu0, mu1);
-            float dis_all = 0.0f;
+            //float dis_threshold = 3 * math.distance(mu0, mu1);
+            //float dis_threshold = 100.0f;
+            //float dis_all = 100.0f;
 
-            count = 0;
+            //count = 0;
+            //for (int i = 0; i < 120 * 160 * 2; i++)
+            //{
+            //    min_index = correspondence[i];
+            //    if (min_index >= 0 && min_index < 120 * 160 * 2 && depth3d_downsampled0[i].z > -1000.0f && depth3d_downsampled1[min_index].z > -1000.0f)
+            //    {
+            //        dis_all += math.distance(depth3d_downsampled0[i], depth3d_downsampled1[min_index]);
+            //        count ++;
+            //    }
+            //}
+            //dis_all = dis_all / (float)count;
+
+
             for (int i = 0; i < 120 * 160 * 2; i++)
             {
                 min_index = correspondence[i];
-                if (min_index >= 0 && min_index < 120 * 160 * 2 && depth3d_downsampled0[i].z > -1000.0f && depth3d_downsampled1[min_index].z > -1000.0f)
-                {
-                    dis_all += math.distance(depth3d_downsampled0[i], depth3d_downsampled1[min_index]);
-                    count ++;
-                }
-            }
-            dis_all = dis_all / (float)count;
 
-
-            for (int i = 0; i < 120 * 160 * 2; i++)
-            {
-                min_index = correspondence[i];
-
-                var p1 = depth3d_downsampled0[i];
+                float3 p1 = depth3d_downsampled0[i];
 
                 if (min_index >= 0 && min_index < 120 * 160 * 2 && p1.z > -1000.0f && depth3d_downsampled1[min_index].z > -1000.0f)
                 {
-                    var p2 = depth3d_downsampled1[min_index];
-                    float curr_dis = math.distance(p1, p2);
-                    if (curr_dis < dis_all && curr_dis < dis_threshold && math.distance(p1, mu0) < 1.0f && math.distance(p2, mu1) < 1.0f)
-                    {
-                        m += OuterProduct(p1 - mu0, p2 - mu1);
-                    }
+                    float3 p2 = depth3d_downsampled1[min_index];
+                    //float curr_dis = math.distance(p1, p2);
+                    //if (curr_dis < dis_all && curr_dis < dis_threshold && math.distance(p1, mu0) < 1.0f && math.distance(p2, mu1) < 1.0f)
+                    //{
+                    //    m += OuterProduct(p1 - mu0, p2 - mu1);
+                    //}
+                    m += OuterProduct(p1 - mu0, p2 - mu1);
                 }
             }
 
