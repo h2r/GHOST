@@ -13,6 +13,9 @@ using System;
 
 public class ICPLauncher : MonoBehaviour
 {
+    int W = 160;
+    int H = 120;
+
     public float distanceThreshold;
     public int max_iterations;
 
@@ -21,7 +24,7 @@ public class ICPLauncher : MonoBehaviour
     int downsample_kernel;
     int correspondence_kernel;
 
-    int groupsX = Mathf.CeilToInt(160.0f * 120.0f * 2.0f / 256.0f);
+    int groupsX = Mathf.CeilToInt(160 * 120 * 2.0f / 256.0f);
 
 
     public DrawMeshInstanced renderer0;
@@ -65,30 +68,30 @@ public class ICPLauncher : MonoBehaviour
     {
         if (image_index == 0)
         {
-            for (int i = 0; i < 120 * 160; i++)
+            for (int i = 0; i < H * W; i++)
             {
                 depth3d_return[i] = depth3d_downsampled0[i];
             }
         }
         if (image_index == 1)
         {
-            for (int i = 0; i < 120 * 160; i++)
+            for (int i = 0; i < H * W; i++)
             {
-                depth3d_return[i] = depth3d_downsampled0[i + 120 * 160];
+                depth3d_return[i] = depth3d_downsampled0[i + H * W];
             }
         }
         if (image_index == 2)
         {
-            for (int i = 0; i < 120 * 160; i++)
+            for (int i = 0; i < H * W; i++)
             {
                 depth3d_return[i] = depth3d_downsampled1[i];
             }
         }
         if (image_index == 3)
         {
-            for (int i = 0; i < 120 * 160; i++)
+            for (int i = 0; i < H * W; i++)
             {
-                depth3d_return[i] = depth3d_downsampled1[i + 120 * 160];
+                depth3d_return[i] = depth3d_downsampled1[i + H * W];
             }
         }
         //string path = "Assets/PointClouds/dedpth3d_icp_return_" + image_index + ".txt";
@@ -107,7 +110,7 @@ public class ICPLauncher : MonoBehaviour
 
     void Start()
     {
-        depth3d_return = new float3[120 * 160];
+        depth3d_return = new float3[W * H];
 
         depth_shape = new TensorShape(1, 1, 480, 640);
         buffer0 = new ComputeBuffer(480 * 640, sizeof(float));
@@ -139,9 +142,9 @@ public class ICPLauncher : MonoBehaviour
         icp_shader.SetFloat("t", 1);
 
         // compute buffers
-        depth3d_downsampled0Buffer = new ComputeBuffer(120 * 160 * 2, sizeof(float) * 3);
-        depth3d_downsampled1Buffer = new ComputeBuffer(120 * 160 * 2, sizeof(float) * 3);
-        correspondenceBuffer = new ComputeBuffer(120 * 160 * 2, sizeof(int));
+        depth3d_downsampled0Buffer = new ComputeBuffer(W * H * 2, sizeof(float) * 3);
+        depth3d_downsampled1Buffer = new ComputeBuffer(W * H * 2, sizeof(float) * 3);
+        correspondenceBuffer = new ComputeBuffer(W * H * 2, sizeof(int));
 
         icp_shader.SetBuffer(downsample_kernel, "depth3d_downsampled0", depth3d_downsampled0Buffer);
         icp_shader.SetBuffer(downsample_kernel, "depth3d_downsampled1", depth3d_downsampled1Buffer);
@@ -151,9 +154,9 @@ public class ICPLauncher : MonoBehaviour
         icp_shader.SetBuffer(correspondence_kernel, "correspondence", correspondenceBuffer);
 
         // datas
-        depth3d_downsampled0 = new float3[120 * 160 * 2];
-        depth3d_downsampled1 = new float3[120 * 160 * 2];
-        correspondence = new int[120 * 160 * 2];
+        depth3d_downsampled0 = new float3[W * H * 2];
+        depth3d_downsampled1 = new float3[W * H * 2];
+        correspondence = new int[W * H * 2];
 
         icp_shader.SetBuffer(downsample_kernel, "depth0", buffer0);
         icp_shader.SetBuffer(downsample_kernel, "depth1", buffer1);
@@ -243,10 +246,10 @@ public class ICPLauncher : MonoBehaviour
             int count = 0;
 
             int min_index;
-            for (int i = 0; i < 160 * 120 * 2; i++)
+            for (int i = 0; i < W * H * 2; i++)
             {
                 min_index = correspondence[i];
-                if (min_index >= 0 && min_index < 120 * 160 * 2 && depth3d_downsampled0[i].z > -1000.0f && depth3d_downsampled1[min_index].z > -1000.0f)
+                if (min_index >= 0 && min_index < W * H * 2 && depth3d_downsampled0[i].z > -1000.0f && depth3d_downsampled1[min_index].z > -1000.0f)
                 {
                     mu0 += depth3d_downsampled0[i];
                     mu1 += depth3d_downsampled1[min_index];
@@ -275,13 +278,13 @@ public class ICPLauncher : MonoBehaviour
             //dis_all = dis_all / (float)count;
 
 
-            for (int i = 0; i < 120 * 160 * 2; i++)
+            for (int i = 0; i < W * H * 2; i++)
             {
                 min_index = correspondence[i];
 
                 float3 p1 = depth3d_downsampled0[i];
 
-                if (min_index >= 0 && min_index < 120 * 160 * 2 && p1.z > -1000.0f && depth3d_downsampled1[min_index].z > -1000.0f)
+                if (min_index >= 0 && min_index < W * H * 2 && p1.z > -1000.0f && depth3d_downsampled1[min_index].z > -1000.0f)
                 {
                     float3 p2 = depth3d_downsampled1[min_index];
                     //float curr_dis = math.distance(p1, p2);

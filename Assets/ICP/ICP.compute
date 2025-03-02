@@ -31,6 +31,9 @@ float4 screenData3;
 
 float distanceThreshold;
 
+#define W 160
+#define H 120
+
 // ===========================================================
 RWStructuredBuffer<int> correspondence;
 
@@ -38,7 +41,7 @@ RWStructuredBuffer<int> correspondence;
 [numthreads(256, 1, 1)]
 void MergeDownsample(uint3 id : SV_DispatchThreadID)
 {
-    if (id.x < 120 * 160)
+    if (id.x < W * H)
     {
         //uint row = id.x / 160;
         //uint col = id.x % 160;
@@ -96,7 +99,7 @@ void MergeDownsample(uint3 id : SV_DispatchThreadID)
         depth3d_downsampled1[id.x] = float3(final_pos2.x, final_pos2.y, final_pos2.z);
     }
     
-    if (id.x > 120 * 160 - 1 && id.x < 120 * 160 * 2)
+    if (id.x > W * H - 1 && id.x < W * H * 2)
     {
         
         //uint row = (id.x - 120 * 160) / 160;
@@ -112,7 +115,7 @@ void MergeDownsample(uint3 id : SV_DispatchThreadID)
         float flg3 = 1.0f;
         float flg4 = 1.0f;
 
-        float i = (id.x - 160 * 120) * samplingSize * samplingSize;
+        float i = (id.x - W * H) * samplingSize * samplingSize;
         float col_y = floor(i * screenData1.z);
         float col_x = i - floor(i * screenData1.z) * screenData1.x;
         uint depth_idx = (screenData1.x * (screenData1.y - col_y - 1)) + (screenData1.x - col_x - 1);
@@ -161,7 +164,7 @@ void MergeDownsample(uint3 id : SV_DispatchThreadID)
 [numthreads(256, 1, 1)]
 void FindCorrespondence(uint3 id : SV_DispatchThreadID)
 {
-    if (id.x < 120 * 160 * 2)
+    if (id.x < W * H * 2)
     {
         uint index = id.x;
         float3 currentPoint = depth3d_downsampled0[index];
@@ -172,7 +175,7 @@ void FindCorrespondence(uint3 id : SV_DispatchThreadID)
         if (currentPoint.z > -1000.0f)
         {
             [loop]
-            for (int i = 0; i < 160 * 120 * 2; i++)
+            for (int i = 0; i < W * H * 2; i++)
             {
                 float3 otherPoint = depth3d_downsampled1[i];
                 if (otherPoint.z > -1000.0f)

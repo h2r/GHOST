@@ -337,7 +337,7 @@ public class DrawMeshInstanced : MonoBehaviour
     {
 
         depth_ar_buffer = new ComputeBuffer(480 * 640, sizeof(float));
-        icp_res_buffer = new ComputeBuffer(120 * 160, sizeof(float) * 3);
+        icp_res_buffer = new ComputeBuffer(160 * 120, sizeof(float) * 3);
         //int kernel = compute.FindKernel("CSMain");
 
         // Argument buffer used by DrawMeshInstancedIndirect.
@@ -400,6 +400,7 @@ public class DrawMeshInstanced : MonoBehaviour
         if (depthManager.show_sampling_res)
         {
             current_icp_res = icp_launcher.get_current_float3(imageScriptIndex);
+            Debug.Log(current_icp_res.Length);
             icp_res_buffer.SetData(current_icp_res);
 
             compute.SetBuffer(kernel, "_ICP_Res", icp_res_buffer);
