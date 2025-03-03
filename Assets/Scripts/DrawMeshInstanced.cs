@@ -402,9 +402,8 @@ public class DrawMeshInstanced : MonoBehaviour
             current_icp_res = icp_launcher.get_current_float3(imageScriptIndex);
             Debug.Log(current_icp_res.Length);
             icp_res_buffer.SetData(current_icp_res);
-
-            compute.SetBuffer(kernel, "_ICP_Res", icp_res_buffer);
         }
+        compute.SetBuffer(kernel, "_ICP_Res", icp_res_buffer);
 
         compute.SetBuffer(kernel, "_Sparse", sparseBuffer);
 

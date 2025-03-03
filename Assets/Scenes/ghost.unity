@@ -3772,11 +3772,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1137478773745686185, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
-      value: ws://138.16.160.231:9090
+      value: ws://138.16.160.230:9090
       objectReference: {fileID: 0}
     - target: {fileID: 1137478773798299895, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
-      value: ws://138.16.160.231:9090
+      value: ws://138.16.160.230:9090
       objectReference: {fileID: 0}
     - target: {fileID: 1137478773834856098, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Mass
@@ -3784,7 +3784,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1137478774015165004, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
-      value: ws://138.16.160.231:9090
+      value: ws://138.16.160.230:9090
       objectReference: {fileID: 0}
     - target: {fileID: 1137478774281308965, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_IsActive
@@ -3792,7 +3792,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1137478774418001489, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
-      value: ws://138.16.160.231:9090
+      value: ws://138.16.160.230:9090
       objectReference: {fileID: 0}
     - target: {fileID: 1137478774418669916, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_Name
@@ -3840,11 +3840,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1137478774429119365, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
-      value: ws://138.16.160.231:9090
+      value: ws://138.16.160.230:9090
       objectReference: {fileID: 0}
     - target: {fileID: 1137478774821249048, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
-      value: ws://138.16.160.231:9090
+      value: ws://138.16.160.230:9090
       objectReference: {fileID: 0}
     - target: {fileID: 1137478774876305373, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Mass
@@ -3880,7 +3880,7 @@ PrefabInstance:
       objectReference: {fileID: 638278053}
     - target: {fileID: 1137478775010377568, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: use_saved_meshes
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775010377574, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_IsActive
@@ -3896,7 +3896,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775393663287, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
-      value: ws://138.16.160.231:9090
+      value: ws://138.16.160.230:9090
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775509555832, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_LocalPosition.x
@@ -3948,11 +3948,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775515482002, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: use_saved_meshes
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775531494915, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
-      value: ws://138.16.160.231:9090
+      value: ws://138.16.160.230:9090
       objectReference: {fileID: 0}
     - target: {fileID: 1731835587416712801, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -3972,15 +3972,23 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 69608c040680c064cbc57c4aad92e21f, type: 2}
     - target: {fileID: 3310871051605526706, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
-      value: ws://138.16.160.231:9090
+      value: ws://138.16.160.230:9090
       objectReference: {fileID: 0}
     - target: {fileID: 3310871051605526707, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Topic
       value: /spot/stream_image2/frontleft_depth_in_visual_frame/image
       objectReference: {fileID: 0}
+    - target: {fileID: 3310871051634603366, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: RosBridgeServerUrl
+      value: ws://138.16.160.230:9090
+      objectReference: {fileID: 0}
     - target: {fileID: 3310871051789667126, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Mass
       value: 1.904699
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871052305709435, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: RosBridgeServerUrl
+      value: ws://138.16.160.230:9090
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052421458295, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Mass
@@ -4012,7 +4020,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052575190430, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
-      value: ws://138.16.160.231:9090
+      value: ws://138.16.160.230:9090
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052575190431, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Topic
@@ -4052,7 +4060,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052589847488, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
-      value: ws://138.16.160.231:9090
+      value: ws://138.16.160.230:9090
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052589847489, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Topic
@@ -4112,7 +4120,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052718925108, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
-      value: ws://138.16.160.231:9090
+      value: ws://138.16.160.230:9090
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052718925109, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Topic
@@ -4156,7 +4164,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052733856933, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: use_saved_meshes
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052733856935, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_IsActive
@@ -4197,6 +4205,10 @@ PrefabInstance:
     - target: {fileID: 3310871052953474555, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871053140754944, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: RosBridgeServerUrl
+      value: ws://138.16.160.230:9090
       objectReference: {fileID: 0}
     - target: {fileID: 3310871053294454782, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Mass
@@ -4244,7 +4256,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3310871053306987607, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: use_saved_meshes
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3310871053646093096, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Topic
@@ -4252,7 +4264,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3310871053646093103, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
-      value: ws://138.16.160.231:9090
+      value: ws://138.16.160.230:9090
       objectReference: {fileID: 0}
     - target: {fileID: 3699985937472072438, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_IsActive
@@ -6487,10 +6499,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   show_spot: 1
   another_manager: {fileID: 1639569377}
-  activate_depth_estimation: 0
+  activate_depth_estimation: 1
   activate_ICP: 1
-  activate_edge_detection: 0
-  edgeThreshold: 0.5
+  activate_edge_detection: 1
+  edgeThreshold: 10
   maxNeighbourNum: 10
   Left_Depth_Renderer_1: {fileID: 326679877}
   Right_Depth_Renderer_1: {fileID: 107554149}
@@ -6524,14 +6536,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2df5584cadb0564ba70a8849a70df5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  distanceThreshold: 1
-  max_iterations: 20
+  iteration_per_threshold: 5
+  frames_per_icp: 20
+  icp_threshold: 0.1
+  use_manual_threshold: 1
   icp_shader: {fileID: 7200000, guid: 554d4ca3d1bda7a42ac84c03b623f26c, type: 3}
   renderer0: {fileID: 326679877}
   renderer1: {fileID: 107554149}
   renderer2: {fileID: 409472603}
   renderer3: {fileID: 409472602}
-  frames_per_icp: 5
 --- !u!1 &645022056
 GameObject:
   m_ObjectHideFlags: 0
@@ -13212,10 +13225,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   show_spot: 1
   another_manager: {fileID: 638278051}
-  activate_depth_estimation: 0
+  activate_depth_estimation: 1
   activate_ICP: 0
-  activate_edge_detection: 0
-  edgeThreshold: 0.5
+  activate_edge_detection: 1
+  edgeThreshold: 10
   maxNeighbourNum: 10
   Left_Depth_Renderer_1: {fileID: 409472603}
   Right_Depth_Renderer_1: {fileID: 409472602}
@@ -13249,14 +13262,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2df5584cadb0564ba70a8849a70df5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  distanceThreshold: 0.5
-  max_iterations: 20
+  iteration_per_threshold: 0
+  frames_per_icp: 10
+  icp_threshold: 0
+  use_manual_threshold: 0
   icp_shader: {fileID: 7200000, guid: 554d4ca3d1bda7a42ac84c03b623f26c, type: 3}
   renderer0: {fileID: 326679877}
   renderer1: {fileID: 107554149}
   renderer2: {fileID: 409472603}
   renderer3: {fileID: 409472602}
-  frames_per_icp: 10
 --- !u!1 &1642978338
 GameObject:
   m_ObjectHideFlags: 0

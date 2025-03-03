@@ -55,33 +55,24 @@ void MergeDownsample(uint3 id : SV_DispatchThreadID)
         float4 res2;
         float flg1 = 1.0f;
         float flg2 = 1.0f;
-        
-        int sampleRows = 120;
-        int sampleCols = 160;
-        int imageWidth = 640;
-        
-        int blockRow = id.x / sampleCols;
-        int blockCol = id.x % sampleCols;
-        
-        int sampleRow = blockRow * 4 + 1;
-        int sampleCol = blockCol * 4 + 1;
 
-        float i = sampleRow * imageWidth + sampleCol;
-        float col_y = floor(i * screenData0.z);
-        float col_x = i - floor(i * screenData0.z) * screenData0.x;
-        uint depth_idx = (screenData0.x * (screenData0.y - col_y - 1)) + (screenData0.x - col_x - 1);      
-        res1.z = depth0[depth_idx] * t + (1 - t);
-        res1.x = (col_y - intrinsics0.y) * res1.z / intrinsics0.z;
-        res1.y = (col_x - intrinsics0.x) * res1.z / intrinsics0.w;
+        float i = id.x * samplingSize;
+        float col_y = floor(i * screenData1.z);
+        float col_x = i - floor(i * screenData1.z) * screenData1.x;
+        uint depth_idx = (screenData1.x * (screenData1.y - col_y - 1)) + (screenData1.x - col_x - 1);
+        res1.z = depth1[depth_idx] * t + (1 - t);
+        res1.x = (col_y - intrinsics1.y) * res1.z / intrinsics1.z;
+        res1.y = (col_x - intrinsics1.x) * res1.z / intrinsics1.w;
         res1.w = 1;
         //if (res1.y > 0.6f)
         //{
         //    flg1 = 0.0f;
         //}
         
-        float4 final_pos10 = mul(_GOPose0, res1);
+        float4 final_pos10 = mul(_GOPose1, res1);
         float4 final_pos1 = mul(_RESTrans, final_pos10);
         
+        i = id.x * samplingSize * samplingSize;
         float col_y1 = floor(i * screenData2.z);
         float col_x1 = i - floor(i * screenData2.z) * screenData2.x;
         uint depth_idx1 = (screenData2.x * (screenData2.y - col_y1 - 1)) + (screenData2.x - col_x1 - 1);
@@ -96,7 +87,7 @@ void MergeDownsample(uint3 id : SV_DispatchThreadID)
         
         float4 final_pos2 = mul(_GOPose2, res2);
         
-        if (depth0[depth_idx] < 0.3f || flg1 < 0.5f)
+        if (depth1[depth_idx] < 0.3f || flg1 < 0.5f)
         {
             final_pos1.z = -1000.0f;
         }
@@ -124,18 +115,8 @@ void MergeDownsample(uint3 id : SV_DispatchThreadID)
         float4 res2;
         float flg3 = 1.0f;
         float flg4 = 1.0f;
-        
-        int sampleRows = 120;
-        int sampleCols = 160;
-        int imageWidth = 640;
-        
-        int blockRow = (id.x - W * H) / sampleCols;
-        int blockCol = (id.x - W * H) % sampleCols;
-        
-        int sampleRow = blockRow * 4 + 1;
-        int sampleCol = blockCol * 4 + 1;
-        
-        float i = sampleRow * imageWidth + sampleCol;
+
+        float i = (id.x - W * H) * samplingSize + W * H;
         float col_y = floor(i * screenData1.z);
         float col_x = i - floor(i * screenData1.z) * screenData1.x;
         uint depth_idx = (screenData1.x * (screenData1.y - col_y - 1)) + (screenData1.x - col_x - 1);
@@ -151,6 +132,7 @@ void MergeDownsample(uint3 id : SV_DispatchThreadID)
         float4 final_pos10 = mul(_GOPose1, res1);
         float4 final_pos1 = mul(_RESTrans, final_pos10);
         
+        i = (id.x - W * H) * samplingSize * samplingSize;
         float col_y1 = floor(i * screenData3.z);
         float col_x1 = i - floor(i * screenData3.z) * screenData3.x;
         uint depth_idx1 = (screenData3.x * (screenData3.y - col_y1 - 1)) + (screenData3.x - col_x1 - 1);

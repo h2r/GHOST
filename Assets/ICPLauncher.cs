@@ -16,8 +16,11 @@ public class ICPLauncher : MonoBehaviour
     int W = 160;
     int H = 120;
 
-    public float distanceThreshold;
-    public int max_iterations;
+    //public float distanceThreshold;
+    public int iteration_per_threshold;
+    public int frames_per_icp;
+    public float icp_threshold;
+    public bool use_manual_threshold;
 
     public ComputeShader icp_shader;
 
@@ -43,7 +46,7 @@ public class ICPLauncher : MonoBehaviour
 
     Matrix4x4 res_trans;
     private int frame_count;
-    public int frames_per_icp;
+    
 
     private ComputeBuffer buffer0;
     private ComputeBuffer buffer1;
@@ -54,6 +57,10 @@ public class ICPLauncher : MonoBehaviour
     float3 t_all;
 
     TensorShape depth_shape;
+
+    float global_min_error = 10000000000.0f;
+
+    float[] threshold_list = new float[] { 1.0f, 0.8f, 0.5f, 0.3f, 0.1f};
 
     //public float3[] get_d0()
     //{
@@ -188,7 +195,6 @@ public class ICPLauncher : MonoBehaviour
 
     public Matrix4x4 run_ICP()
     {
-
         frame_count++;
         if (frame_count % frames_per_icp != 0)
         {
@@ -196,11 +202,7 @@ public class ICPLauncher : MonoBehaviour
             return res_trans;
         }
 
-        //pose
-        icp_shader.SetMatrix("_GOPose0", renderer0.get_current_pose());
-        icp_shader.SetMatrix("_GOPose1", renderer1.get_current_pose());
-        icp_shader.SetMatrix("_GOPose2", renderer2.get_current_pose());
-        icp_shader.SetMatrix("_GOPose3", renderer3.get_current_pose());
+
         //depth
         buffer0.SetData(renderer0.get_depth());
         buffer1.SetData(renderer1.get_depth());
@@ -211,138 +213,70 @@ public class ICPLauncher : MonoBehaviour
         R_all = float3x3.identity;
         t_all = new float3(0.0f, 0.0f, 0.0f);
 
-        res_trans = Matrix4x4.identity;
+        Matrix4x4 temp_trans = Matrix4x4.identity;
 
-        for (int j = 0; j < max_iterations; j++)
+        (temp_trans, global_min_error) = run_one_ICP(res_trans);
+
+        temp_trans = res_trans;
+        float temp_error = 0.0f;
+
+        if (use_manual_threshold)
         {
+            icp_shader.SetFloat("distanceThreshold", icp_threshold);
 
-            // ============================================================== //
-
-
-            icp_shader.SetMatrix("_RESTrans", res_trans);
-            icp_shader.SetFloat("distanceThreshold", distanceThreshold);
+            float local_error = 100000000.0f;
+            Matrix4x4 local_trans = Matrix4x4.identity;
 
 
-            //dispatch
-            icp_shader.Dispatch(downsample_kernel, groupsX, 1, 1);
 
-            // ============================================================== //
-
-            //dispatch
-            icp_shader.Dispatch(correspondence_kernel, groupsX, 1, 1);
-
-            // ============================================================== //
-
-            depth3d_downsampled0Buffer.GetData(depth3d_downsampled0);
-            depth3d_downsampled1Buffer.GetData(depth3d_downsampled1);
-            correspondenceBuffer.GetData(correspondence);
-
-            // ============================================================== //
-
-            float3 mu0 = new float3(0.0f, 0.0f, 0.0f);
-            float3 mu1 = new float3(0.0f, 0.0f, 0.0f);
-            float3x3 m = float3x3.zero;
-
-            int count = 0;
-
-            int min_index;
-            for (int i = 0; i < W * H * 2; i++)
+            for (int j = 0; j < iteration_per_threshold * 5; j++)
             {
-                min_index = correspondence[i];
-                if (min_index >= 0 && min_index < W * H * 2 && depth3d_downsampled0[i].z > -1000.0f && depth3d_downsampled1[min_index].z > -1000.0f)
+                (temp_trans, temp_error) = run_one_ICP(local_trans);
+                if (temp_error < local_error)
                 {
-                    mu0 += depth3d_downsampled0[i];
-                    mu1 += depth3d_downsampled1[min_index];
-                    count++;
-                }
-            }
-            mu0 = mu0 / (float)count;
-            mu1 = mu1 / (float)count;
-
-            Debug.Log(count);
-
-            //float dis_threshold = 3 * math.distance(mu0, mu1);
-            //float dis_threshold = 100.0f;
-            //float dis_all = 100.0f;
-
-            //count = 0;
-            //for (int i = 0; i < 120 * 160 * 2; i++)
-            //{
-            //    min_index = correspondence[i];
-            //    if (min_index >= 0 && min_index < 120 * 160 * 2 && depth3d_downsampled0[i].z > -1000.0f && depth3d_downsampled1[min_index].z > -1000.0f)
-            //    {
-            //        dis_all += math.distance(depth3d_downsampled0[i], depth3d_downsampled1[min_index]);
-            //        count ++;
-            //    }
-            //}
-            //dis_all = dis_all / (float)count;
-
-
-            for (int i = 0; i < W * H * 2; i++)
-            {
-                min_index = correspondence[i];
-
-                float3 p1 = depth3d_downsampled0[i];
-
-                if (min_index >= 0 && min_index < W * H * 2 && p1.z > -1000.0f && depth3d_downsampled1[min_index].z > -1000.0f)
-                {
-                    float3 p2 = depth3d_downsampled1[min_index];
-                    //float curr_dis = math.distance(p1, p2);
-                    //if (curr_dis < dis_all && curr_dis < dis_threshold && math.distance(p1, mu0) < 1.0f && math.distance(p2, mu1) < 1.0f)
-                    //{
-                    //    m += OuterProduct(p1 - mu0, p2 - mu1);
-                    //}
-                    m += OuterProduct(p1 - mu0, p2 - mu1);
+                    local_error = temp_error;
+                    local_trans = temp_trans;
                 }
             }
 
-
-            // ============================================================== //
-
-            float[,] result = new float[3, 3];
-            result[0, 0] = m.c0.x; result[0, 1] = m.c1.x; result[0, 2] = m.c2.x;
-            result[1, 0] = m.c0.y; result[1, 1] = m.c1.y; result[1, 2] = m.c2.y;
-            result[2, 0] = m.c0.z; result[2, 1] = m.c1.z; result[2, 2] = m.c2.z;
-
-            Matrix<float> mathNetM = DenseMatrix.OfArray(result);
-
-            var svd = mathNetM.Svd(computeVectors: true);
-            Matrix<float> U = svd.U;
-            //Vector<float> S = svd.S;
-            Matrix<float> VT = svd.VT;
-            Matrix<float> V = VT.Transpose();
-            Matrix<float> UT = U.Transpose();
-
-            // ============================================================= //
-
-            Matrix<float> Rmat = V * UT;
-
-            var Rdet = Rmat.Determinant();
-            if (Rdet < 0)
+            if (local_error < global_min_error)
             {
-                for (int row = 0; row < 3; row++)
-                    V[row, 2] = -V[row, 2];
-                Rmat = V * UT;
+                global_min_error = local_error;
+                res_trans = local_trans;
             }
+        }
+        else
+        {
+            for (int i = 0; i < threshold_list.Length; i++)
+            {
+                icp_shader.SetFloat("distanceThreshold", threshold_list[i]);
 
-            float3x3 R_new = new float3x3(
-                Rmat[0, 0], Rmat[0, 1], Rmat[0, 2],
-                Rmat[1, 0], Rmat[1, 1], Rmat[1, 2],
-                Rmat[2, 0], Rmat[2, 1], Rmat[2, 2]
-            );
-            float3 t_new = mu1 - math.mul(R_new, mu0);
+                float local_error = 100000000.0f;
+                Matrix4x4 local_trans = Matrix4x4.identity;
 
-            R_all = math.mul(R_new, R_all);
-            t_all = math.mul(R_new, t_all) + t_new;
+                for (int j = 0; j < iteration_per_threshold; j++)
+                {
+                    (temp_trans, temp_error) = run_one_ICP(local_trans);
+                    if (temp_error < local_error)
+                    {
+                        local_error = temp_error;
+                        local_trans = temp_trans;
+                    }
+                }
 
-            //R_all = float3x3.identity;
-            //t_all = t_all + mu1 - mu0;
+                if (local_error < global_min_error)
+                {
+                    global_min_error = local_error;
+                    res_trans = local_trans;
 
-            res_trans.SetColumn(0, new Vector4(R_all.c0.x, R_all.c0.y, R_all.c0.z, 0.0f));
-            res_trans.SetColumn(1, new Vector4(R_all.c1.x, R_all.c1.y, R_all.c1.z, 0.0f));
-            res_trans.SetColumn(2, new Vector4(R_all.c2.x, R_all.c2.y, R_all.c2.z, 0.0f));
-            res_trans.SetColumn(3, new Vector4(t_all.x, t_all.y, t_all.z, 1.0f));
+                    //Debug.Log(threshold_list[i]);
+                    //Debug.Log("Current Global Min: " + global_min_error);
+                    //Debug.Log("res_trans: " + res_trans);
+                }
 
+                //Debug.Log("Current Global Min: " + global_min_error);
+                //Debug.Log("res_trans: " + res_trans);
+            }
         }
 
 
@@ -356,5 +290,133 @@ public class ICPLauncher : MonoBehaviour
             p.y * q.x, p.y * q.y, p.y * q.z,
             p.z * q.x, p.z * q.y, p.z * q.z
         );
+    }
+
+    private (Matrix4x4, float) run_one_ICP(Matrix4x4 current_trans)
+    {
+        //pose
+        icp_shader.SetMatrix("_GOPose0", renderer0.get_current_pose());
+        icp_shader.SetMatrix("_GOPose1", renderer1.get_current_pose());
+        icp_shader.SetMatrix("_GOPose2", renderer2.get_current_pose());
+        icp_shader.SetMatrix("_GOPose3", renderer3.get_current_pose());
+
+        icp_shader.SetMatrix("_RESTrans", current_trans);
+
+        //dispatch
+        icp_shader.Dispatch(downsample_kernel, groupsX, 1, 1);
+
+        // ============================================================== //
+
+        //dispatch
+        icp_shader.Dispatch(correspondence_kernel, groupsX, 1, 1);
+
+        // ============================================================== //
+
+        depth3d_downsampled0Buffer.GetData(depth3d_downsampled0);
+        depth3d_downsampled1Buffer.GetData(depth3d_downsampled1);
+        correspondenceBuffer.GetData(correspondence);
+
+        // ============================================================== //
+
+        float3 mu0 = new float3(0.0f, 0.0f, 0.0f);
+        float3 mu1 = new float3(0.0f, 0.0f, 0.0f);
+        float3x3 m = float3x3.zero;
+
+        int count = 0;
+
+        int min_index;
+        for (int i = 0; i < W * H * 2; i++)
+        {
+            min_index = correspondence[i];
+            if (min_index >= 0 && min_index < W * H * 2 && depth3d_downsampled0[i].z > -1000.0f && depth3d_downsampled1[min_index].z > -1000.0f)
+            {
+                mu0 += depth3d_downsampled0[i];
+                mu1 += depth3d_downsampled1[min_index];
+                count++;
+            }
+        }
+        mu0 = mu0 / (float)count;
+        mu1 = mu1 / (float)count;
+
+        // ============================================================== //
+
+        for (int i = 0; i < W * H * 2; i++)
+        {
+            min_index = correspondence[i];
+
+            float3 p1 = depth3d_downsampled0[i];
+
+            if (min_index >= 0 && min_index < W * H * 2 && p1.z > -1000.0f && depth3d_downsampled1[min_index].z > -1000.0f)
+            {
+                float3 p2 = depth3d_downsampled1[min_index];
+                m += OuterProduct(p1 - mu0, p2 - mu1);
+            }
+        }
+
+        // ============================================================== //
+
+        float[,] result = new float[3, 3];
+        result[0, 0] = m.c0.x; result[0, 1] = m.c1.x; result[0, 2] = m.c2.x;
+        result[1, 0] = m.c0.y; result[1, 1] = m.c1.y; result[1, 2] = m.c2.y;
+        result[2, 0] = m.c0.z; result[2, 1] = m.c1.z; result[2, 2] = m.c2.z;
+
+        Matrix<float> mathNetM = DenseMatrix.OfArray(result);
+
+        var svd = mathNetM.Svd(computeVectors: true);
+        Matrix<float> U = svd.U;
+        //Vector<float> S = svd.S;
+        Matrix<float> VT = svd.VT;
+        Matrix<float> V = VT.Transpose();
+        Matrix<float> UT = U.Transpose();
+
+        // ============================================================= //
+
+        Matrix<float> Rmat = V * UT;
+
+        var Rdet = Rmat.Determinant();
+        if (Rdet < 0)
+        {
+            for (int row = 0; row < 3; row++)
+                V[row, 2] = -V[row, 2];
+            Rmat = V * UT;
+        }
+
+        float3x3 R_new = new float3x3(
+            Rmat[0, 0], Rmat[0, 1], Rmat[0, 2],
+            Rmat[1, 0], Rmat[1, 1], Rmat[1, 2],
+            Rmat[2, 0], Rmat[2, 1], Rmat[2, 2]
+        );
+        float3 t_new = mu1 - math.mul(R_new, mu0);
+
+        Matrix4x4 new_trans = current_trans;
+        Matrix4x4 T_new = Matrix4x4.identity;
+
+        T_new.SetColumn(0, new Vector4(R_new.c0.x, R_new.c1.x, R_new.c2.x, 0));
+        T_new.SetColumn(1, new Vector4(R_new.c0.y, R_new.c1.y, R_new.c2.y, 0));
+        T_new.SetColumn(2, new Vector4(R_new.c0.z, R_new.c1.z, R_new.c2.z, 0));
+        T_new.SetColumn(3, new Vector4(t_new.x, t_new.y, t_new.z, 1));
+
+        new_trans = math.mul(T_new, new_trans);
+
+        // ============================================================= //
+        
+        float totalError = 0.0f;
+        for (int i = 0; i < W * H * 2; i++)
+        {
+            min_index = correspondence[i];
+            float3 p1 = depth3d_downsampled0[i];
+
+            
+            if (min_index >= 0 && min_index < W * H * 2 && p1.z > -1000.0f && depth3d_downsampled1[min_index].z > -1000.0f)
+            {
+                float3 transformedPoint = new_trans.MultiplyPoint3x4(depth3d_downsampled0[i]);
+                float3 targetPoint = depth3d_downsampled1[min_index];
+                totalError += math.lengthsq(transformedPoint - targetPoint);
+            }
+        }
+
+        float mse = totalError / count;
+
+        return (new_trans, mse);
     }
 }
