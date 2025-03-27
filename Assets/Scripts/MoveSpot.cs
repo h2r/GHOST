@@ -25,96 +25,73 @@ namespace RosSharp.RosBridgeClient
     	// Update is called once per frame
     	void Update()
     	{
-            
+            bool moved = false;
+            Vector3 linearVelocity  = new Vector3(0.0f, 0.0f, 0.0f);
+            Vector3 angularVelocity = new Vector3(0.0f, 0.0f, 0.0f);
 
             if (Input.GetKey("w"))
         	{
             	print("move forward");
-            	Vector3 linearVelocity = new Vector3(0.0f, 0.0f,  0.5f);
-            	Vector3 angularVelocity = new Vector3(0.0f, 0.0f, 0.0f);
-	            message.linear = GetGeometryVector3(linearVelocity.Unity2Ros());
-            	message.angular = GetGeometryVector3(-angularVelocity.Unity2Ros());
-
-
-            	Publish(message);
+                linearVelocity += new Vector3(0.0f, 0.0f, 0.5f);
+                moved = true;
         	}
-
         	if (Input.GetKey("s"))
         	{
             	print("move back");
-            	Vector3 linearVelocity = new Vector3(0.0f, 0.0f, -0.5f);
-            	Vector3 angularVelocity = new Vector3(0.0f, 0.0f, 0.0f);
-	            message.linear = GetGeometryVector3(linearVelocity.Unity2Ros());
-            	message.angular = GetGeometryVector3(-angularVelocity.Unity2Ros());
-
-
-            	Publish(message);
-        	}
-
+            	linearVelocity -= new Vector3(0.0f, 0.0f, 0.5f);
+                moved = true;
+            }
         	if (Input.GetKey("d"))
         	{
             	print("move right");
-            	Vector3 linearVelocity = new Vector3(0.5f, 0.0f, 0.0f);
-            	Vector3 angularVelocity = new Vector3(0.0f, 0.0f, 0.0f);
-	            message.linear = GetGeometryVector3(linearVelocity.Unity2Ros());
-            	message.angular = GetGeometryVector3(-angularVelocity.Unity2Ros());
-
-
-            	Publish(message);
-        	}
-
+            	linearVelocity += new Vector3(0.5f, 0.0f, 0.0f);
+                moved = true;
+            }
         	if (Input.GetKey("a"))
         	{
             	print("move left");
-            	Vector3 linearVelocity = new Vector3(-0.5f, 0.0f, 0.0f);
-            	Vector3 angularVelocity = new Vector3(0.0f, 0.0f, 0.0f);
-	            message.linear = GetGeometryVector3(linearVelocity.Unity2Ros());
-            	message.angular = GetGeometryVector3(-angularVelocity.Unity2Ros());
-
-
-            	Publish(message);
-        	}
-
+            	linearVelocity -= new Vector3(0.5f, 0.0f, 0.0f);
+                moved = true;
+            }
         	if (Input.GetKey("e"))
         	{
             	print("rotate right");
-            	Vector3 linearVelocity = new Vector3(0.0f, 0.0f, 0.0f);
-            	Vector3 angularVelocity = new Vector3(0.0f, 0.5f, 0.0f);
-	            message.linear = GetGeometryVector3(linearVelocity.Unity2Ros());
-            	message.angular = GetGeometryVector3(-angularVelocity.Unity2Ros());
-
-            	Publish(message);
-        	}
+            	angularVelocity += new Vector3(0.0f, 0.5f, 0.0f);
+                moved = true;
+            }
        		if (Input.GetKey("q"))
         	{
             	print("rotate left");
-            	Vector3 linearVelocity = new Vector3(0.0f, 0.0f, 0.0f);
-            	Vector3 angularVelocity = new Vector3(0.0f, -0.5f, 0.0f);
-	            message.linear = GetGeometryVector3(linearVelocity.Unity2Ros());
-            	message.angular = GetGeometryVector3(-angularVelocity.Unity2Ros());
+            	angularVelocity -= new Vector3(0.0f, 0.5f, 0.0f);
+                moved = true;
+            }            
 
-            	Publish(message);
-        	}
             if (Input.GetKeyDown("i"))
             {
                 Debug.Log("Saving");
                 save = true;
             }
-    	}
 
+            if (moved)
+            {
+                message.linear = GetGeometryVector3(linearVelocity.Unity2Ros());
+                message.angular = GetGeometryVector3(-angularVelocity.Unity2Ros());
 
-        public void drive(Vector2 wasd, float rotate, float height)
+                Publish(message);
+            }
+        }
+
+        public void drive(float forward, float strafe, float turn, float look, float height)
         {
+            Vector3 linearVelocity = new Vector3(strafe, height, forward);
+            Vector3 angularVelocity = new Vector3(look, turn, 0.0f);
 
-            Vector3 linearVelocity = new Vector3(wasd[0], height, wasd[1]);
-            Vector3 angularVelocity = new Vector3(0.0f, rotate, 0.0f);
-            Debug.Log("in drive" + linearVelocity);
-            Debug.Log("in drive" + linearVelocity.Unity2Ros());
-            Debug.Log("message" + message);
+            Debug.Log("Driving with linear velocity: " + linearVelocity + " (Unity2Ros: " + linearVelocity.Unity2Ros() + ")");
+            Debug.Log("Driving with angular velocity: " + angularVelocity + " (Unity2Ros: " + (-angularVelocity.Unity2Ros()) + ")");
+
             message.linear = GetGeometryVector3(linearVelocity.Unity2Ros());
             message.angular = GetGeometryVector3(-angularVelocity.Unity2Ros());
-                
-            
+
             Publish(message);
         }
 
