@@ -42,8 +42,8 @@ public class VRGeneralControls : MonoBehaviour
 
     void Start()
     {
-        gripperOpen = false;
-        gripper.closeGripper();
+        //gripperOpen = false;
+        //gripper.closeGripper();
         //hintUI.enabled = true;
         //UI.enabled = false;
         //UIShowing = false;

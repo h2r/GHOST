@@ -18,6 +18,7 @@ public class VRDriveSpot : MonoBehaviour
     public RosSharp.RosBridgeClient.MoveSpot drive;
     //todo: add spot 2 drive
     public RosSharp.RosBridgeClient.MoveSpot drive2;
+    
     public RawImageSubscriber[] depthSubscribers;
     public JPEGImageSubscriber[] colorSubscribers; // Must be in the same order as depthSubscribers
     public OdometrySubscriber odometrySubscriber;
@@ -35,6 +36,11 @@ public class VRDriveSpot : MonoBehaviour
     private const float HEIGHT_MIN = -0.1f;
     private const float HEIGHT_MAX = 0.3f;
 
+    private const float FORWARD_SPEED = 0.5f;
+    private const float TURN_SPEED = 0.75f;
+    private const float LOOK_SPEED = 0.75f;
+
+
     void Start()
     {
         if (defaultLow)
@@ -46,11 +52,13 @@ public class VRDriveSpot : MonoBehaviour
             height = 0f;
         }
         origCloudTransforms = new Tuple<Vector3, Quaternion>[pointClouds.Length];
-        for (int i = 0; i < origCloudTransforms.Length; i++ )
+        for (int i = 0; i < origCloudTransforms.Length; i++)
         {
-            origCloudTransforms[i] = new Tuple<Vector3, Quaternion>(pointClouds[i].transform.localPosition, pointClouds[i].transform.localRotation);
+            origCloudTransforms[i] = new Tuple<Vector3, Quaternion>(
+                pointClouds[i].transform.localPosition,
+                pointClouds[i].transform.localRotation
+            );
         }
-
         depthsTempChanged = new bool[pointClouds.Length];
     }
 
@@ -78,34 +86,67 @@ public class VRDriveSpot : MonoBehaviour
             heightChanged = true;
         }
 
-
         // Read base movement values, adjust speeds
+        Vector2 leftInput  = OVRInput.Get(LAx);
+        Vector2 rightInput = OVRInput.Get(RAx);
+
+        float forward = leftInput.y * FORWARD_SPEED;
+        float strafe  = leftInput.x * FORWARD_SPEED;
+
+        float turn = rightInput.x * TURN_SPEED;
+        float look = rightInput.y * TURN_SPEED;
+
         rightMove = OVRInput.Get(RAx) * 0.75f;
         leftMove = OVRInput.Get(LAx) * 0.5f;
         leftMove.x *= 0.5f;
 
-        // Move the robot if any adjustments have been made
-        if (rightMove.x != 0f || leftMove.magnitude != 0f || heightChanged)
+        if (Mathf.Abs(forward) > 0.01f || 
+            Mathf.Abs(strafe) > 0.01f  ||
+            Mathf.Abs(turn) > 0.01f    || 
+            Mathf.Abs(look) > 0.01f    ||
+            heightChanged)
         {
-            // Set movement so only one direction is moved with the left stick at a time
-            if (Mathf.Abs(leftMove.x) > Mathf.Abs(leftMove.y)) { leftMove.y = 0; }
-            else if (Mathf.Abs(leftMove.y) > Mathf.Abs(leftMove.x)) { leftMove.x = 0; }
-
-            if (OVRInput.Get(RT1)) {
-                drive2.drive(leftMove, rightMove.x, height);
-            } else
+            if (OVRInput.Get(RT1))
             {
-                drive.drive(leftMove, rightMove.x, height);
+                drive2.drive(forward, strafe, turn, look, height);
+            }
+            else
+            {
+                drive.drive(forward, strafe, turn, look, height);
             }
 
-            //todo:add spot 2 drive
-
-            // Pause depth history for 1.5 seconds
+            // Pause depth history update for 1.5 seconds
             foreach (DrawMeshInstanced ds in pointClouds)
             {
                 ds.continue_update();
             }
+        } else
+        {
+            Debug.Log("No movement this frame!");
         }
+
+        //// Move the robot if any adjustments have been made
+        //if (rightMove.x != 0f || leftMove.magnitude != 0f || heightChanged)
+        //{
+        //    // Set movement so only one direction is moved with the left stick at a time
+        //    if (Mathf.Abs(leftMove.x) > Mathf.Abs(leftMove.y)) { leftMove.y = 0; }
+        //    else if (Mathf.Abs(leftMove.y) > Mathf.Abs(leftMove.x)) { leftMove.x = 0; }
+
+            //    if (OVRInput.Get(RT1)) {
+            //        drive2.drive(leftMove, rightMove.x, height);
+            //    } else
+            //    {
+            //        drive.drive(leftMove, rightMove.x, height);
+            //    }
+
+            //    //todo:add spot 2 drive
+
+            //    // Pause depth history for 1.5 seconds
+            //    foreach (DrawMeshInstanced ds in pointClouds)
+            //    {
+            //        ds.continue_update();
+            //    }
+            //}
     }
 
 

@@ -22,7 +22,7 @@ namespace RosSharp.RosBridgeClient
 
         void Update()
         {
-            if(Input.GetKeyDown("k"))
+            if(Input.GetKeyDown("k") && (Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.RightControl)))
                 killSpot();
         }
 
