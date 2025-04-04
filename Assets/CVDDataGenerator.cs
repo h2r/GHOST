@@ -166,13 +166,6 @@ public class CVDDataGenerator : MonoBehaviour
                 //buffer_opticalR?.Release();
                 (buffer_opticalL, buffer_opticalR) = optical_flow_estimation.estimate_all(previous_rgbL, rgbL, previous_rgbR, rgbR);
             }
-            else
-            {
-                //buffer_opticalL?.Dispose();
-                //buffer_opticalR?.Dispose();
-                buffer_opticalL = new ComputeBuffer(480 * 640 * 2, sizeof(float));
-                buffer_opticalR = new ComputeBuffer(480 * 640 * 2, sizeof(float));
-            }
 
             previous_rgbL.Dispose();
             previous_rgbR.Dispose();
