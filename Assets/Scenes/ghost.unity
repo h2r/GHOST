@@ -3596,7 +3596,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &404129228
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5370,7 +5370,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &513884140
 RectTransform:
   m_ObjectHideFlags: 0
@@ -9176,9 +9176,7 @@ MonoBehaviour:
   Spot1Manager: {fileID: 164802373}
   Spot2Manager: {fileID: 1834046045}
   Spot1InstructPanel: {fileID: 1750650391}
-  Spot2InstructPanel: {fileID: 513884139}
   spot1CurModeInstruct: {fileID: 1791865009}
-  spot2CurModeInstruct: {fileID: 600411576}
 --- !u!1 &1008755828
 GameObject:
   m_ObjectHideFlags: 0
@@ -14276,7 +14274,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1754821894
 RectTransform:
   m_ObjectHideFlags: 0

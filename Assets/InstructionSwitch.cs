@@ -14,15 +14,12 @@ public class InstructionSwitch : MonoBehaviour
 
     // Show/hide the instruction panels as needed
     public GameObject Spot1InstructPanel;
-    public GameObject Spot2InstructPanel;
 
     // Instruction text shown in VR
     public TextMeshProUGUI spot1CurModeInstruct;
-    public TextMeshProUGUI spot2CurModeInstruct;
 
     private int previousSpot1Mode = -999; // Track last known mode
     private int previousSpot2Mode = -999; // Track last known mode
-
 
     private int spot1Mode;
     private int spot2Mode;
@@ -31,7 +28,7 @@ public class InstructionSwitch : MonoBehaviour
     private readonly string[] instructContentRelatedToMode =
     {
         "Move Thumbstick → Translate Spot\n\nHold Index Trigger + Move Thumbstick → Rotate Spot\n\nPress Thumbstick → Lower Spot Height\n\nHold Index Trigger + Press Thumbstick → Raise Spot Height",
-        "Press Hand Trigger → Stow Arm\n\nHold Index Trigger + Move Arm → Set New Arm Position\n\n\nCamera Transform (Active in Dynamic Arm Mode with both Spots)\nL Thumbstick → Move (Translate)\nR Thumbstick → Rotate\nPress L/R Thumbstick → Adjust Height",
+        "Press Hand Trigger → Stow Arm\n\nHold Index Trigger + Move Arm → Set New Arm Position\n\nCamera Transform\nL Thumbstick → Move (Translate)\nR Thumbstick → Rotate\nPress L/R Thumbstick → Adjust Height",
         //"Press Hand Trigger → Stow Arm\n\nDouble Click Index Trigger → Switch Thumbstick Mode: \n- Gripper Translation\n- Gripper Nod\n- Gripper Rotate (180° max)\n\nPress Thumbstick → Lower Gripper\n\nHold Index Trigger + Press Thumbstick → Raise Gripper"
     };
 
@@ -40,8 +37,6 @@ public class InstructionSwitch : MonoBehaviour
         "Press X to Switch Mode\n\nPress Menu (Left Controller)  → Mode Instruction\n\nPress Hand Trigger → Stow Arm",
         "Press A to Switch Mode"
     };
-
-
 
     private bool isInstructionVisible = true; // Track instruction panel visibility
 
@@ -85,32 +80,24 @@ public class InstructionSwitch : MonoBehaviour
             {
                 // Both spots are in default mode, show their respective default content
                 Spot1InstructPanel.SetActive(true);
-                Spot2InstructPanel.SetActive(true);
-
                 spot1CurModeInstruct.text = defaultContent[0];
-                spot2CurModeInstruct.text = defaultContent[1];
             }
             else if (spot1Mode != -1 && spot2Mode != -1 && spot1Mode == spot2Mode)
             {
                 // Both Spots in the same valid mode
                 Spot1InstructPanel.SetActive(true);
-                Spot2InstructPanel.SetActive(false);
                 spot1CurModeInstruct.text = instructContentRelatedToMode[spot1Mode];
             }
             else
             {
                 // Handle cases where either Spot1 or Spot2 is in an invalid state (-1)
                 Spot1InstructPanel.SetActive(true);
-                Spot2InstructPanel.SetActive(true);
-
                 spot1CurModeInstruct.text = spot1Mode != -1 ? instructContentRelatedToMode[spot1Mode] : defaultContent[0];
-                spot2CurModeInstruct.text = spot2Mode != -1 ? instructContentRelatedToMode[spot2Mode] : defaultContent[1];
             }
         }
         else
         {
             Spot1InstructPanel.SetActive(false);
-            Spot2InstructPanel.SetActive(false);
         }
     }
 
