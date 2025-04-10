@@ -15,7 +15,7 @@ public class VRDriveSpot : MonoBehaviour
     public OVRInput.RawButton rightPress;
     public OVRInput.RawButton leftPress;
     public OVRInput.RawButton RT1;
-    //public OVRInput.RawButton RB;
+    
 
     public RosSharp.RosBridgeClient.MoveSpot drive;
     //public RosSharp.RosBridgeClient.MoveSpot drive2;
@@ -37,6 +37,8 @@ public class VRDriveSpot : MonoBehaviour
     private const float HEIGHT_MIN = -0.1f;
     private const float HEIGHT_MAX = 0.3f;
     //private int drive_mode = 0;
+    public OVRInput.RawButton driveSwitch;
+    public bool curDrive = true;
 
     void Start()
     {
@@ -59,6 +61,14 @@ public class VRDriveSpot : MonoBehaviour
 
     void Update()
     {
+        if (OVRInput.GetDown(driveSwitch))
+        {
+            curDrive = !curDrive;
+        }
+        if (!curDrive)
+        {
+            return;
+        }
 
         Vector2 leftMove;
         Vector2 rightMove;

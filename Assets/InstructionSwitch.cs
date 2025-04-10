@@ -32,7 +32,7 @@ public class InstructionSwitch : MonoBehaviour
     {
         "Move Thumbstick → Translate Spot\n\nHold Index Trigger + Move Thumbstick → Rotate Spot\n\nPress Thumbstick → Lower Spot Height\n\nHold Index Trigger + Press Thumbstick → Raise Spot Height",
         "Press Hand Trigger → Stow Arm\n\nHold Index Trigger + Move Arm → Set New Arm Position\n\n\nCamera Transform (Active in Dynamic Arm Mode with both Spots)\nL Thumbstick → Move (Translate)\nR Thumbstick → Rotate\nPress L/R Thumbstick → Adjust Height",
-        "Press Hand Trigger → Stow Arm\n\nDouble Click Index Trigger → Switch Thumbstick Mode: \n- Gripper Translation\n- Gripper Nod\n- Gripper Rotate (180° max)\n\nPress Thumbstick → Lower Gripper\n\nHold Index Trigger + Press Thumbstick → Raise Gripper"
+        //"Press Hand Trigger → Stow Arm\n\nDouble Click Index Trigger → Switch Thumbstick Mode: \n- Gripper Translation\n- Gripper Nod\n- Gripper Rotate (180° max)\n\nPress Thumbstick → Lower Gripper\n\nHold Index Trigger + Press Thumbstick → Raise Gripper"
     };
 
     private readonly string[] defaultContent =

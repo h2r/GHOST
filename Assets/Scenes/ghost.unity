@@ -1259,7 +1259,6 @@ MonoBehaviour:
   modes:
   - {fileID: 1322041478}
   - {fileID: 947366007}
-  - {fileID: 407861667}
   UISpotID: Spot 1
   curModeTextMesh: {fileID: 2015793253}
   generalControlsScript: {fileID: 164802372}
@@ -3674,7 +3673,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &407861665
 Transform:
   m_ObjectHideFlags: 0
@@ -7330,7 +7329,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 718889039}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 73f70c27fb348ca47adefa5c7121c984, type: 3}
   m_Name: 
@@ -7352,6 +7351,8 @@ MonoBehaviour:
   - {fileID: 409472603}
   - {fileID: 409472602}
   defaultLow: 0
+  driveSwitch: 1
+  curDrive: 0
 --- !u!114 &718889042
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7404,7 +7405,7 @@ MonoBehaviour:
     controller'
   objectsOfModeToEnable: []
   scriptsOfModeToEnable:
-  - {fileID: 718889043}
+  - {fileID: 718889041}
 --- !u!114 &718889043
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7412,7 +7413,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 718889039}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f00bb137bc72ae34ea2101ec2df6f8dd, type: 3}
   m_Name: 
@@ -10928,7 +10929,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1322041475}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 73f70c27fb348ca47adefa5c7121c984, type: 3}
   m_Name: 
@@ -10950,6 +10951,8 @@ MonoBehaviour:
   - {fileID: 326679877}
   - {fileID: 107554149}
   defaultLow: 0
+  driveSwitch: 1
+  curDrive: 1
 --- !u!114 &1322041478
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11002,7 +11005,7 @@ MonoBehaviour:
     controller'
   objectsOfModeToEnable: []
   scriptsOfModeToEnable:
-  - {fileID: 1322041479}
+  - {fileID: 1322041477}
 --- !u!114 &1322041479
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11010,7 +11013,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1322041475}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f00bb137bc72ae34ea2101ec2df6f8dd, type: 3}
   m_Name: 
@@ -15199,7 +15202,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Stow: 2
-  ModeSwitch: 1
+  ModeSwitch: 256
   GripperControl: 134217728
   dummyHandTransform: {fileID: 1681050001}
   realHandTransform: {fileID: 689239495}
@@ -15226,7 +15229,6 @@ MonoBehaviour:
   modes:
   - {fileID: 718889042}
   - {fileID: 655561110}
-  - {fileID: 2025026150}
   UISpotID: Spot 2
   curModeTextMesh: {fileID: 327316659}
   generalControlsScript: {fileID: 1834046044}
@@ -16202,7 +16204,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2025026147
 Transform:
   m_ObjectHideFlags: 0
