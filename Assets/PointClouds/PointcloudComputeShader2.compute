@@ -10,7 +10,7 @@ struct MeshProperties
 #define HEIGHT 480
 
 RWStructuredBuffer<MeshProperties> _Properties;
-RWStructuredBuffer<float> _Depth;
+RWStructuredBuffer<float3> _Depth;
 RWStructuredBuffer<float> _Sparse;
 RWStructuredBuffer<float> _Edge;
 RWStructuredBuffer<float3> _ICP_Res;
@@ -37,7 +37,7 @@ void EdgeDetector(uint3 id : SV_DispatchThreadID)
     
     if (indexX > 5 && indexX < WIDTH - 5 && indexY > 5 && indexY < HEIGHT - 5)
     {
-        if (activate_edge_detection && _Depth[index] > 0.0f)
+        if (activate_edge_detection && _Depth[index].z > 0.0f)
         {
             const float kX[5][5] =
             {
@@ -68,7 +68,7 @@ void EdgeDetector(uint3 id : SV_DispatchThreadID)
                     uint sampleY = indexY + i;
                     uint sampleIndex = sampleY * WIDTH + sampleX;
 
-                    float depthValue = _Depth[sampleIndex];
+                    float depthValue = _Depth[sampleIndex].z;
 
                     Gx += depthValue * kX[i + 2][j + 2];
                     Gy += depthValue * kY[i + 2][j + 2];
@@ -107,7 +107,7 @@ void CSMain(uint3 id : SV_DispatchThreadID)
     if (id.x < 480 * 640)
     {
         
-        float4 pos = _Properties[id.x].pos;
+        float3 pos = _Depth[id.x];
 
         //float i = samplingSize * id.x;
         float i = id.x * samplingSize;
@@ -118,15 +118,17 @@ void CSMain(uint3 id : SV_DispatchThreadID)
 
         uint depth_idx = (screenData.x * (screenData.y - col_y - 1)) + (screenData.x - col_x - 1);
     
-        pos.z = _Depth[depth_idx] * t + (1 - t);
+        pos.z = _Depth[depth_idx].z;
 
         pos.x = (col_y - intrinsics.y) * pos.z / intrinsics.z;
         pos.y = (col_x - intrinsics.x) * pos.z / intrinsics.w;
+        
+        float4 final_pos = mul(_GOPose, float4(pos, 1.0f));
 
         float flg = 0.0f;
 
         //pos.z = _Depth[depth_idx];
-        pos.w = 1;
+        //pos.w = 1;
         //float4 pos = {.x,_Properties[id.x].pos.y,_Properties[id.x].pos.z,1.0};
         
         if (pos.y < y_max || pos.z < z_max)
@@ -138,13 +140,16 @@ void CSMain(uint3 id : SV_DispatchThreadID)
             flg = 1.0f;
         }
         
-        if (_Edge[depth_idx] > 0.5f)
-        {
-            flg = 1.0f;
-        }
+        _Properties[id.x].pos = final_pos;
+        _Properties[id.x].pos.w = pos.z;
+        
+        //if (_Edge[depth_idx] > 0.5f)
+        //{
+        //    flg = 1.0f;
+        //}
 
-        float4 final_pos = mul(_GOPose, pos);
-        float4 final_pos1 = mul(_ICPTrans, final_pos);
+        //float4 final_pos = mul(_GOPose, pos);
+        //float4 final_pos1 = mul(_ICPTrans, final_pos);
         //float4 final_pos = pos;
 
         //final_pos.x = final_pos.x + dx;
@@ -162,11 +167,11 @@ void CSMain(uint3 id : SV_DispatchThreadID)
     //}
     
     // Apply translation to existing matrix, which will be read in the shader.
-        _Properties[id.x].pos = final_pos1;
+        //_Properties[id.x].pos = final_pos1;
 
         if (flg < 0.5f)
         {
-            _Properties[id.x].pos.w = _Depth[depth_idx] * t + (1 - t);
+            //_Properties[id.x].pos.w = _Depth[depth_idx] * t + (1 - t);
         }
         else
         {
@@ -175,24 +180,24 @@ void CSMain(uint3 id : SV_DispatchThreadID)
         
     
         
-        if (show_sampling_res)
-        {
-            if (id.x % 16 == 0)
-            {
+        //if (show_sampling_res)
+        //{
+        //    if (id.x % 16 == 0)
+        //    {
             
-                _Properties[id.x].pos.x = _ICP_Res[id.x / 16].x;
-                _Properties[id.x].pos.y = _ICP_Res[id.x / 16].y;
-                _Properties[id.x].pos.z = _ICP_Res[id.x / 16].z;
-                _Properties[id.x].pos.w = _Sparse[depth_idx] * t + (1 - t);
-            }
-            else
-            {
-                _Properties[id.x].pos.x = 1000.0f;
-                _Properties[id.x].pos.y = 1000.0f;
-                _Properties[id.x].pos.z = 1000.0f;
-                _Properties[id.x].pos.w = 0.0f;
-            }
-        }
+        //        _Properties[id.x].pos.x = _ICP_Res[id.x / 16].x;
+        //        _Properties[id.x].pos.y = _ICP_Res[id.x / 16].y;
+        //        _Properties[id.x].pos.z = _ICP_Res[id.x / 16].z;
+        //        _Properties[id.x].pos.w = _Sparse[depth_idx] * t + (1 - t);
+        //    }
+        //    else
+        //    {
+        //        _Properties[id.x].pos.x = 1000.0f;
+        //        _Properties[id.x].pos.y = 1000.0f;
+        //        _Properties[id.x].pos.z = 1000.0f;
+        //        _Properties[id.x].pos.w = 0.0f;
+        //    }
+        //}
 
 
         

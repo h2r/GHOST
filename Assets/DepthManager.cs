@@ -236,31 +236,42 @@ public class DepthManager : MonoBehaviour
             //first_run = true;
         }
 
-        if (activate_depth_estimation)
+        if (camera_index == 0)
         {
-            if (camera_index == 0 && temp_output_left_1 != null)
-            {
-                return (temp_output_left_1, icp_trans_temp);
-            }
-            else if (camera_index == 1 && temp_output_right_1 != null)
-            {
-                return (temp_output_right_1, icp_trans_temp);
-            }
-            return (final_out, icp_trans_temp);
+            return (temp_output_left_1, icp_trans_temp);
         }
-        else
+        else if (camera_index == 1)
         {
-            if (camera_index == 0 && normal_temp_output_left_1 != null)
-            {
-                return (normal_temp_output_left_1, icp_trans_temp);
-            }
-            else if (camera_index == 1 && normal_temp_output_right_1 != null)
-            {
-                return (normal_temp_output_right_1, icp_trans_temp);
-            }
-            return (final_out, icp_trans_temp);
+            return (temp_output_right_1, icp_trans_temp);
         }
-        
+
+        return (temp_output_left_1, icp_trans_temp);
+
+        //if (activate_depth_estimation)
+        //{
+        //    if (camera_index == 0 && temp_output_left_1 != null)
+        //    {
+        //        return (temp_output_left_1, icp_trans_temp);
+        //    }
+        //    else if (camera_index == 1 && temp_output_right_1 != null)
+        //    {
+        //        return (temp_output_right_1, icp_trans_temp);
+        //    }
+        //    return (final_out, icp_trans_temp);
+        //}
+        //else
+        //{
+        //    if (camera_index == 0 && normal_temp_output_left_1 != null)
+        //    {
+        //        return (normal_temp_output_left_1, icp_trans_temp);
+        //    }
+        //    else if (camera_index == 1 && normal_temp_output_right_1 != null)
+        //    {
+        //        return (normal_temp_output_right_1, icp_trans_temp);
+        //    }
+        //    return (final_out, icp_trans_temp);
+        //}
+
     }
 
     private (ComputeBuffer, ComputeBuffer, Matrix4x4) process_depth(Tensor<float> depthL_1, Tensor<float> rgbL_1, Tensor<float> depthR_1, Tensor<float> rgbR_1, bool is_not_moving, bool calculate_icp)

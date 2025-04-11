@@ -336,7 +336,7 @@ public class DrawMeshInstanced : MonoBehaviour
     private void InitializeBuffers()
     {
 
-        depth_ar_buffer = new ComputeBuffer(480 * 640, sizeof(float));
+        depth_ar_buffer = new ComputeBuffer(480 * 640, sizeof(float) * 3);
         icp_res_buffer = new ComputeBuffer(160 * 120, sizeof(float) * 3);
         //int kernel = compute.FindKernel("CSMain");
 
