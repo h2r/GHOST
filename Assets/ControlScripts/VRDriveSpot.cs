@@ -39,6 +39,7 @@ public class VRDriveSpot : MonoBehaviour
     //private int drive_mode = 0;
     public OVRInput.RawButton driveSwitch;
     public bool curDrive = true;
+    public GameObject spotPointer;
 
     void Start()
     {
@@ -65,6 +66,7 @@ public class VRDriveSpot : MonoBehaviour
         {
             curDrive = !curDrive;
         }
+        spotPointer.SetActive(curDrive);
         if (!curDrive)
         {
             return;
