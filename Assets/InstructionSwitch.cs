@@ -27,15 +27,16 @@ public class InstructionSwitch : MonoBehaviour
     // Mode instructions
     private readonly string[] instructContentRelatedToMode =
     {
-        "Move Thumbstick → Translate Spot\n\nHold Index Trigger + Move Thumbstick → Rotate Spot\n\nPress Thumbstick → Lower Spot Height\n\nHold Index Trigger + Press Thumbstick → Raise Spot Height",
-        "Press Hand Trigger → Stow Arm\n\nHold Index Trigger + Move Arm → Set New Arm Position\n\nCamera Transform\nL Thumbstick → Move (Translate)\nR Thumbstick → Rotate\nPress L/R Thumbstick → Adjust Height",
+        "Move L Thumbstick → Translate\n\nMove R Thumbstick → Rotate\n\nPress L Thumbstick → Lower Height\n\nPress R Thumbstick → Raise Height",
+        "Press Y/B → Stow Arm\n\nHold Top Trigger + Hand Drag → Move Arm\n\nPress Hand Trigger → Open/Close Gripper\n\nCamera Transform\nL Thumbstick → Move (Translate)\nR Thumbstick → Rotate\nPress L/R Thumbstick → Adjust Height",
+        //"Move Thumbstick → Translate Spot\n\nHold Index Trigger + Move Thumbstick → Rotate Spot\n\nPress Thumbstick → Lower Spot Height\n\nHold Index Trigger + Press Thumbstick → Raise Spot Height",
         //"Press Hand Trigger → Stow Arm\n\nDouble Click Index Trigger → Switch Thumbstick Mode: \n- Gripper Translation\n- Gripper Nod\n- Gripper Rotate (180° max)\n\nPress Thumbstick → Lower Gripper\n\nHold Index Trigger + Press Thumbstick → Raise Gripper"
     };
 
     private readonly string[] defaultContent =
     {
-        "Press X to Switch Mode\n\nPress Menu (Left Controller)  → Mode Instruction\n\nPress Hand Trigger → Stow Arm",
-        "Press A to Switch Mode"
+        "Press X → Switch Mode\n\nPress Menu (Left Controller)  → Mode Instruction\n\nPress Y/B → Stow Arm",
+        "Press X → Switch Mode"
     };
 
     private bool isInstructionVisible = true; // Track instruction panel visibility
