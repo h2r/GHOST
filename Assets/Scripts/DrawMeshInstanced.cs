@@ -114,8 +114,6 @@ public class DrawMeshInstanced : MonoBehaviour
 
         if (depth_ar_buffer != null)
         {
-            Debug.LogWarning("Updated texture, drawing...");
-
             SetProperties();
             compute.SetMatrix("_GOPose", Matrix4x4.TRS(transform.position, transform.rotation, new Vector3(1, 1, 1)));
             compute.Dispatch(point_cloud_kernel, Mathf.CeilToInt(population / 256), 1, 1);
@@ -159,12 +157,10 @@ public class DrawMeshInstanced : MonoBehaviour
 
         if (start_completion)
         {
-            Debug.LogWarning("inpainting = " + activate_inpainting);
             compute.SetBool("activate_inpainting", activate_inpainting);
         }
         else
         {
-            Debug.LogWarning("inpainting off");
             compute.SetBool("activate_inpainting", false);
         }
         
@@ -226,11 +222,10 @@ public class DrawMeshInstanced : MonoBehaviour
             color_image = copy_texture(colorSubscriber.texture2D);
             depth_ar = depthSubscriber.getDepthArr();
         }
-        Debug.LogWarning("depth_ar.Length = " + depth_ar.Length);
 
         if (depth_ar.Length < 640*480)
         {
-            Debug.LogWarning("NOT ENOUGH DEPTH (" + depth_ar.Length + ")");
+            Debug.LogWarning("Recieved a depth array with inadequate length (" + depth_ar.Length + ")");
             return;
         }
         sparse_buffer.SetData(depth_ar);

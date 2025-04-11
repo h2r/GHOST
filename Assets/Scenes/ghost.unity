@@ -298,7 +298,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45e88b52fad9fb94881edee1e15909ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rgbModel: {fileID: 5022602860645237092, guid: e39d5cb1babc4b645b12d8ac28bf2ef5, type: 3}
+  rgbModel: {fileID: 5022602860645237092, guid: 68e9ed28e49fd7f47b40f1066942887b, type: 3}
   rgbdModel: {fileID: 5022602860645237092, guid: d15adac15f1f81c4ab79276f3b80aa8d, type: 3}
   useRawDepth: 0
 --- !u!114 &4523433
@@ -3027,6 +3027,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1137478773629964864, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: Mass
+      value: 1.904699
+      objectReference: {fileID: 0}
     - target: {fileID: 1137478773745686185, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
       value: ws://138.16.160.231:9090
@@ -3161,7 +3165,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775010377568, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: use_saved_meshes
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775010377568, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: max_inpainting_dis
@@ -3225,7 +3229,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775515482002, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: use_saved_meshes
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775515482002, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: max_inpainting_dis
@@ -8696,7 +8700,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2aa5aa4b010728244ab71bdf5fa87a3d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Topic: /tf
+  Topic: /spot/frontright_fisheye_extrinsics
   TimeStep: 0
 --- !u!1 &1480700625
 GameObject:

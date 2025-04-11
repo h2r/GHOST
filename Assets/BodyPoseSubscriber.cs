@@ -17,8 +17,13 @@ namespace RosSharp.RosBridgeClient
 
         private void Update()
         {
+            Debug.LogWarning("In BodyPoseSubscriber Update");
             if (isMessageReceived)
+            {
+                Debug.LogWarning("In BodyPoseSubscriber Update: isMessageReceived = true");
                 ProcessMessage();
+            }
+                
         }
 
         public Matrix4x4 getBodyPose()
@@ -28,6 +33,7 @@ namespace RosSharp.RosBridgeClient
 
         protected override void ReceiveMessage(MessageTypes.Tf2.TFMessage _message)
         {
+            Debug.LogWarning("Received message: " + message.ToString());
             message = _message;
             isMessageReceived = true;
         }
@@ -45,6 +51,7 @@ namespace RosSharp.RosBridgeClient
         {
             foreach (var transformStamped in message.transforms)
             {
+                Debug.LogWarning("In BodyPoseSubscriber ProcessMessage: transformStamped = " + transformStamped);
                 if (transformStamped.header.frame_id == "spot/body" &&
                     transformStamped.child_frame_id == "spot/odom")
                 {

@@ -42,9 +42,9 @@ void Transformation(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupThreadI
 
     int index = xIndex + yIndex * WIDTH;
 
-    if (xIndex > 0 && xIndex < WIDTH - 1 && yIndex > 0 && yIndex < HEIGHT - 1)
+    if (xIndex < WIDTH && yIndex < HEIGHT)
     {
-        uint depth_idx = (WIDTH * (HEIGHT - yIndex - 1)) + (WIDTH - xIndex - 1);
+        // uint depth_idx = (WIDTH * (HEIGHT - yIndex - 1)) + (WIDTH - xIndex - 1);
         
         float3 pos;
         pos.z = depth_ar[index];
@@ -64,12 +64,13 @@ void Transformation(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupThreadI
         optical.x = optical_ar[index];
         optical.y = optical_ar[index + WIDTH * HEIGHT];
         optical_buffer[buffer_pos * HEIGHT * WIDTH + index] = optical;
-        
-        // pose
+                
+        output_ar[index] = pos;        
+    }
+    // Store pose history
+    if (index == 0)
+    {
         pose_buffer[buffer_pos] = pose;
-        
-        output_ar[index] = pos;
-
     }
 }
 
@@ -118,102 +119,340 @@ int calc_pre_buffer_pos(int pos)
     }
 }
 
-// EdgeDetection
+//// ConsistentVideoDepth
+//[numthreads(16, 8, 1)]
+//void CVD(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupThreadID)
+//{
+//    int aimxIndex = groupId.x * 16 + threadId.x;
+//    int aimyIndex = groupId.y * 8 + threadId.y;
+
+//    int aimindex = aimxIndex + aimyIndex * WIDTH;
+
+//    // Skip the margin pixels because we're "convolving" with a 3x3 kernel
+//    if (aimxIndex > 0 && aimxIndex < WIDTH - 1 && aimyIndex > 0 && aimyIndex < HEIGHT - 1)
+//    {
+//        float3 sumpoint = float3(0.0f, 0.0f, 0.0f);
+//        float total_weight = 0.0f;
+        
+//        float3 aimPoint = depth_buffer[buffer_pos * HEIGHT * WIDTH + aimindex];
+        
+//        bool is_valid_depth = aimPoint.z >= 0.01f;
+//        if (is_valid_depth)
+//        {
+//            sumpoint += aimPoint;
+//            total_weight += 1.0f;
+//        }    
+
+//        [unroll]
+//        for (int dx = -1; dx < 2; ++dx)
+//        {
+//            [unroll]
+//            for (int dy = -1; dy < 2; ++dy)
+//            {
+//                float3 neighbor_point = depth_buffer[buffer_pos * WIDTH * HEIGHT + (aimxIndex + dx) + (aimyIndex + dy) * WIDTH];
+
+//                if (neighbor_point.z >= 0.01f)
+//                {
+//                    // Bump weight of neighbors if depth is invalid
+//                    float weight_scale = is_valid_depth ? 1.0f : 2.0f;
+//                    float depth_ratio = is_valid_depth ?
+//                        (max(aimPoint.z, neighbor_point.z) / min(aimPoint.z, neighbor_point.z) - 1.0f) :
+//                        0.1f;
+                    
+//                    float weight = weight_scale * exp(-cvd_weight * depth_ratio);
+//                    total_weight += weight;
+//                    sumpoint += neighbor_point * weight;
+//                } 
+//            }
+//        }
+        
+//        [unroll]
+//        for (int dx1 = -1; dx1 < 2; ++dx1)
+//        {
+//            [unroll]
+//            for (int dy1 = -1; dy1 < 2; ++dy1)
+//            {
+//                int xIndex = aimxIndex + dx1;
+//                int yIndex = aimyIndex + dy1;
+                
+//                int index = xIndex + yIndex * WIDTH;
+//                int current_pos = buffer_pos;
+                
+//                for (int i = 0; i < num_frames - 1; ++i)
+//                {
+//                    int pre_pos = current_pos == 0 ? num_frames - 1 : current_pos - 1;
+
+//                    float2 optical_flow = optical_buffer[current_pos * WIDTH * HEIGHT + index];
+                    
+//                    // Use fractional optical flow for more accurate tracking
+//                    float prev_x_f = float(xIndex) - optical_flow.x;
+//                    float prev_y_f = float(yIndex) - optical_flow.y;
+//                    int prev_x = int(prev_x_f + 0.5f);
+//                    int prev_y = int(prev_y_f + 0.5f);
+
+//                    if (prev_x >= 0 &&
+//                        prev_x < WIDTH &&
+//                        prev_y >= 0 &&
+//                        prev_y < HEIGHT)
+//                    {
+//                        int prev_index = prev_x + prev_y * WIDTH;
+
+//                        float3 prev_point = depth_buffer[pre_pos * WIDTH * HEIGHT + prev_index];
+//                        if (prev_point.z >= 0.01f)
+//                        {
+//                            // We assume that the pose matrix is the inverse of the extrinsics matrix
+//                            float4x4 transform = mul(inverse_pose, pose_buffer[pre_pos]);
+//                            float3 mapped_point = mul(transform, float4(prev_point, 1.0f));
+
+//                            // Weigh previous points more if current depth is invalid
+//                            float temporal_scale = is_valid_depth ? 1.0f : (3.0f / (i + 1));
+//                            float depth_ratio = is_valid_depth ?
+//                                (max(aimPoint.z, mapped_point.z) / min(aimPoint.z, mapped_point.z) - 1.0f) :
+//                                0.05f; // Lower penalty for invalid depths
+                                
+//                            float weight = temporal_scale * exp(-cvd_weight * depth_ratio);
+//                            total_weight += weight;
+//                            sumpoint += mapped_point * weight;
+                            
+//                        }
+//                    }
+            
+//                    xIndex = prev_x;
+//                    yIndex = prev_y;
+//                    current_pos = pre_pos;
+//                }
+//            }
+//        }
+
+//        if (total_weight >= 1e-6)
+//        {           
+//            float3 final_point = sumpoint / total_weight;
+        
+//            if (!is_valid_depth || cvd_weight < 100)
+//            {
+//                aimPoint = final_point;
+//            }
+//        }
+//        else if (!is_valid_depth)
+//        {
+//            aimPoint = float3(1.0f, 1.0f, 1.0f);
+//        }
+
+//        output_ar[aimindex] = aimPoint;
+//        depth_buffer[buffer_pos * HEIGHT * WIDTH + aimindex] = aimPoint;
+
+//    }
+//}
+
+
+
+
+
+//// ConsistentVideoDepth
+//[numthreads(16, 8, 1)]
+//void CVD(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupThreadID)
+//{
+//    int aimxIndex = groupId.x * 16 + threadId.x;
+//    int aimyIndex = groupId.y * 8 + threadId.y;
+//    int aimindex = aimxIndex + aimyIndex * WIDTH;
+
+//    // Skip the margin pixels because we're "convolving" with a 3x3 kernel
+//    if (aimxIndex > 0 && aimxIndex < WIDTH - 1 && aimyIndex > 0 && aimyIndex < HEIGHT - 1)
+//    {
+//        float3 current_point = depth_buffer[buffer_pos * HEIGHT * WIDTH + aimindex];
+//        bool is_valid_depth = current_point.z >= 0.01f;
+        
+//        // Save original point for blending later (temporal stability)
+//        float3 original_point = current_point;
+        
+//        // Don't start with current point in accumulation - we'll blend later
+//        float3 sumpoint = float3(0.0f, 0.0f, 0.0f);
+//        float total_weight = 0.0f;
+        
+//        // Add spatial contribution with a Gaussian-like falloff
+//        [unroll]
+//        for (int dy = -1; dy <= 1; ++dy)
+//        {
+//            [unroll]
+//            for (int dx = -1; dx <= 1; ++dx)
+//            {
+//                // Skip center point - we'll blend with it later
+//                if (dx == 0 && dy == 0)
+//                    continue;
+                
+//                int nx = aimxIndex + dx;
+//                int ny = aimyIndex + dy;
+//                int nindex = nx + ny * WIDTH;
+                
+//                float3 neighbor_point = depth_buffer[buffer_pos * WIDTH * HEIGHT + nindex];
+//                if (neighbor_point.z >= 0.01f)
+//                {
+//                    // Spatial weight decreases with distance
+//                    float spatial_weight = 1.0f / (1.0f + abs(dx) + abs(dy));
+                    
+//                    // Depth similarity weight
+//                    float depth_ratio = is_valid_depth ?
+//                        (max(current_point.z, neighbor_point.z) / min(current_point.z, neighbor_point.z)) :
+//                        1.1f; // Fixed small penalty for invalid depths
+                    
+//                    float depth_weight = exp(-cvd_weight * (depth_ratio - 1.0f));
+                    
+//                    // Combine weights
+//                    float weight = spatial_weight * depth_weight;
+//                    sumpoint += neighbor_point * weight;
+//                    total_weight += weight;
+//                }
+//            }
+//        }
+        
+//        // Add temporal contribution with consistency check
+//        int max_frames = min(3, num_frames - 1); // Limit temporal window for stability
+//        float3 temporal_sum = float3(0.0f, 0.0f, 0.0f);
+//        float temporal_weight = 0.0f;
+        
+//        // Start with direct pixel
+//        int xIndex = aimxIndex;
+//        int yIndex = aimyIndex;
+//        int index = aimindex;
+//        int current_pos = buffer_pos;
+        
+//        for (int i = 0; i < max_frames; ++i)
+//        {
+//            int pre_pos = calc_pre_buffer_pos(current_pos);
+//            float2 optical_flow = optical_buffer[current_pos * WIDTH * HEIGHT + index];
+            
+//            // Use fractional coordinates and proper rounding
+//            float prev_x_f = float(xIndex) - optical_flow.x;
+//            float prev_y_f = float(yIndex) - optical_flow.y;
+//            int prev_x = int(prev_x_f + 0.5f);
+//            int prev_y = int(prev_y_f + 0.5f);
+            
+//            if (prev_x >= 0 && prev_x < WIDTH && prev_y >= 0 && prev_y < HEIGHT)
+//            {
+//                int prev_index = prev_x + prev_y * WIDTH;
+//                float3 prev_point = depth_buffer[pre_pos * WIDTH * HEIGHT + prev_index];
+                
+//                if (prev_point.z >= 0.01f)
+//                {
+//                    // Transform point using pose difference
+//                    float4x4 transform = mul(inverse_pose, pose_buffer[pre_pos]);
+//                    float3 mapped_point = mul(transform, float4(prev_point, 1.0f)).xyz;
+                    
+//                    // Apply temporal weight that decreases with frame distance
+//                    float frame_weight = 0.8f / (i + 1.0f);
+                    
+//                    // Apply depth similarity weight
+//                    float depth_ratio = is_valid_depth ?
+//                        (max(current_point.z, mapped_point.z) / min(current_point.z, mapped_point.z)) :
+//                        1.05f;
+//                    float depth_weight = exp(-cvd_weight * (depth_ratio - 1.0f));
+                    
+//                    // Add to temporal sum
+//                    float weight = frame_weight * depth_weight;
+//                    temporal_sum += mapped_point * weight;
+//                    temporal_weight += weight;
+//                }
+//            }
+            
+//            // Update for next frame tracking
+//            xIndex = prev_x;
+//            yIndex = prev_y;
+//            index = prev_x + prev_y * WIDTH;
+//            current_pos = pre_pos;
+//        }
+        
+//        // Combine spatial and temporal results
+//        float3 final_point;
+//        if (total_weight > 0.0f && temporal_weight > 0.0f)
+//        {
+//            // Blend spatial and temporal contributions
+//            float3 spatial_result = sumpoint / total_weight;
+//            float3 temporal_result = temporal_sum / temporal_weight;
+            
+//            // Favor temporal consistency with a weight of 0.7
+//            final_point = spatial_result * 0.3f + temporal_result * 0.7f;
+//        }
+//        else if (total_weight > 0.0f)
+//        {
+//            final_point = sumpoint / total_weight;
+//        }
+//        else if (temporal_weight > 0.0f)
+//        {
+//            final_point = temporal_sum / temporal_weight;
+//        }
+//        else
+//        {
+//            // Keep original point if no contributions
+//            final_point = original_point;
+//        }
+        
+//        // For valid depths, blend with original to reduce flickering
+//        // For invalid depths, use the computed value directly
+//        if (is_valid_depth)
+//        {
+//            // Gradually blend between original and filtered point based on cvd_weight
+//            float blend_factor = saturate(cvd_weight / 50.0f) * 0.7f;
+//            current_point = lerp(original_point, final_point, blend_factor);
+//        }
+//        else if (length(final_point) > 0.01f)
+//        {
+//            // For invalid depths, use the computed value if available
+//            current_point = final_point;
+//        }
+//        else
+//        {
+//            // Otherwise keep the invalid point marker
+//            current_point = float3(0.0f, 0.0f, 0.0f);
+//        }
+        
+//        // Write output
+//        output_ar[aimindex] = current_point;
+//        depth_buffer[buffer_pos * HEIGHT * WIDTH + aimindex] = current_point;
+//    }
+//}
+
+// ConsistentVideoDepth
+// THIS IS A HACK TO TEST POSE VS INV_POSE
 [numthreads(16, 8, 1)]
 void CVD(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupThreadID)
 {
     int aimxIndex = groupId.x * 16 + threadId.x;
     int aimyIndex = groupId.y * 8 + threadId.y;
-
     int aimindex = aimxIndex + aimyIndex * WIDTH;
 
-    if (aimxIndex > 0 && aimxIndex < WIDTH - 1 && aimyIndex > 0 && aimyIndex < HEIGHT - 1 && depth_buffer[aimindex].z > 0.01f)
+    if (aimxIndex < WIDTH && aimyIndex < HEIGHT)
     {
-        float3 aimPoint = depth_buffer[buffer_pos * HEIGHT * WIDTH + aimindex];
-        float z = aimPoint.z;
-        float sumz = z;
-        float3 sumpoint = aimPoint;
-        float total_weight = 1.0f;
+        float3 current_point = depth_buffer[buffer_pos * HEIGHT * WIDTH + aimindex];
+        bool is_valid_depth = current_point.z >= 0.01f;
         
-        
-
-        [unroll]
-        for (int dx = -1; dx < 2; ++dx)
-        {
-            [unroll]
-            for (int dy = -1; dy < 2; ++dy)
-            {
-
-                float3 prev_point = depth_buffer[buffer_pos * WIDTH * HEIGHT + aimxIndex + dx + aimyIndex + dy * WIDTH];
-
-                if (prev_point.z >= 0.01f)
-                {
-                    float weight = exp(-cvd_weight * (max(aimPoint.z, prev_point.z) / min(aimPoint.z, prev_point.z) - 1.0f));
-                    total_weight = total_weight + weight;
-                    sumpoint += prev_point * weight;
-                }
+        // Save original point for blending later (temporal stability)
+        float3 original_point = current_point;
                 
-            }
-        }
+        int pre_pos = calc_pre_buffer_pos(buffer_pos);
         
-        [unroll]
-        for (int dx1 = -1; dx1 < 2; ++dx1)
-        {
-            [unroll]
-            for (int dy1 = -1; dy1 < 2; ++dy1)
-            {
-                int xIndex = aimxIndex + dx1;
-                int yIndex = aimyIndex + dy1;
-
-                int index = xIndex + yIndex * WIDTH;
-                int current_pos = buffer_pos;
+        float3 prev_point = depth_buffer[pre_pos * WIDTH * HEIGHT + aimindex];
                 
-                for (int i = 0; i < num_frames - 1; ++i)
-                {
-                    int pre_pos = calc_pre_buffer_pos(current_pos);
-                    float2 optical_flow = optical_buffer[current_pos * WIDTH * HEIGHT + xIndex + yIndex * WIDTH];
-                    
-                    int prev_x = xIndex - int(optical_flow.x);
-                    int prev_y = yIndex - int(optical_flow.y);
-
-                    if (prev_x > 0 && prev_x < WIDTH - 1 && prev_y > 0 && prev_y < HEIGHT - 1)
-                    {
-                        int prev_index = prev_x + prev_y * WIDTH;
-
-                        float3 prev_point = depth_buffer[pre_pos * WIDTH * HEIGHT + prev_index];
-                        float4x4 transform = mul(inverse_pose, pose_buffer[pre_pos]);
-                        float3 mapped_point = mul(transform, float4(prev_point, 1.0f));
-
-                        if (mapped_point.z >= 0.01f)
-                        {
-                            //float weight = 0.3f;
-                            float ratio = max(aimPoint.z, mapped_point.z) / min(aimPoint.z, mapped_point.z) - 1.0f;
-                            float weight = exp(-cvd_weight * ratio);
-                            total_weight = total_weight + weight;
-                            sumpoint += mapped_point * weight;
-                        }
-                    }
-            
-                    xIndex = prev_x;
-                    yIndex = prev_y;
-                    current_pos = pre_pos;
-                }
-
-            }
-        }
-        
-        float3 final_point = sumpoint / total_weight;
-        
-        if (cvd_weight < 100)
+        if (prev_point.z >= 0.01f)
         {
-            aimPoint = final_point;
-        }
-            
-        output_ar[aimindex] = aimPoint;
-        depth_buffer[buffer_pos * HEIGHT * WIDTH + aimindex] = aimPoint;
+            // Transform point using pose difference
+            float4x4 transform = mul(inverse_pose, pose_buffer[pre_pos]);
+            float3 mapped_point = mul(transform, float4(prev_point, 1.0f)).xyz;
+            current_point = mapped_point;
+            float hack = length(mapped_point) + 1.f;
+            current_point = float3(hack, hack, hack);
 
+        }
+        else
+        {
+            current_point = float3(10.f, 10.f, 10.f);
+        }
+        
+        // Write output
+        output_ar[aimindex] = current_point;
+        depth_buffer[buffer_pos * HEIGHT * WIDTH + aimindex] = original_point;
     }
 }
+
 
 //// EdgeDetection
 //[numthreads(16, 16, 1)]

@@ -1,3 +1,4 @@
+using RosSharp.RosBridgeClient;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,7 +11,7 @@ public class PoseConsistentVideoDepth : MonoBehaviour
     int edge_kernel;
     int cvd_kernel;
 
-    int num_frames = 2;
+    int num_frames = 8;
 
     private ComputeBuffer depthBufferCompute;
     private ComputeBuffer poseBufferCompute;
@@ -47,7 +48,7 @@ public class PoseConsistentVideoDepth : MonoBehaviour
         pose_consistent_depth_shader.SetBuffer(transformation_kernel, "pose_buffer", poseBufferCompute);
 
         // Optical Buffer
-        opticalBufferCompute = new ComputeBuffer(480 * 640 * num_frames * 2, sizeof(float));
+        opticalBufferCompute = new ComputeBuffer(480 * 640 * num_frames, sizeof(float) * 2);
         pose_consistent_depth_shader.SetBuffer(cvd_kernel, "optical_buffer", opticalBufferCompute);
         pose_consistent_depth_shader.SetBuffer(transformation_kernel, "optical_buffer", opticalBufferCompute);
 
@@ -79,6 +80,11 @@ public class PoseConsistentVideoDepth : MonoBehaviour
     public ComputeBuffer consistent_depth(ComputeBuffer depth_buffer, Matrix4x4 pose_mat, ComputeBuffer optical_buffer, bool activate_CVD, float edgethreshold, bool activate_edge_detection, bool activate_depth_completion, float cvd_weight)
     {
         pose_consistent_depth_shader.SetInt("buffer_pos", buffer_pos);
+        Matrix4x4 inverse_pose_mat = Matrix4x4.Inverse(pose_mat);
+
+        Debug.LogWarning("pose_mat: " + pose_mat);
+        Debug.LogWarning("inverse_pose_mat: " + inverse_pose_mat);
+
         //if (activate_CVD || activate_edge_detection || activate_depth_completion)
         if (true)
         {
@@ -100,7 +106,6 @@ public class PoseConsistentVideoDepth : MonoBehaviour
         if (activate_CVD && cvd_weight < 99)
         {
             pose_consistent_depth_shader.SetBuffer(cvd_kernel, "depth_ar", depth_buffer);
-            Matrix4x4 inverse_pose_mat = Matrix4x4.Inverse(pose_mat);
             pose_consistent_depth_shader.SetMatrix("inverse_pose", inverse_pose_mat);
             pose_consistent_depth_shader.SetBuffer(cvd_kernel, "optical_ar", optical_buffer);
             pose_consistent_depth_shader.Dispatch(cvd_kernel, groupsX, groupsY, 1);

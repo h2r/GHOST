@@ -161,6 +161,8 @@ public class CVDDataGenerator : MonoBehaviour
             {
                 mat_l = pose_subscriber.getBodyPose();
                 mat_r = pose_subscriber.getBodyPose();
+                Debug.Log("pose mat_l: " + mat_l);
+                Debug.Log("pose mat_r: " + mat_r);
                 //Debug.Log("optical flow?");
                 //buffer_opticalL?.Release();
                 //buffer_opticalR?.Release();
