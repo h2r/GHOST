@@ -6,8 +6,14 @@ using Unity.Sentis;
 
 public class DepthManager : MonoBehaviour
 {
+    public bool activate_CVD;
+    public float cvd_weight;
     public bool show_spot;
     public DepthManager another_manager;
+
+    private CVDDataGenerator CVD_generator;
+    public PoseConsistentVideoDepth CVDLeft;
+    public PoseConsistentVideoDepth CVDRight;
 
     public bool activate_depth_estimation;
     public bool activate_ICP;
@@ -40,6 +46,13 @@ public class DepthManager : MonoBehaviour
 
     public DrawMeshInstanced Left_Depth_Renderer_1;
     public DrawMeshInstanced Right_Depth_Renderer_1;
+
+    private ComputeBuffer temp_depth_left;
+    private ComputeBuffer temp_depth_right;
+    private ComputeBuffer temp_optical_left, temp_depth_left_return;
+    private ComputeBuffer temp_optical_right, temp_depth_right_return;
+
+    Matrix4x4 mat_l, mat_r;
 
     //bool first_run = false;
 
@@ -80,6 +93,22 @@ public class DepthManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        CVD_generator = GetComponent<CVDDataGenerator>();
+
+        mat_l = new Matrix4x4(
+            new Vector4(0, 0, 0, 0),
+            new Vector4(0, 0, 0, 0),
+            new Vector4(0, 0, 0, 0),
+            new Vector4(0, 0, 0, 0)
+        );
+
+        mat_r = new Matrix4x4(
+            new Vector4(0, 0, 0, 0),
+            new Vector4(0, 0, 0, 0),
+            new Vector4(0, 0, 0, 0),
+            new Vector4(0, 0, 0, 0)
+        );
+
         depth_completion = GetComponent<DepthCompletion>();
         ICP_launcher = GetComponent<ICPLauncher>();
 
@@ -254,24 +283,31 @@ public class DepthManager : MonoBehaviour
             ICP_trans = ICP_launcher.run_ICP();
         }
 
-        // depth completion
-        Debug.Log("depth completion");
-        is_not_moving = true;
-        if (activate_depth_estimation && is_not_moving)
-        {
-            //fps_timer.start(depth_completion_timer_id);
-            (complete_output_left_1, complete_output_right_1) = depth_completion.complete(depthL_1, rgbL_1, depthR_1, rgbR_1);
-            //fps_timer.end(depth_completion_timer_id);
-        }
-        else
-        {
-            //complete_output_left_1 = ComputeTensorData.Pin(depthL_1).buffer;
-            //complete_output_right_1 = ComputeTensorData.Pin(depthR_1).buffer;
-            //complete_output_left_2 = ComputeTensorData.Pin(depthL_2).buffer;
-            //complete_output_right_2 = ComputeTensorData.Pin(depthR_2).buffer;
-        }
+        //// depth completion
+        //Debug.Log("depth completion");
+        //is_not_moving = true;
+        //if (activate_depth_estimation && is_not_moving)
+        //{
+        //    //fps_timer.start(depth_completion_timer_id);
+        //    (complete_output_left_1, complete_output_right_1) = depth_completion.complete(depthL_1, rgbL_1, depthR_1, rgbR_1);
+        //    //fps_timer.end(depth_completion_timer_id);
+        //}
+        //else
+        //{
+        //    //complete_output_left_1 = ComputeTensorData.Pin(depthL_1).buffer;
+        //    //complete_output_right_1 = ComputeTensorData.Pin(depthR_1).buffer;
+        //    //complete_output_left_2 = ComputeTensorData.Pin(depthL_2).buffer;
+        //    //complete_output_right_2 = ComputeTensorData.Pin(depthR_2).buffer;
+        //}
 
-        
+        float edgethreshold = 0.0f;
+
+        (temp_depth_left, temp_depth_right, mat_l, mat_r, temp_optical_left, temp_optical_right) = CVD_generator.generatePoseData(depthL_1, rgbL_1, depthR_1, rgbR_1, activate_depth_estimation, activate_CVD);
+
+
+        temp_depth_left_return = CVDLeft.consistent_depth(temp_depth_left, mat_l, temp_optical_left, activate_CVD, edgethreshold, activate_edge_detection, activate_depth_estimation, cvd_weight);
+        //Debug.Log("2 kernel 1");
+        temp_depth_right_return = CVDRight.consistent_depth(temp_depth_right, mat_r, temp_optical_right, activate_CVD, edgethreshold, activate_edge_detection, activate_depth_estimation, cvd_weight);
 
         //fps_timer.start(averaging_timer_id);
         //temp_output_left = AveragerLeft.averaging(temp_output_left, is_not_moving, mean_averaging, median_averaging, edge_detection, edge_threshold);
@@ -291,9 +327,8 @@ public class DepthManager : MonoBehaviour
         // return transformation
 
 
+        //return (complete_output_left_1, complete_output_right_1, ICP_trans);
 
-
-
-        return (complete_output_left_1, complete_output_right_1, ICP_trans);
+        return (temp_depth_left_return, temp_depth_right_return, ICP_trans);
     }
 }
