@@ -18,7 +18,6 @@ public class VRDriveSpot : MonoBehaviour
     
 
     public RosSharp.RosBridgeClient.MoveSpot drive;
-    //public RosSharp.RosBridgeClient.MoveSpot drive2;
 
     public RawImageSubscriber[] depthSubscribers;
     public JPEGImageSubscriber[] colorSubscribers; // Must be in the same order as depthSubscribers
@@ -74,10 +73,10 @@ public class VRDriveSpot : MonoBehaviour
 
         Vector2 leftMove;
         Vector2 rightMove;
-        Vector3 relativePos;
-        Quaternion relativeRot;
-        Vector3 newPos;
-        Quaternion newRot;
+        //Vector3 relativePos;
+        //Quaternion relativeRot;
+        //Vector3 newPos;
+        //Quaternion newRot;
         bool heightChanged = false;
 
         //if (OVRInput.GetDown(RB))
@@ -114,22 +113,6 @@ public class VRDriveSpot : MonoBehaviour
 
             drive.drive(leftMove, rightMove.x, height);
 
-            //// move spot 1
-            //if (drive_mode == 0)
-            //{
-            //    drive.drive(leftMove, rightMove.x, height);
-            //}
-            //// move spot 2
-            //if (drive_mode == 1)
-            //{
-            //    drive2.drive(leftMove, rightMove.x, height);
-            //}
-            //// move together
-            //if (drive_mode == 2)
-            //{
-            //    drive.drive(leftMove, rightMove.x, height);
-            //    drive2.drive(leftMove, rightMove.x, height);
-            //}
 
             // Pause depth history for 1.5 seconds
             foreach (RawImageSubscriber ds in depthSubscribers)
@@ -137,6 +120,13 @@ public class VRDriveSpot : MonoBehaviour
                 ds.pauseDepthHistory(1.5f);
             }
         }
+    }
+
+    void OnDisable()
+    {
+        // when switch to the other mode, hide the spot pointer
+        if (spotPointer != null)
+            spotPointer.SetActive(false);
     }
 
 

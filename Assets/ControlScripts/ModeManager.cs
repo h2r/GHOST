@@ -64,7 +64,8 @@ public class ModeManager : MonoBehaviour
 
         if (curModeTextMesh != null)
         {
-            curModeTextMesh.text = UISpotID + " Mode: " + (currMode + 1).ToString() + " - " + modes[currMode].modeName + "\n";
+            //curModeTextMesh.text = UISpotID + " Mode: " + (currMode + 1).ToString() + " - " + modes[currMode].modeName + "\n";
+            curModeTextMesh.text = UISpotID + " - " + modes[currMode].modeName + "\n";
         }
 
         // Send far plane request
