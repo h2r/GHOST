@@ -4,8 +4,10 @@ using System.Collections.Generic;
 using System.Threading;
 using RosSharp.RosBridgeClient;
 using RosSharp.RosBridgeClient.MessageTypes.Std;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.UI;
 using UnityEngine.XR;
 
 public class VRDriveSpot : MonoBehaviour
@@ -40,6 +42,10 @@ public class VRDriveSpot : MonoBehaviour
     public bool curDrive = true;
     public GameObject spotPointer;
 
+    public Image spotPanel;
+    public TextMeshProUGUI spotPanelText;
+    public Material spotIndicatorMaterial;
+
     void Start()
     {
         if (defaultLow)
@@ -65,11 +71,19 @@ public class VRDriveSpot : MonoBehaviour
         {
             curDrive = !curDrive;
         }
+
+        // control the pointer to spot according to selection.
         spotPointer.SetActive(curDrive);
+
+        // control the spot panel's color according to selection.
         if (!curDrive)
         {
+            spotPanel.color = new Color(0f, 0f, 0f, 87f / 255f);
             return;
         }
+        Color baseColor = spotIndicatorMaterial.GetColor("_Color");
+        baseColor.a = 87f / 255f; // Convert 87 to Unity’s 0–1 range
+        spotPanel.color = baseColor;
 
         Vector2 leftMove;
         Vector2 rightMove;
@@ -127,6 +141,11 @@ public class VRDriveSpot : MonoBehaviour
         // when switch to the other mode, hide the spot pointer
         if (spotPointer != null)
             spotPointer.SetActive(false);
+
+        Color baseColor = spotIndicatorMaterial.GetColor("_Color");
+        baseColor.a = 87f / 255f; // Convert 87 to Unity’s 0–1 range
+        spotPanel.color = baseColor;
+
     }
 
 
