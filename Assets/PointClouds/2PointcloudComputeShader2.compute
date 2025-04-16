@@ -37,7 +37,7 @@ void EdgeDetector(uint3 id : SV_DispatchThreadID)
     
     if (indexX > 5 && indexX < WIDTH - 5 && indexY > 5 && indexY < HEIGHT - 5)
     {
-        if (activate_edge_detection && _Depth[index].z > 0.0f)
+        if (activate_edge_detection)
         {
             const float kX[5][5] =
             {
@@ -143,10 +143,10 @@ void CSMain(uint3 id : SV_DispatchThreadID)
         _Properties[id.x].pos = final_pos;
         _Properties[id.x].pos.w = pos.z;
         
-        //if (_Edge[depth_idx] > 0.5f)
-        //{
-        //    flg = 1.0f;
-        //}
+        if (_Edge[depth_idx] > 0.5f)
+        {
+            flg = 1.0f;
+        }
 
         //float4 final_pos = mul(_GOPose, pos);
         //float4 final_pos1 = mul(_ICPTrans, final_pos);

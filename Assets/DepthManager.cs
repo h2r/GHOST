@@ -218,8 +218,8 @@ public class DepthManager : MonoBehaviour
             depth_process_lock = true;
 
             //bool not_moving = Left_Depth_Renderer.get_ready_to_freeze() && Right_Depth_Renderer.get_ready_to_freeze();
-            //bool not_moving = Left_Depth_Renderer_1.get_ready_to_freeze();
-            bool not_moving = true;
+            bool not_moving = Left_Depth_Renderer_1.get_ready_to_freeze();
+            //bool not_moving = true;
             //not_moving = true;
             (temp_output_left_1, temp_output_right_1, icp_trans_temp) = process_depth(depth_left_t_1, rgb_left_t_1, depth_right_t_1, rgb_right_t_1, not_moving, calculate_icp);
             //Debug.Log("hihi");
@@ -313,12 +313,12 @@ public class DepthManager : MonoBehaviour
 
         float edgethreshold = 0.0f;
 
-        (temp_depth_left, temp_depth_right, mat_l, mat_r, temp_optical_left, temp_optical_right) = CVD_generator.generatePoseData(depthL_1, rgbL_1, depthR_1, rgbR_1, activate_depth_estimation, activate_CVD);
+        (temp_depth_left, temp_depth_right, mat_l, mat_r, temp_optical_left, temp_optical_right) = CVD_generator.generatePoseData(depthL_1, rgbL_1, depthR_1, rgbR_1, activate_depth_estimation, activate_CVD && is_not_moving);
 
 
-        temp_depth_left_return = CVDLeft.consistent_depth(temp_depth_left, mat_l, temp_optical_left, activate_CVD, edgethreshold, activate_edge_detection, activate_depth_estimation, cvd_weight);
+        temp_depth_left_return = CVDLeft.consistent_depth(temp_depth_left, mat_l, temp_optical_left, activate_CVD && is_not_moving, edgethreshold, activate_edge_detection, activate_depth_estimation, cvd_weight);
         //Debug.Log("2 kernel 1");
-        temp_depth_right_return = CVDRight.consistent_depth(temp_depth_right, mat_r, temp_optical_right, activate_CVD, edgethreshold, activate_edge_detection, activate_depth_estimation, cvd_weight);
+        temp_depth_right_return = CVDRight.consistent_depth(temp_depth_right, mat_r, temp_optical_right, activate_CVD && is_not_moving, edgethreshold, activate_edge_detection, activate_depth_estimation, cvd_weight);
 
         //fps_timer.start(averaging_timer_id);
         //temp_output_left = AveragerLeft.averaging(temp_output_left, is_not_moving, mean_averaging, median_averaging, edge_detection, edge_threshold);

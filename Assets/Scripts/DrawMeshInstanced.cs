@@ -76,6 +76,10 @@ public class DrawMeshInstanced : MonoBehaviour
 
     private MeshProperties[] globalProps;
 
+    bool start_completion = true;
+    bool ready_to_freeze = false;
+    bool freeze_lock = false;
+
     //private MeshProperties[] generalUseProps;
 
     ComputeBuffer depth_ar_buffer;
@@ -550,6 +554,39 @@ public class DrawMeshInstanced : MonoBehaviour
     public Vector4 get_intrinsics()
     {
         return new Vector4((float)CX, (float)CY, FX, FY);
+    }
+
+    public bool get_ready_to_freeze()
+    {
+        return start_completion;
+    }
+
+    private IEnumerator ToggleReadyToFreezeAfterDelay(float waitTime)
+    {
+        freeze_lock = true;
+
+        yield return new WaitForSeconds(waitTime);
+        ready_to_freeze = true;
+        start_completion = true;
+        freeze_lock = false;
+    }
+
+    private IEnumerator ToggleReadyToDepthAfterDelay(float waitTime)
+    {
+        yield return new WaitForSeconds(waitTime);
+        start_completion = true;
+    }
+
+    public void continue_update()
+    {
+        start_completion = false;
+        if (ready_to_freeze & !freeze_lock)
+        {
+            StartCoroutine(ToggleReadyToFreezeAfterDelay(1.0f / 30.0f * 120));
+            StartCoroutine(ToggleReadyToDepthAfterDelay(1.0f / 30.0f * 120 / 2.0f));
+            ready_to_freeze = false;
+            start_completion = false;
+        }
     }
 
     //private Mesh CreateQuad(float width = 1f, float height = 1f, float depth = 1f)

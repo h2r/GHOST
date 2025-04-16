@@ -6655,16 +6655,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f91acdd68ae8fb440bb7ce87f9b6a346, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  activate_CVD: 0
-  cvd_weight: 8
+  activate_CVD: 1
+  cvd_weight: 3
   show_spot: 1
   another_manager: {fileID: 1639569377}
   CVDLeft: {fileID: 305849529}
   CVDRight: {fileID: 1814602523}
   activate_depth_estimation: 1
   activate_ICP: 0
-  activate_edge_detection: 0
-  edgeThreshold: 10
+  activate_edge_detection: 1
+  edgeThreshold: 5
   maxNeighbourNum: 10
   Left_Depth_Renderer_1: {fileID: 326679877}
   Right_Depth_Renderer_1: {fileID: 107554149}
@@ -13826,16 +13826,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f91acdd68ae8fb440bb7ce87f9b6a346, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  activate_CVD: 0
-  cvd_weight: 8
+  activate_CVD: 1
+  cvd_weight: 3
   show_spot: 1
   another_manager: {fileID: 638278051}
   CVDLeft: {fileID: 1031760795}
   CVDRight: {fileID: 1274553787}
   activate_depth_estimation: 1
   activate_ICP: 0
-  activate_edge_detection: 0
-  edgeThreshold: 10
+  activate_edge_detection: 1
+  edgeThreshold: 5
   maxNeighbourNum: 10
   Left_Depth_Renderer_1: {fileID: 409472603}
   Right_Depth_Renderer_1: {fileID: 409472602}
