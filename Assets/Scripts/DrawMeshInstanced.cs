@@ -16,6 +16,7 @@ using static Meta.XR.MRUtilityKit.Data;
 
 public class DrawMeshInstanced : MonoBehaviour
 {
+    bool new_depth_to_render = false;
     public ICPLauncher icp_launcher;
     float3[] current_icp_res;
     private Matrix4x4 icp_trans;
@@ -463,6 +464,11 @@ public class DrawMeshInstanced : MonoBehaviour
             DestroyImmediate(color_image, true);
             color_image = copy_texture(colorSubscriber.texture2D);
             depth_ar = depthSubscriber.getDepthArr();
+            if (depthSubscriber.new_depth == true)
+            {
+                new_depth_to_render = true;
+            }
+            depthSubscriber.new_depth = false;
         }
 
         if (depth_ar.Length < 640 * 480)
@@ -473,7 +479,8 @@ public class DrawMeshInstanced : MonoBehaviour
 
         calculate_icp = true;
         if (imageScriptIndex > 1) { calculate_icp = false; } // depth manager 2
-        (depth_ar_buffer, icp_trans) = depthManager.update_depth_from_renderer(color_image, depth_ar, camera_index, calculate_icp);
+        (depth_ar_buffer, icp_trans) = depthManager.update_depth_from_renderer(color_image, depth_ar, camera_index, calculate_icp, new_depth_to_render);
+        new_depth_to_render = false;
         if (imageScriptIndex > 1) { icp_trans = Matrix4x4.identity; } // depth manager 2
 
     }

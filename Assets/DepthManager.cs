@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Unity.Sentis;
+using Unity.VisualScripting;
 
 public class DepthManager : MonoBehaviour
 {
@@ -90,6 +91,9 @@ public class DepthManager : MonoBehaviour
 
     public bool show_sampling_res;
 
+    float[] old_depth1 = new float[480 * 640];
+    float[] old_depth2 = new float[480 * 640];
+
     // Start is called before the first frame update
     void Start()
     {
@@ -140,6 +144,58 @@ public class DepthManager : MonoBehaviour
 
     }
 
+    void Update()
+    {
+        if (received_left_1 && received_right_1 && !depth_process_lock)
+        {
+            depth_process_lock = true;
+
+            //bool not_moving = Left_Depth_Renderer.get_ready_to_freeze() && Right_Depth_Renderer.get_ready_to_freeze();
+            bool not_moving = Left_Depth_Renderer_1.get_ready_to_freeze();
+            //bool not_moving = true;
+            //not_moving = true;
+            (temp_output_left_1, temp_output_right_1, icp_trans_temp) = process_depth(depth_left_t_1, rgb_left_t_1, depth_right_t_1, rgb_right_t_1, not_moving, false);
+            //Debug.Log("hihi");
+
+            if (depth_left_t_1 != null) { depth_left_t_1.Dispose(); }
+            if (rgb_left_t_1 != null) { rgb_left_t_1.Dispose(); }
+            if (depth_right_t_1 != null) { depth_right_t_1.Dispose(); }
+            if (rgb_right_t_1 != null) { rgb_right_t_1.Dispose(); }
+
+            received_left_1 = false;
+            received_right_1 = false;
+
+            depth_process_lock = false;
+            //first_run = true;
+        }
+    }
+
+    public static bool AreFloatArraysEqual(float[] arr1, float[] arr2, float epsilon = 1e-6f)
+    {
+        // Check for null
+        if (arr1 == null || arr2 == null)
+        {
+            return arr1 == arr2; // both null is considered "equal", otherwise false
+        }
+
+        // Check lengths
+        if (arr1.Length != arr2.Length)
+        {
+            return false;
+        }
+
+        // Compare elements with tolerance
+        for (int i = 0; i < arr1.Length; i++)
+        {
+            if (Mathf.Abs(arr1[i] - arr2[i]) > epsilon)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
 
     private IEnumerator ResetActivateDepthEstimation()
     {
@@ -148,12 +204,8 @@ public class DepthManager : MonoBehaviour
         activate_depth_estimation = true;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-    }
 
-    public (ComputeBuffer, Matrix4x4) update_depth_from_renderer(Texture2D rgb, float[] depth, int camera_index, bool calculate_icp)
+    public (ComputeBuffer, Matrix4x4) update_depth_from_renderer(Texture2D rgb, float[] depth, int camera_index, bool calculate_icp, bool new_depth)
     {
         TextureTransform tform = new();
         tform.SetDimensions(rgb.width, rgb.height, 3);
@@ -172,7 +224,7 @@ public class DepthManager : MonoBehaviour
         }
         //Debug.Log("GO");
 
-        if (camera_index == 0 && !received_left_1)
+        if (camera_index == 0 && !received_left_1 && new_depth)
         {
             //fps_timer.start(left_eye_data_timer_id);
 
@@ -185,6 +237,8 @@ public class DepthManager : MonoBehaviour
             //rgb_left = new Texture2D(rgb.width, rgb.height, rgb.format, rgb.mipmapCount > 1);
             //Graphics.CopyTexture(rgb, rgb_left);
 
+            //old_depth1 = depth;
+
             depth_left_t_1 = new Tensor<float>(depth_shape, depth);
             TextureConverter.ToTensor(rgb, rgb_left_t_1, tform);
             rgb_left_t_1.Reshape(color_shape);
@@ -195,9 +249,11 @@ public class DepthManager : MonoBehaviour
 
             //fps_timer.end(left_eye_data_timer_id);
         }
-        else if (camera_index == 1 && !received_right_1)
+        else if (camera_index == 1 && !received_right_1 && new_depth)
         {
             //fps_timer.start(right_eye_data_timer_id);
+
+            //old_depth2 = depth;
 
             depth_right_t_1 = new Tensor<float>(depth_shape, depth);
             TextureConverter.ToTensor(rgb, rgb_right_t_1, tform);
@@ -212,29 +268,6 @@ public class DepthManager : MonoBehaviour
 
         //Debug.Log(received_left_1); Debug.Log(received_right_1);
         //Debug.Log(received_left_2); Debug.Log(received_right_2);
-
-        if (received_left_1 && received_right_1 && !depth_process_lock)
-        {
-            depth_process_lock = true;
-
-            //bool not_moving = Left_Depth_Renderer.get_ready_to_freeze() && Right_Depth_Renderer.get_ready_to_freeze();
-            bool not_moving = Left_Depth_Renderer_1.get_ready_to_freeze();
-            //bool not_moving = true;
-            //not_moving = true;
-            (temp_output_left_1, temp_output_right_1, icp_trans_temp) = process_depth(depth_left_t_1, rgb_left_t_1, depth_right_t_1, rgb_right_t_1, not_moving, calculate_icp);
-            //Debug.Log("hihi");
-
-            if (depth_left_t_1 != null) { depth_left_t_1.Dispose(); }
-            if (rgb_left_t_1 != null) { rgb_left_t_1.Dispose(); }
-            if (depth_right_t_1 != null) { depth_right_t_1.Dispose(); }
-            if (rgb_right_t_1 != null) { rgb_right_t_1.Dispose(); }
-
-            received_left_1 = false;
-            received_right_1 = false;
-
-            depth_process_lock = false;
-            //first_run = true;
-        }
 
         if (camera_index == 0)
         {
@@ -273,6 +306,8 @@ public class DepthManager : MonoBehaviour
         //}
 
     }
+
+
 
     private (ComputeBuffer, ComputeBuffer, Matrix4x4) process_depth(Tensor<float> depthL_1, Tensor<float> rgbL_1, Tensor<float> depthR_1, Tensor<float> rgbR_1, bool is_not_moving, bool calculate_icp)
     {

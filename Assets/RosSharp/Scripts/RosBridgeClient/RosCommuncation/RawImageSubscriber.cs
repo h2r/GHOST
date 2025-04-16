@@ -56,6 +56,7 @@ namespace RosSharp.RosBridgeClient
 
         private Thread messageThread;
 
+        public bool new_depth = false;
 
         /* struct to hold the recency of a depth value */
         private struct DepthInfo
@@ -223,6 +224,8 @@ namespace RosSharp.RosBridgeClient
             // Copy into the final return array and timestamp
             globalData = new float[image_data.Length];
             Array.Copy(image_data, globalData, image_data.Length);
+
+            new_depth = true;
 
             // Set timestamps
             timestamp_synced = timestamp_proc.secs + timestamp_proc.nsecs * 0.000000001;
