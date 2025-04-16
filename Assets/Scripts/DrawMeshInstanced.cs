@@ -443,6 +443,14 @@ public class DrawMeshInstanced : MonoBehaviour
 
     private void UpdateTexture()
     {
+        Vector4 intr = new Vector4((float)CX, (float)CY, FX, FY);
+        compute.SetVector("intrinsics", intr);
+        material.SetVector("intrinsics", intr);
+
+        Vector4 screenData = new Vector4((float)width, (float)height, 1 / (float)width, FY);
+        compute.SetVector("screenData", screenData);
+        material.SetVector("screenData", screenData);
+
         if (use_saved_meshes)
         {
         }

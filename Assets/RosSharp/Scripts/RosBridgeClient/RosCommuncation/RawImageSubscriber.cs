@@ -98,7 +98,7 @@ namespace RosSharp.RosBridgeClient
             if (printMessageReceiveRate)
             {
                 totalSeconds = (DateTime.Now - lastMessageRetrieved).TotalSeconds;
-                //UnityEngine.Debug.Log("Time between messages: " + totalSeconds.ToString("0.0000") + " seconds, " + (1 / totalSeconds).ToString("0.00") + " FPS");
+                UnityEngine.Debug.Log("Time between messages: " + totalSeconds.ToString("0.0000") + " seconds, " + (1 / totalSeconds).ToString("0.00") + " FPS");
                 lastMessageRetrieved = DateTime.Now;
             }
 
