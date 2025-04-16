@@ -14,6 +14,7 @@ public class InstructionSwitch : MonoBehaviour
 
     // Show/hide the instruction panels as needed
     public GameObject Spot1InstructPanel;
+    public GameObject FixInstruction;
 
     // Instruction text shown in VR
     public TextMeshProUGUI spot1CurModeInstruct;
@@ -27,8 +28,8 @@ public class InstructionSwitch : MonoBehaviour
     // Mode instructions
     private readonly string[] instructContentRelatedToMode =
     {
-        "Move L Thumbstick to Translate\n\nMove R Thumbstick to Rotate\n\nPress L Thumbstick to Lower Height\n\nPress R Thumbstick to Raise Height",
-        "Hold Top Trigger and Drag your hand to Move arm.\n\nPress Hand Trigger to Open/Close Gripper\n\nPress Y (Spot 1) / B (Spot 2) to Stow Arm\n\nCamera Transform\nL Thumbstick → Translate\nR Thumbstick → Rotate\nPress L/R Thumbstick → Adjust Height",
+        "Press A to Switch Spot to Drive\n\nMove L Thumbstick to Translate Spot\n\nMove R Thumbstick to Rotate Spot\n\nPress L Thumbstick to Lower Height\n\nPress R Thumbstick to Raise Height",
+        "Hold Top Trigger and Drag your hand to Move arm.\n\nPress Hand Trigger to Open/Close Gripper\n\nCamera Transform\nL Thumbstick → Translate\nR Thumbstick → Rotate\nPress L/R Thumbstick → Adjust Height",
         //"Move Thumbstick → Translate Spot\n\nHold Index Trigger + Move Thumbstick → Rotate Spot\n\nPress Thumbstick → Lower Spot Height\n\nHold Index Trigger + Press Thumbstick → Raise Spot Height",
         //"Press Hand Trigger → Stow Arm\n\nDouble Click Index Trigger → Switch Thumbstick Mode: \n- Gripper Translation\n- Gripper Nod\n- Gripper Rotate (180° max)\n\nPress Thumbstick → Lower Gripper\n\nHold Index Trigger + Press Thumbstick → Raise Gripper"
     };
@@ -80,8 +81,11 @@ public class InstructionSwitch : MonoBehaviour
             if (spot1Mode == -1 && spot2Mode == -1)
             {
                 // Both spots are in default mode, show their respective default content
-                Spot1InstructPanel.SetActive(true);
-                spot1CurModeInstruct.text = defaultContent[0];
+                //Spot1InstructPanel.SetActive(true);
+                //spot1CurModeInstruct.text = defaultContent[0];
+
+                // not showing the mode instruction at start
+                Spot1InstructPanel.SetActive(false);
             }
             else if (spot1Mode != -1 && spot2Mode != -1 && spot1Mode == spot2Mode)
             {
@@ -95,10 +99,13 @@ public class InstructionSwitch : MonoBehaviour
                 Spot1InstructPanel.SetActive(true);
                 spot1CurModeInstruct.text = spot1Mode != -1 ? instructContentRelatedToMode[spot1Mode] : defaultContent[0];
             }
+
+            FixInstruction.SetActive(true);
         }
         else
         {
             Spot1InstructPanel.SetActive(false);
+            FixInstruction.SetActive(false);
         }
     }
 
