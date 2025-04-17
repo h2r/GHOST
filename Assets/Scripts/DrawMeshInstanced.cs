@@ -78,12 +78,17 @@ public class DrawMeshInstanced : MonoBehaviour
     private MeshProperties[] globalProps;
 
     bool start_completion = true;
-    bool ready_to_freeze = false;
+    bool ready_to_freeze = true;
     bool freeze_lock = false;
+
+    float[,] depth_avg_buffer = new float[30, 640 * 480];
+    float[] res_depth = new float[640 * 480];
 
     //private MeshProperties[] generalUseProps;
 
     ComputeBuffer depth_ar_buffer;
+
+    int buffer_pos = 0;
 
     int kernel;
     int edge_kernel;
@@ -479,10 +484,59 @@ public class DrawMeshInstanced : MonoBehaviour
 
         calculate_icp = true;
         if (imageScriptIndex > 1) { calculate_icp = false; } // depth manager 2
-        (depth_ar_buffer, icp_trans) = depthManager.update_depth_from_renderer(color_image, depth_ar, camera_index, calculate_icp, new_depth_to_render);
+
+        //if (depthManager.avg_before_completion)
+        //{
+        //    for (int j = 0; j < depth_ar.Length; j++)
+        //    {
+        //        depth_avg_buffer[buffer_pos, j] = depth_ar[j];
+        //        res_depth[j] = 0.0f;
+        //    }
+
+        //    int num_valid = 0;
+        //    float total_sum = 0.0f;
+        //    for (int j = 0; j < 480 * 640; j++)
+        //    {
+        //        num_valid = 0;
+        //        total_sum = 0.0f;
+        //        for (int i = 0; i < 30; i++)
+        //        {
+                    
+        //            if (depth_avg_buffer[i, j] >= 1.0f)
+        //            {
+        //                num_valid += 1;
+        //                total_sum += depth_avg_buffer[i, j];
+        //            }
+        //        }
+        //        if (num_valid != 0)
+        //        {
+        //            res_depth[j] = total_sum / num_valid;
+        //        }
+        //    }
+
+
+        //    buffer_pos += 1;
+        //    if (buffer_pos >= 30)
+        //    {
+        //        buffer_pos = 0;
+        //    }
+        //}
+
+            
+
+        if (depthManager.avg_before_completion)
+        {
+            (depth_ar_buffer, icp_trans) = depthManager.update_depth_from_renderer(color_image, res_depth, camera_index, calculate_icp, new_depth_to_render);
+        }
+        else
+        {
+            (depth_ar_buffer, icp_trans) = depthManager.update_depth_from_renderer(color_image, depth_ar, camera_index, calculate_icp, new_depth_to_render);
+        }
+            
         new_depth_to_render = false;
         if (imageScriptIndex > 1) { icp_trans = Matrix4x4.identity; } // depth manager 2
 
+        
     }
 
     private void Update()
@@ -572,25 +626,28 @@ public class DrawMeshInstanced : MonoBehaviour
     {
         freeze_lock = true;
 
-        yield return new WaitForSeconds(waitTime);
+        yield return new WaitForSecondsRealtime(waitTime);
         ready_to_freeze = true;
         start_completion = true;
+        Debug.LogWarning("DEPTH IS READY AGAIN");
         freeze_lock = false;
     }
 
     private IEnumerator ToggleReadyToDepthAfterDelay(float waitTime)
     {
-        yield return new WaitForSeconds(waitTime);
+        yield return new WaitForSecondsRealtime(waitTime);
+        Debug.LogWarning("DEPTH IS READY");
         start_completion = true;
     }
 
     public void continue_update()
     {
         start_completion = false;
+        Debug.LogWarning("SET TO FALSE");
         if (ready_to_freeze & !freeze_lock)
         {
-            StartCoroutine(ToggleReadyToFreezeAfterDelay(1.0f / 30.0f * 120));
-            StartCoroutine(ToggleReadyToDepthAfterDelay(1.0f / 30.0f * 120 / 2.0f));
+            StartCoroutine(ToggleReadyToFreezeAfterDelay(1.0f));
+            StartCoroutine(ToggleReadyToDepthAfterDelay(1.0f));
             ready_to_freeze = false;
             start_completion = false;
         }

@@ -46,6 +46,8 @@ public class VRDriveSpot : MonoBehaviour
     public TextMeshProUGUI spotPanelText;
     public Material spotIndicatorMaterial;
 
+    public DepthManager depthManager;
+
     void Start()
     {
         if (defaultLow)
@@ -70,6 +72,7 @@ public class VRDriveSpot : MonoBehaviour
         if (OVRInput.GetDown(driveSwitch))
         {
             curDrive = !curDrive;
+            depthManager.show_spot = curDrive;
         }
 
         // control the pointer to spot according to selection.

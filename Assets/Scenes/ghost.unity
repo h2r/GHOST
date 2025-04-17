@@ -5915,12 +5915,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 563131594}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -1.6145236, y: 2.2813423, z: -3.9128585}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1834046043}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &563131596
 MonoBehaviour:
@@ -6655,6 +6655,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f91acdd68ae8fb440bb7ce87f9b6a346, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  avg_before_completion: 0
   activate_CVD: 1
   cvd_weight: 3
   show_spot: 1
@@ -6663,7 +6664,7 @@ MonoBehaviour:
   CVDRight: {fileID: 1814602523}
   activate_depth_estimation: 1
   activate_ICP: 0
-  activate_edge_detection: 1
+  activate_edge_detection: 0
   edgeThreshold: 5
   maxNeighbourNum: 10
   Left_Depth_Renderer_1: {fileID: 326679877}
@@ -7686,6 +7687,7 @@ MonoBehaviour:
   spotPanel: {fileID: 260171718}
   spotPanelText: {fileID: 327316659}
   spotIndicatorMaterial: {fileID: 2100000, guid: 8d651bf5d7e26084dbdf01c4cf0e5fde, type: 2}
+  depthManager: {fileID: 1639569377}
 --- !u!114 &718889042
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11463,6 +11465,7 @@ MonoBehaviour:
   spotPanel: {fileID: 1123781891}
   spotPanelText: {fileID: 2015793253}
   spotIndicatorMaterial: {fileID: 2100000, guid: 69608c040680c064cbc57c4aad92e21f, type: 2}
+  depthManager: {fileID: 638278051}
 --- !u!114 &1322041478
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13826,6 +13829,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f91acdd68ae8fb440bb7ce87f9b6a346, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  avg_before_completion: 0
   activate_CVD: 1
   cvd_weight: 3
   show_spot: 1
@@ -13834,7 +13838,7 @@ MonoBehaviour:
   CVDRight: {fileID: 1274553787}
   activate_depth_estimation: 1
   activate_ICP: 0
-  activate_edge_detection: 1
+  activate_edge_detection: 0
   edgeThreshold: 5
   maxNeighbourNum: 10
   Left_Depth_Renderer_1: {fileID: 409472603}
@@ -15861,7 +15865,6 @@ Transform:
   - {fileID: 1391545887}
   - {fileID: 2044625702}
   - {fileID: 527979533}
-  - {fileID: 563131595}
   - {fileID: 655561108}
   - {fileID: 718889040}
   - {fileID: 2010952379}
@@ -17548,3 +17551,4 @@ SceneRoots:
   - {fileID: 638278052}
   - {fileID: 1639569378}
   - {fileID: 1526506750}
+  - {fileID: 563131595}
