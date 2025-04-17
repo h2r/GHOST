@@ -54,6 +54,10 @@ public class HeightAdjuster : MonoBehaviour
             {
                 /* Move camera position around according to left stick */
                 leftMove = OVRInput.Get(LAx) / 50f;
+                //Debug.Log("x: ");
+                //Debug.Log(leftMove.x);
+                //Debug.Log("y: ");
+                //Debug.Log(leftMove.y);
                 relativeRot = Quaternion.Euler(0f, mainCamera.rotation.eulerAngles.y, 0f);// cameraTransform.rotation;
                 cameraOffset.position += relativeRot * new Vector3(leftMove.x, 0f, leftMove.y);
 
@@ -82,5 +86,12 @@ public class HeightAdjuster : MonoBehaviour
 
         /* Go lower */
         
+    }
+
+    public Vector3 get_normal()
+    {
+        var relRot = Quaternion.Euler(0f, mainCamera.rotation.eulerAngles.y, 0f);
+        var res = relRot * new Vector3(0f, 0f, 1.0f);
+        return res.normalized;
     }
 }
