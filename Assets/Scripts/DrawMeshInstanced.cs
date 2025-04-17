@@ -12,10 +12,13 @@ using System.Diagnostics;
 using Debug = UnityEngine.Debug;
 using Unity.Mathematics;
 using static Meta.XR.MRUtilityKit.Data;
+using Unity.VisualScripting;
 //using System;
 
 public class DrawMeshInstanced : MonoBehaviour
 {
+    public DepthAveraging averager;
+
     bool new_depth_to_render = false;
     public ICPLauncher icp_launcher;
     float3[] current_icp_res;
@@ -635,6 +638,7 @@ public class DrawMeshInstanced : MonoBehaviour
         ready_to_freeze = true;
         start_completion = true;
         Debug.LogWarning("DEPTH IS READY AGAIN");
+        averager.ClearBuffer();
         freeze_lock = false;
     }
 
@@ -651,8 +655,8 @@ public class DrawMeshInstanced : MonoBehaviour
         Debug.LogWarning("SET TO FALSE");
         if (ready_to_freeze & !freeze_lock)
         {
-            StartCoroutine(ToggleReadyToFreezeAfterDelay(1.0f));
-            StartCoroutine(ToggleReadyToDepthAfterDelay(1.0f));
+            StartCoroutine(ToggleReadyToFreezeAfterDelay(4.0f));
+            StartCoroutine(ToggleReadyToDepthAfterDelay(4.0f));
             ready_to_freeze = false;
             start_completion = false;
         }

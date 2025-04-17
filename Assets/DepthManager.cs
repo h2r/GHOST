@@ -24,6 +24,8 @@ public class DepthManager : MonoBehaviour
 
     public float edgeThreshold;
     public int maxNeighbourNum;
+
+    public DepthAveraging AveragerLeft, AveragerRight;
     //public bool mean_averaging;
     //public bool median_averaging;
     //public bool edge_detection;
@@ -41,6 +43,9 @@ public class DepthManager : MonoBehaviour
 
     private bool received_left_1 = false;
     private bool received_right_1 = false;
+
+    float[] left_depth_avg = new float[480 * 640];
+    float[] right_depth_avg = new float[480 * 640];
 
     private bool depth_process_lock = false;
 
@@ -243,7 +248,9 @@ public class DepthManager : MonoBehaviour
 
             //old_depth1 = depth;
 
-            depth_left_t_1 = new Tensor<float>(depth_shape, depth);
+            left_depth_avg = AveragerLeft.averaging(depth, Left_Depth_Renderer_1.get_ready_to_freeze(), avg_before_completion);
+
+            depth_left_t_1 = new Tensor<float>(depth_shape, left_depth_avg);
             TextureConverter.ToTensor(rgb, rgb_left_t_1, tform);
             rgb_left_t_1.Reshape(color_shape);
 
@@ -259,7 +266,9 @@ public class DepthManager : MonoBehaviour
 
             //old_depth2 = depth;
 
-            depth_right_t_1 = new Tensor<float>(depth_shape, depth);
+            right_depth_avg = AveragerRight.averaging(depth, Left_Depth_Renderer_1.get_ready_to_freeze(), avg_before_completion);
+
+            depth_right_t_1 = new Tensor<float>(depth_shape, right_depth_avg);
             TextureConverter.ToTensor(rgb, rgb_right_t_1, tform);
             rgb_right_t_1.Reshape(color_shape);
 

@@ -1,0 +1,76 @@
+#pragma kernel EdgeDetection
+#pragma kernel MeanAveraging
+#pragma kernel ClearBuffer
+#pragma kernel MedianAveragingFast
+#pragma kernel MedianAveragingNaive
+
+// Size of the buffers
+#define WIDTH 640
+#define HEIGHT 480
+
+// Number of frames
+int num_frames;
+
+// For Edge Detection Min Grad
+float edgeThreshold;
+
+// Buffers
+RWStructuredBuffer<float> depth_ar; // EdgeDetection, MeanAveraging, MedianAveragingFast, MedianAveragingNaive 
+RWStructuredBuffer<float> depth_buffer; // MeanAveraging, ClearBuffer, MedianAveragingFast, MedianAveragingNaive 
+
+// buffer pos
+int buffer_pos;
+
+// activate filter or not
+bool activate;
+
+
+
+// Clear Buffer Data
+[numthreads(16, 16, 1)]
+void ClearBuffer(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupThreadID)
+{
+    int xIndex = groupId.x * 16 + threadId.x;
+    int yIndex = groupId.y * 16 + threadId.y;
+
+    if (xIndex < WIDTH && yIndex < HEIGHT)
+    {
+        for (int i = 0; i < num_frames; i++)
+        {
+            int idx = i * WIDTH * HEIGHT + xIndex + yIndex * WIDTH;
+            depth_buffer[idx] = 0.0f;
+        }
+    }
+}
+
+
+// Fast Median Averaging
+[numthreads(16, 16, 1)]
+void MeanAveraging(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupThreadID)
+{
+    int xIndex = groupId.x * 16 + threadId.x;
+    int yIndex = groupId.y * 16 + threadId.y;
+
+    int index = xIndex + yIndex * WIDTH;
+    depth_buffer[buffer_pos * WIDTH * HEIGHT + index] = depth_ar[index];
+
+    if (xIndex < WIDTH && yIndex < HEIGHT && activate)
+    {
+        float weighted_sum = 0.0;
+        float total_weight = 0.0001;
+ 
+        for (int i = 0; i < num_frames - 1; i++)
+        {
+            int idx = i * WIDTH * HEIGHT + index;
+            //float weight = 1.0;
+            //weight = 1.0;
+            if (depth_buffer[idx] > 0)
+            {
+                weighted_sum += depth_buffer[idx];
+                total_weight += 1.0;
+            }
+        }
+            
+        depth_ar[index] = weighted_sum / total_weight;
+    }
+}
