@@ -4100,6 +4100,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 638278053}
     - target: {fileID: 1137478775010377568, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: mainCameraRot
+      value: 
+      objectReference: {fileID: 1747440747}
+    - target: {fileID: 1137478775010377568, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: use_saved_meshes
       value: 0
       objectReference: {fileID: 0}
@@ -4171,6 +4175,10 @@ PrefabInstance:
       propertyPath: icp_launcher
       value: 
       objectReference: {fileID: 638278053}
+    - target: {fileID: 1137478775515482002, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: mainCameraRot
+      value: 
+      objectReference: {fileID: 1747440747}
     - target: {fileID: 1137478775515482002, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: imageScriptIndex
       value: 1
@@ -4396,6 +4404,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 638278053}
     - target: {fileID: 3310871052733856933, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: mainCameraRot
+      value: 
+      objectReference: {fileID: 1747440747}
+    - target: {fileID: 3310871052733856933, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: imageScriptIndex
       value: 3
       objectReference: {fileID: 0}
@@ -4495,6 +4507,10 @@ PrefabInstance:
       propertyPath: icp_launcher
       value: 
       objectReference: {fileID: 638278053}
+    - target: {fileID: 3310871053306987607, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: mainCameraRot
+      value: 
+      objectReference: {fileID: 1747440747}
     - target: {fileID: 3310871053306987607, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: imageScriptIndex
       value: 2

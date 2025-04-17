@@ -88,10 +88,10 @@ public class HeightAdjuster : MonoBehaviour
         
     }
 
-    public Vector3 get_normal()
-    {
-        var relRot = Quaternion.Euler(0f, mainCamera.rotation.eulerAngles.y, 0f);
-        var res = relRot * new Vector3(0f, 0f, 1.0f);
-        return res.normalized;
-    }
+    //public Vector3 get_normal()
+    //{
+    //    var relRot = Quaternion.Euler(0f, mainCamera.rotation.eulerAngles.y, 0f);
+    //    var res = relRot * new Vector3(0f, 0f, 1.0f);
+    //    return res.normalized;
+    //}
 }

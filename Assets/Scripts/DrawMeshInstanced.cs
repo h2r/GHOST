@@ -27,6 +27,8 @@ public class DrawMeshInstanced : MonoBehaviour
     public DepthManager depthManager;
     public int camera_index;
 
+    public Transform mainCameraRot;
+
     public float range;
 
     public Texture2D color_image;
@@ -589,7 +591,9 @@ public class DrawMeshInstanced : MonoBehaviour
         // Question:
         //          - where is the point cloud? -> stored at where
         //          - what is the format of the point cloud after calling the compute shader
-        //          - How to access the 2 point cloud from 2 spots?        
+        //          - How to access the 2 point cloud from 2 spots?
+        //          
+        OrientQuad(mesh, get_normal());
         Graphics.DrawMeshInstancedIndirect(mesh, 0, material, bounds, argsBuffer);
         //numUpdates += 1;
     }
@@ -660,6 +664,14 @@ public class DrawMeshInstanced : MonoBehaviour
             ready_to_freeze = false;
             start_completion = false;
         }
+    }
+
+    public Vector3 get_normal()
+    {
+        var relRot = Quaternion.Euler(0f, mainCameraRot.rotation.eulerAngles.y, 0f);
+        var res = relRot * new Vector3(0f, 0f, -1.0f);
+        Debug.LogWarning(res.ToString());
+        return res.normalized;
     }
 
     //private Mesh CreateQuad(float width = 1f, float height = 1f, float depth = 1f)
@@ -775,6 +787,39 @@ public class DrawMeshInstanced : MonoBehaviour
         mesh.uv = uv;
 
         return mesh;
+    }
+
+    void OrientQuad(Mesh mesh, Vector3 vec_dir)
+    {
+        if (vec_dir.sqrMagnitude < 1e-6f) return;          // guard against zero
+        Quaternion rot = Quaternion.FromToRotation(-Vector3.forward, vec_dir.normalized);
+
+        float w = size_scale * .5f;
+        float h = size_scale * .5f;
+
+        Vector3[] v = new Vector3[4] {
+            new Vector3(-w, -h, 0),
+            new Vector3(w, -h, 0),
+            new Vector3(-w, h, 0),
+            new Vector3(w, h, 0)
+        };
+
+        Vector3[] n = new Vector3[4] {
+            -Vector3.forward,
+            -Vector3.forward,
+            -Vector3.forward,
+            -Vector3.forward,
+        };
+
+        for (int i = 0; i < v.Length; ++i)
+        {
+            v[i] = rot * v[i];      // rotate vertex positions
+            n[i] = rot * n[i];      // rotate normals
+        }
+
+        mesh.vertices = v;
+        mesh.normals = n;
+        //mesh.RecalculateBounds();
     }
 
     private Mesh CreateTri(float width = 1f, float height = 1f)
