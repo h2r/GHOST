@@ -13,6 +13,7 @@ public class InitialPos : MonoBehaviour
     }
 
     // Move the camera right above 
+    // will try on 4/17 for fixing camera
     void SetInitialPosition()
     {
         transform.position = armBaseLocation.position + new Vector3(0f, -1f, 0.4f);
