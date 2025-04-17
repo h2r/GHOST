@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Oculus.Interaction.OVR.Input;
 using RosSharp.RosBridgeClient;
 using UnityEngine;
 using UnityEngine.Experimental.GlobalIllumination;
@@ -49,7 +50,22 @@ public class MoveArm : MonoBehaviour
     public Material translucentSpotArmMaterial;
 
     public Material spot1_indicator;
-    
+
+
+    public DrawMeshInstanced[] pointClouds;
+    public OVRInput.RawButton two3d;
+    private float point_cloud_t = 1f;
+
+    /*public bool curDrive = true;
+    public DepthManager depthManager;*/
+
+    public VRDriveSpot driveScript;
+
+    // Double-click detection for LT1
+    private float lastLT1PressTime = 0f;
+    private const float doubleClickInterval = 0.5f; // Adjust as needed
+
+
 
 
     private void OnEnable()
@@ -65,6 +81,33 @@ public class MoveArm : MonoBehaviour
     {
         Vector3 locationChange;
         Quaternion rotationChange;
+        
+
+        // ---------------------------------------------------
+        // Double-Click Detection on two3d to switch modes
+        // ---------------------------------------------------
+        if (OVRInput.GetDown(two3d))
+        {
+            float timeSinceLastPress = Time.time - lastLT1PressTime;
+            if (timeSinceLastPress <= doubleClickInterval)
+            {
+                /* Toggle every point cloud */
+                point_cloud_t = point_cloud_t == 1f ? 0f : 1f;
+                foreach (DrawMeshInstanced cloud in pointClouds)
+                {
+                    cloud.t = point_cloud_t;
+                }
+            }
+            // Update the timestamp
+            lastLT1PressTime = Time.time;
+        }
+
+        // switch pointcloud
+        if (OVRInput.Get(two3d))
+        {
+            driveScript.curDrive = !driveScript.curDrive;
+            driveScript.depthManager.show_spot = driveScript.curDrive;
+        }
 
         // If the trigger is pressed, we want to start tracking the position of the arm and sending it to Spot
         if (OVRInput.Get(HandTracking))

@@ -1394,6 +1394,9 @@ MonoBehaviour:
   opaqueSpotArmMaterial: {fileID: 0}
   translucentSpotArmMaterial: {fileID: 0}
   spot1_indicator: {fileID: 0}
+  pointClouds: []
+  two3d: 0
+  driveScript: {fileID: 0}
 --- !u!114 &177092883
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1771,6 +1774,9 @@ MonoBehaviour:
   opaqueSpotArmMaterial: {fileID: 0}
   translucentSpotArmMaterial: {fileID: 0}
   spot1_indicator: {fileID: 0}
+  pointClouds: []
+  two3d: 0
+  driveScript: {fileID: 0}
 --- !u!114 &216091794
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2389,6 +2395,37 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1499995371}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &297786703
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 297786704}
+  m_Layer: 0
+  m_Name: spot_flag
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &297786704
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 297786703}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1834046043}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &298831650
 GameObject:
@@ -4837,6 +4874,9 @@ MonoBehaviour:
   opaqueSpotArmMaterial: {fileID: 0}
   translucentSpotArmMaterial: {fileID: 0}
   spot1_indicator: {fileID: 0}
+  pointClouds: []
+  two3d: 0
+  driveScript: {fileID: 0}
 --- !u!114 &436511615
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6876,6 +6916,11 @@ MonoBehaviour:
   opaqueSpotArmMaterial: {fileID: 2100000, guid: 1009aa728b6bccd49a5691c631816ea4, type: 2}
   translucentSpotArmMaterial: {fileID: 2100000, guid: 86f42008a474fbf4aba6368837fb6993, type: 2}
   spot1_indicator: {fileID: 2100000, guid: 8d651bf5d7e26084dbdf01c4cf0e5fde, type: 2}
+  pointClouds:
+  - {fileID: 409472603}
+  - {fileID: 409472602}
+  two3d: 1
+  driveScript: {fileID: 718889041}
 --- !u!114 &655561110
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9055,6 +9100,11 @@ MonoBehaviour:
   opaqueSpotArmMaterial: {fileID: 2100000, guid: 1009aa728b6bccd49a5691c631816ea4, type: 2}
   translucentSpotArmMaterial: {fileID: 2100000, guid: 86f42008a474fbf4aba6368837fb6993, type: 2}
   spot1_indicator: {fileID: 2100000, guid: 69608c040680c064cbc57c4aad92e21f, type: 2}
+  pointClouds:
+  - {fileID: 326679877}
+  - {fileID: 107554149}
+  two3d: 1
+  driveScript: {fileID: 0}
 --- !u!114 &947366007
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15871,6 +15921,7 @@ Transform:
   - {fileID: 216091792}
   - {fileID: 177092881}
   - {fileID: 2025026147}
+  - {fileID: 297786704}
   m_Father: {fileID: 1637440002}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1834046044
@@ -16361,6 +16412,9 @@ MonoBehaviour:
   opaqueSpotArmMaterial: {fileID: 0}
   translucentSpotArmMaterial: {fileID: 0}
   spot1_indicator: {fileID: 0}
+  pointClouds: []
+  two3d: 0
+  driveScript: {fileID: 0}
 --- !u!114 &1955072830
 MonoBehaviour:
   m_ObjectHideFlags: 0

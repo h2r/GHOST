@@ -111,7 +111,6 @@ public class DrawMeshInstanced : MonoBehaviour
         pS = 1.0f;
         kernel = compute.FindKernel("CSMain");
         edge_kernel = compute.FindKernel("EdgeDetector");
-        compute.SetFloat("t", t);
 
         //size_scale = 0.002f;
         //width = 640;
@@ -453,6 +452,8 @@ public class DrawMeshInstanced : MonoBehaviour
 
     private void UpdateTexture()
     {
+        compute.SetFloat("t", t);
+
         Vector4 intr = new Vector4((float)CX, (float)CY, FX, FY);
         compute.SetVector("intrinsics", intr);
         material.SetVector("intrinsics", intr);
