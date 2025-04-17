@@ -501,7 +501,7 @@ public class DrawMeshInstanced : MonoBehaviour
         //        total_sum = 0.0f;
         //        for (int i = 0; i < 30; i++)
         //        {
-                    
+
         //            if (depth_avg_buffer[i, j] >= 1.0f)
         //            {
         //                num_valid += 1;
@@ -522,17 +522,21 @@ public class DrawMeshInstanced : MonoBehaviour
         //    }
         //}
 
-            
 
-        if (depthManager.avg_before_completion)
-        {
-            (depth_ar_buffer, icp_trans) = depthManager.update_depth_from_renderer(color_image, res_depth, camera_index, calculate_icp, new_depth_to_render);
-        }
-        else
-        {
-            (depth_ar_buffer, icp_trans) = depthManager.update_depth_from_renderer(color_image, depth_ar, camera_index, calculate_icp, new_depth_to_render);
-        }
-            
+
+        //temp_output_left = Averager.averaging(temp_output_left, is_not_moving, mean_averaging, median_averaging, edge_detection, edge_threshold);
+
+        (depth_ar_buffer, icp_trans) = depthManager.update_depth_from_renderer(color_image, depth_ar, camera_index, calculate_icp, new_depth_to_render, depthManager.avg_before_completion);
+
+        //if (depthManager.avg_before_completion)
+        //{
+        //    (depth_ar_buffer, icp_trans) = depthManager.update_depth_from_renderer(color_image, res_depth, camera_index, calculate_icp, new_depth_to_render);
+        //}
+        //else
+        //{
+        //    (depth_ar_buffer, icp_trans) = depthManager.update_depth_from_renderer(color_image, depth_ar, camera_index, calculate_icp, new_depth_to_render);
+        //}
+
         new_depth_to_render = false;
         if (imageScriptIndex > 1) { icp_trans = Matrix4x4.identity; } // depth manager 2
 

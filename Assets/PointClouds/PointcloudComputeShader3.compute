@@ -118,7 +118,7 @@ void CSMain(uint3 id : SV_DispatchThreadID)
 
         uint depth_idx = (screenData.x * (screenData.y - col_y - 1)) + (screenData.x - col_x - 1);
     
-        pos.z = _Depth[depth_idx].z;
+        pos.z = _Depth[depth_idx].z * t + (1 - t);
 
         pos.x = (col_y - intrinsics.y) * pos.z / intrinsics.z;
         pos.y = (col_x - intrinsics.x) * pos.z / intrinsics.w;
@@ -141,7 +141,7 @@ void CSMain(uint3 id : SV_DispatchThreadID)
         }
         
         _Properties[id.x].pos = final_pos;
-        _Properties[id.x].pos.w = pos.z;
+        _Properties[id.x].pos.w = pos.z * t + (1 - t);
         
         if (_Edge[depth_idx] > 0.5f)
         {

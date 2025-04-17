@@ -208,7 +208,7 @@ public class DepthManager : MonoBehaviour
     }
 
 
-    public (ComputeBuffer, Matrix4x4) update_depth_from_renderer(Texture2D rgb, float[] depth, int camera_index, bool calculate_icp, bool new_depth)
+    public (ComputeBuffer, Matrix4x4) update_depth_from_renderer(Texture2D rgb, float[] depth, int camera_index, bool calculate_icp, bool new_depth, bool avg_before_complete)
     {
         TextureTransform tform = new();
         tform.SetDimensions(rgb.width, rgb.height, 3);
@@ -237,6 +237,7 @@ public class DepthManager : MonoBehaviour
             //{
             //    Destroy(rgb_left);
             //}
+
             //rgb_left = new Texture2D(rgb.width, rgb.height, rgb.format, rgb.mipmapCount > 1);
             //Graphics.CopyTexture(rgb, rgb_left);
 
