@@ -6774,7 +6774,7 @@ MonoBehaviour:
   activate_depth_estimation: 1
   activate_ICP: 0
   activate_edge_detection: 1
-  edgeThreshold: 20
+  edgeThreshold: 21
   maxNeighbourNum: 10
   AveragerLeft: {fileID: 1823001778}
   AveragerRight: {fileID: 42691506}
@@ -14052,7 +14052,7 @@ MonoBehaviour:
   activate_depth_estimation: 1
   activate_ICP: 0
   activate_edge_detection: 1
-  edgeThreshold: 20
+  edgeThreshold: 21
   maxNeighbourNum: 10
   AveragerLeft: {fileID: 823879425}
   AveragerRight: {fileID: 1137389442}
