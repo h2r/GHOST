@@ -9222,7 +9222,7 @@ MonoBehaviour:
   - {fileID: 326679877}
   - {fileID: 107554149}
   two3d: 1
-  driveScript: {fileID: 0}
+  driveScript: {fileID: 1322041477}
 --- !u!114 &947366007
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15041,8 +15041,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.6, y: -0.32}
-  m_SizeDelta: {x: 0.74, y: 0.5}
+  m_AnchoredPosition: {x: -0.6, y: -0.39}
+  m_SizeDelta: {x: 0.74, y: 0.65}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1750650393
 MonoBehaviour:

@@ -64,8 +64,9 @@ public class MoveArm : MonoBehaviour
     // Double-click detection for LT1
     private float lastLT1PressTime = 0f;
     private const float doubleClickInterval = 0.5f; // Adjust as needed
+    private bool clickPending = false;
 
-
+    private bool pointCloudSpotActive;
 
 
     private void OnEnable()
@@ -75,39 +76,50 @@ public class MoveArm : MonoBehaviour
         dummyHandTransform.rotation = realHandTransform.rotation;
         showSpotBody = false;
         setSpotVisible(spotBody, showSpotBody);
+
+        pointCloudSpotActive = driveScript.curDrive;
     }
 
     void Update()
     {
         Vector3 locationChange;
         Quaternion rotationChange;
-        
 
-        // ---------------------------------------------------
-        // Double-Click Detection on two3d to switch modes
-        // ---------------------------------------------------
         if (OVRInput.GetDown(two3d))
         {
-            float timeSinceLastPress = Time.time - lastLT1PressTime;
-            if (timeSinceLastPress <= doubleClickInterval)
+            float timeSinceLastClick = Time.time - lastLT1PressTime;
+
+            if (timeSinceLastClick <= doubleClickInterval)
             {
-                /* Toggle every point cloud */
+                // Double click detected
+                clickPending = false;
+
+                // DOUBLE CLICK ACTION
                 point_cloud_t = point_cloud_t == 1f ? 0f : 1f;
                 foreach (DrawMeshInstanced cloud in pointClouds)
                 {
                     cloud.t = point_cloud_t;
                 }
             }
-            // Update the timestamp
+            else
+            {
+                // Maybe a single click — set flag and wait for possible second click next frame
+                clickPending = true;
+            }
+
             lastLT1PressTime = Time.time;
         }
 
-        // switch pointcloud
-        if (OVRInput.Get(two3d))
+        // Execute single-click if no second click came within interval
+        if (clickPending && Time.time - lastLT1PressTime > doubleClickInterval)
         {
-            driveScript.curDrive = !driveScript.curDrive;
-            driveScript.depthManager.show_spot = driveScript.curDrive;
+            clickPending = false;
+
+            // SINGLE CLICK ACTION
+            pointCloudSpotActive = !pointCloudSpotActive;
         }
+        driveScript.depthManager.show_spot = pointCloudSpotActive;
+
 
         // If the trigger is pressed, we want to start tracking the position of the arm and sending it to Spot
         if (OVRInput.Get(HandTracking))
@@ -269,6 +281,13 @@ public class MoveArm : MonoBehaviour
         armPublisher.enabled = false;
         showSpotBody = false;
         setSpotVisible(spotBody, true);
+
+        driveScript.curDrive = pointCloudSpotActive;
+
+        foreach (DrawMeshInstanced cloud in pointClouds)
+        {
+            cloud.t = 1f;
+        }
     }
 }
 
