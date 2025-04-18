@@ -82,7 +82,23 @@ public class VRDriveSpot : MonoBehaviour
             driveControlAll.updateState(isSpot2Drive);
             curDrive = driveControlAll.getState_Bool(isSpot2Drive);
 
-            depthManager.show_spot = curDrive;
+            // in sync drive mode
+            if(driveControlAll.getState_Int() == 2)
+            {
+                // only show spot1's pointcloud
+                if(!isSpot2Drive) {
+                    depthManager.show_spot = curDrive;
+                }
+                else
+                {
+                    depthManager.show_spot = false;
+                }
+            }
+            else
+            // show own pointcloud
+            {
+                depthManager.show_spot = curDrive;
+            }
         }
 
         // control the pointer to spot according to selection.
