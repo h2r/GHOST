@@ -47,6 +47,10 @@ public class VRDriveSpot : MonoBehaviour
     public Material spotIndicatorMaterial;
 
     public DepthManager depthManager;
+    
+    public Transform childObject; 
+    public Transform parentObject;
+    public bool isSpot2Drive;
 
     void Start()
     {
@@ -124,6 +128,11 @@ public class VRDriveSpot : MonoBehaviour
         // Move the robot if any adjustments have been made
         if (rightMove.x != 0f || leftMove.magnitude != 0f || heightChanged)
         {
+
+            if(isSpot2Drive)
+            {
+                childObject.SetParent(parentObject);
+            }
             // Set movement so only one direction is moved with the left stick at a time
             if (Mathf.Abs(leftMove.x) > Mathf.Abs(leftMove.y)) { leftMove.y = 0; }
             else if (Mathf.Abs(leftMove.y) > Mathf.Abs(leftMove.x)) { leftMove.x = 0; }
@@ -141,10 +150,15 @@ public class VRDriveSpot : MonoBehaviour
                 ds.continue_update();
             }
         }
+        
     }
 
     void OnDisable()
     {
+        if (isSpot2Drive)
+        {
+            childObject.SetParent(null);
+        }
         // when switch to the other mode, hide the spot pointer
         if (spotPointer != null)
             spotPointer.SetActive(false);
