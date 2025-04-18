@@ -80,7 +80,7 @@ public class VRDriveSpot : MonoBehaviour
         {
             //curDrive = !curDrive;
             driveControlAll.updateState(isSpot2Drive);
-            curDrive = driveControlAll.getStates(isSpot2Drive);
+            curDrive = driveControlAll.getState_Bool(isSpot2Drive);
 
             depthManager.show_spot = curDrive;
         }
@@ -143,9 +143,21 @@ public class VRDriveSpot : MonoBehaviour
             if (Mathf.Abs(leftMove.x) > Mathf.Abs(leftMove.y)) { leftMove.y = 0; }
             else if (Mathf.Abs(leftMove.y) > Mathf.Abs(leftMove.x)) { leftMove.x = 0; }
 
-            drive.drive(leftMove, rightMove.x, height);
-
-
+            if (driveControlAll.getState_Int() == 2)
+            {
+                if (!isSpot2Drive)
+                {
+                    syncDrive.drive(leftMove, rightMove.x, height);
+                }
+                else
+                {
+                }
+            }
+            else
+            {
+                drive.drive(leftMove, rightMove.x, height);
+            }
+                
             // Pause depth history for 1.5 seconds
             //foreach (RawImageSubscriber ds in depthSubscribers)
             //{

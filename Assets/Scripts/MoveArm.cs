@@ -8,6 +8,8 @@ using UnityEngine.Experimental.GlobalIllumination;
 
 public class MoveArm : MonoBehaviour
 {
+    public bool isSpot2Arm;
+    public DriveControlAll driveControlAll;
     public RosSharp.RosBridgeClient.PoseStampedRelativePublisher armPublisher; // Reference to RosConnnector's arm publisher
     public GameObject CurrentController; // Reference to right controller object
     public Transform dummyHandTransform; // Reference to dummy hand object
@@ -116,7 +118,9 @@ public class MoveArm : MonoBehaviour
             clickPending = false;
 
             // SINGLE CLICK ACTION
-            pointCloudSpotActive = !pointCloudSpotActive;
+            //pointCloudSpotActive = !pointCloudSpotActive;
+            driveControlAll.updateState(isSpot2Arm);
+            pointCloudSpotActive = driveControlAll.getState_Bool(isSpot2Arm);
         }
         driveScript.depthManager.show_spot = pointCloudSpotActive;
 

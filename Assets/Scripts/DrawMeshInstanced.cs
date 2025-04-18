@@ -670,7 +670,7 @@ public class DrawMeshInstanced : MonoBehaviour
     {
         var relRot = Quaternion.Euler(0f, mainCameraRot.rotation.eulerAngles.y, 0f);
         var res = relRot * new Vector3(0f, 0f, -1.0f);
-        Debug.LogWarning(res.ToString());
+        //Debug.LogWarning(res.ToString());
         return res.normalized;
     }
 

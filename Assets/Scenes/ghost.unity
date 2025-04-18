@@ -1416,6 +1416,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 481b63c4dd93fcb44ae08589b42311f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isSpot2Arm: 0
+  driveControlAll: {fileID: 0}
   armPublisher: {fileID: 693475766}
   CurrentController: {fileID: 0}
   dummyHandTransform: {fileID: 0}
@@ -1796,6 +1798,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 481b63c4dd93fcb44ae08589b42311f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isSpot2Arm: 0
+  driveControlAll: {fileID: 0}
   armPublisher: {fileID: 693475766}
   CurrentController: {fileID: 0}
   dummyHandTransform: {fileID: 0}
@@ -4911,6 +4915,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 481b63c4dd93fcb44ae08589b42311f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isSpot2Arm: 0
+  driveControlAll: {fileID: 0}
   armPublisher: {fileID: 693475766}
   CurrentController: {fileID: 0}
   dummyHandTransform: {fileID: 0}
@@ -6953,6 +6959,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 481b63c4dd93fcb44ae08589b42311f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isSpot2Arm: 1
+  driveControlAll: {fileID: 1597991200}
   armPublisher: {fileID: 669083972}
   CurrentController: {fileID: 1052391961}
   dummyHandTransform: {fileID: 1681050001}
@@ -9187,6 +9195,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 481b63c4dd93fcb44ae08589b42311f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isSpot2Arm: 0
+  driveControlAll: {fileID: 1597991200}
   armPublisher: {fileID: 693475766}
   CurrentController: {fileID: 39407675}
   dummyHandTransform: {fileID: 244727980}
@@ -16745,6 +16755,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 481b63c4dd93fcb44ae08589b42311f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isSpot2Arm: 0
+  driveControlAll: {fileID: 0}
   armPublisher: {fileID: 693475766}
   CurrentController: {fileID: 0}
   dummyHandTransform: {fileID: 0}

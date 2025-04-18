@@ -159,7 +159,7 @@ public class DepthManager : MonoBehaviour
 
             //bool not_moving = Left_Depth_Renderer.get_ready_to_freeze() && Right_Depth_Renderer.get_ready_to_freeze();
             bool not_moving = Left_Depth_Renderer_1.get_ready_to_freeze();
-            Debug.LogWarning("not_moving: " + not_moving);
+            //Debug.LogWarning("not_moving: " + not_moving);
             //bool not_moving = true;
             //not_moving = true;
             (temp_output_left_1, temp_output_right_1, icp_trans_temp) = process_depth(depth_left_t_1, rgb_left_t_1, depth_right_t_1, rgb_right_t_1, not_moving, false);

@@ -19,26 +19,25 @@ public class DriveControlAll : MonoBehaviour
 
     public void updateState(bool isSpot2)
     {
-        if (isSpot2)
+        if (!isSpot2)
         {
             if (state == 0)
             {
                 state = 1;
             }
-
-            if (state == 1)
+            else if (state == 1)
             {
                 state = 2;
             }
-
-            if (state == 2)
+            else if (state == 2)
             {
                 state = 0;
             }
         }
+        //Debug.LogWarning("State: " + state.ToString());
     }
 
-    public bool getStates(bool isSpot2)
+    public bool getState_Bool(bool isSpot2)
     {
         if (state == 0) 
         {
@@ -48,8 +47,7 @@ public class DriveControlAll : MonoBehaviour
             }
             return false;
         }
-
-        if (state == 1)
+        else if (state == 1)
         {
             if (!isSpot2)
             {
@@ -57,8 +55,7 @@ public class DriveControlAll : MonoBehaviour
             }
             return true;
         }
-
-        if (state == 2)
+        else if (state == 2)
         {
             if (!isSpot2)
             {
@@ -68,5 +65,10 @@ public class DriveControlAll : MonoBehaviour
         }
 
         return true;
+    }
+
+    public int getState_Int()
+    {
+        return state;
     }
 }
