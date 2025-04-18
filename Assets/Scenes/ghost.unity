@@ -2441,37 +2441,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1499995371}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &297786703
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 297786704}
-  m_Layer: 0
-  m_Name: spot_flag
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &297786704
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 297786703}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1834046043}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &298831650
 GameObject:
   m_ObjectHideFlags: 0
@@ -7822,6 +7791,9 @@ MonoBehaviour:
   spotPanelText: {fileID: 327316659}
   spotIndicatorMaterial: {fileID: 2100000, guid: 8d651bf5d7e26084dbdf01c4cf0e5fde, type: 2}
   depthManager: {fileID: 1639569377}
+  childObject: {fileID: 117133133}
+  parentObject: {fileID: 1583796089}
+  isSpot2Drive: 1
 --- !u!114 &718889042
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11695,6 +11667,9 @@ MonoBehaviour:
   spotPanelText: {fileID: 2015793253}
   spotIndicatorMaterial: {fileID: 2100000, guid: 69608c040680c064cbc57c4aad92e21f, type: 2}
   depthManager: {fileID: 638278051}
+  childObject: {fileID: 117133133}
+  parentObject: {fileID: 1583796089}
+  isSpot2Drive: 0
 --- !u!114 &1322041478
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13791,6 +13766,11 @@ Transform:
 --- !u!1 &1583796087 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3310871052690497864, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1583796089 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3310871052690497871, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
   m_PrefabInstance: {fileID: 409472599}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1588447496
@@ -16243,7 +16223,6 @@ Transform:
   - {fileID: 216091792}
   - {fileID: 177092881}
   - {fileID: 2025026147}
-  - {fileID: 297786704}
   m_Father: {fileID: 1637440002}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1834046044
