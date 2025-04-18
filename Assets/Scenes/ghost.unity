@@ -6764,6 +6764,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   avg_before_completion: 1
   varianceThreshold: 0.01
+  meanThreshold: 0.1
   activate_CVD: 0
   cvd_weight: 3
   show_spot: 1
@@ -14202,6 +14203,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   avg_before_completion: 1
   varianceThreshold: 0.01
+  meanThreshold: 0.1
   activate_CVD: 0
   cvd_weight: 3
   show_spot: 0

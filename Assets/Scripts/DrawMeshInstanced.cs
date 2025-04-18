@@ -572,6 +572,7 @@ public class DrawMeshInstanced : MonoBehaviour
         compute.SetFloat("z_max", depthManager.z_max);
 
         compute.SetFloat("edgeThreshold", depthManager.edgeThreshold);
+        compute.SetFloat("meanThreshold", depthManager.meanThreshold);
         compute.SetInt("maxNeighbourNum", depthManager.maxNeighbourNum);
         compute.SetBool("activate_edge_detection", depthManager.activate_edge_detection);
 

@@ -28,6 +28,8 @@ float edgeThreshold;
 int maxNeighbourNum;
 bool activate_edge_detection;
 
+float meanThreshold;
+
 [numthreads(256, 1, 1)]
 void EdgeDetector(uint3 id : SV_DispatchThreadID)
 {
@@ -57,8 +59,18 @@ void EdgeDetector(uint3 id : SV_DispatchThreadID)
                 { -1, -4, -6, -4, -1 }
             };
 
+            const float kMu[5][5] =
+            {
+                { 1, 1, 1, 1, 1 },
+                { 1, 1, 1, 1, 1 },
+                { 1, 1, 1, 1, 1 },
+                { 1, 1, 1, 1, 1 },
+                { 1, 1, 1, 1, 1 }
+            };
+
             float Gx = 0.0;
             float Gy = 0.0;
+            float mu = 0.0;
 
             for (int i = -2; i <= 2; i++)
             {
@@ -72,6 +84,7 @@ void EdgeDetector(uint3 id : SV_DispatchThreadID)
 
                     Gx += depthValue * kX[i + 2][j + 2];
                     Gy += depthValue * kY[i + 2][j + 2];
+                    mu += depthValue * kMu[i + 2][j + 2];
                 }
             }
             
@@ -82,6 +95,12 @@ void EdgeDetector(uint3 id : SV_DispatchThreadID)
             else
             {
                 _Edge[id.x] = 0.0f;
+            }
+
+            uint depth_index = indexY * WIDTH + indexX;
+            if ( abs(_Depth[depth_index].z - (mu / 25.0)) / (mu / 25.0) > meanThreshold )
+            {
+                _Edge[id.x] = 1.0f;
             }
         }
         else

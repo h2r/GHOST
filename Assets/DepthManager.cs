@@ -9,6 +9,7 @@ public class DepthManager : MonoBehaviour
 {
     public bool avg_before_completion;
     public float varianceThreshold;
+    public float meanThreshold;
 
     public bool activate_CVD;
     public float cvd_weight;
