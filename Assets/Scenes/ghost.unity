@@ -14153,7 +14153,7 @@ MonoBehaviour:
   avg_before_completion: 1
   activate_CVD: 0
   cvd_weight: 3
-  show_spot: 1
+  show_spot: 0
   another_manager: {fileID: 638278051}
   CVDLeft: {fileID: 1031760795}
   CVDRight: {fileID: 1274553787}

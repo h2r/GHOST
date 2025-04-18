@@ -175,6 +175,9 @@ void CSMain(uint3 id : SV_DispatchThreadID)
         }
         else
         {
+            pos.z = _Sparse[depth_idx] * t + (1 - t);
+            float4 final_pos_sparse = mul(_GOPose, float4(pos, 1.0f));
+            _Properties[id.x].pos = final_pos_sparse;
             _Properties[id.x].pos.w = _Sparse[depth_idx] * t + (1 - t);
         }
         
