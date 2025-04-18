@@ -17,9 +17,12 @@ public class VRDriveSpot : MonoBehaviour
     public OVRInput.RawButton rightPress;
     public OVRInput.RawButton leftPress;
     public OVRInput.RawButton RT1;
+    public DriveControlAll driveControlAll;
     
 
     public RosSharp.RosBridgeClient.MoveSpot drive;
+
+    public RosSharp.RosBridgeClient.SyncMoveSpot syncDrive;
 
     public RawImageSubscriber[] depthSubscribers;
     public JPEGImageSubscriber[] colorSubscribers; // Must be in the same order as depthSubscribers
@@ -75,7 +78,10 @@ public class VRDriveSpot : MonoBehaviour
     {
         if (OVRInput.GetDown(driveSwitch))
         {
-            curDrive = !curDrive;
+            //curDrive = !curDrive;
+            driveControlAll.updateState(isSpot2Drive);
+            curDrive = driveControlAll.getStates(isSpot2Drive);
+
             depthManager.show_spot = curDrive;
         }
 

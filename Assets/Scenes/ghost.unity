@@ -4768,6 +4768,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4598551966875127983, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1000864622}
+    - targetCorrespondingSourceObject: {fileID: 4598551966875127983, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1597991199}
     - targetCorrespondingSourceObject: {fileID: 1137478775229705932, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       insertIndex: 0
       addedObject: {fileID: 164802371}
@@ -4784,6 +4787,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1137478773745686191, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2123763374}
+    - targetCorrespondingSourceObject: {fileID: 1137478773745686191, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2123763400}
     - targetCorrespondingSourceObject: {fileID: 3310871052575190424, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 669083943}
@@ -7772,7 +7778,9 @@ MonoBehaviour:
   rightPress: 4
   leftPress: 1024
   RT1: 67108864
+  driveControlAll: {fileID: 1597991200}
   drive: {fileID: 616808317}
+  syncDrive: {fileID: 0}
   depthSubscribers:
   - {fileID: 810543855}
   - {fileID: 941303697}
@@ -7859,9 +7867,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f00bb137bc72ae34ea2101ec2df6f8dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MoveJoystick: 2
-  T1: 67108864
-  JoystickPress: 4
+  MoveJoystick: 0
+  T1: 0
+  JoystickPress: 0
   drive: {fileID: 616808317}
   defaultLow: 0
 --- !u!1 &729532306
@@ -11648,7 +11656,9 @@ MonoBehaviour:
   rightPress: 4
   leftPress: 1024
   RT1: 67108864
+  driveControlAll: {fileID: 1597991200}
   drive: {fileID: 693475761}
+  syncDrive: {fileID: 2123763400}
   depthSubscribers:
   - {fileID: 810543855}
   - {fileID: 941303697}
@@ -11735,9 +11745,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f00bb137bc72ae34ea2101ec2df6f8dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MoveJoystick: 1
-  T1: 268435456
-  JoystickPress: 1024
+  MoveJoystick: 0
+  T1: 0
+  JoystickPress: 0
   drive: {fileID: 693475761}
   defaultLow: 0
 --- !u!1 &1325604193
@@ -13923,6 +13933,51 @@ Transform:
   m_Children: []
   m_Father: {fileID: 823720264}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1597991198
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1597991199}
+  - component: {fileID: 1597991200}
+  m_Layer: 0
+  m_Name: DriveControlAll
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1597991199
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1597991198}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 194951746}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1597991200
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1597991198}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ab84669ab8025c41bd5f24ee361fb68, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  state: 0
 --- !u!1 &1608124071
 GameObject:
   m_ObjectHideFlags: 0
@@ -17775,6 +17830,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Topic: /spot/joystick_arm_pose_stamped
   FrameId: Unity
+--- !u!114 &2123763400
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2123763348}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34e9d399e5b037545bceeceb261e0bd3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Topic: /multi_spot/cmd_vel
+  save: 0
 --- !u!1 &2127769091
 GameObject:
   m_ObjectHideFlags: 0
