@@ -79,6 +79,7 @@ public class DrawMeshInstanced : MonoBehaviour
     public bool use_saved_meshes = false; // boolean that determines whether to use saved meshes or read in new scene data from ROS
     private bool freezeCloud = false; // boolean that freezes this point cloud
     private float[] depth_ar;
+    private float[] avged_sparse = new float[640 * 480]; // averaged depth array
 
     private MeshProperties[] globalProps;
 
@@ -486,7 +487,7 @@ public class DrawMeshInstanced : MonoBehaviour
         {
             return;
         }
-        sparseBuffer.SetData(depth_ar);
+        sparseBuffer.SetData(avged_sparse);
 
         calculate_icp = true;
         if (imageScriptIndex > 1) { calculate_icp = false; } // depth manager 2
@@ -532,7 +533,7 @@ public class DrawMeshInstanced : MonoBehaviour
 
         //temp_output_left = Averager.averaging(temp_output_left, is_not_moving, mean_averaging, median_averaging, edge_detection, edge_threshold);
 
-        (depth_ar_buffer, icp_trans) = depthManager.update_depth_from_renderer(color_image, depth_ar, camera_index, calculate_icp, new_depth_to_render, depthManager.avg_before_completion);
+        (depth_ar_buffer, icp_trans, avged_sparse) = depthManager.update_depth_from_renderer(color_image, depth_ar, camera_index, calculate_icp, new_depth_to_render, depthManager.avg_before_completion);
 
         //if (depthManager.avg_before_completion)
         //{

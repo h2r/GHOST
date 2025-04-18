@@ -29,7 +29,7 @@ namespace RosSharp.RosBridgeClient
 
             if (Input.GetKey("w"))
         	{
-            	print("move forward");
+                print("move forward");
             	Vector3 linearVelocity = new Vector3(0.0f, 0.0f,  0.5f);
             	Vector3 angularVelocity = new Vector3(0.0f, 0.0f, 0.0f);
 	            message.linear = GetGeometryVector3(linearVelocity.Unity2Ros());

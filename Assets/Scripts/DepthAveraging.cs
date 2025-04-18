@@ -12,9 +12,9 @@ public class DepthAveraging : MonoBehaviour
     int median_kernel;
     int fast_median_kernel;
 
-    int num_frames = 20;
+    int num_frames = 30;
 
-    float[,] depth_buffer = new float[20, 480 * 640];
+    float[,] depth_buffer;
     //private ComputeBuffer depthArCompute;
     private ComputeBuffer depthBufferCompute;
 
@@ -30,14 +30,20 @@ public class DepthAveraging : MonoBehaviour
 
     ComputeBuffer depth_ar_buffer;
 
+    public DepthManager depthManager;
+
+    float varianceThreshold;
+
     // Update is called once per frame
     void Update()
     {
-
+        varianceThreshold = depthManager.varianceThreshold;
     }
 
     void Start()
     {
+
+        depth_buffer = new float[num_frames, 480 * 640];
         // kernel
         depth_ar_buffer = new ComputeBuffer(480 * 640, sizeof(float));
         mean_kernel = average_shader.FindKernel("MeanAveraging");
@@ -46,7 +52,7 @@ public class DepthAveraging : MonoBehaviour
 
         // Data & Buffer
         //depthArCompute = new ComputeBuffer(480 * 640, sizeof(float));
-        depthBufferCompute = new ComputeBuffer(480 * 640 * 20, sizeof(float));
+        depthBufferCompute = new ComputeBuffer(480 * 640 * num_frames, sizeof(float));
         average_shader.SetInt("num_frames", num_frames);
         depthBufferCompute.SetData(depth_buffer);
 
@@ -79,6 +85,7 @@ public class DepthAveraging : MonoBehaviour
         {
             average_shader.SetBool("activate", is_not_moving);   // activate = activate_averaging
             average_shader.SetInt("buffer_pos", buffer_pos);
+            average_shader.SetFloat("varianceThreshold", varianceThreshold);
             depth_ar_buffer.SetData(depth_ar);
 
             average_shader.SetBuffer(mean_kernel, "depth_ar", depth_ar_buffer);

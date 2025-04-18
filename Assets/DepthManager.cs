@@ -8,6 +8,7 @@ using Unity.VisualScripting;
 public class DepthManager : MonoBehaviour
 {
     public bool avg_before_completion;
+    public float varianceThreshold;
 
     public bool activate_CVD;
     public float cvd_weight;
@@ -153,6 +154,19 @@ public class DepthManager : MonoBehaviour
 
     void Update()
     {
+
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            activate_depth_estimation = !activate_depth_estimation;
+            activate_edge_detection = !activate_edge_detection;
+            avg_before_completion = !avg_before_completion;
+        }
+
+        //if (Input.GetKey(KeyCode.G))
+        //{
+        //    Debug.LogWarning("Space key was pressed.");
+        //}
+
         if (received_left_1 && received_right_1 && !depth_process_lock)
         {
             depth_process_lock = true;
@@ -213,7 +227,7 @@ public class DepthManager : MonoBehaviour
     }
 
 
-    public (ComputeBuffer, Matrix4x4) update_depth_from_renderer(Texture2D rgb, float[] depth, int camera_index, bool calculate_icp, bool new_depth, bool avg_before_complete)
+    public (ComputeBuffer, Matrix4x4, float[]) update_depth_from_renderer(Texture2D rgb, float[] depth, int camera_index, bool calculate_icp, bool new_depth, bool avg_before_complete)
     {
         TextureTransform tform = new();
         tform.SetDimensions(rgb.width, rgb.height, 3);
@@ -223,11 +237,11 @@ public class DepthManager : MonoBehaviour
         {
             if (camera_index == 0)
             {
-                return (temp_output_left_1, icp_trans_temp);
+                return (temp_output_left_1, icp_trans_temp, left_depth_avg);
             }
             else if (camera_index == 1)
             {
-                return (temp_output_right_1, icp_trans_temp);
+                return (temp_output_right_1, icp_trans_temp, right_depth_avg);
             }
         }
         //Debug.Log("GO");
@@ -284,14 +298,14 @@ public class DepthManager : MonoBehaviour
 
         if (camera_index == 0)
         {
-            return (temp_output_left_1, icp_trans_temp);
+            return (temp_output_left_1, icp_trans_temp, left_depth_avg);
         }
         else if (camera_index == 1)
         {
-            return (temp_output_right_1, icp_trans_temp);
+            return (temp_output_right_1, icp_trans_temp, right_depth_avg);
         }
 
-        return (temp_output_left_1, icp_trans_temp);
+        return (temp_output_left_1, icp_trans_temp, right_depth_avg);
 
         //if (activate_depth_estimation)
         //{

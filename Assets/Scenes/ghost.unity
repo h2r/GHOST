@@ -364,6 +364,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   average_shader: {fileID: 7200000, guid: 87484ef97c462bc408544e06f98e3a9e, type: 3}
+  depthManager: {fileID: 638278051}
 --- !u!4 &42691507
 Transform:
   m_ObjectHideFlags: 0
@@ -6762,6 +6763,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   avg_before_completion: 1
+  varianceThreshold: 0.01
   activate_CVD: 0
   cvd_weight: 3
   show_spot: 1
@@ -8611,6 +8613,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   average_shader: {fileID: 7200000, guid: 88ce8922b3efe294289007fff27b9620, type: 3}
+  depthManager: {fileID: 1639569377}
 --- !u!1 &853697057
 GameObject:
   m_ObjectHideFlags: 0
@@ -10582,6 +10585,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   average_shader: {fileID: 7200000, guid: b8838699a5c22754da509ed29099d4c7, type: 3}
+  depthManager: {fileID: 1639569377}
 --- !u!4 &1137389443
 Transform:
   m_ObjectHideFlags: 0
@@ -14196,6 +14200,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   avg_before_completion: 1
+  varianceThreshold: 0.01
   activate_CVD: 0
   cvd_weight: 3
   show_spot: 0
@@ -14369,6 +14374,53 @@ SkinnedMeshRenderer:
     m_Center: {x: 0.03454852, y: 0.0005114786, z: 0.00007304177}
     m_Extent: {x: 0.0009967163, y: 0.0020704702, z: 0.004453361}
   m_DirtyAABB: 0
+--- !u!1 &1646626574
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1646626576}
+  - component: {fileID: 1646626575}
+  m_Layer: 0
+  m_Name: DemoControl
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &1646626575
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1646626574}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fdabb8ca619af774199949ca51791021, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  depthManager1: {fileID: 638278051}
+  depthManager2: {fileID: 1639569377}
+  vision_control: 1
+--- !u!4 &1646626576
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1646626574}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2.5626292, y: -0.26595908, z: 11.946254}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1647675466
 GameObject:
   m_ObjectHideFlags: 0
@@ -16050,6 +16102,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   average_shader: {fileID: 7200000, guid: ba39b13e5f1a2b44599c82f234cd50af, type: 3}
+  depthManager: {fileID: 638278051}
 --- !u!1 &1826214443
 GameObject:
   m_ObjectHideFlags: 0
@@ -17988,3 +18041,4 @@ SceneRoots:
   - {fileID: 1639569378}
   - {fileID: 1526506750}
   - {fileID: 563131595}
+  - {fileID: 1646626576}
