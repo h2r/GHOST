@@ -25,6 +25,8 @@ public class InstructionSwitch : MonoBehaviour
     private int spot1Mode;
     private int spot2Mode;
 
+    public Transform userCamera;
+
     // Mode instructions
     private readonly string[] instructContentRelatedToMode =
     {
@@ -51,6 +53,15 @@ public class InstructionSwitch : MonoBehaviour
         if (OVRInput.GetDown(UserInstruction))
         {
             ToggleInstructions();
+        }
+
+
+        // button for demo to reset the user camera
+        if (Input.GetKeyDown(KeyCode.R)){
+            Debug.LogWarning("keycode R");
+
+            userCamera.position = new Vector3(-0.0417f, -1.7499f, 3.124f);
+            userCamera.rotation = Quaternion.Euler(new Vector3(0, 8, 0));
         }
 
         CheckForModeChange();

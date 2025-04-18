@@ -9690,6 +9690,7 @@ MonoBehaviour:
   Spot1InstructPanel: {fileID: 1750650391}
   FixInstruction: {fileID: 1060961219}
   spot1CurModeInstruct: {fileID: 1791865009}
+  userCamera: {fileID: 771285273}
 --- !u!1 &1008755828
 GameObject:
   m_ObjectHideFlags: 0
