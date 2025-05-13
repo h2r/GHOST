@@ -102,6 +102,21 @@ public class DepthManager : MonoBehaviour
         // Setup depth-completion input tensors
         depth_left_t = new Tensor<float>(depth_shape);
         depth_right_t = new Tensor<float>(depth_shape);
+        
+	// Fill tensor with dummy data
+        for (int i = 0; i < depth_right_t.count; i++)
+        {
+            if (i % 10 == 0)
+            {
+                depth_left_t[i]  = 4.0f;
+                depth_right_t[i] = 12.0f;
+            }
+            else
+            {
+                depth_left_t[i]  = 0.0f;
+                depth_right_t[i] = 0.0f;
+            }
+        }
 
         rgb_left_t = new Tensor<float>(color_shape, data: null);
         rgb_right_t = new Tensor<float>(color_shape, data: null);
@@ -140,8 +155,34 @@ public class DepthManager : MonoBehaviour
 
         if (camera_index == 0 && !received_left)
         {
-            depth_left_t.Upload(depth);
+            //fps_timer.start(left_eye_data_timer_id);
 
+            //depth_left = (float[])depth.Clone();
+
+            //if (rgb_left != null)
+            //{
+            //    Destroy(rgb_left);
+            //}
+            //rgb_left = new Texture2D(rgb.width, rgb.height, rgb.format, rgb.mipmapCount > 1);
+            //Graphics.CopyTexture(rgb, rgb_left);
+
+            //if (depth_left_t != null)
+            //{
+            //    depth_left_t.Dispose();
+            //}
+            //if (rgb_left_t != null)
+            //{
+            //    rgb_left_t.Dispose();
+            //}
+
+            if (depth_left_t != null)
+            {
+                depth_left_t.Upload(depth);
+            }
+            else
+            {
+                depth_left_t = new Tensor<float>(depth_shape, depth);
+            }
             TextureConverter.ToTensor(rgb, rgb_left_t, tform);
             rgb_left_t.Reshape(color_shape);
 
@@ -151,8 +192,25 @@ public class DepthManager : MonoBehaviour
         }
         else if (camera_index == 1 && !received_right)
         {
-            depth_right_t.Upload(depth);
-          
+            //fps_timer.start(right_eye_data_timer_id);
+
+            //if (depth_right_t != null)
+            //{
+            //    depth_right_t.Dispose();
+            //}
+            //if (rgb_right_t != null)
+            //{
+            //    rgb_right_t.Dispose();
+            //}
+
+            if (depth_right_t != null)
+            {
+                depth_right_t.Upload(depth);
+            } else
+            {
+                depth_right_t = new Tensor<float>(depth_shape, depth);
+            }
+
             TextureConverter.ToTensor(rgb, rgb_right_t, tform);
             rgb_right_t.Reshape(color_shape);
 
@@ -171,11 +229,18 @@ public class DepthManager : MonoBehaviour
 
             (temp_depth_left_return, temp_depth_right_return) = process_depth(depth_left_t, rgb_left_t, depth_right_t, rgb_right_t, not_moving);
 
+            //if (depth_left_t != null)
+            //{
+            //    depth_left_t.Dispose();
+            //}
             if (rgb_left_t != null)
             {
                 rgb_left_t.Dispose();
             }
-
+            //if (depth_right_t != null)
+            //{
+            //    depth_right_t.Dispose();
+            //}
             if (rgb_right_t != null)
             {
                 rgb_right_t.Dispose();
