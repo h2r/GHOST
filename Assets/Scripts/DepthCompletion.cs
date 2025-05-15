@@ -19,8 +19,8 @@ public class DepthCompletion : MonoBehaviour
 
     public bool useRawDepth;
 
-    Tensor<float> depth_outputTensor_0, depth_outputTensor_1;
-    ComputeBuffer computeTensorData0, computeTensorData1, computeTensorDataTest;
+    Tensor<float> depth_outputTensor_0, depth_outputTensor_1, testinputtensor, testinputtensor2;
+    ComputeBuffer computeTensorData0, computeTensorData1, computeTensorDataTest, computeTensorDataTest2;
 
     // Imports from UnityBYOM.dll (Make sure it's copied to Assets/Plugins)
     [DllImport("UnityBYOM", CharSet = CharSet.Ansi)]
@@ -29,7 +29,9 @@ public class DepthCompletion : MonoBehaviour
     private static extern bool UB_RunInference(
         IntPtr texResource,      // ID3D12Resource* of the Unity texture
         IntPtr outputBuffer,     // ComputeBuffer.GetNativeBufferPtr()
-        int outputCount);        // element count
+        int inputCount,          // Number of input elements
+        int outputCount          // Number of output elements
+    );        
 
     [DllImport("UnityBYOM")]
     private static extern void UB_SetUnityLogCallback(LogCallback callback);
@@ -60,7 +62,32 @@ public class DepthCompletion : MonoBehaviour
         TensorShape shape = new TensorShape(640, 480, 1, 1); // RGB input shape
         depth_outputTensor_0 = new Tensor<float>(shape);
         computeTensorData0 = ComputeTensorData.Pin(depth_outputTensor_0).buffer;
-        
+
+        testinputtensor = new Tensor<float>(shape);
+        testinputtensor2 = new Tensor<float>(shape);
+
+
+        // Fill tensor with dummy data
+        for (int i = 0; i < testinputtensor.count; i++)
+        {
+            if (i % 10 == 0)
+            {
+                testinputtensor[i] = 15.0f;
+                testinputtensor2[i] = 7.0f;
+            }
+            else
+            {
+                testinputtensor[i] = 0.0f;
+                testinputtensor2[i] = 0.0f;
+            }
+            //Debug.LogError("testinputtensor[" + i + "] = " + testinputtensor[i]);
+        }
+
+        computeTensorDataTest = ComputeTensorData.Pin(testinputtensor).buffer;
+        computeTensorDataTest2 = ComputeTensorData.Pin(testinputtensor2).buffer;
+
+
+
         depth_outputTensor_1 = new Tensor<float>(shape);
         computeTensorData1 = ComputeTensorData.Pin(depth_outputTensor_1).buffer;
     }
@@ -97,6 +124,8 @@ public class DepthCompletion : MonoBehaviour
             ComputeTensorData detphTensorColor0 = ComputeTensorData.Pin(depth_tensor_0);
             IntPtr rawBuf = detphTensorColor0.buffer.GetNativeBufferPtr();
 
+            // IntPtr rawBuf = computeTensorDataTest.GetNativeBufferPtr();
+
             Debug.Log("before getnativebufferptr: depth_outputTensor_0.dataOnBackend = " + depth_outputTensor_0.dataOnBackend);
 
             IntPtr outputBuffer = computeTensorData0.GetNativeBufferPtr();
@@ -109,15 +138,22 @@ public class DepthCompletion : MonoBehaviour
             Debug.Log("computeTensorData0.count = " + out_size);
             Debug.Log("after getnativebufferptr: depth_outputTensor_0.dataOnBackend = " + depth_outputTensor_0.dataOnBackend);
 
-            bool ret = UB_RunInference(rawBuf, outputBuffer, 640 * 480);
+            bool ret = UB_RunInference(rawBuf, outputBuffer, 640 * 480, 640 * 480);
             if (!ret) {
                 Debug.LogError("Failed to run inference via UnityBrains");
             }
 
+            // TODO: batch the inference calls
+
             ComputeTensorData gpuTensorColor1 = ComputeTensorData.Pin(color_tensor_1);
             IntPtr colorBuffer1 = gpuTensorColor1.buffer.GetNativeBufferPtr();
+            Debug.Log("before pin: depth_tensor_1.dataOnBackend = " + depth_tensor_1.dataOnBackend);
             ComputeTensorData detphTensorColor1 = ComputeTensorData.Pin(depth_tensor_1);
+            Debug.Log("after pin: depth_tensor_1.dataOnBackend = " + depth_tensor_1.dataOnBackend);
             rawBuf = detphTensorColor1.buffer.GetNativeBufferPtr();
+
+            //rawBuf = computeTensorDataTest2.GetNativeBufferPtr();
+
 
             Debug.Log("before getnativebufferptr: depth_outputTensor_1.dataOnBackend = " + depth_outputTensor_1.dataOnBackend);
 
@@ -126,7 +162,7 @@ public class DepthCompletion : MonoBehaviour
             Debug.Log("depth_outputTensor_1.count = " + depth_outputTensor_1.count);
             Debug.Log("depth_outputTensor_1.shape = " + depth_outputTensor_1.shape);
 
-            ret = UB_RunInference(rawBuf, outputBuffer, 640 * 480);
+            ret = UB_RunInference(rawBuf, outputBuffer, 640 * 480, 640 * 480);
             if (!ret)
             {
                 Debug.LogError("Failed to run second inference via UnityBrains");
