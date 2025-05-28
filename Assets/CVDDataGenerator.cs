@@ -142,6 +142,11 @@ public class CVDDataGenerator : MonoBehaviour
         }
         else
         {
+            //// Print 
+            //Debug.Log("previous_rgbL.dataOnBackend = " + previous_rgbL.buff);
+            //Debug.Log("rgbL.dataOnBackend = " + rgbL.dataOnBackend);
+
+
             if (activate_depth_completion)
             {
                 //buffer_opticalL?.Release();
@@ -156,23 +161,24 @@ public class CVDDataGenerator : MonoBehaviour
                 buffer_depthR = ComputeTensorData.Pin(depthR).buffer;
             }
 
+            // TODO: re-enable but avoid the dispose calls.
 
-            if (activate_CVD)
-            {
-                mat_l = pose_subscriber.getBodyPose();
-                mat_r = pose_subscriber.getBodyPose();
-                Debug.Log("pose mat_l: " + mat_l);
-                Debug.Log("pose mat_r: " + mat_r);
-                //Debug.Log("optical flow?");
-                //buffer_opticalL?.Release();
-                //buffer_opticalR?.Release();
-                (buffer_opticalL, buffer_opticalR) = optical_flow_estimation.estimate_all(previous_rgbL, rgbL, previous_rgbR, rgbR);
-            }
+            //if (activate_CVD)
+            //{
+            //    mat_l = pose_subscriber.getBodyPose();
+            //    mat_r = pose_subscriber.getBodyPose();
+            //    Debug.Log("pose mat_l: " + mat_l);
+            //    Debug.Log("pose mat_r: " + mat_r);
+            //    //Debug.Log("optical flow?");
+            //    //buffer_opticalL?.Release();
+            //    //buffer_opticalR?.Release();
+            //    (buffer_opticalL, buffer_opticalR) = optical_flow_estimation.estimate_all(previous_rgbL, rgbL, previous_rgbR, rgbR);
+            //}
 
-            previous_rgbL.Dispose();
-            previous_rgbR.Dispose();
-            previous_rgbL = rgbL;
-            previous_rgbR = rgbR;
+            //previous_rgbL.Dispose();
+            //previous_rgbR.Dispose();
+            //previous_rgbL = rgbL;
+            //previous_rgbR = rgbR;
 
             //Debug.Log("not firstrun return");
 
