@@ -31,7 +31,16 @@ public class DepthCompletion : MonoBehaviour
         IntPtr outputBuffer,     // ComputeBuffer.GetNativeBufferPtr()
         int inputCount,          // Number of input elements
         int outputCount          // Number of output elements
-    );        
+    );
+
+    [DllImport("UnityBYOM")]
+    private static extern bool UB_RunInferenceBatched(
+        IntPtr[] inputResources,    // Array of resource pointers
+        IntPtr[] outputResources,   // Array of output resource pointers
+        int batchSize,
+        int inputSizePerItem,
+        int outputSizePerItem
+    );
 
     [DllImport("UnityBYOM")]
     private static extern void UB_SetUnityLogCallback(LogCallback callback);
@@ -56,7 +65,7 @@ public class DepthCompletion : MonoBehaviour
         workerRGBD = new Worker(runtimeModelRGBD, BackendType.GPUCompute);
 
         UB_SetUnityLogCallback(PluginLogCallback);
-        IntPtr result = UB_LoadModel("C:/Users/faisa/workspace/Unity/tests/danything_mono_metric_finetune_epoch5_valloss0.0798-scripted.pt", "cuda");
+        IntPtr result = UB_LoadModel("C:/Users/faisa/workspace/Unity/tests/danything_mono_metric_finetune_epoch5_valloss0.0798-scripted-batch2.pt", "cuda");
         Debug.LogWarning("Model Load result = " + result);
 
         TensorShape shape = new TensorShape(1, 1, 480, 640); // Depth shape
@@ -94,54 +103,83 @@ public class DepthCompletion : MonoBehaviour
     public (ComputeBuffer, ComputeBuffer) complete(Tensor<float> depth_tensor_0, Tensor<float> color_tensor_0, Tensor<float> depth_tensor_1, Tensor<float> color_tensor_1)
     {
         if (!useRawDepth) {
+            //ComputeTensorData gpuTensorColor0 = ComputeTensorData.Pin(color_tensor_0);
+            //IntPtr colorBuffer0 = gpuTensorColor0.buffer.GetNativeBufferPtr();
+            //ComputeTensorData detphTensorColor0 = ComputeTensorData.Pin(depth_tensor_0);
+
+            //// IntPtr rawBuf = computeTensorDataTest.GetNativeBufferPtr();
+
+            //Debug.Log("before getnativebufferptr: depth_outputTensor_0.dataOnBackend = " + depth_outputTensor_0.dataOnBackend);
+            //Debug.Log("gpuTensorColor0.buffer.GetType() = " + gpuTensorColor0.buffer.GetType());
+            //Debug.Log("color_tensor_0.count = " + color_tensor_0.count);
+            //Debug.Log("color_tensor_0.shape = " + color_tensor_0.shape);
+
+            //IntPtr outputBuffer = computeTensorData0.GetNativeBufferPtr();
+
+            //TensorShape shape = color_tensor_0.shape;
+            //int out_size = depth_outputTensor_0.count;
+
+            //Debug.Log("depth_outputTensor_0.count = " + depth_outputTensor_0.count);
+            //Debug.Log("depth_outputTensor_0.shape = " + depth_outputTensor_0.shape);
+            //Debug.Log("computeTensorData0.count = " + out_size);
+            //Debug.Log("after getnativebufferptr: depth_outputTensor_0.dataOnBackend = " + depth_outputTensor_0.dataOnBackend);
+
+            //bool ret = UB_RunInference(colorBuffer0, outputBuffer, 640 * 480 * 3, 640 * 480);
+            //if (!ret) {
+            //    Debug.LogError("Failed to run inference via UnityBrains");
+            //}
+
+            //// TODO: batch the inference calls
+
+            //ComputeTensorData gpuTensorColor1 = ComputeTensorData.Pin(color_tensor_1);
+            //IntPtr colorBuffer1 = gpuTensorColor1.buffer.GetNativeBufferPtr();
+            //Debug.Log("before pin: depth_tensor_1.dataOnBackend = " + depth_tensor_1.dataOnBackend);
+            //ComputeTensorData detphTensorColor1 = ComputeTensorData.Pin(depth_tensor_1);
+            //Debug.Log("after pin: depth_tensor_1.dataOnBackend = " + depth_tensor_1.dataOnBackend);
+
+
+            //Debug.Log("before getnativebufferptr: depth_outputTensor_1.dataOnBackend = " + depth_outputTensor_1.dataOnBackend);
+            //Debug.Log("color_tensor_1.count = " + color_tensor_1.count);
+            //Debug.Log("color_tensor_1.shape = " + color_tensor_1.shape);
+
+            //outputBuffer = computeTensorData1.GetNativeBufferPtr();
+
+            //Debug.Log("depth_outputTensor_1.count = " + depth_outputTensor_1.count);
+            //Debug.Log("depth_outputTensor_1.shape = " + depth_outputTensor_1.shape);
+
+            //ret = UB_RunInference(colorBuffer1, outputBuffer, 640 * 480 * 3, 640 * 480);
+            //if (!ret)
+            //{
+            //    Debug.LogError("Failed to run second inference via UnityBrains");
+            //}
+
+
             ComputeTensorData gpuTensorColor0 = ComputeTensorData.Pin(color_tensor_0);
-            IntPtr colorBuffer0 = gpuTensorColor0.buffer.GetNativeBufferPtr();
-            ComputeTensorData detphTensorColor0 = ComputeTensorData.Pin(depth_tensor_0);
-
-            // IntPtr rawBuf = computeTensorDataTest.GetNativeBufferPtr();
-
-            Debug.Log("before getnativebufferptr: depth_outputTensor_0.dataOnBackend = " + depth_outputTensor_0.dataOnBackend);
-            Debug.Log("color_tensor_0.count = " + color_tensor_0.count);
-            Debug.Log("color_tensor_0.shape = " + color_tensor_0.shape);
-
-            IntPtr outputBuffer = computeTensorData0.GetNativeBufferPtr();
-
-            TensorShape shape = color_tensor_0.shape;
-            int out_size = depth_outputTensor_0.count;
-
-            Debug.Log("depth_outputTensor_0.count = " + depth_outputTensor_0.count);
-            Debug.Log("depth_outputTensor_0.shape = " + depth_outputTensor_0.shape);
-            Debug.Log("computeTensorData0.count = " + out_size);
-            Debug.Log("after getnativebufferptr: depth_outputTensor_0.dataOnBackend = " + depth_outputTensor_0.dataOnBackend);
-
-            bool ret = UB_RunInference(colorBuffer0, outputBuffer, 640 * 480 * 3, 640 * 480);
-            if (!ret) {
-                Debug.LogError("Failed to run inference via UnityBrains");
-            }
-
-            // TODO: batch the inference calls
-
             ComputeTensorData gpuTensorColor1 = ComputeTensorData.Pin(color_tensor_1);
-            IntPtr colorBuffer1 = gpuTensorColor1.buffer.GetNativeBufferPtr();
-            Debug.Log("before pin: depth_tensor_1.dataOnBackend = " + depth_tensor_1.dataOnBackend);
-            ComputeTensorData detphTensorColor1 = ComputeTensorData.Pin(depth_tensor_1);
-            Debug.Log("after pin: depth_tensor_1.dataOnBackend = " + depth_tensor_1.dataOnBackend);
 
+            // Create arrays for batched call
+            IntPtr[] inputResources = new IntPtr[2];
+            IntPtr[] outputResources = new IntPtr[2];
 
-            Debug.Log("before getnativebufferptr: depth_outputTensor_1.dataOnBackend = " + depth_outputTensor_1.dataOnBackend);
-            Debug.Log("color_tensor_1.count = " + color_tensor_1.count);
-            Debug.Log("color_tensor_1.shape = " + color_tensor_1.shape);
+            inputResources[0] = gpuTensorColor0.buffer.GetNativeBufferPtr();
+            inputResources[1] = gpuTensorColor1.buffer.GetNativeBufferPtr();
+            outputResources[0] = computeTensorData0.GetNativeBufferPtr();
+            outputResources[1] = computeTensorData1.GetNativeBufferPtr();
 
-            outputBuffer = computeTensorData1.GetNativeBufferPtr();
+            // Single batched inference call
+            bool ret = UB_RunInferenceBatched(
+                inputResources,
+                outputResources,
+                2,              // batch size
+                640 * 480 * 3,  // input size per item
+                640 * 480       // output size per item
+            );
 
-            Debug.Log("depth_outputTensor_1.count = " + depth_outputTensor_1.count);
-            Debug.Log("depth_outputTensor_1.shape = " + depth_outputTensor_1.shape);
-
-            ret = UB_RunInference(colorBuffer1, outputBuffer, 640 * 480 * 3, 640 * 480);
             if (!ret)
             {
-                Debug.LogError("Failed to run second inference via UnityBrains");
+                Debug.LogError("Failed to run batched inference via UnityBrains");
             }
+
 
         } else {
             workerRGBD.SetInput("rgb_0", color_tensor_0);

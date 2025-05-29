@@ -170,11 +170,7 @@ public class DepthManager : MonoBehaviour
             {
                 depth_right_t = new Tensor<float>(depth_shape, depth);
             }
-            Debug.Log("Received right eye data: " + rgb.width + "x" + rgb.height);
-            Debug.Log("right-eye tensor shape: " + rgb_right_t.shape);
             TextureConverter.ToTensor(rgb, rgb_right_t, tform);
-            Debug.Log("right-eye tensor shape after: " + rgb_right_t.shape);
-
             rgb_right_t.Reshape(color_shape);
 
             received_right = true;
