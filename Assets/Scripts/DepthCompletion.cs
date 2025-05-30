@@ -56,7 +56,7 @@ public class DepthCompletion : MonoBehaviour
         workerRGBD = new Worker(runtimeModelRGBD, BackendType.GPUCompute);
 
         UB_SetUnityLogCallback(PluginLogCallback);
-        IntPtr result = UB_LoadModel("C:/Users/faisa/workspace/Unity/tests/danything_mono_metric_finetune_epoch5_valloss0.0798-scripted.pt", "cuda");
+        IntPtr result = UB_LoadModel("C:/Users/brown/Documents/fmz/GHOST/Assets/onnx/danything_mono_metric_finetune_epoch5_valloss0.0798-scripted.pt", "cuda");
         Debug.LogWarning("Model Load result = " + result);
 
         TensorShape shape = new TensorShape(1, 1, 480, 640); // Depth shape
