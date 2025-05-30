@@ -77,6 +77,8 @@ public class DrawMeshInstanced : MonoBehaviour
     public float size_scale; //hack to current pointcloud viewing
 
     public bool use_saved_meshes = false; // boolean that determines whether to use saved meshes or read in new scene data from ROS
+    private float[] depth_ar_saved;
+
     private bool freezeCloud = false; // boolean that freezes this point cloud
     private float[] depth_ar;
     private float[] avged_sparse = new float[640 * 480]; // averaged depth array
@@ -142,9 +144,10 @@ public class DrawMeshInstanced : MonoBehaviour
                 {
                     int length = reader.ReadInt32();
                     depth_ar = new float[length];
+                    depth_ar_saved = new float[length];
                     for (int i = 0; i < length; i++)
                     {
-                        depth_ar[i] = reader.ReadSingle();
+                        depth_ar_saved[i] = reader.ReadSingle();
                     }
                 }
             }
@@ -197,7 +200,7 @@ public class DrawMeshInstanced : MonoBehaviour
         }
 
         globalProps = GetProperties();
-        
+
 
 
         //inp_stm.Close();
@@ -399,7 +402,7 @@ public class DrawMeshInstanced : MonoBehaviour
         //}
 
 
-        
+
         //material.SetFloat("a", get_target_rota());
         //material.SetFloat("pS", pS);
         //depthBuffer.SetData(depth_ar);
@@ -424,7 +427,7 @@ public class DrawMeshInstanced : MonoBehaviour
 
 
         material.SetTexture("_colorMap", color_image);
-        
+
         //compute.SetBuffer(kernel, "_Depth", depthBuffer);
 
 
@@ -470,6 +473,11 @@ public class DrawMeshInstanced : MonoBehaviour
 
         if (use_saved_meshes)
         {
+            for (int i = 0; i < 480 * 640; i++)
+            {
+                depth_ar[i] = depth_ar_saved[i];
+            }
+            new_depth_to_render = true;
         }
         else
         {
@@ -547,7 +555,7 @@ public class DrawMeshInstanced : MonoBehaviour
         new_depth_to_render = false;
         if (imageScriptIndex > 1) { icp_trans = Matrix4x4.identity; } // depth manager 2
 
-        
+
     }
 
     private void Update()
@@ -557,7 +565,7 @@ public class DrawMeshInstanced : MonoBehaviour
             return;
         }
 
-        
+
         UpdateTexture();
 
         //Debug.Log("UPDATE");
