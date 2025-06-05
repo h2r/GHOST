@@ -4092,7 +4092,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775010377568, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: use_saved_meshes
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775010377574, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_IsActive
@@ -4176,7 +4176,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775515482002, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: use_saved_meshes
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775531494915, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
@@ -6776,7 +6776,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a02a2ba34d563204fa10a9e25c7ccb98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Baseline: {fileID: 5022602860645237092, guid: 5c0adad9409f35a498f591972a8c1bec, type: 3}
+  rgbdModelAsset: {fileID: 5022602860645237092, guid: 5c0adad9409f35a498f591972a8c1bec, type: 3}
+  Use_UB: 0
+  UB_Model_file: C:/Users/brown/Documents/fmz/GHOST/Assets/onnx/danything_mono_metric_finetune_epoch5_valloss0.0798-scripted.pt
 --- !u!114 &638278051
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14236,7 +14238,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a02a2ba34d563204fa10a9e25c7ccb98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Baseline: {fileID: 5022602860645237092, guid: 5c0adad9409f35a498f591972a8c1bec, type: 3}
+  rgbdModelAsset: {fileID: 5022602860645237092, guid: 5c0adad9409f35a498f591972a8c1bec, type: 3}
+  Use_UB: 0
+  UB_Model_file: 
 --- !u!114 &1639569377
 MonoBehaviour:
   m_ObjectHideFlags: 0

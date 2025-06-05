@@ -1,23 +1,48 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using Unity.Sentis;
+using UnityEditor;
 using UnityEngine;
-using static Unity.Sentis.Model;
-using System;
 using UnityEngine.VFX;
+using static Unity.Sentis.Model;
 
 public class DepthCompletion : MonoBehaviour
 {
-    public ModelAsset Baseline;
-    //public ModelAsset MaskBaseline;
-    Model runtimeModelBaseline;
-    //Model runtimeModelMaskBaseline;
-    Worker workerBaseline;
-    //Worker workerMaskBaseline;
+    public ModelAsset rgbdModelAsset;
+    Model runtimeModelRGBD;
+    Worker workerRGBD;
 
-    //public bool use_baseline;
-    //TensorShape depth_shape = new TensorShape(1, 1, 480, 640);
-    //TensorShape color_shape = new TensorShape(1, 3, 480, 640);
+    public bool Use_UB; // Use UnityBYOM for inference
+    private bool __use_ub;
+    // Path to model file
+    public string UB_Model_file;
+
+    Tensor<float> depth_outputTensor_0, depth_outputTensor_1;
+    ComputeBuffer computeTensorData0, computeTensorData1;
+
+
+    // Imports from UnityBYOM.dll (Make sure it's copied to Assets/Plugins)
+    [DllImport("UnityBYOM", CharSet = CharSet.Ansi)]
+    private static extern IntPtr UB_LoadModel(string modelPath, string backend);
+    [DllImport("UnityBYOM")]
+    private static extern bool UB_RunInference(
+        IntPtr texResource,      // ID3D12Resource* of the Unity texture
+        IntPtr outputBuffer,     // ComputeBuffer.GetNativeBufferPtr()
+        int inputCount,          // Number of input elements
+        int outputCount          // Number of output elements
+    );
+    [DllImport("UnityBYOM")]
+    private static extern void UB_SetUnityLogCallback(LogCallback callback);
+
+    private delegate void LogCallback(string message);
+
+    private static void PluginLogCallback(string message)
+    {
+        Debug.Log("[UnityBYOM] " + message);
+    }
+
 
 
     //// =============================================================================== //
@@ -25,8 +50,30 @@ public class DepthCompletion : MonoBehaviour
     //// =============================================================================== //
     void Start()
     {
-        runtimeModelBaseline = ModelLoader.Load(Baseline);
-        workerBaseline = new Worker(runtimeModelBaseline, BackendType.GPUCompute);
+        if (Use_UB)
+        {
+            // Use UnityBYOM for inference
+            UB_SetUnityLogCallback(PluginLogCallback);
+            IntPtr result = UB_LoadModel(UB_Model_file, "cuda");
+            Debug.LogWarning("Model Load result = " + result);
+
+            TensorShape shape = new TensorShape(1, 1, 480, 640); // Depth shape
+            depth_outputTensor_0 = new Tensor<float>(shape);
+            computeTensorData0 = ComputeTensorData.Pin(depth_outputTensor_0).buffer;
+            depth_outputTensor_1 = new Tensor<float>(shape);
+            computeTensorData1 = ComputeTensorData.Pin(depth_outputTensor_1).buffer;
+            
+            __use_ub = true;
+        }
+        else
+        {
+            // Use Sentis for inference
+            runtimeModelRGBD = ModelLoader.Load(rgbdModelAsset);
+            workerRGBD = new Worker(runtimeModelRGBD, BackendType.GPUCompute);
+
+            __use_ub = false;
+
+        }
 
 
         //runtimeModelMaskBaseline = ModelLoader.Load(MaskBaseline);
@@ -35,16 +82,13 @@ public class DepthCompletion : MonoBehaviour
 
     void OnDestroy()
     {
-        workerBaseline.Dispose();
-        //workerMaskBaseline.Dispose();
-        if (runtimeModelBaseline != null)
-        {
-            runtimeModelBaseline = null;
-        }
-        //if (runtimeModelMaskBaseline != null)
-        //{
-        //    runtimeModelMaskBaseline = null;
-        //}
+        workerRGBD?.Dispose();
+        runtimeModelRGBD = null;
+
+        depth_outputTensor_0?.Dispose();
+        depth_outputTensor_1?.Dispose();
+
+        // TODO: Release c++ model if using UnityBYOM
     }
 
     // =============================================================================== //
@@ -53,148 +97,98 @@ public class DepthCompletion : MonoBehaviour
     //public (ComputeBuffer, ComputeBuffer) complete(float[] depth_data_0, Texture2D color_data_0, float[] depth_data_1, Texture2D color_data_1)
     public (ComputeBuffer, ComputeBuffer) complete(Tensor<float> depth_tensor_0, Tensor<float> color_tensor_0, Tensor<float> depth_tensor_1, Tensor<float> color_tensor_1)
     {
-        //Tensor<float> depth_tensor_0 = new Tensor<float>(depth_shape, depth_data_0);
-        //Tensor<float> color_tensor_0 = TextureConverter.ToTensor(color_data_0, channels: 3);
-        //color_tensor_0.Reshape(color_shape);
+        if (__use_ub)
+        {
+            // Use UnityBYOM for inference
+            //IntPtr colorBuffer0 = ComputeTensorData.Pin(color_tensor_0).buffer.GetNativeBufferPtr();
+            //bool ret = UB_RunInference(colorBuffer0, computeTensorData0.GetNativeBufferPtr(), 640 * 480 * 3, 640 * 480);
+            //if (!ret)
+            //{
+            //    Debug.LogError("Failed to run inference via UnityBrains");
+            //}
+            //IntPtr colorBuffer1 = ComputeTensorData.Pin(color_tensor_1).buffer.GetNativeBufferPtr();
+            //ret = UB_RunInference(colorBuffer1, computeTensorData1.GetNativeBufferPtr(), 640 * 480 * 3, 640 * 480);
+            //if (!ret)
+            //{
+            //    Debug.LogError("Failed to run second inference via UnityBrains");
+            //}
 
-        //Tensor<float> depth_tensor_1 = new Tensor<float>(depth_shape, depth_data_1);
-        //Tensor<float> color_tensor_1 = TextureConverter.ToTensor(color_data_1, channels: 3);
-        //color_tensor_1.Reshape(color_shape);
+            ComputeTensorData gpuTensorColor0 = ComputeTensorData.Pin(color_tensor_0);
+            IntPtr colorBuffer0 = gpuTensorColor0.buffer.GetNativeBufferPtr();
+            ComputeTensorData detphTensorColor0 = ComputeTensorData.Pin(depth_tensor_0);
 
-        //if (use_baseline)
-        //{
-//<<<<<<< HEAD
-//            workerBaseline.SetInput("rgb_0", color_tensor_0);
-//            workerBaseline.SetInput("rgb_1", color_tensor_1);
-//            workerBaseline.SetInput("rgb_2", color_tensor_2);
-//            workerBaseline.SetInput("rgb_3", color_tensor_3);
+            // IntPtr rawBuf = computeTensorDataTest.GetNativeBufferPtr();
 
-//            workerBaseline.SetInput("depth_0", depth_tensor_0);
-//            workerBaseline.SetInput("depth_1", depth_tensor_1);
-//            workerBaseline.SetInput("depth_2", depth_tensor_2);
-//            workerBaseline.SetInput("depth_3", depth_tensor_3);
+            Debug.Log("before getnativebufferptr: depth_outputTensor_0.dataOnBackend = " + depth_outputTensor_0.dataOnBackend);
+            Debug.Log("color_tensor_0.count = " + color_tensor_0.count);
+            Debug.Log("color_tensor_0.shape = " + color_tensor_0.shape);
 
-//            workerBaseline.Schedule();
+            IntPtr outputBuffer = computeTensorData0.GetNativeBufferPtr();
 
-//            Tensor<float> depth_outputTensor_0 = workerBaseline.PeekOutput("output_depth_0") as Tensor<float>;
-//            //float[] output_depth_0 = depth_outputTensor_0.DownloadToArray();
-//            ComputeBuffer computeTensorData0 = ComputeTensorData.Pin(depth_outputTensor_0).buffer;
+            TensorShape shape = color_tensor_0.shape;
+            int out_size = depth_outputTensor_0.count;
 
-//            Tensor<float> depth_outputTensor_1 = workerBaseline.PeekOutput("output_depth_1") as Tensor<float>;
-//            //float[] output_depth_1 = depth_outputTensor_1.DownloadToArray();
-//            ComputeBuffer computeTensorData1 = ComputeTensorData.Pin(depth_outputTensor_1).buffer;
+            Debug.Log("depth_outputTensor_0.count = " + depth_outputTensor_0.count);
+            Debug.Log("depth_outputTensor_0.shape = " + depth_outputTensor_0.shape);
+            Debug.Log("computeTensorData0.count = " + out_size);
+            Debug.Log("after getnativebufferptr: depth_outputTensor_0.dataOnBackend = " + depth_outputTensor_0.dataOnBackend);
 
-//            Tensor<float> depth_outputTensor_2 = workerBaseline.PeekOutput("output_depth_2") as Tensor<float>;
-//            //float[] output_depth_1 = depth_outputTensor_1.DownloadToArray();
-//            ComputeBuffer computeTensorData2 = ComputeTensorData.Pin(depth_outputTensor_2).buffer;
+            Debug.Log("0: input buffer = " + colorBuffer0);
+            Debug.Log("0: output buffer = " + outputBuffer);
+            bool ret = UB_RunInference(colorBuffer0, outputBuffer, 640 * 480 * 3, 640 * 480);
+            if (!ret)
+            {
+                Debug.LogError("Failed to run inference via UnityBrains");
+            }
 
-//            Tensor<float> depth_outputTensor_3 = workerBaseline.PeekOutput("output_depth_3") as Tensor<float>;
-//            //float[] output_depth_1 = depth_outputTensor_1.DownloadToArray();
-//            ComputeBuffer computeTensorData3 = ComputeTensorData.Pin(depth_outputTensor_3).buffer;
+            // TODO: batch the inference calls
 
-//            //color_tensor_0.Dispose();
-//            //color_tensor_1.Dispose();
-//            //color_tensor_2.Dispose();
-//            //color_tensor_3.Dispose();
+            ComputeTensorData gpuTensorColor1 = ComputeTensorData.Pin(color_tensor_1);
+            IntPtr colorBuffer1 = gpuTensorColor1.buffer.GetNativeBufferPtr();
+            Debug.Log("before pin: depth_tensor_1.dataOnBackend = " + depth_tensor_1.dataOnBackend);
+            ComputeTensorData detphTensorColor1 = ComputeTensorData.Pin(depth_tensor_1);
+            Debug.Log("after pin: depth_tensor_1.dataOnBackend = " + depth_tensor_1.dataOnBackend);
 
-//            //depth_tensor_0.Dispose();
-//            //depth_tensor_1.Dispose();
-//            //depth_tensor_2.Dispose();
-//            //depth_tensor_3.Dispose();
 
-//            Debug.Log("Run Model");
+            Debug.Log("before getnativebufferptr: depth_outputTensor_1.dataOnBackend = " + depth_outputTensor_1.dataOnBackend);
+            Debug.Log("color_tensor_1.count = " + color_tensor_1.count);
+            Debug.Log("color_tensor_1.shape = " + color_tensor_1.shape);
 
-//            return (computeTensorData0, computeTensorData1, computeTensorData2, computeTensorData3);
-//=======
-        workerBaseline.SetInput("rgb_0", color_tensor_0);
-        workerBaseline.SetInput("rgb_1", color_tensor_1);
-        //workerBaseline.SetInput("rgb_2", color_tensor_2);
-        //workerBaseline.SetInput("rgb_3", color_tensor_3);
+            outputBuffer = computeTensorData1.GetNativeBufferPtr();
 
-        workerBaseline.SetInput("depth_0", depth_tensor_0);
-        workerBaseline.SetInput("depth_1", depth_tensor_1);
-        //workerBaseline.SetInput("depth_2", depth_tensor_2);
-        //workerBaseline.SetInput("depth_3", depth_tensor_3);
+            Debug.Log("depth_outputTensor_1.count = " + depth_outputTensor_1.count);
+            Debug.Log("depth_outputTensor_1.shape = " + depth_outputTensor_1.shape);
 
-        workerBaseline.Schedule();
-
-        Tensor<float> depth_outputTensor_0 = workerBaseline.PeekOutput("output_depth_0") as Tensor<float>;
-        //float[] output_depth_0 = depth_outputTensor_0.DownloadToArray();
-        ComputeBuffer computeTensorData0 = ComputeTensorData.Pin(depth_outputTensor_0).buffer;
-
-        Tensor<float> depth_outputTensor_1 = workerBaseline.PeekOutput("output_depth_1") as Tensor<float>;
-        //float[] output_depth_1 = depth_outputTensor_1.DownloadToArray();
-        ComputeBuffer computeTensorData1 = ComputeTensorData.Pin(depth_outputTensor_1).buffer;
-
-        //Tensor<float> depth_outputTensor_2 = workerBaseline.PeekOutput("output_depth_2") as Tensor<float>;
-        ////float[] output_depth_1 = depth_outputTensor_1.DownloadToArray();
-        //ComputeBuffer computeTensorData2 = ComputeTensorData.Pin(depth_outputTensor_2).buffer;
-
-        //Tensor<float> depth_outputTensor_3 = workerBaseline.PeekOutput("output_depth_3") as Tensor<float>;
-        ////float[] output_depth_1 = depth_outputTensor_1.DownloadToArray();
-        //ComputeBuffer computeTensorData3 = ComputeTensorData.Pin(depth_outputTensor_3).buffer;
-
-        //color_tensor_0.Dispose();
-        //color_tensor_1.Dispose();
-        //color_tensor_2.Dispose();
-        //color_tensor_3.Dispose();
-
-        //depth_tensor_0.Dispose();
-        //depth_tensor_1.Dispose();
-        //depth_tensor_2.Dispose();
-        //depth_tensor_3.Dispose();
+            Debug.Log("1: input buffer = " + colorBuffer1);
+            Debug.Log("1: output buffer = " + outputBuffer);
+            ret = UB_RunInference(colorBuffer1, outputBuffer, 640 * 480 * 3, 640 * 480);
+            if (!ret)
+            {
+                Debug.LogError("Failed to run second inference via UnityBrains");
+            }
 
 
 
-        //workerBaseline2.SetInput("rgb_0", color_tensor_2);
-        //workerBaseline2.SetInput("rgb_1", color_tensor_3);
-        ////workerBaseline.SetInput("rgb_2", color_tensor_2);
-        ////workerBaseline.SetInput("rgb_3", color_tensor_3);
-
-        //workerBaseline2.SetInput("depth_0", depth_tensor_2);
-        //workerBaseline2.SetInput("depth_1", depth_tensor_3);
-        ////workerBaseline.SetInput("depth_2", depth_tensor_2);
-        ////workerBaseline.SetInput("depth_3", depth_tensor_3);
-
-        //workerBaseline2.Schedule();
-
-        //Tensor<float> depth_outputTensor_2 = workerBaseline2.PeekOutput("output_depth_0") as Tensor<float>;
-        ////float[] output_depth_0 = depth_outputTensor_0.DownloadToArray();
-        //ComputeBuffer computeTensorData2 = ComputeTensorData.Pin(depth_outputTensor_2).buffer;
-
-        //Tensor<float> depth_outputTensor_3 = workerBaseline2.PeekOutput("output_depth_1") as Tensor<float>;
-        ////float[] output_depth_1 = depth_outputTensor_1.DownloadToArray();
-        //ComputeBuffer computeTensorData3 = ComputeTensorData.Pin(depth_outputTensor_3).buffer;
-
-        //Debug.Log("Run Model");
-
-        return (computeTensorData0, computeTensorData1);
-//>>>>>>> multiDev-debug
-        //}
-        //else
-        //{
-        //    workerMaskBaseline.SetInput("rgb_0", color_tensor_0);
-        //    workerMaskBaseline.SetInput("rgb_1", color_tensor_1);
-        //    workerMaskBaseline.SetInput("depth_0", depth_tensor_0);
-        //    workerMaskBaseline.SetInput("depth_1", depth_tensor_1);
-        //    workerMaskBaseline.Schedule();
-
-        //    Tensor<float> depth_outputTensor_0 = workerMaskBaseline.PeekOutput("output_depth_0") as Tensor<float>;
-        //    //float[] output_depth_0 = depth_outputTensor_0.DownloadToArray();
-        //    ComputeBuffer computeTensorData0 = ComputeTensorData.Pin(depth_outputTensor_0).buffer;
-
-        //    Tensor<float> depth_outputTensor_1 = workerMaskBaseline.PeekOutput("output_depth_1") as Tensor<float>;
-        //    //float[] output_depth_1 = depth_outputTensor_1.DownloadToArray();
-        //    ComputeBuffer computeTensorData1 = ComputeTensorData.Pin(depth_outputTensor_1).buffer;
-
-        //    color_tensor_0.Dispose();
-        //    color_tensor_1.Dispose();
-        //    depth_tensor_0.Dispose();
-        //    depth_tensor_1.Dispose();
-
-        //    return (computeTensorData0, computeTensorData1);
-        //}
+            return (computeTensorData0, computeTensorData1);
 
 
+        } else { 
+            workerRGBD.SetInput("rgb_0", color_tensor_0);
+            workerRGBD.SetInput("rgb_1", color_tensor_1);
+
+            workerRGBD.SetInput("depth_0", depth_tensor_0);
+            workerRGBD.SetInput("depth_1", depth_tensor_1);
+
+
+            workerRGBD.Schedule();
+
+            Tensor<float> depth_outputTensor_0 = workerRGBD.PeekOutput("output_depth_0") as Tensor<float>;
+            ComputeBuffer computeTensorData0 = ComputeTensorData.Pin(depth_outputTensor_0).buffer;
+
+            Tensor<float> depth_outputTensor_1 = workerRGBD.PeekOutput("output_depth_1") as Tensor<float>;
+            ComputeBuffer computeTensorData1 = ComputeTensorData.Pin(depth_outputTensor_1).buffer;
+
+            return (computeTensorData0, computeTensorData1);
+        }
     }
 }

@@ -49,6 +49,18 @@ public class CVDDataGenerator : MonoBehaviour
         );
     }
 
+    void OnDestroy()
+    {
+        previous_rgbL?.Dispose();
+        previous_rgbR?.Dispose();
+        
+        buffer_depthL?.Dispose();
+        buffer_depthR?.Dispose();
+        buffer_opticalL?.Dispose();
+        buffer_opticalR?.Dispose();
+        Debug.Log("CVDDataGenerator destroyed and buffers released.");
+    }
+
     IEnumerator SetFirstRunFalseAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
@@ -125,8 +137,8 @@ public class CVDDataGenerator : MonoBehaviour
     {
         if (first_run)
         {
-            previous_rgbL = rgbL;
-            previous_rgbR = rgbR;
+            previous_rgbL = new Tensor<float>(rgbL.shape);
+            previous_rgbR = new Tensor<float>(rgbR.shape);
 
             //buffer_depthL?.Release();
             //buffer_depthR?.Release();
@@ -169,17 +181,20 @@ public class CVDDataGenerator : MonoBehaviour
                 //buffer_opticalL?.Release();
                 //buffer_opticalR?.Release();
                 (buffer_opticalL, buffer_opticalR) = optical_flow_estimation.estimate_all(previous_rgbL, rgbL, previous_rgbR, rgbR);
-            }
 
-            previous_rgbL.Dispose();
-            previous_rgbR.Dispose();
-            previous_rgbL = rgbL;
-            previous_rgbR = rgbR;
+                previous_rgbL = ops.copy(rgbL);
+                // TODO: Come up with a better way to handle this copy.
+                for (int i = 0; i < previous_rgbL.count; i++)
+                {
+                    previous_rgbL[i] = rgbL[i];
+                    previous_rgbR[i] = rgbR[i];
+
+                }
+            }
 
             //Debug.Log("not firstrun return");
 
             return (buffer_depthL, buffer_depthR, mat_l, mat_r, buffer_opticalL, buffer_opticalR);
         }
     }
-
 }

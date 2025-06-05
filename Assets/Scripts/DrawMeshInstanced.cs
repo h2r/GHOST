@@ -540,7 +540,7 @@ public class DrawMeshInstanced : MonoBehaviour
 
 
         //temp_output_left = Averager.averaging(temp_output_left, is_not_moving, mean_averaging, median_averaging, edge_detection, edge_threshold);
-
+        Debug.Log("depth_ar length: " + depth_ar.Length + " depth_ar ptr = " + depth_ar);
         (depth_ar_buffer, icp_trans, avged_sparse) = depthManager.update_depth_from_renderer(color_image, depth_ar, camera_index, calculate_icp, new_depth_to_render, depthManager.avg_before_completion);
 
         //if (depthManager.avg_before_completion)
