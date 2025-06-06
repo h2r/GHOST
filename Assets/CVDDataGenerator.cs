@@ -182,7 +182,7 @@ public class CVDDataGenerator : MonoBehaviour
                 //buffer_opticalR?.Release();
                 (buffer_opticalL, buffer_opticalR) = optical_flow_estimation.estimate_all(previous_rgbL, rgbL, previous_rgbR, rgbR);
 
-                previous_rgbL = ops.copy(rgbL);
+                //previous_rgbL = ops.copy(rgbL);
                 // TODO: Come up with a better way to handle this copy.
                 for (int i = 0; i < previous_rgbL.count; i++)
                 {
