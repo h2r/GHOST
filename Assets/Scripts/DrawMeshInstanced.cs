@@ -11,7 +11,6 @@ using JetBrains.Annotations;
 using System.Diagnostics;
 using Debug = UnityEngine.Debug;
 using Unity.Mathematics;
-using static Meta.XR.MRUtilityKit.Data;
 using Unity.VisualScripting;
 //using System;
 
