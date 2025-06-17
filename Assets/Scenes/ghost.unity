@@ -4949,10 +4949,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 420483823}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 53d4ef5f17580c34997bcc28d44ea604, type: 3}
+  m_Script: {fileID: 11500000, guid: 42c5c42437e094441929da3e64cb7559, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  UB_Model_file: C:/Users/faisa/workspace/Unity/tests/danything_mono_metric_finetune_epoch5_valloss0.0798-scripted-fp16.pt
+  UB_Model_file: 
 --- !u!4 &420483825
 Transform:
   m_ObjectHideFlags: 0
