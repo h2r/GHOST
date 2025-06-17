@@ -28,20 +28,12 @@ public class DepthManager : MonoBehaviour
     public int maxNeighbourNum;
 
     public DepthAveraging AveragerLeft, AveragerRight;
-    //public bool mean_averaging;
-    //public bool median_averaging;
-    //public bool edge_detection;
-
-    //public float edge_threshold;
 
     private Tensor<float> depth_left_t_1;
     private Tensor<float> rgb_left_t_1;
 
     private Tensor<float> depth_right_t_1;
     private Tensor<float> rgb_right_t_1;
-
-    //private float[] output_left = new float[480 * 640];
-    //private float[] output_right = new float[480 * 640];
 
     private bool received_left_1 = false;
     private bool received_right_1 = false;
@@ -50,9 +42,6 @@ public class DepthManager : MonoBehaviour
     float[] right_depth_avg = new float[480 * 640];
 
     private bool depth_process_lock = false;
-
-    //public DepthAveraging AveragerLeft;
-    //public DepthAveraging AveragerRight;
 
     public DrawMeshInstanced Left_Depth_Renderer_1;
     public DrawMeshInstanced Right_Depth_Renderer_1;
@@ -63,10 +52,6 @@ public class DepthManager : MonoBehaviour
     private ComputeBuffer temp_optical_right, temp_depth_right_return;
 
     Matrix4x4 mat_l, mat_r;
-
-    //bool first_run = false;
-
-    //private float deltaTime = 0.0f;
 
     //public GameObject FPSDisplayObject;
 
@@ -170,33 +155,17 @@ public class DepthManager : MonoBehaviour
             avg_before_completion = !avg_before_completion;
         }
 
-        //if (Input.GetKey(KeyCode.G))
-        //{
-        //    Debug.LogWarning("Space key was pressed.");
-        //}
-
         if (received_left_1 && received_right_1 && !depth_process_lock)
         {
             depth_process_lock = true;
 
-            //bool not_moving = Left_Depth_Renderer.get_ready_to_freeze() && Right_Depth_Renderer.get_ready_to_freeze();
             bool not_moving = Left_Depth_Renderer_1.get_ready_to_freeze();
-            //Debug.LogWarning("not_moving: " + not_moving);
-            //bool not_moving = true;
-            //not_moving = true;
             (temp_output_left_1, temp_output_right_1, icp_trans_temp) = process_depth(depth_left_t_1, rgb_left_t_1, depth_right_t_1, rgb_right_t_1, not_moving, false);
-            //Debug.Log("hihi");
-
-            //if (depth_left_t_1 != null) { depth_left_t_1.Dispose(); }
-            //if (rgb_left_t_1 != null) { rgb_left_t_1.Dispose(); }
-            //if (depth_right_t_1 != null) { depth_right_t_1.Dispose(); }
-            //if (rgb_right_t_1 != null) { rgb_right_t_1.Dispose(); }
 
             received_left_1 = false;
             received_right_1 = false;
 
             depth_process_lock = false;
-            //first_run = true;
         }
     }
 
@@ -252,23 +221,10 @@ public class DepthManager : MonoBehaviour
                 return (temp_output_right_1, icp_trans_temp, right_depth_avg);
             }
         }
-        //Debug.Log("GO");
-
+        
         if (camera_index == 0 && !received_left_1 && new_depth)
         {
             //fps_timer.start(left_eye_data_timer_id);
-
-            //depth_left = (float[])depth.Clone();
-
-            //if (rgb_left != null)
-            //{
-            //    Destroy(rgb_left);
-            //}
-
-            //rgb_left = new Texture2D(rgb.width, rgb.height, rgb.format, rgb.mipmapCount > 1);
-            //Graphics.CopyTexture(rgb, rgb_left);
-
-            //old_depth1 = depth;
 
             left_depth_avg = AveragerLeft.averaging(depth, Left_Depth_Renderer_1.get_ready_to_freeze(), avg_before_completion);
             if (depth_left_t_1 != null)
@@ -282,8 +238,6 @@ public class DepthManager : MonoBehaviour
             TextureConverter.ToTensor(rgb, rgb_left_t_1, tform);
             rgb_left_t_1.Reshape(color_shape);
 
-            //normal_temp_output_left_1.SetData(depth);
-
             received_left_1 = true;
 
             //fps_timer.end(left_eye_data_timer_id);
@@ -292,13 +246,9 @@ public class DepthManager : MonoBehaviour
         {
             //fps_timer.start(right_eye_data_timer_id);
 
-            //old_depth2 = depth;
-
             right_depth_avg = AveragerRight.averaging(depth, Left_Depth_Renderer_1.get_ready_to_freeze(), avg_before_completion);
             if (depth_right_t_1 != null)
             {
-                Debug.Log("Upload right depth avg: " + right_depth_avg + ", right_depth_avg.length = " + right_depth_avg.Length);
-                Debug.Log("depth_right_t_1 = " + depth_right_t_1.dataOnBackend);
                 depth_right_t_1.Upload(right_depth_avg);
             }
             else
@@ -308,15 +258,10 @@ public class DepthManager : MonoBehaviour
             TextureConverter.ToTensor(rgb, rgb_right_t_1, tform);
             rgb_right_t_1.Reshape(color_shape);
 
-            //normal_temp_output_right_1.SetData(depth);
-
             received_right_1 = true;
 
             //fps_timer.end(right_eye_data_timer_id);
         }
-
-        //Debug.Log(received_left_1); Debug.Log(received_right_1);
-        //Debug.Log(received_left_2); Debug.Log(received_right_2);
 
         if (camera_index == 0)
         {
@@ -328,99 +273,22 @@ public class DepthManager : MonoBehaviour
         }
 
         return (temp_output_left_1, icp_trans_temp, right_depth_avg);
-
-        //if (activate_depth_estimation)
-        //{
-        //    if (camera_index == 0 && temp_output_left_1 != null)
-        //    {
-        //        return (temp_output_left_1, icp_trans_temp);
-        //    }
-        //    else if (camera_index == 1 && temp_output_right_1 != null)
-        //    {
-        //        return (temp_output_right_1, icp_trans_temp);
-        //    }
-        //    return (final_out, icp_trans_temp);
-        //}
-        //else
-        //{
-        //    if (camera_index == 0 && normal_temp_output_left_1 != null)
-        //    {
-        //        return (normal_temp_output_left_1, icp_trans_temp);
-        //    }
-        //    else if (camera_index == 1 && normal_temp_output_right_1 != null)
-        //    {
-        //        return (normal_temp_output_right_1, icp_trans_temp);
-        //    }
-        //    return (final_out, icp_trans_temp);
-        //}
-
     }
 
     private (ComputeBuffer, ComputeBuffer, Matrix4x4) process_depth(Tensor<float> depthL_1, Tensor<float> rgbL_1, Tensor<float> depthR_1, Tensor<float> rgbR_1, bool is_not_moving, bool calculate_icp)
     {
-        //if (median_averaging && mean_averaging)
-        //{
-        //    mean_averaging = false;
-        //}
-
-        //float[] temp_output_left = depthL, temp_output_right = depthR;
-
-        //complete_output_left_1 = ComputeTensorData.Pin(depthL_1).buffer;
-        //complete_output_right_1 = ComputeTensorData.Pin(depthR_1).buffer;
-        //complete_output_left_2 = ComputeTensorData.Pin(depthL_2).buffer;
-        //complete_output_right_2 = ComputeTensorData.Pin(depthR_2).buffer;
-
         ICP_trans = Matrix4x4.identity;
         if (calculate_icp && activate_ICP) 
         {
             ICP_trans = ICP_launcher.run_ICP();
         }
 
-        //// depth completion
-        //Debug.Log("depth completion");
-        //is_not_moving = true;
-        //if (activate_depth_estimation && is_not_moving)
-        //{
-        //    //fps_timer.start(depth_completion_timer_id);
-        //    (complete_output_left_1, complete_output_right_1) = depth_completion.complete(depthL_1, rgbL_1, depthR_1, rgbR_1);
-        //    //fps_timer.end(depth_completion_timer_id);
-        //}
-        //else
-        //{
-        //    //complete_output_left_1 = ComputeTensorData.Pin(depthL_1).buffer;
-        //    //complete_output_right_1 = ComputeTensorData.Pin(depthR_1).buffer;
-        //    //complete_output_left_2 = ComputeTensorData.Pin(depthL_2).buffer;
-        //    //complete_output_right_2 = ComputeTensorData.Pin(depthR_2).buffer;
-        //}
-
         float edgethreshold = 0.0f;
 
         (temp_depth_left, temp_depth_right, mat_l, mat_r, temp_optical_left, temp_optical_right) = CVD_generator.generatePoseData(depthL_1, rgbL_1, depthR_1, rgbR_1, activate_depth_estimation, activate_CVD && is_not_moving);
 
-
         temp_depth_left_return = CVDLeft.consistent_depth(temp_depth_left, mat_l, temp_optical_left, activate_CVD && is_not_moving, edgethreshold, activate_edge_detection, activate_depth_estimation, cvd_weight);
-        //Debug.Log("2 kernel 1");
         temp_depth_right_return = CVDRight.consistent_depth(temp_depth_right, mat_r, temp_optical_right, activate_CVD && is_not_moving, edgethreshold, activate_edge_detection, activate_depth_estimation, cvd_weight);
-
-        //fps_timer.start(averaging_timer_id);
-        //temp_output_left = AveragerLeft.averaging(temp_output_left, is_not_moving, mean_averaging, median_averaging, edge_detection, edge_threshold);
-        //temp_output_right = AveragerRight.averaging(temp_output_right, is_not_moving, mean_averaging, median_averaging, edge_detection, edge_threshold);
-        //fps_timer.end(averaging_timer_id);
-
-        //float[] ol = new float[480 * 640], or = new float[480 * 640];
-
-        //temp_output_left.GetData(ol);
-        //temp_output_right.GetData(or);
-
-
-        // merge and downsample
-        // find correspondence
-        // calculate center of mass
-        // accumulate
-        // return transformation
-
-
-        //return (complete_output_left_1, complete_output_right_1, ICP_trans);
 
         return (temp_depth_left_return, temp_depth_right_return, ICP_trans);
     }
