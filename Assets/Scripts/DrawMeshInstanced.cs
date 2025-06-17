@@ -279,7 +279,6 @@ public class DrawMeshInstanced : MonoBehaviour
 
         depth_ar_buffer = new ComputeBuffer(480 * 640, sizeof(float) * 3);
         icp_res_buffer = new ComputeBuffer(160 * 120, sizeof(float) * 3);
-        //int kernel = compute.FindKernel("CSMain");
 
         // Argument buffer used by DrawMeshInstancedIndirect.
         uint[] args = new uint[5] { 0, 0, 0, 0, 0 };
@@ -317,15 +316,6 @@ public class DrawMeshInstanced : MonoBehaviour
 
     private void SetProperties()
     {
-        //int kernel = compute.FindKernel("CSMain");
-
-        //if (globalProps == null)// && use_saved_meshes)
-        //{
-        //    globalProps = GetProperties();
-        //}
-
-
-
         //material.SetFloat("a", get_target_rota());
         //material.SetFloat("pS", pS);
         //depthBuffer.SetData(depth_ar);
