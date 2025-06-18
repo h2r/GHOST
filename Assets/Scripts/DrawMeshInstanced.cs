@@ -11,7 +11,6 @@ using JetBrains.Annotations;
 using System.Diagnostics;
 using Debug = UnityEngine.Debug;
 using Unity.Mathematics;
-using static Meta.XR.MRUtilityKit.Data;
 using Unity.VisualScripting;
 //using System;
 
@@ -77,6 +76,8 @@ public class DrawMeshInstanced : MonoBehaviour
     public float size_scale; //hack to current pointcloud viewing
 
     public bool use_saved_meshes = false; // boolean that determines whether to use saved meshes or read in new scene data from ROS
+    private float[] depth_ar_saved;
+
     private bool freezeCloud = false; // boolean that freezes this point cloud
     private float[] depth_ar;
     private float[] avged_sparse = new float[640 * 480]; // averaged depth array
@@ -142,9 +143,10 @@ public class DrawMeshInstanced : MonoBehaviour
                 {
                     int length = reader.ReadInt32();
                     depth_ar = new float[length];
+                    depth_ar_saved = new float[length];
                     for (int i = 0; i < length; i++)
                     {
-                        depth_ar[i] = reader.ReadSingle();
+                        depth_ar_saved[i] = reader.ReadSingle();
                     }
                 }
             }
@@ -197,7 +199,7 @@ public class DrawMeshInstanced : MonoBehaviour
         }
 
         globalProps = GetProperties();
-        
+
 
 
         //inp_stm.Close();
@@ -250,10 +252,6 @@ public class DrawMeshInstanced : MonoBehaviour
 
     private MeshProperties[] GetProperties()
     {
-        // Initialize buffer with the given population.
-        //MeshProperties[] properties = new MeshProperties[population];
-
-        //return properties;
         MeshProperties[] properties = new MeshProperties[population];
 
         if (width == 0 || height == 0 || depth_ar == null || depth_ar.Length == 0 || true)
@@ -261,91 +259,19 @@ public class DrawMeshInstanced : MonoBehaviour
             return properties;
         }
 
-
-        // uint x;
-        // uint y;
-        // uint depth_idx;
         uint i;
 
+        Vector4 initialValue = new Vector4( 0, 0, 0, 1 );
 
         for (uint pop_i = 0; pop_i < population; pop_i++)
         {
+            // TODO: Handle downsampling correctly
             i = pop_i * downsample;
-            MeshProperties props = new MeshProperties();
-
-
-            //x = i % (width);
-            //y = (uint)Mathf.Floor(i / width);
-
-            /*
-            depth_idx = (width * (height - y - 1)) + (width - x - 1);
-
-            if (depth_idx >= depth_ar.Length)
-            {
-                continue;
-            }
-            */
-            /*
-            Vector3 position = Vector3.one;
-
-
-            position = new Vector4(10000, 1000, 1000, 1);
-            */
-            /*
-            if (depth_ar[depth_idx] == 0)
-            {
-                
-
-                props.pos = new Vector4(0,0,0,1);
-                //properties[pop_i].pos = new Vector4(0, 0, 0, 1);
-
-                //props.mat = Matrix4x4.TRS(new Vector3(0, 0, 0), Quaternion.Euler(0, 0, 0), Vector3.one * 0);
-                //props.color = Color.Lerp(Color.red, Color.blue, Random.value);
-
-                props.color = new Vector4(0, 0, 0, 1);
-                //properties[pop_i].color = new Vector4(0, 0, 0, 1);
-
-                //properties[pop_i] = props;
-                continue;
-
-            }
-            else
-            {
-                //position = new Vector3(10000, 1000, 1000);
-                position = pixel_to_vision_frame(x, y, depth_ar[depth_idx]); //TODO: Get 4x4 matrix instead
-            }
-            */
-
-            //Quaternion rotation = Quaternion.Euler(0, 0, 0);
-            //Vector3 scale = Vector3.one * 1;
-            //Vector3 some_noise = new Vector3(Random.Range(-noise_range, noise_range), Random.Range(-noise_range, noise_range), Random.Range(-noise_range, noise_range));
-            //props.mat = Matrix4x4.TRS(position + some_noise, rotation, scale);
-
-
-            //props.color = Color.Lerp(Color.red, Color.blue, Random.value);
-
-            //Vector3 some_noise = new Vector3(Random.Range(-noise_range, noise_range), Random.Range(-noise_range, noise_range), Random.Range(-noise_range, noise_range));
-            //Vector3 intermediatePos = position + some_noise;
-
-            props.pos = new Vector4(0, 0, 0, 1); ;
-            //props.color.x = (float)i;
-            //props.color.y = (float)y;
-            //props.color.z = 1;//(float)depth_ar[depth_idx];
-
-            //props.color = color_image.GetPixel((int)(width-x)-1, (int)y);
-            //props.color[3] = 1.0f;
-
-            //properties[pop_i].pos = position;
-
-            //properties[pop_i].color = color_image.GetPixel((int)(width - x) - 1, (int)y);
-            //properties[pop_i].color[3] = 1.0f;
-            //props.color = new Color(0, 0, 0, 0);
-
-            properties[pop_i] = props;
+            properties[pop_i].pos = initialValue;
 
         }
 
-        return (properties);
+        return properties;
     }
 
     private void InitializeBuffers()
@@ -353,7 +279,6 @@ public class DrawMeshInstanced : MonoBehaviour
 
         depth_ar_buffer = new ComputeBuffer(480 * 640, sizeof(float) * 3);
         icp_res_buffer = new ComputeBuffer(160 * 120, sizeof(float) * 3);
-        //int kernel = compute.FindKernel("CSMain");
 
         // Argument buffer used by DrawMeshInstancedIndirect.
         uint[] args = new uint[5] { 0, 0, 0, 0, 0 };
@@ -391,15 +316,6 @@ public class DrawMeshInstanced : MonoBehaviour
 
     private void SetProperties()
     {
-        //int kernel = compute.FindKernel("CSMain");
-
-        //if (globalProps == null)// && use_saved_meshes)
-        //{
-        //    globalProps = GetProperties();
-        //}
-
-
-        
         //material.SetFloat("a", get_target_rota());
         //material.SetFloat("pS", pS);
         //depthBuffer.SetData(depth_ar);
@@ -424,7 +340,7 @@ public class DrawMeshInstanced : MonoBehaviour
 
 
         material.SetTexture("_colorMap", color_image);
-        
+
         //compute.SetBuffer(kernel, "_Depth", depthBuffer);
 
 
@@ -470,6 +386,11 @@ public class DrawMeshInstanced : MonoBehaviour
 
         if (use_saved_meshes)
         {
+            for (int i = 0; i < 480 * 640; i++)
+            {
+                depth_ar[i] = depth_ar_saved[i];
+            }
+            new_depth_to_render = true;
         }
         else
         {
@@ -532,7 +453,6 @@ public class DrawMeshInstanced : MonoBehaviour
 
 
         //temp_output_left = Averager.averaging(temp_output_left, is_not_moving, mean_averaging, median_averaging, edge_detection, edge_threshold);
-
         (depth_ar_buffer, icp_trans, avged_sparse) = depthManager.update_depth_from_renderer(color_image, depth_ar, camera_index, calculate_icp, new_depth_to_render, depthManager.avg_before_completion);
 
         //if (depthManager.avg_before_completion)
@@ -547,7 +467,7 @@ public class DrawMeshInstanced : MonoBehaviour
         new_depth_to_render = false;
         if (imageScriptIndex > 1) { icp_trans = Matrix4x4.identity; } // depth manager 2
 
-        
+
     }
 
     private void Update()
@@ -557,7 +477,7 @@ public class DrawMeshInstanced : MonoBehaviour
             return;
         }
 
-        
+
         UpdateTexture();
 
         //Debug.Log("UPDATE");
@@ -587,9 +507,8 @@ public class DrawMeshInstanced : MonoBehaviour
 
         // We used to just be able to use `population` here, but it looks like a Unity update imposed a thread limit (65535) on my device.
         // This is probably for the best, but we have to do some more calculation.  Divide population by numthreads.x (declared in compute shader).
-        compute.Dispatch(edge_kernel, Mathf.CeilToInt(population / 64f), 1, 1);
-        compute.Dispatch(kernel, Mathf.CeilToInt(population / 64f), 1, 1);
-        // TODO: Merge the two point cloud using ICP
+        compute.Dispatch(edge_kernel, Mathf.CeilToInt(population / 256f), 1, 1);
+        compute.Dispatch(kernel, Mathf.CeilToInt(population / 256f), 1, 1);
         // Question:
         //          - where is the point cloud? -> stored at where
         //          - what is the format of the point cloud after calling the compute shader

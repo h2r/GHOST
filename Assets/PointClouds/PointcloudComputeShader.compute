@@ -1,44 +1,228 @@
 #pragma kernel CSMain
+#pragma kernel EdgeDetector
 
-struct MeshProperties {
+struct MeshProperties
+{
     float4 pos;
 };
 
+#define WIDTH 640
+#define HEIGHT 480
+
 RWStructuredBuffer<MeshProperties> _Properties;
-RWStructuredBuffer<float> _Depth;
-float4x4 _GOPose;       // [2023-10-30][JHT] Global orientation? pose
-float4 intrinsics;      // [2023-10-30][JHT] Contains (CX, CY, FX, FY) - center point x, center point y, focal length x, focal length y
-float4 screenData;      // [2023-10-30][JHT] Continas (width, height, 1/width, FY) - screen/image coordinate data
-float samplingSize;     // [2023-10-30][JHT] Value of 1 samples all pixels; value of 2 samples half the pixels
-float t;                // [2023-10-30][JHT] Scalar on depth that also inverts the depth (?)
+RWStructuredBuffer<float3> _Depth;
+RWStructuredBuffer<float> _Sparse;
+RWStructuredBuffer<float> _Edge;
+RWStructuredBuffer<float3> _ICP_Res;
+float4x4 _GOPose;
+float4x4 _ICPTrans;
+float4 intrinsics;
+float4 screenData;
+float samplingSize;
+float t;
+float y_max;
+float z_max;
+bool show_sampling_res;
+
+float edgeThreshold;
+int maxNeighbourNum;
+bool activate_edge_detection;
+
+float meanThreshold;
+
+[numthreads(256, 1, 1)]
+void EdgeDetector(uint3 id : SV_DispatchThreadID)
+{
+    uint indexX = id.x % WIDTH;
+    uint indexY = id.x / WIDTH;
+    uint index = indexY * WIDTH + indexX;
+    
+    if (indexX > 5 && indexX < WIDTH - 5 && indexY > 5 && indexY < HEIGHT - 5)
+    {
+        if (activate_edge_detection)
+        {
+            const float kX[5][5] =
+            {
+                { 1, 2, 0, -2, -1 },
+                { 4, 8, 0, -8, -4 },
+                { 6, 12, 0, -12, -6 },
+                { 4, 8, 0, -8, -4 },
+                { 1, 2, 0, -2, -1 }
+            };
+
+            const float kY[5][5] =
+            {
+                { 1, 4, 6, 4, 1 },
+                { 2, 8, 12, 8, 2 },
+                { 0, 0, 0, 0, 0 },
+                { -2, -8, -12, -8, -2 },
+                { -1, -4, -6, -4, -1 }
+            };
+
+            const float kMu[5][5] =
+            {
+                { 1, 1, 1, 1, 1 },
+                { 1, 1, 1, 1, 1 },
+                { 1, 1, 1, 1, 1 },
+                { 1, 1, 1, 1, 1 },
+                { 1, 1, 1, 1, 1 }
+            };
+
+            float Gx = 0.0;
+            float Gy = 0.0;
+            float mu = 0.0;
+
+            for (int i = -2; i <= 2; i++)
+            {
+                for (int j = -2; j <= 2; j++)
+                {
+                    uint sampleX = indexX + j;
+                    uint sampleY = indexY + i;
+                    uint sampleIndex = sampleY * WIDTH + sampleX;
+
+                    float depthValue = _Depth[sampleIndex].z;
+
+                    Gx += depthValue * kX[i + 2][j + 2];
+                    Gy += depthValue * kY[i + 2][j + 2];
+                    mu += depthValue * kMu[i + 2][j + 2];
+                }
+            }
+            
+            if (sqrt(Gx * Gx + Gy * Gy) > edgeThreshold)
+            {
+                _Edge[id.x] = 1.0f;
+            }
+            else
+            {
+                _Edge[id.x] = 0.0f;
+            }
+
+            uint depth_index = indexY * WIDTH + indexX;
+            if ( abs(_Depth[depth_index].z - (mu / 25.0)) / (mu / 25.0) > meanThreshold )
+            {
+                _Edge[id.x] = 1.0f;
+            }
+        }
+        else
+        {
+            _Edge[id.x] = 0.0f;
+        }
+    }
+    else
+    {
+        _Edge[id.x] = 1.0f;
+    }
+}
+
+//float dx;
+//float dy;
+//float dz;
 
 // We used to just be able to use (1, 1, 1) threads for whatever population (not sure the old limit), but a Unity update
 // imposed a thread limit of 65535.  Now, to populations above that, we need to be more granular with our threads.
-[numthreads(64, 1, 1)]
-void CSMain(uint3 id : SV_DispatchThreadID) {
-    float4 pos = _Properties[id.x].pos;
+[numthreads(256, 1, 1)]
+void CSMain(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x < 480 * 640)
+    {
+        
+        float3 pos = _Depth[id.x];
 
-    //float i = samplingSize * id.x;
-    float i = id.x * samplingSize;
+        //float i = samplingSize * id.x;
+        float i = id.x * samplingSize;
 
-    float col_y = floor(i * screenData.z);    
-    float col_x = i - floor(i * screenData.z) * screenData.x;
-    //_Properties[id.x].color.z = 1
+        float col_y = floor(i * screenData.z);
+        float col_x = i - floor(i * screenData.z) * screenData.x;
+        //_Properties[id.x].color.z = 1
 
-    uint depth_idx = (screenData.x * (screenData.y - col_y - 1)) + (screenData.x - col_x - 1);
+        uint depth_idx = (screenData.x * (screenData.y - col_y - 1)) + (screenData.x - col_x - 1);
     
-    pos.z = _Depth[depth_idx] * t + (1 - t);
+        pos.z = _Depth[depth_idx].z * t + (1 - t);
 
-    pos.x = (col_y - intrinsics.y) * pos.z / intrinsics.z;
-    pos.y = (col_x - intrinsics.x) * pos.z / intrinsics.w;
+        pos.x = (col_y - intrinsics.y) * pos.z / intrinsics.z;
+        pos.y = (col_x - intrinsics.x) * pos.z / intrinsics.w;
+        
+        float4 final_pos = mul(_GOPose, float4(pos, 1.0f));
 
-    //pos.z = _Depth[depth_idx];
-    pos.w = 1;
-    if (pos.z <= 0.001){pos.z = 50000;}
-    //float4 pos = {.x,_Properties[id.x].pos.y,_Properties[id.x].pos.z,1.0};
+        float flg = 0.0f;
+
+        //pos.z = _Depth[depth_idx];
+        //pos.w = 1;
+        //float4 pos = {.x,_Properties[id.x].pos.y,_Properties[id.x].pos.z,1.0};
+        
+        if (pos.y < y_max || pos.z < z_max)
+        {
+            pos.z = _Sparse[depth_idx] * t + (1 - t);
+            pos.x = (col_y - intrinsics.y) * pos.z / intrinsics.z;
+            pos.y = (col_x - intrinsics.x) * pos.z / intrinsics.w;
+
+            flg = 1.0f;
+        }
+        
+        _Properties[id.x].pos = final_pos;
+        _Properties[id.x].pos.w = pos.z * t + (1 - t);
+        
+        if (_Edge[depth_idx] > 0.5f)
+        {
+            flg = 1.0f;
+        }
+
+        //float4 final_pos = mul(_GOPose, pos);
+        //float4 final_pos1 = mul(_ICPTrans, final_pos);
+        //float4 final_pos = pos;
+
+        //final_pos.x = final_pos.x + dx;
+        //final_pos.y = final_pos.y + dy;
+        //final_pos.z = final_pos.z + dz;
+
+
+    
+    //if (pos.y < 0.5f || pos.z < -0.0f)
+    //{
+    //    pos.y = 0.0f;
+    //    pos.z = 0.0f;
+    //    pos.x = 0.0f;
+    //    pos.w = 0.0f;
+    //}
     
     // Apply translation to existing matrix, which will be read in the shader.
-    _Properties[id.x].pos = mul(_GOPose, pos);
-    _Properties[id.x].pos.w = _Depth[depth_idx] * t + (1 - t);
+        //_Properties[id.x].pos = final_pos1;
+
+        if (flg < 0.5f)
+        {
+            //_Properties[id.x].pos.w = _Depth[depth_idx] * t + (1 - t);
+        }
+        else
+        {
+            pos.z = _Sparse[depth_idx] * t + (1 - t);
+            float4 final_pos_sparse = mul(_GOPose, float4(pos, 1.0f));
+            _Properties[id.x].pos = final_pos_sparse;
+            _Properties[id.x].pos.w = _Sparse[depth_idx] * t + (1 - t);
+        }
+        
+    
+        
+        //if (show_sampling_res)
+        //{
+        //    if (id.x % 16 == 0)
+        //    {
+            
+        //        _Properties[id.x].pos.x = _ICP_Res[id.x / 16].x;
+        //        _Properties[id.x].pos.y = _ICP_Res[id.x / 16].y;
+        //        _Properties[id.x].pos.z = _ICP_Res[id.x / 16].z;
+        //        _Properties[id.x].pos.w = _Sparse[depth_idx] * t + (1 - t);
+        //    }
+        //    else
+        //    {
+        //        _Properties[id.x].pos.x = 1000.0f;
+        //        _Properties[id.x].pos.y = 1000.0f;
+        //        _Properties[id.x].pos.z = 1000.0f;
+        //        _Properties[id.x].pos.w = 0.0f;
+        //    }
+        //}
+
+
+        
     //_Properties[id.x].pos.w = abs(id.x * samplingSize - i);
+    }
 }
