@@ -15,8 +15,10 @@ public class UBModel : MonoBehaviour
     [DllImport("UnityBYOM")]
     private static extern bool UB_RunInference(
         IntPtr texResource,      // ID3D12Resource* of the Unity texture
+        IntPtr depthResource,    // another ID3D12Resource*
         IntPtr outputBuffer,     // ComputeBuffer.GetNativeBufferPtr()
         int inputCount,          // Number of input elements
+        int depthCount,          // Number of depth input elements
         int outputCount          // Number of output elements
     );
     [DllImport("UnityBYOM")]
@@ -41,7 +43,10 @@ public class UBModel : MonoBehaviour
     void Start()
     {
         UB_SetUnityLogCallback(PluginLogCallback);
+     
+        UB_Model_file = UB_Model_file.Trim();
         bool result = UB_LoadModel(UB_Model_file, "cuda");
+
         if (!result)
         {
             Debug.LogError("Failed to load model from: " + UB_Model_file);
@@ -51,7 +56,7 @@ public class UBModel : MonoBehaviour
             modelLoaded = true;
         }
 
-            TensorShape shape = new TensorShape(1, 1, 480, 640); // Depth shape
+        TensorShape shape = new TensorShape(1, 1, 480, 640); // Depth shape
         outputTensor0 = new Tensor<float>(shape);
         computeTensorData0 = ComputeTensorData.Pin(outputTensor0).buffer;
         outputBuffer0 = computeTensorData0.GetNativeBufferPtr();
@@ -107,7 +112,8 @@ public class UBModel : MonoBehaviour
 
         Debug.Log("0: input buffer = " + colorBuffer0);
         Debug.Log("0: output buffer = " + outputBuffer0);
-        bool ret = UB_RunInference(colorBuffer0, outputBuffer0, 640 * 480 * 3, 640 * 480);
+
+        bool ret = UB_RunInference(colorBuffer0, (IntPtr)0, outputBuffer0, 640 * 480 * 3, 0, 640 * 480);
         if (!ret)
         {
             Debug.LogError("Failed to run inference via UnityBrains");
@@ -131,7 +137,7 @@ public class UBModel : MonoBehaviour
 
         Debug.Log("1: input buffer = " + colorBuffer1);
         Debug.Log("1: output buffer = " + outputBuffer1);
-        ret = UB_RunInference(colorBuffer1, outputBuffer1, 640 * 480 * 3, 640 * 480);
+        ret = UB_RunInference(colorBuffer1, (IntPtr)0, outputBuffer1, 640 * 480 * 3, 0, 640 * 480);
         if (!ret)
         {
             Debug.LogError("Failed to run second inference via UnityBrains");

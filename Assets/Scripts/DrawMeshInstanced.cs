@@ -14,6 +14,7 @@ using Unity.Mathematics;
 using Unity.VisualScripting;
 //using System;
 
+
 public class DrawMeshInstanced : MonoBehaviour
 {
     public DepthAveraging averager;
@@ -99,6 +100,7 @@ public class DrawMeshInstanced : MonoBehaviour
 
     int kernel;
     int edge_kernel;
+    
 
     // Mesh Properties struct to be read from the GPU.
     // Size() is a convenience funciton which returns the stride of the struct.
@@ -298,6 +300,12 @@ public class DrawMeshInstanced : MonoBehaviour
         meshPropertiesBuffer = new ComputeBuffer((int)population, MeshProperties.Size());
         meshPropertiesBuffer.SetData(GetProperties());
 
+        Debug.Log("mesh.getIndexCount(0): " + mesh.GetIndexCount(0));
+        Debug.Log("population: " + population);
+        Debug.Log("mesh.GetIndexStart(0): " + mesh.GetIndexStart(0));
+        Debug.Log("mesh.GetBaseVertex(0): " + mesh.GetBaseVertex(0));
+        Debug.Log("meshPropertiesBuffer.count: " + meshPropertiesBuffer.count);
+
         depthBuffer = new ComputeBuffer((int)depth_ar.Length, sizeof(float));
         sparseBuffer = new ComputeBuffer((int)(480 * 640), sizeof(float));
         edge_buffer = new ComputeBuffer((int)(480 * 640), sizeof(float));
@@ -381,6 +389,8 @@ public class DrawMeshInstanced : MonoBehaviour
         material.SetVector("intrinsics", intr);
 
         Vector4 screenData = new Vector4((float)width, (float)height, 1 / (float)width, FY);
+        Debug.Log("Screen Data: " + screenData.ToString());
+        Debug.Log("screenData[2] = " + screenData[2].ToString());
         compute.SetVector("screenData", screenData);
         material.SetVector("screenData", screenData);
 
@@ -507,7 +517,7 @@ public class DrawMeshInstanced : MonoBehaviour
 
         // We used to just be able to use `population` here, but it looks like a Unity update imposed a thread limit (65535) on my device.
         // This is probably for the best, but we have to do some more calculation.  Divide population by numthreads.x (declared in compute shader).
-        compute.Dispatch(edge_kernel, Mathf.CeilToInt(population / 256f), 1, 1);
+        compute.Dispatch(edge_kernel, Mathf.CeilToInt(640f / 16f), Mathf.CeilToInt(480f / 16f), 1);
         compute.Dispatch(kernel, Mathf.CeilToInt(population / 256f), 1, 1);
         // Question:
         //          - where is the point cloud? -> stored at where
