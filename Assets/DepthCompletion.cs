@@ -20,6 +20,7 @@ public class DepthCompletion : MonoBehaviour
     Tensor<float> depth_outputTensor_0, depth_outputTensor_1;
     ComputeBuffer computeTensorData0, computeTensorData1;
 
+
     //// =============================================================================== //
     ////                               Init & OnRelease                                  //
     //// =============================================================================== //
@@ -46,22 +47,26 @@ public class DepthCompletion : MonoBehaviour
     {
         if (Use_UB)
         {
-            workerRGBD.SetInput("rgb_0", color_tensor_0);
-            workerRGBD.SetInput("rgb_1", color_tensor_1);
 
-            workerRGBD.SetInput("depth_0", depth_tensor_0);
-            workerRGBD.SetInput("depth_1", depth_tensor_1);
+                //workerRGBD.SetInput("rgb_0", color_tensor_0);
+                //workerRGBD.SetInput("rgb_1", color_tensor_1);
+
+                //workerRGBD.SetInput("depth_0", depth_tensor_0);
+                //workerRGBD.SetInput("depth_1", depth_tensor_1);
 
 
-            workerRGBD.Schedule();
+                //workerRGBD.Schedule();
 
-            Tensor<float> depth_outputTensor_0 = workerRGBD.PeekOutput("output_depth_0") as Tensor<float>;
-            ComputeBuffer computeTensorData0 = ComputeTensorData.Pin(depth_outputTensor_0).buffer;
+                //Tensor<float> depth_outputTensor_0 = workerRGBD.PeekOutput("output_depth_0") as Tensor<float>;
+                //ComputeBuffer computeTensorData0 = ComputeTensorData.Pin(depth_outputTensor_0).buffer;
 
-            Tensor<float> depth_outputTensor_1 = workerRGBD.PeekOutput("output_depth_1") as Tensor<float>;
-            ComputeBuffer computeTensorData1 = ComputeTensorData.Pin(depth_outputTensor_1).buffer;
+                //Tensor<float> depth_outputTensor_1 = workerRGBD.PeekOutput("output_depth_1") as Tensor<float>;
+                //ComputeBuffer computeTensorData1 = ComputeTensorData.Pin(depth_outputTensor_1).buffer;
 
-            return UB_Model.Complete(depth_outputTensor_0, color_tensor_0, depth_outputTensor_1, color_tensor_1);
+                //return UB_Model.Complete(color_tensor_0, depth_outputTensor_0, color_tensor_1, depth_outputTensor_1);
+
+            return UB_Model.Complete(color_tensor_0, depth_tensor_0, color_tensor_1, depth_tensor_1);
+
         } else { 
             workerRGBD.SetInput("rgb_0", color_tensor_0);
             workerRGBD.SetInput("rgb_1", color_tensor_1);

@@ -72,15 +72,13 @@ public class UBModel : MonoBehaviour
         // TODO: Release c++ model if using UnityBYOM
     }
 
-    public (ComputeBuffer, ComputeBuffer) Complete(Tensor<float> depth_tensor_0, Tensor<float> color_tensor_0, Tensor<float> depth_tensor_1, Tensor<float> color_tensor_1)
+    public (ComputeBuffer, ComputeBuffer) Complete(Tensor<float> color_tensor_0, Tensor<float> depth_tensor_0, Tensor<float> color_tensor_1, Tensor<float> depth_tensor_1)
     {
         if (!modelLoaded)
         {
             Debug.LogError("Model not loaded. Please ensure the model is loaded before calling Complete.");
             return (computeTensorData0, computeTensorData1);
         }
-
-        //Use UnityBYOM for inference(FMZFIXME: reenable)
 
         IntPtr colorBuffer0 = ComputeTensorData.Pin(color_tensor_0).buffer.GetNativeBufferPtr();
         IntPtr depthBuffer0 = ComputeTensorData.Pin(depth_tensor_0).buffer.GetNativeBufferPtr();

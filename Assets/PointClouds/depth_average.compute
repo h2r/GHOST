@@ -1,8 +1,7 @@
-#pragma kernel EdgeDetection
 #pragma kernel MeanAveraging
 #pragma kernel ClearBuffer
-#pragma kernel MedianAveragingFast
-#pragma kernel MedianAveragingNaive
+#pragma kernel fill_depth_from_prev
+#pragma kernel update_depth_buffer
 
 // Size of the buffers
 #define WIDTH 640
@@ -20,6 +19,7 @@ RWStructuredBuffer<float> depth_buffer; // MeanAveraging, ClearBuffer, MedianAve
 
 // buffer pos
 int buffer_pos;
+int prev_buffer_pos;
 
 // activate filter or not
 bool activate;
@@ -52,7 +52,7 @@ void MeanAveraging(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupThreadID
     int yIndex = groupId.y * 16 + threadId.y;
 
     int index = xIndex + yIndex * WIDTH;
-    depth_buffer[buffer_pos * WIDTH * HEIGHT + index] = depth_ar[index];
+    //depth_buffer[buffer_pos * WIDTH * HEIGHT + index] = depth_ar[index];
 
     if (xIndex < WIDTH && yIndex < HEIGHT && activate)
     {
@@ -98,5 +98,40 @@ void MeanAveraging(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupThreadID
         }
 
         
+    }
+}
+
+// Fill current depth buffer with previous frames' data
+[numthreads(16, 16, 1)]
+void fill_depth_from_prev(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupThreadID)
+{
+    int xIndex = groupId.x * 16 + threadId.x;
+    int yIndex = groupId.y * 16 + threadId.y;
+
+    int index = xIndex + yIndex * WIDTH;
+    int prev_idx = prev_buffer_pos * WIDTH * HEIGHT + index;
+
+    if (xIndex < WIDTH && yIndex < HEIGHT)
+    {
+        if (depth_ar[index] < 0.01)
+        {
+            depth_ar[index] = depth_buffer[prev_idx];
+        }
+    }
+}
+
+// Fill current depth buffer with previous frames' data
+[numthreads(16, 16, 1)]
+void update_depth_buffer(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupThreadID)
+{
+    int xIndex = groupId.x * 16 + threadId.x;
+    int yIndex = groupId.y * 16 + threadId.y;
+
+    int index = xIndex + yIndex * WIDTH;
+    int buffer_idx = buffer_pos * WIDTH * HEIGHT + index;
+
+    if (xIndex < WIDTH && yIndex < HEIGHT)
+    {
+        depth_buffer[buffer_idx] = depth_ar[index];
     }
 }
