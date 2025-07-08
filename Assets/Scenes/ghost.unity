@@ -363,7 +363,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee6b1924fbeb9e34f80040c0091ef987, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  average_shader: {fileID: 7200000, guid: 87484ef97c462bc408544e06f98e3a9e, type: 3}
+  average_shader: {fileID: 7200000, guid: 7f19706c5417c474da4ef9e02e536ce7, type: 3}
   depthManager: {fileID: 638278051}
 --- !u!4 &42691507
 Transform:
@@ -4952,7 +4952,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42c5c42437e094441929da3e64cb7559, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  UB_Model_file: C:/Users/faisa/workspace/Unity/tests/promptda-vitl-vertical.pt
+  UB_Model_file: C:/Users/brown/Documents/fmz/GHOST/Assets/onnx/promptda/prompt-depth-anything-vitl-rotated_optimized.onnx
 --- !u!4 &420483825
 Transform:
   m_ObjectHideFlags: 0
@@ -8723,7 +8723,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee6b1924fbeb9e34f80040c0091ef987, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  average_shader: {fileID: 7200000, guid: 88ce8922b3efe294289007fff27b9620, type: 3}
+  average_shader: {fileID: 7200000, guid: 7f19706c5417c474da4ef9e02e536ce7, type: 3}
   depthManager: {fileID: 1639569377}
 --- !u!1 &853697057
 GameObject:
@@ -10696,7 +10696,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee6b1924fbeb9e34f80040c0091ef987, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  average_shader: {fileID: 7200000, guid: b8838699a5c22754da509ed29099d4c7, type: 3}
+  average_shader: {fileID: 7200000, guid: 7f19706c5417c474da4ef9e02e536ce7, type: 3}
   depthManager: {fileID: 1639569377}
 --- !u!4 &1137389443
 Transform:
@@ -14331,7 +14331,7 @@ MonoBehaviour:
   meanThreshold: 0.1
   activate_CVD: 0
   cvd_weight: 3
-  show_spot: 1
+  show_spot: 0
   another_manager: {fileID: 638278051}
   CVDLeft: {fileID: 1031760795}
   CVDRight: {fileID: 1274553787}
@@ -16233,7 +16233,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee6b1924fbeb9e34f80040c0091ef987, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  average_shader: {fileID: 7200000, guid: ba39b13e5f1a2b44599c82f234cd50af, type: 3}
+  average_shader: {fileID: 7200000, guid: 7f19706c5417c474da4ef9e02e536ce7, type: 3}
   depthManager: {fileID: 638278051}
 --- !u!1 &1826214443
 GameObject:
