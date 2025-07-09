@@ -24,6 +24,9 @@ public class UBModel : MonoBehaviour
     [DllImport("UnityBYOM")]
     private static extern void UB_SetUnityLogCallback(LogCallback callback);
 
+    [DllImport("UnityBYOM", CharSet = CharSet.Ansi)]
+    private static extern void UB_ToggleDebugDumps(string dumpPath);
+
     private delegate void LogCallback(string message);
 
     private static void PluginLogCallback(string message)
@@ -32,6 +35,8 @@ public class UBModel : MonoBehaviour
     }
 
     public string UB_Model_file;
+
+    public bool UB_debug_dump;
     
     
     private bool modelLoaded = false;
@@ -54,6 +59,11 @@ public class UBModel : MonoBehaviour
         } else {
             Debug.Log("Model loaded successfully from: " + UB_Model_file);
             modelLoaded = true;
+        }
+
+        if (UB_debug_dump)
+        {
+            UB_ToggleDebugDumps("GHOST_DUMPS");
         }
 
         TensorShape shape = new TensorShape(1, 1, 480, 640); // Depth shape

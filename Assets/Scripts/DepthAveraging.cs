@@ -91,7 +91,6 @@ public class DepthAveraging : MonoBehaviour
         // aceraging && edge detection
         if (mean_averaging && is_not_moving)
         {
-            throw new System.Exception("Mean averaging is not supported in this version. Use fast median or edge detection instead.");
             average_shader.SetBool("activate", is_not_moving);   // activate = activate_averaging
             average_shader.SetInt("buffer_pos", buffer_pos);
             average_shader.SetFloat("varianceThreshold", varianceThreshold);

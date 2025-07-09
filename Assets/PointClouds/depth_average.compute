@@ -52,7 +52,7 @@ void MeanAveraging(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupThreadID
     int yIndex = groupId.y * 16 + threadId.y;
 
     int index = xIndex + yIndex * WIDTH;
-    //depth_buffer[buffer_pos * WIDTH * HEIGHT + index] = depth_ar[index];
+    depth_buffer[buffer_pos * WIDTH * HEIGHT + index] = depth_ar[index];
 
     if (xIndex < WIDTH && yIndex < HEIGHT && activate)
     {
