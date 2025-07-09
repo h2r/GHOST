@@ -131,6 +131,9 @@ public class DepthManager : MonoBehaviour
         rgb_left_t_1 = new Tensor<float>(color_shape, data: null);
         rgb_right_t_1 = new Tensor<float>(color_shape, data: null);
 
+        received_left_1 = false;
+        received_right_1 = false;
+
         if (activate_depth_estimation)
         {
             StartCoroutine(ResetActivateDepthEstimation());
@@ -299,8 +302,8 @@ public class DepthManager : MonoBehaviour
 
         (temp_depth_left, temp_depth_right, mat_l, mat_r, temp_optical_left, temp_optical_right) = CVD_generator.generatePoseData(depthL_1, rgbL_1, depthR_1, rgbR_1, activate_depth_estimation, activate_CVD && is_not_moving);
 
-        AveragerLeft.update_depth_buffer(temp_depth_left);
-        AveragerRight.update_depth_buffer(temp_depth_right);
+        //AveragerLeft.update_depth_buffer(temp_depth_left);
+        //AveragerRight.update_depth_buffer(temp_depth_right);
 
 
         temp_depth_left_return = CVDLeft.consistent_depth(temp_depth_left, mat_l, temp_optical_left, activate_CVD && is_not_moving, edgethreshold, activate_edge_detection, activate_depth_estimation, cvd_weight);
