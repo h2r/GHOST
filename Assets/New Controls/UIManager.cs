@@ -3,7 +3,8 @@ using UnityEngine;
 
 public class UIManager : MonoBehaviour
 {
-    public ControllerFlow leftFlow, rightFlow;
+    public SingleControllerFlow leftFlow, rightFlow;
+    public DualControllerFlow dualFlow;
 
     // Single controller lists: left spot, left control, perspective, right control, right spot
     // Dual controller lists: spot, control, perspective
@@ -22,8 +23,8 @@ public class UIManager : MonoBehaviour
         {
             activeLists = dualControllerLists;
             actions = new Action<NamedMode>[] {
-                m => leftFlow.SetSpot((SpotMode)m),
-                m => leftFlow.SetControl((NewControlMode)m),
+                m => dualFlow.SetSpot((SpotMode)m),
+                m => dualFlow.SetControl((NewControlMode)m),
                 m => ((PerspectiveMode)m).PerspectiveStart()
             };
             foreach (var list in singleControllerLists)
@@ -52,6 +53,7 @@ public class UIManager : MonoBehaviour
             transform.parent.gameObject.GetComponent<Canvas>().enabled = isOpen;
             leftFlow.SetPaused(isOpen);
             rightFlow.SetPaused(isOpen);
+            dualFlow.SetPaused(isOpen);
         }
         cameraRig.position = new(0, isOpen ? 100 : 0, 0);
     }
