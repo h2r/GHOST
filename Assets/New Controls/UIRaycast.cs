@@ -42,7 +42,7 @@ public class UIRaycast : MonoBehaviour
                 if (rect != null && uiManager.TryRaycastHover(button))
                 {
                     endPoint = rect.position;
-                    if (OVRInput.Get(OVRInput.Button.Three))
+                    if (OVRInput.GetDown(OVRInput.Button.Three))
                         uiManager.RaycastPress(button);
                 }
             }

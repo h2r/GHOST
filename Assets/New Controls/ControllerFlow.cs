@@ -3,6 +3,7 @@ using UnityEngine;
 public class ControllerFlow : MonoBehaviour
 {
     public GameObject anchor;
+    public bool isLeft;
 
     private SpotMode spot;
     private NewControlMode control;
@@ -11,7 +12,7 @@ public class ControllerFlow : MonoBehaviour
     public void Update()
     {
         if (!isPaused && spot != null && control != null)
-            control.ControlUpdate(spot, anchor);
+            control.ControlUpdate(spot, anchor, isLeft);
     }
 
     public void SetSpot(SpotMode spot)
