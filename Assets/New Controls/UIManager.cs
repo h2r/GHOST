@@ -4,6 +4,7 @@ public class UIManager : MonoBehaviour
 {
     public ControllerFlow leftFlow;
     public ButtonList leftSpotList, leftControlList;
+    public Transform cameraRig;
 
     private bool isOpen = true;
 
@@ -12,9 +13,9 @@ public class UIManager : MonoBehaviour
         if (OVRInput.GetDown(OVRInput.Button.Four))
         {
             isOpen = !isOpen;
-            print("menu open: " + isOpen);
             transform.parent.gameObject.GetComponent<Canvas>().enabled = isOpen;
             leftFlow.SetPaused(isOpen);
+            cameraRig.position = new(0, isOpen ? 100 : 0, 0);
         }
     }
 
