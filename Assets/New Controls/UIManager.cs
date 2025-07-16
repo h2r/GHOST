@@ -55,7 +55,7 @@ public class UIManager : MonoBehaviour
             rightFlow.SetPaused(isOpen);
             dualFlow.SetPaused(isOpen);
         }
-        cameraRig.position = new(0, isOpen ? 100 : 0, 0);
+        cameraRig.position = new(cameraRig.position.x, isOpen ? 100 : 0, cameraRig.position.z);
     }
 
     public bool TryRaycastHover(GameObject hit)

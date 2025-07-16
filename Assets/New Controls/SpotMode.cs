@@ -8,11 +8,18 @@ public class SpotMode : NamedMode
     public Color color;
 
     private MoveSpot moveSpot;
+    private SetGripper setGripper;
+
+    private bool isGripperOpen = false;
 
     public void Start()
     {
         if (rosConnector != null)
+        {
             moveSpot = rosConnector.GetComponent<MoveSpot>();
+            setGripper = rosConnector.GetComponent<SetGripper>();
+            setGripper.closeGripper();
+        }
     }
 
     public void Drive(Vector2 direction)
@@ -39,6 +46,20 @@ public class SpotMode : NamedMode
     public Transform GetGripperPos()
     {
         return dummyGripper.transform;
+    }
+
+    public bool GetGripperOpen()
+    {
+        return isGripperOpen;
+    }
+
+    public void SetGripperOpen(bool isGripperOpen)
+    {
+        this.isGripperOpen = isGripperOpen;
+        if (isGripperOpen)
+            setGripper.openGripper();
+        else
+            setGripper.closeGripper();
     }
 
     public override string GetName()

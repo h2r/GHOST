@@ -1509,8 +1509,54 @@ MonoBehaviour:
   options:
   - {fileID: 5238201357717281536}
   - {fileID: 3574057108456860615}
+  - {fileID: 234239420}
   titlePrefab: {fileID: 3278048788002158022, guid: bfe2b15985d2d437fb47203f0df723ee, type: 3}
   buttonPrefab: {fileID: 1520795838076098022, guid: 39fc7b698942e4ac18e866a2f1f87352, type: 3}
+--- !u!1 &234239419
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 234239421}
+  - component: {fileID: 234239420}
+  m_Layer: 0
+  m_Name: Locomotion Joystick Mode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &234239420
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 234239419}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bcc933faff3a17b439d6356bc9fdf1c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cameraRig: {fileID: 117133128}
+--- !u!4 &234239421
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 234239419}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 7}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2759006306583026147}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &236576490
 GameObject:
   m_ObjectHideFlags: 0
@@ -3311,6 +3357,10 @@ PrefabInstance:
       propertyPath: RosBridgeServerUrl
       value: ws://128.148.140.230:9090
       objectReference: {fileID: 0}
+    - target: {fileID: 1137478774581538817, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: Mass
+      value: 1.904699
+      objectReference: {fileID: 0}
     - target: {fileID: 1137478774821249048, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
       value: ws://128.148.140.230:9090
@@ -3735,6 +3785,10 @@ PrefabInstance:
       propertyPath: RosBridgeServerUrl
       value: ws://138.16.160.230:9090
       objectReference: {fileID: 0}
+    - target: {fileID: 3310871053242101645, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: Mass
+      value: 1.904699
+      objectReference: {fileID: 0}
     - target: {fileID: 3310871053294454782, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Mass
       value: 1.904699
@@ -3810,6 +3864,10 @@ PrefabInstance:
     - target: {fileID: 3310871053646093103, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
       value: ws://138.16.160.230:9090
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871053709528298, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: Mass
+      value: 1.904699
       objectReference: {fileID: 0}
     - target: {fileID: 3699985937472072438, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_IsActive
@@ -4047,6 +4105,14 @@ PrefabInstance:
       propertyPath: rightController
       value: 
       objectReference: {fileID: 1052391961}
+    - target: {fileID: 5897453565677584140, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5897453567102578359, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6095128873530598835, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Mass
       value: 1.904699
@@ -4074,6 +4140,18 @@ PrefabInstance:
     - target: {fileID: 7218656818355299475, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_LocalScale.z
       value: 1.02
+      objectReference: {fileID: 0}
+    - target: {fileID: 8353130026847437883, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8353130027234416000, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8551647604095721092, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: Mass
+      value: 1.904699
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 5143370623281230838, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
@@ -12889,6 +12967,7 @@ GameObject:
   - component: {fileID: 1816471308}
   - component: {fileID: 1816471313}
   - component: {fileID: 1816471312}
+  - component: {fileID: 1816471314}
   m_Layer: 0
   m_Name: Arm Camera
   m_TagString: Untagged
@@ -12978,9 +13057,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1816471307}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 0, y: -0, z: 7}
-  m_LocalScale: {x: 2, y: 2, z: 0.01}
+  m_LocalRotation: {x: -0, y: 1, z: -0, w: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 1.5}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 0.01}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -13022,6 +13101,19 @@ MonoBehaviour:
   Serializer: 0
   protocol: 0
   RosBridgeServerUrl: ws://128.148.140.230:9090
+--- !u!114 &1816471314
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1816471307}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27d9a0535d6912c4a838a99b62ed67ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mainCamera: {fileID: 1747440746}
 --- !u!1 &1819992018
 GameObject:
   m_ObjectHideFlags: 0
@@ -13256,7 +13348,7 @@ MonoBehaviour:
   - {fileID: 2247946542373596178}
   - {fileID: 8879956784560127478}
   - {fileID: 8099260845610740598}
-  isLeft: 1
+  isLeft: 0
 --- !u!4 &1827367825
 Transform:
   m_ObjectHideFlags: 0
@@ -13345,7 +13437,7 @@ LineRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1843185003}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -13451,7 +13543,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1843185003}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5ecfe09fba86a4f00a7d0542bfe5c956, type: 3}
   m_Name: 
@@ -15751,6 +15843,7 @@ Transform:
   - {fileID: 4172529428087357182}
   - {fileID: 1727288749668216979}
   - {fileID: 5167267815406251389}
+  - {fileID: 234239421}
   - {fileID: 1873849992}
   - {fileID: 718387733}
   - {fileID: 1205249645}
@@ -16722,6 +16815,7 @@ MonoBehaviour:
   options:
   - {fileID: 5238201357717281536}
   - {fileID: 3574057108456860615}
+  - {fileID: 234239420}
   titlePrefab: {fileID: 3278048788002158022, guid: bfe2b15985d2d437fb47203f0df723ee, type: 3}
   buttonPrefab: {fileID: 1520795838076098022, guid: 39fc7b698942e4ac18e866a2f1f87352, type: 3}
 --- !u!222 &4628723694407447833
@@ -18636,7 +18730,7 @@ MonoBehaviour:
   - {fileID: 1421008789}
   - {fileID: 1208171618}
   - {fileID: 1207437538}
-  useDualController: 1
+  useDualController: 0
   cameraRig: {fileID: 117133133}
 --- !u!224 &8949594240785975953
 RectTransform:
@@ -18747,6 +18841,7 @@ SceneRoots:
   - {fileID: 963194228}
   - {fileID: 705507995}
   - {fileID: 409472599}
+  - {fileID: 1816471311}
   - {fileID: 117133133}
   - {fileID: 331195903}
   - {fileID: 638278052}
@@ -18754,4 +18849,3 @@ SceneRoots:
   - {fileID: 1526506750}
   - {fileID: 420483825}
   - {fileID: 2759006306583026147}
-  - {fileID: 1816471311}
