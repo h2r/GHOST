@@ -7483,6 +7483,18 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1246843491123510926, guid: 916b966d0f16a8846b5de19a4c71f199, type: 3}
+      propertyPath: color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1246843491123510926, guid: 916b966d0f16a8846b5de19a4c71f199, type: 3}
+      propertyPath: color.g
+      value: 0.046749115
+      objectReference: {fileID: 0}
+    - target: {fileID: 1246843491123510926, guid: 916b966d0f16a8846b5de19a4c71f199, type: 3}
+      propertyPath: color.r
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2340880792977849444, guid: 916b966d0f16a8846b5de19a4c71f199, type: 3}
       propertyPath: anchor
       value: 
@@ -7491,6 +7503,10 @@ PrefabInstance:
       propertyPath: isLeft
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2340880792977849444, guid: 916b966d0f16a8846b5de19a4c71f199, type: 3}
+      propertyPath: skinRenderer
+      value: 
+      objectReference: {fileID: 320381276}
     - target: {fileID: 2759006305835704888, guid: 916b966d0f16a8846b5de19a4c71f199, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -7534,6 +7550,18 @@ PrefabInstance:
     - target: {fileID: 3876382578565991089, guid: 916b966d0f16a8846b5de19a4c71f199, type: 3}
       propertyPath: m_Name
       value: Flows & Modes
+      objectReference: {fileID: 0}
+    - target: {fileID: 8166042498533984369, guid: 916b966d0f16a8846b5de19a4c71f199, type: 3}
+      propertyPath: color.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8166042498533984369, guid: 916b966d0f16a8846b5de19a4c71f199, type: 3}
+      propertyPath: color.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8166042498533984369, guid: 916b966d0f16a8846b5de19a4c71f199, type: 3}
+      propertyPath: color.r
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8166042498533984369, guid: 916b966d0f16a8846b5de19a4c71f199, type: 3}
       propertyPath: dummyGripper
@@ -9765,6 +9793,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   anchor: {fileID: 1052391961}
+  skinRenderer: {fileID: 1508531705}
   isLeft: 0
 --- !u!1 &1421008787
 GameObject:
@@ -14293,7 +14322,7 @@ PrefabInstance:
       objectReference: {fileID: 233482398}
     - target: {fileID: 8903260710941632649, guid: 545dd8ad18b558f47be6c9df2aadb87a, type: 3}
       propertyPath: useDualController
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8903260710941632649, guid: 545dd8ad18b558f47be6c9df2aadb87a, type: 3}
       propertyPath: pointClouds.Array.size
