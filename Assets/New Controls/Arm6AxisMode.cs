@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Arm6AxisMode : NewControlMode
 {
-    public override void ControlUpdate(SpotMode spot, GameObject controller)
+    public override void ControlUpdate(SpotMode spot, GameObject controller, bool isLeft)
     {
         spot.SetGripperPos(controller.transform);
     }
