@@ -1,12 +1,48 @@
+using System;
 using UnityEngine;
 
 public class UIManager : MonoBehaviour
 {
     public ControllerFlow leftFlow, rightFlow;
-    public ButtonList leftSpotList, leftControlList, perspectiveList, rightControlList, rightSpotList;
+
+    // Single controller lists: left spot, left control, perspective, right control, right spot
+    // Dual controller lists: spot, control, perspective
+    public ButtonList[] singleControllerLists, dualControllerLists;
+    public bool useDualController;
     public Transform cameraRig;
 
+    private ButtonList[] activeLists;
+    private Action<NamedMode>[] actions;
+
     private bool isOpen = true;
+
+    public void Start()
+    {
+        if (useDualController)
+        {
+            activeLists = dualControllerLists;
+            actions = new Action<NamedMode>[] {
+                m => leftFlow.SetSpot((SpotMode)m),
+                m => leftFlow.SetControl((NewControlMode)m),
+                m => ((PerspectiveMode)m).PerspectiveStart()
+            };
+            foreach (var list in singleControllerLists)
+                list.gameObject.SetActive(false);
+        }
+        else
+        {
+            activeLists = singleControllerLists;
+            actions = new Action<NamedMode>[] {
+                m => leftFlow.SetSpot((SpotMode)m),
+                m => leftFlow.SetControl((NewControlMode)m),
+                m => ((PerspectiveMode)m).PerspectiveStart(),
+                m => rightFlow.SetControl((NewControlMode)m),
+                m => rightFlow.SetSpot((SpotMode)m)
+            };
+            foreach (var list in dualControllerLists)
+                list.gameObject.SetActive(false);
+        }
+    }
 
     public void Update()
     {
@@ -16,26 +52,28 @@ public class UIManager : MonoBehaviour
             transform.parent.gameObject.GetComponent<Canvas>().enabled = isOpen;
             leftFlow.SetPaused(isOpen);
             rightFlow.SetPaused(isOpen);
-            cameraRig.position = new(0, isOpen ? 100 : 0, 0);
         }
+        cameraRig.position = new(0, isOpen ? 100 : 0, 0);
     }
 
     public bool TryRaycastHover(GameObject hit)
     {
-        return leftSpotList.TryHoverButton(hit) ||
-        leftControlList.TryHoverButton(hit) ||
-        perspectiveList.TryHoverButton(hit) ||
-        rightControlList.TryHoverButton(hit) ||
-        rightSpotList.TryHoverButton(hit);
+        foreach (var list in activeLists)
+        {
+            if (list.TryHoverButton(hit))
+                return true;
+        }
+
+        return false;
     }
 
     public void RaycastPress(GameObject hit)
     {
-        _ = leftSpotList.PressButton(hit, m => leftFlow.SetSpot((SpotMode)m)) ||
-        leftControlList.PressButton(hit, m => leftFlow.SetControl((NewControlMode)m)) ||
-        perspectiveList.PressButton(hit, m => ((PerspectiveMode)m).PerspectiveStart()) ||
-        rightControlList.PressButton(hit, m => rightFlow.SetControl((NewControlMode)m)) ||
-        rightSpotList.PressButton(hit, m => rightFlow.SetSpot((SpotMode)m));
+        for (int i = 0; i < activeLists.Length; i++)
+        {
+            if (activeLists[i].PressButton(hit, actions[i]))
+                return;
+        }
     }
 
     public bool GetOpen()
