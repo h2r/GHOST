@@ -7,10 +7,7 @@ using UnityEngine.UI;
 public class ButtonList : MonoBehaviour
 {
     public string title;
-    public NamedMode[] options = {
-        new DriveJoystickMode(),
-        new Arm6AxisMode()
-    };
+    public NamedMode[] options;
     public GameObject titlePrefab, buttonPrefab;
 
     private GameObject[] buttons;
@@ -46,15 +43,25 @@ public class ButtonList : MonoBehaviour
         for (int i = 0; i < buttons.Length; i++)
         {
             var button = buttons[i];
+            Color color;
             if (button == hitObj)
             {
-                button.GetComponent<Image>().color = new(1, 0, 0, 0.5f);
+                if (options[i].GetType() == typeof(SpotMode))
+                {
+                    var spotColor = ((SpotMode)options[i]).color;
+                    color = new(spotColor.r, spotColor.g, spotColor.b, 0.5f);
+                }
+                else
+                {
+                    color = new(0, 1, 0, 0.5f);
+                }
                 action(options[i]);
             }
             else
             {
-                button.GetComponent<Image>().color = new(1, 1, 1, 0.5f);
+                color = new(1, 1, 1, 0.5f);
             }
+            button.GetComponent<Image>().color = color;
         }
 
         return true;

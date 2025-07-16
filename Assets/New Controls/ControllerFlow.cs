@@ -3,6 +3,7 @@ using UnityEngine;
 public class ControllerFlow : MonoBehaviour
 {
     public GameObject anchor;
+    public SkinnedMeshRenderer skinRenderer;
     public bool isLeft;
 
     private SpotMode spot;
@@ -12,7 +13,14 @@ public class ControllerFlow : MonoBehaviour
     public void Update()
     {
         if (!isPaused && spot != null && control != null)
+        {
             control.ControlUpdate(spot, anchor, isLeft);
+            skinRenderer.material.color = spot.color;
+        }
+        else
+        {
+            skinRenderer.material.color = Color.white;
+        }
     }
 
     public void SetSpot(SpotMode spot)

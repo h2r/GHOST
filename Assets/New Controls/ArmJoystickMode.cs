@@ -16,6 +16,6 @@ public class ArmJoystickMode : NewControlMode
 
     public override string GetName()
     {
-        return "Drive & Rotate";
+        return "Arm (Joystick)";
     }
 }
