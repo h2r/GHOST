@@ -9,6 +9,7 @@ public class UIRaycast : MonoBehaviour
     public UIManager uiManager;
     public GraphicRaycaster raycaster;
     public EventSystem eventSystem;
+    public bool isLeft;
 
     private LineRenderer lineRenderer;
 
@@ -42,7 +43,8 @@ public class UIRaycast : MonoBehaviour
                 if (rect != null && uiManager.TryRaycastHover(button))
                 {
                     endPoint = rect.position;
-                    if (OVRInput.GetDown(OVRInput.Button.Three))
+                    if ((OVRInput.GetDown(OVRInput.Button.Three) && isLeft) ||
+                        (OVRInput.GetDown(OVRInput.Button.One) && !isLeft))
                         uiManager.RaycastPress(button);
                 }
             }

@@ -11,6 +11,6 @@ public class CloudPerspectiveMode : PerspectiveMode
 
     public override string GetName()
     {
-        return "Cloud";
+        return "Cloud Only";
     }
 }

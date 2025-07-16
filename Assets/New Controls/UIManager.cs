@@ -47,7 +47,7 @@ public class UIManager : MonoBehaviour
 
     public void Update()
     {
-        if (OVRInput.GetDown(OVRInput.Button.Four))
+        if (OVRInput.GetDown(OVRInput.Button.Start))
         {
             isOpen = !isOpen;
             transform.parent.gameObject.GetComponent<Canvas>().enabled = isOpen;
