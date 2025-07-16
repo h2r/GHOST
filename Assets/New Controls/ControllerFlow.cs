@@ -6,10 +6,11 @@ public class ControllerFlow : MonoBehaviour
 
     private SpotMode spot;
     private NewControlMode control;
+    private bool isPaused = true;
 
     public void Update()
     {
-        if (spot != null && control != null)
+        if (!isPaused && spot != null && control != null)
             control.ControlUpdate(spot, anchor);
     }
 
@@ -21,5 +22,10 @@ public class ControllerFlow : MonoBehaviour
     public void SetControl(NewControlMode control)
     {
         this.control = control;
+    }
+
+    public void SetPaused(bool isPaused)
+    {
+        this.isPaused = isPaused;
     }
 }
