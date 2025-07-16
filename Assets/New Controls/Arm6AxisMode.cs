@@ -1,5 +1,6 @@
 using UnityEngine;
 
+// One controller mode
 public class Arm6AxisMode : NewControlMode
 {
     public override void ControlUpdate(SpotMode spot, GameObject controller, bool isLeft)

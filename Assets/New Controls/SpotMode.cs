@@ -21,11 +21,23 @@ public class SpotMode : NamedMode
             moveSpot.drive(direction, 0, 0);
     }
 
+    public void Rotate(float direction)
+    {
+        print(modeName + " rotate: " + direction);
+        if (rosConnector != null)
+            moveSpot.drive(Vector2.zero, direction, 0);
+    }
+
     public void SetGripperPos(Transform tf)
     {
         print(modeName + " move gripper");
         if (dummyGripper != null)
             dummyGripper.transform.SetPositionAndRotation(tf.position, tf.rotation);
+    }
+
+    public Transform GetGripperPos()
+    {
+        return dummyGripper.transform;
     }
 
     public override string GetName()
