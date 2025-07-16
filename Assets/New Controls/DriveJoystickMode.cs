@@ -1,10 +1,20 @@
+using System;
 using UnityEngine;
 
 // One controller mode
 public class DriveJoystickMode : NewControlMode
 {
-    public override void ControlUpdate(SpotMode spot, GameObject controller, bool isLeft)
+    public override void ControlUpdate(SpotMode spot, GameObject controller, bool isLeft, Action<string[]> SetLabels)
     {
+        SetLabels(new[] {
+            "",
+            "",
+            "",
+            "Drive",
+            "",
+            ""
+        });
+
         Vector2 joystick;
         if (isLeft)
             joystick = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick);

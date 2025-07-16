@@ -1,9 +1,10 @@
+using System;
 using UnityEngine;
 
 // One controller mode
 public class Arm6AxisMode : NewControlMode
 {
-    public override void ControlUpdate(SpotMode spot, GameObject controller, bool isLeft)
+    public override void ControlUpdate(SpotMode spot, GameObject controller, bool isLeft, Action<string[]> SetLabels)
     {
         spot.SetGripperPos(controller.transform);
     }
