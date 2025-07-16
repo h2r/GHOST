@@ -15,13 +15,13 @@ public class SpotMode : NamedMode
 
     public void Drive(Vector2 direction)
     {
-        print("drive: " + direction);
+        print(modeName + " drive: " + direction);
         // moveSpot.drive(direction, 0, 0);
     }
 
     public void SetGripperPos(Transform tf)
     {
-        print("move gripper");
+        print(modeName + " move gripper");
         // dummyGripper.transform.SetPositionAndRotation(tf.position, tf.rotation);
     }
 
