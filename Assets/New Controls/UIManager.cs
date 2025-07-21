@@ -82,4 +82,13 @@ public class UIManager : MonoBehaviour
     {
         return isOpen;
     }
+
+
+    public void HighlightButton(GameObject hovered)
+    {
+        foreach (var list in activeLists)
+        {
+            list.HighlightButton(hovered);
+        }
+    }
 }
