@@ -7,24 +7,30 @@ using UnityEngine.UI;
 public class ButtonList : MonoBehaviour
 {
     public string title;
-    public NamedMode[] options;
+    public MenuDefinition menuDefinition; // Assign in Inspector
     public GameObject titlePrefab, buttonPrefab;
 
-    private GameObject[] buttons;
+    [HideInInspector] public GameObject[] buttons;
 
     public void Start()
     {
+        if (menuDefinition == null || menuDefinition.options == null)
+        {
+            Debug.LogWarning($"{name}: MenuDefinition or options not set!");
+            return;
+        }
+
         var titleObj = Instantiate(titlePrefab, transform);
         titleObj.GetComponent<RectTransform>().localPosition = new(0, 0, 0);
         titleObj.GetComponent<TMP_Text>().text = title;
 
-        buttons = new GameObject[options.Length];
+        buttons = new GameObject[menuDefinition.options.Length];
         float y = -55;
-        for (int i = 0; i < options.Length; i++)
+        for (int i = 0; i < menuDefinition.options.Length; i++)
         {
             buttons[i] = Instantiate(buttonPrefab, transform);
             buttons[i].GetComponent<RectTransform>().localPosition = new(0, y, 0);
-            buttons[i].transform.Find("Text").GetComponent<TMP_Text>().text = options[i].GetName();
+            buttons[i].transform.Find("Text").GetComponent<TMP_Text>().text = menuDefinition.options[i].GetName();
 
             y -= 55;
         }
@@ -32,7 +38,7 @@ public class ButtonList : MonoBehaviour
 
     public bool TryHoverButton(GameObject hitObj)
     {
-        return buttons.Contains(hitObj);
+        return buttons != null && buttons.Contains(hitObj);
     }
 
     public bool ContainsButton(GameObject obj)
@@ -42,6 +48,7 @@ public class ButtonList : MonoBehaviour
 
     public void HighlightButton(GameObject hovered)
     {
+        if (buttons == null) return;
         for (int i = 0; i < buttons.Length; i++)
         {
             var button = buttons[i];
@@ -60,7 +67,7 @@ public class ButtonList : MonoBehaviour
 
     public bool PressButton(GameObject hitObj, Action<NamedMode> action)
     {
-        if (!buttons.Contains(hitObj))
+        if (buttons == null || !buttons.Contains(hitObj))
             return false;
 
         for (int i = 0; i < buttons.Length; i++)
@@ -69,16 +76,17 @@ public class ButtonList : MonoBehaviour
             Color color;
             if (button == hitObj)
             {
-                if (options[i].GetType() == typeof(SpotMode))
+                var mode = menuDefinition.options[i];
+                if (mode.GetType() == typeof(SpotMode))
                 {
-                    var spotColor = ((SpotMode)options[i]).color;
+                    var spotColor = ((SpotMode)mode).color;
                     color = new(spotColor.r, spotColor.g, spotColor.b, 0.5f);
                 }
                 else
                 {
                     color = new(0, 1, 0, 0.5f);
                 }
-                action(options[i]);
+                action(mode);
             }
             else
             {
