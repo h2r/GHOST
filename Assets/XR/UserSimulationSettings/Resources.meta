@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<< HEAD
 guid: 6c81e45cf57574fcd95b0ce5980ff434
+=======
+guid: e054322da7fb74f4793e780c5de0c172
+>>>>>>> new-controls
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}

@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<< HEAD
 guid: 07d20eefb940a4366b75ebd1140a880a
+=======
+guid: 3872199e9244244dab8e90bdcca3924f
+>>>>>>> new-controls
 NativeFormatImporter:
   externalObjects: {}
   mainObjectFileID: 0
