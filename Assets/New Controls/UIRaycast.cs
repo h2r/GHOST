@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -12,12 +13,12 @@ public class UIRaycast : MonoBehaviour
     public UIManager uiManager;
     public GraphicRaycaster raycaster;
     public EventSystem eventSystem;
+    public ButtonList[] allowedLists; // Assign in Inspector
 
     private LineRenderer lineRenderer;
     private OVRInput.Button clickButton;
     private OVRInput.Controller controller;
 
-    // Ray colors
     private static readonly Color defaultColor = Color.white;
     private static readonly Color hoverColor = new Color(0.5f, 0.7f, 1f, 1f); // subtle blue
 
@@ -38,12 +39,12 @@ public class UIRaycast : MonoBehaviour
 
         if (hand == Hand.Left)
         {
-            clickButton = OVRInput.Button.Three;
+            clickButton = OVRInput.Button.Three; // X
             controller = OVRInput.Controller.LTouch;
         }
         else
         {
-            clickButton = OVRInput.Button.One;
+            clickButton = OVRInput.Button.One; // A
             controller = OVRInput.Controller.RTouch;
         }
     }
@@ -76,7 +77,7 @@ public class UIRaycast : MonoBehaviour
                 {
                     var rect = results[0].gameObject.GetComponent<RectTransform>();
                     var button = results[0].gameObject.transform.parent.gameObject;
-                    if (rect != null && uiManager.TryRaycastHover(button))
+                    if (rect != null && IsButtonAllowed(button) && uiManager.TryRaycastHover(button))
                     {
                         endPoint = rect.position;
                         hovering = true;
@@ -85,8 +86,7 @@ public class UIRaycast : MonoBehaviour
                         if (OVRInput.GetDown(clickButton))
                         {
                             uiManager.RaycastPress(button);
-                            // Short, subtle haptic feedback
-                            OVRInput.SetControllerVibration(0.1f, 0.2f, controller);
+                            StartCoroutine(ShortHapticPulse(controller, 0.05f, 0.5f, 0.2f));
                         }
                     }
                 }
@@ -102,7 +102,7 @@ public class UIRaycast : MonoBehaviour
             // Button hover highlight
             if (hoveredButton != lastHoveredButton)
             {
-                uiManager.HighlightButton(hoveredButton); // You need to add this method, see below
+                uiManager.HighlightButton(hoveredButton);
                 lastHoveredButton = hoveredButton;
             }
         }
@@ -128,5 +128,24 @@ public class UIRaycast : MonoBehaviour
         }
 
         return Vector2.zero;
+    }
+
+    // Only allow selection if the button is in the allowed lists for this controller
+    bool IsButtonAllowed(GameObject button)
+    {
+        if (allowedLists == null) return false;
+        foreach (var list in allowedLists)
+        {
+            if (list != null && list.ContainsButton(button))
+                return true;
+        }
+        return false;
+    }
+
+    IEnumerator ShortHapticPulse(OVRInput.Controller ctrl, float duration, float frequency, float amplitude)
+    {
+        OVRInput.SetControllerVibration(frequency, amplitude, ctrl);
+        yield return new WaitForSeconds(duration);
+        OVRInput.SetControllerVibration(0, 0, ctrl);
     }
 }

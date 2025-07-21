@@ -6,8 +6,6 @@ public class UIManager : MonoBehaviour
     public SingleControllerFlow leftFlow, rightFlow;
     public DualControllerFlow dualFlow;
 
-    // Single controller lists: left spot, left control, perspective, right control, right spot
-    // Dual controller lists: spot, control, perspective
     public ButtonList[] singleControllerLists, dualControllerLists;
     public bool useDualController;
     public Transform cameraRig;
@@ -65,7 +63,6 @@ public class UIManager : MonoBehaviour
             if (list.TryHoverButton(hit))
                 return true;
         }
-
         return false;
     }
 
@@ -78,17 +75,16 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public bool GetOpen()
-    {
-        return isOpen;
-    }
-
-
     public void HighlightButton(GameObject hovered)
     {
         foreach (var list in activeLists)
         {
             list.HighlightButton(hovered);
         }
+    }
+
+    public bool GetOpen()
+    {
+        return isOpen;
     }
 }

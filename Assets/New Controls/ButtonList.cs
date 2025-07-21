@@ -35,6 +35,29 @@ public class ButtonList : MonoBehaviour
         return buttons.Contains(hitObj);
     }
 
+    public bool ContainsButton(GameObject obj)
+    {
+        return buttons != null && buttons.Contains(obj);
+    }
+
+    public void HighlightButton(GameObject hovered)
+    {
+        for (int i = 0; i < buttons.Length; i++)
+        {
+            var button = buttons[i];
+            Color color;
+            if (button == hovered)
+            {
+                color = new Color(0.5f, 0.7f, 1f, 0.5f); // subtle blue
+            }
+            else
+            {
+                color = new(1, 1, 1, 0.5f);
+            }
+            button.GetComponent<Image>().color = color;
+        }
+    }
+
     public bool PressButton(GameObject hitObj, Action<NamedMode> action)
     {
         if (!buttons.Contains(hitObj))
@@ -65,24 +88,5 @@ public class ButtonList : MonoBehaviour
         }
 
         return true;
-    }
-
-    public void HighlightButton(GameObject hovered)
-    {
-        for (int i = 0; i < buttons.Length; i++)
-        {
-            var button = buttons[i];
-            Color color;
-            if (button == hovered)
-            {
-                // Subtle blue highlight for hover
-                color = new Color(0.5f, 0.7f, 1f, 0.5f);
-            }
-            else
-            {
-                color = new(1, 1, 1, 0.5f);
-            }
-            button.GetComponent<Image>().color = color;
-        }
     }
 }
