@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class ButtonList : MonoBehaviour
 {
     public string title;
-    public MenuDefinition menuDefinition; // Assign in Inspector
+    public MenuDefinition menuDefinition;
     public GameObject titlePrefab, buttonPrefab;
 
     [HideInInspector] public GameObject[] buttons;
