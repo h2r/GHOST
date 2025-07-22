@@ -17,7 +17,7 @@ public class DriveJoystickMode : NewControlMode
             "",
             "",
             doRotate ? "Rotate" : "Drive",
-            "Do Rotate",
+            doRotate ? "" : "Do Rotate",
             ""
         });
 
@@ -27,9 +27,9 @@ public class DriveJoystickMode : NewControlMode
         else
             joystick = OVRInput.Get(OVRInput.Axis2D.SecondaryThumbstick);
         if (doRotate && Mathf.Abs(joystick.x) > 0.1)
-            spot.Rotate(joystick.x);
+            spot.Rotate(joystick.x * 0.5f);
         else if (!doRotate && joystick.magnitude > 0.1)
-            spot.Drive(joystick);
+            spot.Drive(joystick * 0.5f);
     }
 
     public override string GetName()

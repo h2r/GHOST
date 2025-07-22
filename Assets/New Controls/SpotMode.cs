@@ -7,7 +7,7 @@ public class SpotMode : NamedMode
     public string modeName;
     public Color color;
 
-    private MoveSpot moveSpot;
+    private ThreadedMoveSpot moveSpot;
     private SetGripper setGripper;
 
     private bool isGripperOpen = false;
@@ -16,7 +16,7 @@ public class SpotMode : NamedMode
     {
         if (rosConnector != null)
         {
-            moveSpot = rosConnector.GetComponent<MoveSpot>();
+            moveSpot = rosConnector.GetComponent<ThreadedMoveSpot>();
             setGripper = rosConnector.GetComponent<SetGripper>();
             setGripper.closeGripper();
         }
@@ -26,19 +26,19 @@ public class SpotMode : NamedMode
     {
         print(modeName + " drive: " + direction);
         if (rosConnector != null)
-            moveSpot.drive(direction, 0, 0);
+            moveSpot.Move(direction, 0, 0);
     }
 
     public void Rotate(float direction)
     {
-        print(modeName + " rotate: " + direction);
+        // print(modeName + " rotate: " + direction);
         if (rosConnector != null)
-            moveSpot.drive(Vector2.zero, direction, 0);
+            moveSpot.Move(Vector2.zero, direction, 0);
     }
 
     public void SetGripperPos(Transform tf)
     {
-        print(modeName + " move gripper");
+        // print(modeName + " move gripper");
         if (dummyGripper != null)
             dummyGripper.transform.SetPositionAndRotation(tf.position, tf.rotation);
     }

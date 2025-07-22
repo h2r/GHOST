@@ -43,10 +43,14 @@ public class ThreadedRosConnector : MonoBehaviour
             {
                 var (message, ttlFrames) = lpMessages[kvp.Key];
                 if (ttlFrames > 0)
+                {
+                    print("lpm: " + kvp.Key + " " + message);
                     RosSocket.Publish(kvp.Key, message);
+                }
                 else
                     LoopUnpublish(kvp.Key);
             }
+            Thread.Sleep(1000 / 100);
         }
     }
 
