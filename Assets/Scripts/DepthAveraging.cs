@@ -121,17 +121,17 @@ public class DepthAveraging : MonoBehaviour
         average_shader.SetBuffer(depth_prefill_kernel, "depth_ar", depth_ar);
         average_shader.SetBuffer(depth_prefill_kernel, "depth_buffer", depthBufferCompute);
 
-        Debug.Log("Filling depth buffer with previous frame data: " + buffer_pos);
+        //Debug.Log("Filling depth buffer with previous frame data: " + buffer_pos);
         average_shader.Dispatch(depth_prefill_kernel, groupsX, groupsY, 1);
 
-        Debug.Log("Depth buffer prefilled with previous frame data.");
+        //Debug.Log("Depth buffer prefilled with previous frame data.");
     }
 
     public void update_depth_buffer(ComputeBuffer depth_ar)
     {
         buffer_pos = (buffer_pos + 1) % num_frames;
 
-        Debug.Log("Committing current frame to past depth buffer: " + buffer_pos + " depth array: " + depthBufferCompute.GetNativeBufferPtr());
+        //Debug.Log("Committing current frame to past depth buffer: " + buffer_pos + " depth array ptr: " + depthBufferCompute.GetNativeBufferPtr());
 
         average_shader.SetInt("buffer_pos", buffer_pos);
         average_shader.SetBuffer(depth_buffer_update_kernel, "depth_ar", depth_ar);
@@ -140,6 +140,6 @@ public class DepthAveraging : MonoBehaviour
 
         buffer_empty = false;
 
-        Debug.Log("Updated depth buffer.");
+       //Debug.Log("Updated depth buffer.");
     }
 }
