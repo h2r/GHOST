@@ -229,16 +229,16 @@ public class DepthManager : MonoBehaviour
         {
             //fps_timer.start(left_eye_data_timer_id);
 
-            //left_depth_avg = AveragerLeft.averaging(depth, Left_Depth_Renderer_1.get_ready_to_freeze(), avg_before_completion);
+            left_depth_avg = AveragerLeft.averaging(depth, Left_Depth_Renderer_1.get_ready_to_freeze(), avg_before_completion);
             if (depth_left_t_1 != null)
             {
-                //depth_left_t_1.Upload(left_depth_avg);
-                depth_left_t_1.Upload(depth);
+                depth_left_t_1.Upload(left_depth_avg);
+                //depth_left_t_1.Upload(depth);
             }
             else
             {
-                //depth_left_t_1 = new Tensor<float>(depth_shape, left_depth_avg);
-                depth_left_t_1 = new Tensor<float>(depth_shape, depth);
+                depth_left_t_1 = new Tensor<float>(depth_shape, left_depth_avg);
+                //depth_left_t_1 = new Tensor<float>(depth_shape, depth);
             }
             TextureConverter.ToTensor(rgb, rgb_left_t_1, tform);
             rgb_left_t_1.Reshape(color_shape);
@@ -251,16 +251,16 @@ public class DepthManager : MonoBehaviour
         {
             //fps_timer.start(right_eye_data_timer_id);
 
-            //right_depth_avg = AveragerRight.averaging(depth, Left_Depth_Renderer_1.get_ready_to_freeze(), avg_before_completion);
+            right_depth_avg = AveragerRight.averaging(depth, Left_Depth_Renderer_1.get_ready_to_freeze(), avg_before_completion);
             if (depth_right_t_1 != null)
             {
-                //depth_right_t_1.Upload(right_depth_avg);
-                depth_right_t_1.Upload(depth);
+                depth_right_t_1.Upload(right_depth_avg);
+                //depth_right_t_1.Upload(depth);
             }
             else
             {
-                //depth_right_t_1 = new Tensor<float>(depth_shape, right_depth_avg);
-                depth_right_t_1 = new Tensor<float>(depth_shape, depth);
+                depth_right_t_1 = new Tensor<float>(depth_shape, right_depth_avg);
+                //depth_right_t_1 = new Tensor<float>(depth_shape, depth);
             }
             TextureConverter.ToTensor(rgb, rgb_right_t_1, tform);
             rgb_right_t_1.Reshape(color_shape);
@@ -294,16 +294,16 @@ public class DepthManager : MonoBehaviour
 
 
         // Get compute buffers for depth
-        //ComputeBuffer depthL_1_buf = ComputeTensorData.Pin(depthL_1).buffer;
-        //ComputeBuffer depthR_1_buf = ComputeTensorData.Pin(depthR_1).buffer;
+        ComputeBuffer depthL_1_buf = ComputeTensorData.Pin(depthL_1).buffer;
+        ComputeBuffer depthR_1_buf = ComputeTensorData.Pin(depthR_1).buffer;
 
-        //AveragerLeft.prev_filling(depthL_1_buf);
-        //AveragerRight.prev_filling(depthR_1_buf);
+        AveragerLeft.prev_filling(depthL_1_buf);
+        AveragerRight.prev_filling(depthR_1_buf);
 
         (temp_depth_left, temp_depth_right, mat_l, mat_r, temp_optical_left, temp_optical_right) = CVD_generator.generatePoseData(depthL_1, rgbL_1, depthR_1, rgbR_1, activate_depth_estimation, activate_CVD && is_not_moving);
 
-        //AveragerLeft.update_depth_buffer(temp_depth_left);
-        //AveragerRight.update_depth_buffer(temp_depth_right);
+        AveragerLeft.update_depth_buffer(temp_depth_left);
+        AveragerRight.update_depth_buffer(temp_depth_right);
 
 
         temp_depth_left_return = CVDLeft.consistent_depth(temp_depth_left, mat_l, temp_optical_left, activate_CVD && is_not_moving, edgethreshold, activate_edge_detection, activate_depth_estimation, cvd_weight);
