@@ -23,7 +23,7 @@ public class LocomotionJoystickMode : NewControlMode
         else
             joystick = OVRInput.Get(OVRInput.Axis2D.SecondaryThumbstick);
         if (joystick.magnitude > 0.1)
-            cameraRig.transform.position += new Vector3(joystick.x, 0, joystick.y) * 0.05f;
+            cameraRig.transform.position += (cameraRig.transform.forward * joystick.y + cameraRig.transform.right * joystick.x) * 0.05f;
     }
 
     public override string GetName()

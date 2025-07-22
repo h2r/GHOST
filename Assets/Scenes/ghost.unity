@@ -412,11 +412,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1499995371}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &43937878 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1137478774281308966, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
-  m_PrefabInstance: {fileID: 409472599}
-  m_PrefabAsset: {fileID: 0}
 --- !u!23 &43937879 stripped
 MeshRenderer:
   m_CorrespondingSourceObject: {fileID: 1137478774641359479, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
@@ -1127,7 +1122,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 43937878}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &128476702
 MonoBehaviour:
@@ -3471,6 +3466,14 @@ PrefabInstance:
       propertyPath: RosBridgeServerUrl
       value: ws://128.148.140.230:9090
       objectReference: {fileID: 0}
+    - target: {fileID: 1137478773745686192, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478773745686198, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1137478773798299895, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
       value: ws://128.148.140.230:9090
@@ -3605,7 +3608,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775010377568, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: use_saved_meshes
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775010377574, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_IsActive
@@ -3693,7 +3696,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775515482002, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: use_saved_meshes
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775531494915, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
@@ -3721,7 +3724,7 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 69608c040680c064cbc57c4aad92e21f, type: 2}
     - target: {fileID: 3310871051605526706, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
-      value: ws://128.148.138.132:9090
+      value: ws://128.148.140.230:9090
       objectReference: {fileID: 0}
     - target: {fileID: 3310871051605526707, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Topic
@@ -3729,7 +3732,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3310871051634603366, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
-      value: ws://128.148.138.132:9090
+      value: ws://128.148.140.230:9090
       objectReference: {fileID: 0}
     - target: {fileID: 3310871051789667126, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Mass
@@ -3737,7 +3740,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052305709435, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
-      value: ws://128.148.138.132:9090
+      value: ws://128.148.140.230:9090
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052421458295, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Mass
@@ -3769,7 +3772,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052575190430, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
-      value: ws://128.148.138.132:9090
+      value: ws://128.148.140.230:9090
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052575190431, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Topic
@@ -3809,7 +3812,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052589847488, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
-      value: ws://128.148.138.132:9090
+      value: ws://128.148.140.230:9090
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052589847489, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Topic
@@ -3869,7 +3872,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052718925108, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
-      value: ws://128.148.138.132:9090
+      value: ws://128.148.140.230:9090
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052718925109, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Topic
@@ -3933,7 +3936,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052733856933, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: use_saved_meshes
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052733856935, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_IsActive
@@ -3977,7 +3980,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3310871053140754944, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
-      value: ws://128.148.138.132:9090
+      value: ws://128.148.140.230:9090
       objectReference: {fileID: 0}
     - target: {fileID: 3310871053242101645, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Mass
@@ -4049,7 +4052,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3310871053306987607, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: use_saved_meshes
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3310871053646093096, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Topic
@@ -4057,7 +4060,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3310871053646093103, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
-      value: ws://128.148.138.132:9090
+      value: ws://128.148.140.230:9090
       objectReference: {fileID: 0}
     - target: {fileID: 3310871053709528298, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Mass
@@ -4366,6 +4369,12 @@ PrefabInstance:
       insertIndex: 6
       addedObject: {fileID: 1527530487}
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1137478773745686191, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      insertIndex: 4
+      addedObject: {fileID: 2123763411}
+    - targetCorrespondingSourceObject: {fileID: 1137478773745686191, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      insertIndex: 7
+      addedObject: {fileID: 2123763410}
     - targetCorrespondingSourceObject: {fileID: 1137478773745686191, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2123763374}
@@ -10604,6 +10613,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 400188807}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1492351514 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7218656818355299476, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1498259872
 GameObject:
   m_ObjectHideFlags: 0
@@ -14919,6 +14933,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08c18dd85b068194398cf479e6bbd467, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &2123763410
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2123763348}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e32271c4a0064955bf999d8a70d938c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  topic: /spot/cmd_vel
+--- !u!114 &2123763411
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2123763348}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db59377061e8c4fbe9e48b87bb31ff75, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  secondsTimeout: 10
+  serializer: 0
+  protocol: 0
+  rosBridgeServerUrl: ws://128.148.140.230:9090
 --- !u!1 &2127769091
 GameObject:
   m_ObjectHideFlags: 0
@@ -15478,8 +15521,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bb871ab2670c47a4b4937c2d9460adc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rosConnector: {fileID: 0}
-  dummyGripper: {fileID: 0}
+  rosConnector: {fileID: 669083912}
+  dummyGripper: {fileID: 1492351514}
   modeName: Spot Two
   color: {r: 0, g: 0.046749115, b: 1, a: 0}
 --- !u!1 &1385481233091570360
@@ -19136,3 +19179,4 @@ SceneRoots:
   - {fileID: 1526506750}
   - {fileID: 420483825}
   - {fileID: 2759006306583026147}
+  - {fileID: 128476701}
