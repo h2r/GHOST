@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class DepthAveraging : MonoBehaviour
@@ -12,7 +13,10 @@ public class DepthAveraging : MonoBehaviour
     int median_kernel;
     int fast_median_kernel;
 
-    int num_frames = 30;
+    int depth_prefill_kernel;
+    int depth_buffer_update_kernel;
+
+    int num_frames = 2;
 
     float[,] depth_buffer;
     //private ComputeBuffer depthArCompute;
@@ -29,6 +33,7 @@ public class DepthAveraging : MonoBehaviour
     float[] res_ar = new float[480 * 640];
 
     ComputeBuffer depth_ar_buffer;
+    bool buffer_empty = true;
 
     public DepthManager depthManager;
 
@@ -49,6 +54,8 @@ public class DepthAveraging : MonoBehaviour
         mean_kernel = average_shader.FindKernel("MeanAveraging");
         clear_kernel = average_shader.FindKernel("ClearBuffer");
 
+        depth_prefill_kernel = average_shader.FindKernel("fill_depth_from_prev");
+        depth_buffer_update_kernel = average_shader.FindKernel("update_depth_buffer");
 
         // Data & Buffer
         //depthArCompute = new ComputeBuffer(480 * 640, sizeof(float));
@@ -56,14 +63,15 @@ public class DepthAveraging : MonoBehaviour
         average_shader.SetInt("num_frames", num_frames);
         depthBufferCompute.SetData(depth_buffer);
 
-        average_shader.SetBuffer(mean_kernel, "depth_buffer", depthBufferCompute);
-        average_shader.SetBuffer(clear_kernel, "depth_buffer", depthBufferCompute);
+        buffer_empty = true;
     }
 
     public void ClearBuffer()
     {
+        average_shader.SetBuffer(clear_kernel, "depth_buffer", depthBufferCompute);
         average_shader.Dispatch(clear_kernel, groupsX, groupsY, 1);
         buffer_pos = 0;
+        buffer_empty = true;
     }
 
     void OnDestroy()
@@ -89,14 +97,49 @@ public class DepthAveraging : MonoBehaviour
             depth_ar_buffer.SetData(depth_ar);
 
             average_shader.SetBuffer(mean_kernel, "depth_ar", depth_ar_buffer);
+            average_shader.SetBuffer(mean_kernel, "depth_buffer", depthBufferCompute);
+
             average_shader.Dispatch(mean_kernel, groupsX, groupsY, 1);
 
-            buffer_pos = (buffer_pos + 1) % (num_frames - 1);
+            //buffer_pos = (buffer_pos + 1) % (num_frames - 1);
 
             depth_ar_buffer.GetData(res_ar);
             return res_ar;
         }
 
         return depth_ar;
+    }
+
+    public void prev_filling(ComputeBuffer depth_ar)
+    {
+        if (buffer_empty)
+        {
+            return;
+        }
+        average_shader.SetInt("prev_buffer_pos", buffer_pos);
+
+        average_shader.SetBuffer(depth_prefill_kernel, "depth_ar", depth_ar);
+        average_shader.SetBuffer(depth_prefill_kernel, "depth_buffer", depthBufferCompute);
+
+        //Debug.Log("Filling depth buffer with previous frame data: " + buffer_pos);
+        average_shader.Dispatch(depth_prefill_kernel, groupsX, groupsY, 1);
+
+        //Debug.Log("Depth buffer prefilled with previous frame data.");
+    }
+
+    public void update_depth_buffer(ComputeBuffer depth_ar)
+    {
+        buffer_pos = (buffer_pos + 1) % num_frames;
+
+        //Debug.Log("Committing current frame to past depth buffer: " + buffer_pos + " depth array ptr: " + depthBufferCompute.GetNativeBufferPtr());
+
+        average_shader.SetInt("buffer_pos", buffer_pos);
+        average_shader.SetBuffer(depth_buffer_update_kernel, "depth_ar", depth_ar);
+        average_shader.SetBuffer(depth_buffer_update_kernel, "depth_buffer", depthBufferCompute);
+        average_shader.Dispatch(depth_buffer_update_kernel, groupsX, groupsY, 1);
+
+        buffer_empty = false;
+
+       //Debug.Log("Updated depth buffer.");
     }
 }

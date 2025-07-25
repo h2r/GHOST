@@ -131,6 +131,9 @@ public class DepthManager : MonoBehaviour
         rgb_left_t_1 = new Tensor<float>(color_shape, data: null);
         rgb_right_t_1 = new Tensor<float>(color_shape, data: null);
 
+        received_left_1 = false;
+        received_right_1 = false;
+
         if (activate_depth_estimation)
         {
             StartCoroutine(ResetActivateDepthEstimation());
@@ -230,10 +233,12 @@ public class DepthManager : MonoBehaviour
             if (depth_left_t_1 != null)
             {
                 depth_left_t_1.Upload(left_depth_avg);
+                //depth_left_t_1.Upload(depth);
             }
             else
             {
                 depth_left_t_1 = new Tensor<float>(depth_shape, left_depth_avg);
+                //depth_left_t_1 = new Tensor<float>(depth_shape, depth);
             }
             TextureConverter.ToTensor(rgb, rgb_left_t_1, tform);
             rgb_left_t_1.Reshape(color_shape);
@@ -250,10 +255,12 @@ public class DepthManager : MonoBehaviour
             if (depth_right_t_1 != null)
             {
                 depth_right_t_1.Upload(right_depth_avg);
+                //depth_right_t_1.Upload(depth);
             }
             else
             {
                 depth_right_t_1 = new Tensor<float>(depth_shape, right_depth_avg);
+                //depth_right_t_1 = new Tensor<float>(depth_shape, depth);
             }
             TextureConverter.ToTensor(rgb, rgb_right_t_1, tform);
             rgb_right_t_1.Reshape(color_shape);
@@ -285,7 +292,19 @@ public class DepthManager : MonoBehaviour
 
         float edgethreshold = 0.0f;
 
+
+        // Get compute buffers for depth
+        ComputeBuffer depthL_1_buf = ComputeTensorData.Pin(depthL_1).buffer;
+        ComputeBuffer depthR_1_buf = ComputeTensorData.Pin(depthR_1).buffer;
+
+        AveragerLeft.prev_filling(depthL_1_buf);
+        AveragerRight.prev_filling(depthR_1_buf);
+
         (temp_depth_left, temp_depth_right, mat_l, mat_r, temp_optical_left, temp_optical_right) = CVD_generator.generatePoseData(depthL_1, rgbL_1, depthR_1, rgbR_1, activate_depth_estimation, activate_CVD && is_not_moving);
+
+        AveragerLeft.update_depth_buffer(temp_depth_left);
+        AveragerRight.update_depth_buffer(temp_depth_right);
+
 
         temp_depth_left_return = CVDLeft.consistent_depth(temp_depth_left, mat_l, temp_optical_left, activate_CVD && is_not_moving, edgethreshold, activate_edge_detection, activate_depth_estimation, cvd_weight);
         temp_depth_right_return = CVDRight.consistent_depth(temp_depth_right, mat_r, temp_optical_right, activate_CVD && is_not_moving, edgethreshold, activate_edge_detection, activate_depth_estimation, cvd_weight);

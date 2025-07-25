@@ -16,9 +16,12 @@ public class DepthCompletion : MonoBehaviour
 
     public bool Use_UB; // Use UnityBYOM for inference
     public UBModel UB_Model; // Reference to UBModel script
+    
+    private int run_nconv;
 
     Tensor<float> depth_outputTensor_0, depth_outputTensor_1;
     ComputeBuffer computeTensorData0, computeTensorData1;
+
 
     //// =============================================================================== //
     ////                               Init & OnRelease                                  //
@@ -28,6 +31,8 @@ public class DepthCompletion : MonoBehaviour
         // Setup sentis model
         runtimeModelRGBD = ModelLoader.Load(rgbdModelAsset);
         workerRGBD = new Worker(runtimeModelRGBD, BackendType.GPUCompute);
+
+        run_nconv = 2;
     }
 
     void OnDestroy()
@@ -45,8 +50,34 @@ public class DepthCompletion : MonoBehaviour
     public (ComputeBuffer, ComputeBuffer) complete(Tensor<float> depth_tensor_0, Tensor<float> color_tensor_0, Tensor<float> depth_tensor_1, Tensor<float> color_tensor_1)
     {
         if (Use_UB)
-        {  
-            return UB_Model.Complete(depth_tensor_0, color_tensor_0, depth_tensor_1, color_tensor_1);
+        {
+            //if (run_nconv > 0)
+            //{
+            //    // Keep a copy of the color tensors
+            //    Tensor<float> color0_copy = color_tensor_0;
+            //    Tensor<float> color1_copy = color_tensor_1;
+
+            //    workerRGBD.SetInput("rgb_0", color_tensor_0);
+            //    workerRGBD.SetInput("rgb_1", color_tensor_1);
+
+            //    workerRGBD.SetInput("depth_0", depth_tensor_0);
+            //    workerRGBD.SetInput("depth_1", depth_tensor_1);
+
+
+            //    workerRGBD.Schedule();
+
+            //    Tensor<float> depth_outputTensor_0 = workerRGBD.PeekOutput("output_depth_0") as Tensor<float>;
+            //    ComputeBuffer computeTensorData0 = ComputeTensorData.Pin(depth_outputTensor_0).buffer;
+
+            //    Tensor<float> depth_outputTensor_1 = workerRGBD.PeekOutput("output_depth_1") as Tensor<float>;
+            //    ComputeBuffer computeTensorData1 = ComputeTensorData.Pin(depth_outputTensor_1).buffer;
+
+            //    run_nconv -= 1;
+            //    return UB_Model.Complete(color_tensor_0, depth_outputTensor_0, color_tensor_1, depth_outputTensor_1);
+            //}
+
+            return UB_Model.Complete(color_tensor_0, depth_tensor_0, color_tensor_1, depth_tensor_1);
+
         } else { 
             workerRGBD.SetInput("rgb_0", color_tensor_0);
             workerRGBD.SetInput("rgb_1", color_tensor_1);

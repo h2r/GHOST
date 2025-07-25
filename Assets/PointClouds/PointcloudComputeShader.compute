@@ -30,14 +30,180 @@ bool activate_edge_detection;
 
 float meanThreshold;
 
-[numthreads(256, 1, 1)]
-void EdgeDetector(uint3 id : SV_DispatchThreadID)
+
+#define TILE_SIZE 16
+#define BORDER_SIZE 2
+#define SHARED_SIZE (TILE_SIZE + 2 * BORDER_SIZE)
+
+groupshared float sharedDepth[SHARED_SIZE][SHARED_SIZE];
+
+[numthreads(TILE_SIZE, TILE_SIZE, 1)]
+void EdgeDetector(uint3 id : SV_DispatchThreadID, uint3 groupThreadID : SV_GroupThreadID, uint3 groupID : SV_GroupID)
 {
-    uint indexX = id.x % WIDTH;
-    uint indexY = id.x / WIDTH;
+    uint indexX = id.x;
+    uint indexY = id.y;
     uint index = indexY * WIDTH + indexX;
     
-    if (indexX > 5 && indexX < WIDTH - 5 && indexY > 5 && indexY < HEIGHT - 5)
+    // Local thread indices within the group
+    uint localX = groupThreadID.x;
+    uint localY = groupThreadID.y;
+    
+    // Calculate shared memory coordinates
+    uint sharedX = localX + BORDER_SIZE;
+    uint sharedY = localY + BORDER_SIZE;
+    
+    // Load center tile data
+    if (indexX < WIDTH && indexY < HEIGHT)
+    {
+        sharedDepth[sharedY][sharedX] = _Depth[index].z;
+    }
+    else
+    {
+        sharedDepth[sharedY][sharedX] = 0.0f;
+    }
+    
+    // Load border data - top border
+    if (localY < BORDER_SIZE)
+    {
+        int borderY = (int)indexY - BORDER_SIZE;
+        if (borderY >= 0 && indexX < WIDTH)
+        {
+            uint borderIndex = borderY * WIDTH + indexX;
+            sharedDepth[localY][sharedX] = _Depth[borderIndex].z;
+        }
+        else
+        {
+            sharedDepth[localY][sharedX] = 0.0f;
+        }
+    }
+    
+    // Load border data - bottom border
+    if (localY >= TILE_SIZE - BORDER_SIZE)
+    {
+        int borderY = (int)indexY + BORDER_SIZE;
+        if (borderY < HEIGHT && indexX < WIDTH)
+        {
+            uint borderIndex = borderY * WIDTH + indexX;
+            uint sharedBorderY = localY + 2 * BORDER_SIZE;
+            sharedDepth[sharedBorderY][sharedX] = _Depth[borderIndex].z;
+        }
+        else
+        {
+            uint sharedBorderY = localY + 2 * BORDER_SIZE;
+            sharedDepth[sharedBorderY][sharedX] = 0.0f;
+        }
+    }
+    
+    // Load border data - left border
+    if (localX < BORDER_SIZE)
+    {
+        int borderX = (int)indexX - BORDER_SIZE;
+        if (borderX >= 0 && indexY < HEIGHT)
+        {
+            uint borderIndex = indexY * WIDTH + borderX;
+            sharedDepth[sharedY][localX] = _Depth[borderIndex].z;
+        }
+        else
+        {
+            sharedDepth[sharedY][localX] = 0.0f;
+        }
+    }
+    
+    // Load border data - right border
+    if (localX >= TILE_SIZE - BORDER_SIZE)
+    {
+        int borderX = (int)indexX + BORDER_SIZE;
+        if (borderX < WIDTH && indexY < HEIGHT)
+        {
+            uint borderIndex = indexY * WIDTH + borderX;
+            uint sharedBorderX = localX + 2 * BORDER_SIZE;
+            sharedDepth[sharedY][sharedBorderX] = _Depth[borderIndex].z;
+        }
+        else
+        {
+            uint sharedBorderX = localX + 2 * BORDER_SIZE;
+            sharedDepth[sharedY][sharedBorderX] = 0.0f;
+        }
+    }
+    
+    // Load corner data - top-left
+    if (localX < BORDER_SIZE && localY < BORDER_SIZE)
+    {
+        int borderX = (int)indexX - BORDER_SIZE;
+        int borderY = (int)indexY - BORDER_SIZE;
+        if (borderX >= 0 && borderY >= 0)
+        {
+            uint borderIndex = borderY * WIDTH + borderX;
+            sharedDepth[localY][localX] = _Depth[borderIndex].z;
+        }
+        else
+        {
+            sharedDepth[localY][localX] = 0.0f;
+        }
+    }
+    
+    // Load corner data - top-right
+    if (localX >= TILE_SIZE - BORDER_SIZE && localY < BORDER_SIZE)
+    {
+        int borderX = (int)indexX + BORDER_SIZE;
+        int borderY = (int)indexY - BORDER_SIZE;
+        if (borderX < WIDTH && borderY >= 0)
+        {
+            uint borderIndex = borderY * WIDTH + borderX;
+            uint sharedBorderX = localX + 2 * BORDER_SIZE;
+            sharedDepth[localY][sharedBorderX] = _Depth[borderIndex].z;
+        }
+        else
+        {
+            uint sharedBorderX = localX + 2 * BORDER_SIZE;
+            sharedDepth[localY][sharedBorderX] = 0.0f;
+        }
+    }
+    
+    // Load corner data - bottom-left
+    if (localX < BORDER_SIZE && localY >= TILE_SIZE - BORDER_SIZE)
+    {
+        int borderX = (int)indexX - BORDER_SIZE;
+        int borderY = (int)indexY + BORDER_SIZE;
+        if (borderX >= 0 && borderY < HEIGHT)
+        {
+            uint borderIndex = borderY * WIDTH + borderX;
+            uint sharedBorderY = localY + 2 * BORDER_SIZE;
+            sharedDepth[sharedBorderY][localX] = _Depth[borderIndex].z;
+        }
+        else
+        {
+            uint sharedBorderY = localY + 2 * BORDER_SIZE;
+            sharedDepth[sharedBorderY][localX] = 0.0f;
+        }
+    }
+    
+    // Load corner data - bottom-right
+    if (localX >= TILE_SIZE - BORDER_SIZE && localY >= TILE_SIZE - BORDER_SIZE)
+    {
+        int borderX = (int)indexX + BORDER_SIZE;
+        int borderY = (int)indexY + BORDER_SIZE;
+        if (borderX < WIDTH && borderY < HEIGHT)
+        {
+            uint borderIndex = borderY * WIDTH + borderX;
+            uint sharedBorderX = localX + 2 * BORDER_SIZE;
+            uint sharedBorderY = localY + 2 * BORDER_SIZE;
+            sharedDepth[sharedBorderY][sharedBorderX] = _Depth[borderIndex].z;
+        }
+        else
+        {
+            uint sharedBorderX = localX + 2 * BORDER_SIZE;
+            uint sharedBorderY = localY + 2 * BORDER_SIZE;
+            sharedDepth[sharedBorderY][sharedBorderX] = 0.0f;
+        }
+    }
+    
+    // Wait for all threads to finish loading data
+    GroupMemoryBarrierWithGroupSync();
+    
+    // Perform edge detection using shared memory
+    if (indexX >= BORDER_SIZE && indexX < WIDTH - BORDER_SIZE && 
+        indexY >= BORDER_SIZE && indexY < HEIGHT - BORDER_SIZE)
     {
         if (activate_edge_detection)
         {
@@ -72,15 +238,15 @@ void EdgeDetector(uint3 id : SV_DispatchThreadID)
             float Gy = 0.0;
             float mu = 0.0;
 
+            // Use shared memory for convolution
             for (int i = -2; i <= 2; i++)
             {
                 for (int j = -2; j <= 2; j++)
                 {
-                    uint sampleX = indexX + j;
-                    uint sampleY = indexY + i;
-                    uint sampleIndex = sampleY * WIDTH + sampleX;
+                    uint sharedSampleX = sharedX + j;
+                    uint sharedSampleY = sharedY + i;
 
-                    float depthValue = _Depth[sampleIndex].z;
+                    float depthValue = sharedDepth[sharedSampleY][sharedSampleX];
 
                     Gx += depthValue * kX[i + 2][j + 2];
                     Gy += depthValue * kY[i + 2][j + 2];
@@ -90,27 +256,29 @@ void EdgeDetector(uint3 id : SV_DispatchThreadID)
             
             if (sqrt(Gx * Gx + Gy * Gy) > edgeThreshold)
             {
-                _Edge[id.x] = 1.0f;
+                _Edge[index] = 1.0f;
             }
             else
             {
-                _Edge[id.x] = 0.0f;
+                _Edge[index] = 0.0f;
             }
 
-            uint depth_index = indexY * WIDTH + indexX;
-            if ( abs(_Depth[depth_index].z - (mu / 25.0)) / (mu / 25.0) > meanThreshold )
+            // Use shared memory for mean threshold check
+            float currentDepth = sharedDepth[sharedY][sharedX];
+            float meanDepth = mu / 25.0;
+            if (abs(currentDepth - meanDepth) / meanDepth > meanThreshold)
             {
-                _Edge[id.x] = 1.0f;
+                _Edge[index] = 1.0f;
             }
         }
         else
         {
-            _Edge[id.x] = 0.0f;
+            _Edge[index] = 0.0f;
         }
     }
-    else
+    else if (indexX < WIDTH && indexY < HEIGHT)
     {
-        _Edge[id.x] = 1.0f;
+        _Edge[index] = 1.0f;
     }
 }
 
@@ -132,7 +300,7 @@ void CSMain(uint3 id : SV_DispatchThreadID)
         float i = id.x * samplingSize;
 
         float col_y = floor(i * screenData.z);
-        float col_x = i - floor(i * screenData.z) * screenData.x;
+        float col_x = floor(i - col_y * screenData.x);
         //_Properties[id.x].color.z = 1
 
         uint depth_idx = (screenData.x * (screenData.y - col_y - 1)) + (screenData.x - col_x - 1);
