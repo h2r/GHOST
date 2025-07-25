@@ -172,23 +172,27 @@ If you need to make small changes to the last commit, use `git commit --amend`.
    ```bash
    git add <new file>
    ```
+   Note: NEVER DO THIS
+   ```bash
+   git add *
+   ```
 
-2. **Commit With a Descriptive Message**
+3. **Commit With a Descriptive Message**
    ```bash
    git commit -am "Add user authentication module"
    ```
 
-3. **Review Commits**
+4. **Review Commits**
    ```bash
    git log
    ```
 
-4. **Rebase and Squash Commits if Necessary**
+5. **Rebase and Squash Commits if Necessary**
    ```bash
    git rebase -i HEAD~N
    ```
 
-5. **Push To Remote Repository**
+6. **Push To Remote Repository**
    ```bash
    git push origin feature/add-authentication
    ```
