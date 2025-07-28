@@ -54,9 +54,9 @@ public class ThreadedRosConnector : MonoBehaviour
         }
     }
 
-    public void LoopPublish(string publicationId, Message message)
+    public void LoopPublish(string publicationId, Message message, int ttlFrames)
     {
-        lpMessages[publicationId] = (message, 3);
+        lpMessages[publicationId] = (message, ttlFrames);
     }
 
     public void LoopUnpublish(string publicationId)

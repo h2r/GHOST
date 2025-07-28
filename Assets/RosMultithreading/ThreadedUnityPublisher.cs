@@ -15,9 +15,9 @@ public abstract class ThreadedUnityPublisher<T> : MonoBehaviour where T : Messag
         publicationId = connector.RosSocket.Advertise<T>(topic);
     }
 
-    protected void LoopPublish(T message)
+    protected void LoopPublish(T message, int ttlFrames = 1)
     {
-        connector.LoopPublish(publicationId, message);
+        connector.LoopPublish(publicationId, message, ttlFrames);
     }
 
     protected void LoopUnpublish()
