@@ -14,6 +14,7 @@ public class ThreadedRosConnector : MonoBehaviour
     public string rosBridgeServerUrl = "ws://192.168.1.38:9090";
 
     private readonly ConcurrentDictionary<string, LoopPublishAgent> lpAgents = new();
+    private bool isSpotKilled = false;
 
     public void Awake()
     {
@@ -41,6 +42,8 @@ public class ThreadedRosConnector : MonoBehaviour
 
     public void LoopPublish(string publicationId, Message message, int ttlFrames)
     {
+        if (isSpotKilled) return;
+
         if (!lpAgents.ContainsKey(publicationId))
             lpAgents[publicationId] = new(RosSocket, publicationId);
 
@@ -50,6 +53,19 @@ public class ThreadedRosConnector : MonoBehaviour
     public void LoopUnpublish(string publicationId)
     {
         lpAgents[publicationId].ClearMessage();
+    }
+
+    public void KillSpot(string killPublicationId, Message killMessage)
+    {
+        LoopPublish(killPublicationId, killMessage, 1);
+
+        isSpotKilled = true;
+
+        foreach (var kvp in lpAgents)
+        {
+            if (kvp.Key != killPublicationId)
+                kvp.Value.ClearMessage();
+        }
     }
 
     private void ConnectAndWait()

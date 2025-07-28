@@ -24,4 +24,9 @@ public abstract class ThreadedUnityPublisher<T> : MonoBehaviour where T : Messag
     {
         connector.LoopUnpublish(publicationId);
     }
+
+    protected void KillSpot(T killMessage)
+    {
+        connector.KillSpot(publicationId, killMessage);
+    }
 }
