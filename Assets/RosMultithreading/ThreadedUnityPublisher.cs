@@ -1,7 +1,7 @@
 using UnityEngine;
 using RosSharp.RosBridgeClient;
 
-[RequireComponent(typeof(RosConnector))]
+[RequireComponent(typeof(ThreadedRosConnector))]
 public abstract class ThreadedUnityPublisher<T> : MonoBehaviour where T : Message
 {
     public string topic;
