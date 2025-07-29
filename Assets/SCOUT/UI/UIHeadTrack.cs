@@ -2,18 +2,21 @@ using UnityEngine;
 
 public class UIHeadTrack : MonoBehaviour
 {
-    public float yawThresholdDegrees = 30f;
-    public float moveSpeed = 5f;
+    public float yawThresholdDegrees = 45f;
+    public float moveSpeed = 3.5f;
+
     public Vector3 panelOffset = new Vector3(0f, -0.2f, 0f);
 
     private Transform cameraTransform;
 
     private Vector3 defaultPosition;
     private Quaternion defaultRotation;
-
     private float panelDistance;
 
     private bool panelMoved = false;
+    private bool tracking = true;
+
+    private Vector3 yawReferenceForward;
 
     void Start()
     {
@@ -22,33 +25,39 @@ public class UIHeadTrack : MonoBehaviour
         defaultPosition = transform.position;
         defaultRotation = transform.rotation;
 
-        // Calculate initial distance from camera to panel
+        // Use initial distance from camera to panel as panelDistance
         panelDistance = Vector3.Distance(cameraTransform.position, transform.position);
+
+        // Set initial forward direction as yaw baseline
+        yawReferenceForward = GetFlatForward(cameraTransform.forward);
     }
 
     void Update()
     {
         float headYaw = GetHeadYaw();
 
-        if (Mathf.Abs(headYaw) >= yawThresholdDegrees)
+        if (Mathf.Abs(headYaw) >= yawThresholdDegrees && tracking)
         {
             MovePanelInFront();
-            panelMoved = true;
         }
-        else if (panelMoved)
+        else if (Mathf.Abs(headYaw) < yawThresholdDegrees)
         {
-            ReturnPanelToDefault();
+            // Once user looks back toward center, allow re-trigger
+            tracking = true;
         }
     }
 
     float GetHeadYaw()
     {
-        Vector3 forward = cameraTransform.forward;
-        forward.y = 0;
-        forward.Normalize();
-
-        float yawAngle = Vector3.SignedAngle(Vector3.forward, forward, Vector3.up);
+        Vector3 currentFlatForward = GetFlatForward(cameraTransform.forward);
+        float yawAngle = Vector3.SignedAngle(yawReferenceForward, currentFlatForward, Vector3.up);
         return yawAngle;
+    }
+
+    Vector3 GetFlatForward(Vector3 vec)
+    {
+        vec.y = 0;
+        return vec.normalized;
     }
 
     void MovePanelInFront()
@@ -58,6 +67,12 @@ public class UIHeadTrack : MonoBehaviour
 
         Quaternion targetRotation = Quaternion.LookRotation(transform.position - cameraTransform.position);
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * moveSpeed);
+
+        // Reset yaw center to the new direction
+        yawReferenceForward = GetFlatForward(cameraTransform.forward);
+
+        panelMoved = true;
+        tracking = false; // Disable further triggering until reset
     }
 
     void ReturnPanelToDefault()
