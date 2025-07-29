@@ -15,8 +15,6 @@ public class UIHeadTrack : MonoBehaviour
 
     private bool panelMoved = false;
 
-    private float baseYaw;
-
     void Start()
     {
         cameraTransform = Camera.main.transform;
@@ -26,14 +24,13 @@ public class UIHeadTrack : MonoBehaviour
 
         // Calculate initial distance from camera to panel
         panelDistance = Vector3.Distance(cameraTransform.position, transform.position);
-        baseYaw = GetHeadYaw();
     }
 
     void Update()
     {
         float headYaw = GetHeadYaw();
 
-        if (Mathf.Abs(baseYaw - headYaw) >= yawThresholdDegrees)
+        if (Mathf.Abs(headYaw) >= yawThresholdDegrees)
         {
             MovePanelInFront();
             panelMoved = true;
@@ -60,7 +57,6 @@ public class UIHeadTrack : MonoBehaviour
         transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * moveSpeed);
         Quaternion targetRotation = Quaternion.LookRotation(transform.position - cameraTransform.position);
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * moveSpeed);
-        baseYaw = GetHeadYaw(); 
     }
 
     void ReturnPanelToDefault()

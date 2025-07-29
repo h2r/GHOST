@@ -16701,6 +16701,7 @@ GameObject:
   - component: {fileID: 7746903456321617326}
   - component: {fileID: 3708788928900924300}
   - component: {fileID: 8903260709167177724}
+  - component: {fileID: 8903260709167177725}
   m_Layer: 0
   m_Name: UI Root
   m_TagString: Untagged
@@ -19234,6 +19235,21 @@ MonoBehaviour:
   - {fileID: 1207437538}
   useDualController: 0
   cameraRig: {fileID: 117133133}
+--- !u!114 &8903260709167177725
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3278476787374081275}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5278d0557f8ce6a47a15ddc6c661c0be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  yawThresholdDegrees: 45
+  moveSpeed: 3.5
+  panelOffset: {x: 0, y: -0.2, z: 0}
 --- !u!224 &8949594240785975953
 RectTransform:
   m_ObjectHideFlags: 0
