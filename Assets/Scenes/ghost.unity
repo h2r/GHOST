@@ -1699,6 +1699,8 @@ MonoBehaviour:
   - {fileID: 234239420}
   titlePrefab: {fileID: 3278048788002158022, guid: bfe2b15985d2d437fb47203f0df723ee, type: 3}
   buttonPrefab: {fileID: 1520795838076098022, guid: 39fc7b698942e4ac18e866a2f1f87352, type: 3}
+  redBlueSprite: {fileID: 0}
+  blueRedSprite: {fileID: 0}
 --- !u!1 &234239419
 GameObject:
   m_ObjectHideFlags: 0
@@ -7281,6 +7283,8 @@ MonoBehaviour:
   - {fileID: 2094657730}
   titlePrefab: {fileID: 3278048788002158022, guid: bfe2b15985d2d437fb47203f0df723ee, type: 3}
   buttonPrefab: {fileID: 1520795838076098022, guid: 39fc7b698942e4ac18e866a2f1f87352, type: 3}
+  redBlueSprite: {fileID: 0}
+  blueRedSprite: {fileID: 0}
 --- !u!1 &913736098
 GameObject:
   m_ObjectHideFlags: 0
@@ -8588,6 +8592,8 @@ MonoBehaviour:
   - {fileID: 2094657730}
   titlePrefab: {fileID: 3278048788002158022, guid: bfe2b15985d2d437fb47203f0df723ee, type: 3}
   buttonPrefab: {fileID: 1520795838076098022, guid: 39fc7b698942e4ac18e866a2f1f87352, type: 3}
+  redBlueSprite: {fileID: 0}
+  blueRedSprite: {fileID: 0}
 --- !u!1 &1208171616
 GameObject:
   m_ObjectHideFlags: 0
@@ -8642,6 +8648,8 @@ MonoBehaviour:
   - {fileID: 718387732}
   titlePrefab: {fileID: 3278048788002158022, guid: bfe2b15985d2d437fb47203f0df723ee, type: 3}
   buttonPrefab: {fileID: 1520795838076098022, guid: 39fc7b698942e4ac18e866a2f1f87352, type: 3}
+  redBlueSprite: {fileID: 0}
+  blueRedSprite: {fileID: 0}
 --- !u!1 &1209531448
 GameObject:
   m_ObjectHideFlags: 0
@@ -8917,6 +8925,8 @@ MonoBehaviour:
   - {fileID: 1246843491585836373}
   titlePrefab: {fileID: 3278048788002158022, guid: bfe2b15985d2d437fb47203f0df723ee, type: 3}
   buttonPrefab: {fileID: 1520795838076098022, guid: 39fc7b698942e4ac18e866a2f1f87352, type: 3}
+  redBlueSprite: {fileID: 0}
+  blueRedSprite: {fileID: 0}
 --- !u!1 &1223693442
 GameObject:
   m_ObjectHideFlags: 0
@@ -9934,6 +9944,8 @@ MonoBehaviour:
   - {fileID: 1246843491585836373}
   titlePrefab: {fileID: 3278048788002158022, guid: bfe2b15985d2d437fb47203f0df723ee, type: 3}
   buttonPrefab: {fileID: 1520795838076098022, guid: 39fc7b698942e4ac18e866a2f1f87352, type: 3}
+  redBlueSprite: {fileID: 0}
+  blueRedSprite: {fileID: 0}
 --- !u!1 &1421883542
 GameObject:
   m_ObjectHideFlags: 0
@@ -14329,6 +14341,8 @@ MonoBehaviour:
   - {fileID: 83438709}
   titlePrefab: {fileID: 3278048788002158022, guid: bfe2b15985d2d437fb47203f0df723ee, type: 3}
   buttonPrefab: {fileID: 1520795838076098022, guid: 39fc7b698942e4ac18e866a2f1f87352, type: 3}
+  redBlueSprite: {fileID: 21300000, guid: dcc8f43741162eb42a9d364428f60392, type: 3}
+  blueRedSprite: {fileID: 21300000, guid: e26f18bcbcc7a674b89e40d6f0ff0220, type: 3}
 --- !u!114 &1962067508
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17199,6 +17213,8 @@ MonoBehaviour:
   - {fileID: 1246843491585836373}
   titlePrefab: {fileID: 3278048788002158022, guid: bfe2b15985d2d437fb47203f0df723ee, type: 3}
   buttonPrefab: {fileID: 1520795838076098022, guid: 39fc7b698942e4ac18e866a2f1f87352, type: 3}
+  redBlueSprite: {fileID: 0}
+  blueRedSprite: {fileID: 0}
 --- !u!114 &4407220997977968548
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17300,6 +17316,8 @@ MonoBehaviour:
   - {fileID: 234239420}
   titlePrefab: {fileID: 3278048788002158022, guid: bfe2b15985d2d437fb47203f0df723ee, type: 3}
   buttonPrefab: {fileID: 1520795838076098022, guid: 39fc7b698942e4ac18e866a2f1f87352, type: 3}
+  redBlueSprite: {fileID: 0}
+  blueRedSprite: {fileID: 0}
 --- !u!222 &4628723694407447833
 CanvasRenderer:
   m_ObjectHideFlags: 0

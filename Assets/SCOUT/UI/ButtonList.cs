@@ -10,6 +10,8 @@ public class ButtonList : MonoBehaviour
     public string title;
     public NamedMode[] options;
     public GameObject titlePrefab, buttonPrefab;
+    public Sprite redBlueSprite, blueRedSprite; 
+    private bool swap; 
 
     private GameObject[] buttons;
 
@@ -38,6 +40,10 @@ public class ButtonList : MonoBehaviour
 
             y -= 55;
         }
+        if(options.Length == 1)
+        {
+            buttons[0].GetComponent<Image>().sprite = blueRedSprite;
+        }
     }
 
     public bool TryHoverButton(GameObject hitObj)
@@ -58,7 +64,10 @@ public class ButtonList : MonoBehaviour
             {
 
                 action(options[i]);
-                color = new(0, 1, 0, 0.5f); 
+                swap = !swap;
+                var img = button.GetComponent<Image>();
+                img.sprite = swap ? redBlueSprite : blueRedSprite;
+                return true; 
             }
             else if (button == hitObj)
             {

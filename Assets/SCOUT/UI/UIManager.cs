@@ -107,11 +107,13 @@ public class UIManager : MonoBehaviour
 
     private void SetSingleControlPresets()
     {
-        activeLists[0].PressButtonIndex(0, actions[0]);
+        //sets left spot to spot one (red) 
+        //sets right spot to spot two (blue) 
+        activeLists[0].PressButtonIndex(1, actions[0]);
         activeLists[1].PressButtonIndex((int)SingleControl.LOCOMOTION, actions[1]);
         activeLists[2].PressButtonIndex((int)Perspective.CLOUD, actions[2]);
         activeLists[3].PressButtonIndex((int)SingleControl.DRIVE, actions[3]);
-        activeLists[4].PressButtonIndex(1, actions[4]);
+        activeLists[4].PressButtonIndex(0, actions[4]);
     }
 
     public void SwapSpots()
