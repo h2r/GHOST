@@ -2,22 +2,20 @@ using UnityEngine;
 
 public class UIHeadTrack : MonoBehaviour
 {
-    public float yawThresholdDegrees = 30f;
-    public float moveSpeed = 5f;
+    public float yawThresholdDegrees = 45f;
+    public float moveSpeed = 3.5f;
     public Vector3 panelOffset = new Vector3(0f, -0.2f, 0f);
 
     private Transform cameraTransform;
 
     private Vector3 defaultPosition;
     private Quaternion defaultRotation;
+
     private float panelDistance;
 
-    private Vector3 yawReferenceForward;
-    private bool tracking = true;
-    private bool isMoving = false;
+    private bool panelMoved = false;
 
-    private Vector3 targetPosition;
-    private Quaternion targetRotation;
+    private float baseYaw;
 
     void Start()
     {
@@ -25,63 +23,55 @@ public class UIHeadTrack : MonoBehaviour
 
         defaultPosition = transform.position;
         defaultRotation = transform.rotation;
-        panelDistance = Vector3.Distance(cameraTransform.position, transform.position);
 
-        yawReferenceForward = GetFlatForward(cameraTransform.forward);
+        // Calculate initial distance from camera to panel
+        panelDistance = Vector3.Distance(cameraTransform.position, transform.position);
+        baseYaw = GetHeadYaw();
     }
 
     void Update()
     {
-        if (isMoving)
-        {
-            // Animate position and rotation toward target
-            transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * moveSpeed);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * moveSpeed);
-
-            // Check if close enough to stop
-            if (Vector3.Distance(transform.position, targetPosition) < 0.01f &&
-                Quaternion.Angle(transform.rotation, targetRotation) < 0.5f)
-            {
-                transform.position = targetPosition;
-                transform.rotation = targetRotation;
-
-                yawReferenceForward = GetFlatForward(cameraTransform.forward);
-                isMoving = false;
-            }
-
-            return;
-        }
-
         float headYaw = GetHeadYaw();
 
-        if (Mathf.Abs(headYaw) >= yawThresholdDegrees && tracking)
+        if (Mathf.Abs(baseYaw - headYaw) >= yawThresholdDegrees)
         {
-            BeginPanelMove();
+            MovePanelInFront();
+            panelMoved = true;
         }
-        else if (Mathf.Abs(headYaw) < yawThresholdDegrees)
+        else if (panelMoved)
         {
-            tracking = true;
+            ReturnPanelToDefault();
         }
     }
 
     float GetHeadYaw()
     {
-        Vector3 currentFlatForward = GetFlatForward(cameraTransform.forward);
-        return Vector3.SignedAngle(yawReferenceForward, currentFlatForward, Vector3.up);
+        Vector3 forward = cameraTransform.forward;
+        forward.y = 0;
+        forward.Normalize();
+
+        float yawAngle = Vector3.SignedAngle(Vector3.forward, forward, Vector3.up);
+        return yawAngle;
     }
 
-    Vector3 GetFlatForward(Vector3 vec)
+    void MovePanelInFront()
     {
-        vec.y = 0;
-        return vec.normalized;
+        Vector3 targetPosition = cameraTransform.position + cameraTransform.forward * panelDistance + panelOffset;
+        transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * moveSpeed);
+        Quaternion targetRotation = Quaternion.LookRotation(transform.position - cameraTransform.position);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * moveSpeed);
+        baseYaw = GetHeadYaw(); 
     }
 
-    void BeginPanelMove()
+    void ReturnPanelToDefault()
     {
-        tracking = false;
-        isMoving = true;
+        transform.position = Vector3.Lerp(transform.position, defaultPosition, Time.deltaTime * moveSpeed);
+        transform.rotation = Quaternion.Slerp(transform.rotation, defaultRotation, Time.deltaTime * moveSpeed);
 
-        targetPosition = cameraTransform.position + cameraTransform.forward * panelDistance + panelOffset;
-        targetRotation = Quaternion.LookRotation(targetPosition - cameraTransform.position);
+        if (Vector3.Distance(transform.position, defaultPosition) < 0.01f &&
+            Quaternion.Angle(transform.rotation, defaultRotation) < 0.5f)
+        {
+            panelMoved = false;
+        }
     }
 }
