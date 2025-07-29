@@ -7,8 +7,4 @@ public class SwapSpot : NamedMode
     {
         return "Swap Spots";
     }
-    public void SwapSpots()
-    {
-
-    }
 }

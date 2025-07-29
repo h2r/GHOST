@@ -19,6 +19,7 @@ public class UIManager : MonoBehaviour
     public SingleControllerFlow leftFlow, rightFlow;
     public DualControllerFlow dualFlow;
 
+
     // Single controller lists: left spot, left control, perspective, right control, right spot
     // Dual controller lists: spot, control, perspective
     public ButtonList[] singleControllerLists, dualControllerLists;
@@ -53,7 +54,7 @@ public class UIManager : MonoBehaviour
                 m => ((PerspectiveMode)m).PerspectiveStart(),
                 m => rightFlow.SetControl((NewControlMode)m),
                 m => rightFlow.SetSpot((SpotMode)m), 
-                m => ((SwapSpot)m).SwapSpots(), 
+                m => this.SwapSpots(), 
             };
             SetSingleControlPresets(); 
             activeLists[0].gameObject.SetActive(false);
@@ -111,5 +112,16 @@ public class UIManager : MonoBehaviour
         activeLists[2].PressButtonIndex((int)Perspective.CLOUD, actions[2]);
         activeLists[3].PressButtonIndex((int)SingleControl.DRIVE, actions[3]);
         activeLists[4].PressButtonIndex(1, actions[4]);
+    }
+
+    public void SwapSpots()
+    {
+        SpotMode leftSpot = this.leftFlow.GetSpot(); 
+        SpotMode rightSpot = this.rightFlow.GetSpot();
+
+        this.leftFlow.SetSpot(rightSpot);
+        this.rightFlow.SetSpot(leftSpot); 
+        
+        //TODO add some UI toggle swap 
     }
 }

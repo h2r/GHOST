@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Meta.WitAi.Composer;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -53,7 +54,13 @@ public class ButtonList : MonoBehaviour
         {
             var button = buttons[i];
             Color color;
-            if (button == hitObj)
+            if (options[i].GetType() == typeof(SwapSpot))
+            {
+
+                action(options[i]);
+                color = new(0, 1, 0, 0.5f); 
+            }
+            else if (button == hitObj)
             {
                 if (options[i].GetType() == typeof(SpotMode))
                 {
@@ -79,5 +86,10 @@ public class ButtonList : MonoBehaviour
     public bool PressButtonIndex(int index, Action<NamedMode> action)
     {
         return PressButton(buttons[index], action); 
+    }
+
+    public GameObject GetButton(int index)
+    {
+        return buttons[index];
     }
 }

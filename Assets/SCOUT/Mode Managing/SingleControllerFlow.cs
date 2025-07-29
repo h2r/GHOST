@@ -42,4 +42,9 @@ public class SingleControllerFlow : MonoBehaviour
         this.isPaused = isPaused;
         model.SetLabels(new[] { "", "", "", "", "", "" });
     }
+
+    public SpotMode GetSpot()
+    {
+        return this.spot; 
+    }
 }
