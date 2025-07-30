@@ -43,12 +43,13 @@ public class UIHeadTrack : MonoBehaviour
         if (state != PanelState.MOVING  && Mathf.Abs(baseYaw - headYaw) >= yawThresholdDegrees)
         {
             ComputeNewPanelTarget();
-            state = PanelState.MOVING; 
+            state = PanelState.MOVING;
+
 
         }
         else if (state == PanelState.MOVING)
         {
-            MovePanelInFront(); 
+            MovePanelInFront();
         }
         else if (state == PanelState.MOVED)
         {
@@ -68,8 +69,8 @@ public class UIHeadTrack : MonoBehaviour
 
     void MovePanelInFront()
     {
-        transform.position = Vector3.Lerp(transform.position, defaultPosition, Time.deltaTime * moveSpeed);
-        transform.rotation = Quaternion.Slerp(transform.rotation, defaultRotation, Time.deltaTime * moveSpeed);
+        transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * moveSpeed);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * moveSpeed);
         if (Vector3.Distance(transform.position, targetPosition) < 0.01f &&
             Quaternion.Angle(transform.rotation, targetRotation) < 0.5f)
         {
@@ -84,7 +85,7 @@ public class UIHeadTrack : MonoBehaviour
         FlatForward.y = 0;
         FlatForward.Normalize();
 
-        Vector3 targetPosition = cameraTransform.position + FlatForward * panelDistance + panelOffset;
+        targetPosition = cameraTransform.position + FlatForward * panelDistance + panelOffset;
         targetPosition.y = defaultPosition.y;
 
     }
