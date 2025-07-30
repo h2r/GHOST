@@ -9,8 +9,9 @@ public class SpotMode : NamedMode
 
     private ThreadedMoveSpot moveSpot;
     private SetGripper setGripper;
-
     private bool isGripperOpen = false;
+
+    private ThreadedStowArm stowArm;
 
     public void Start()
     {
@@ -18,6 +19,7 @@ public class SpotMode : NamedMode
         {
             moveSpot = rosConnector.GetComponent<ThreadedMoveSpot>();
             setGripper = rosConnector.GetComponent<SetGripper>();
+            stowArm = rosConnector.GetComponent<ThreadedStowArm>();
             setGripper.closeGripper();
         }
     }
@@ -39,9 +41,16 @@ public class SpotMode : NamedMode
     public void SetGripperPos(Transform tf)
     {
         // print(modeName + " move gripper");
-        if (dummyGripper != null)
-            dummyGripper.transform.SetPositionAndRotation(tf.position, tf.rotation);
+        if (dummyGripper == null) return;
+
+        dummyGripper.transform.SetPositionAndRotation(tf.position, tf.rotation);
     }
+
+    public void SetGripperWorldPose(Vector3 position, Quaternion rotation)
+    {
+        if (dummyGripper == null) return;
+        dummyGripper.transform.SetPositionAndRotation(position, rotation);
+     }
 
     public Transform GetGripperPos()
     {
@@ -61,6 +70,19 @@ public class SpotMode : NamedMode
         else
             setGripper.closeGripper();
     }
+
+    public void StowArm()
+    {
+        if (stowArm != null)
+        {
+            stowArm.Stow();
+        }
+        else
+        {
+            Debug.LogWarning("ThreadedStowArm not found on rosConnector!");
+        }
+    }
+
 
     public override string GetName()
     {

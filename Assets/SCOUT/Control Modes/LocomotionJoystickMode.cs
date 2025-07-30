@@ -1,14 +1,6 @@
 using System;
 using UnityEngine;
 
-public enum RotationReference
-{
-    World,      // Rotates around the global Y axis (tank-style)
-    Head,       // Rotates around the up direction of the head/camera
-    Controller  // Rotates around the up direction of the active controller
-}
-
-// One controller mode
 public class LocomotionJoystickMode : NewControlMode
 {
     [Header("References")]
@@ -19,34 +11,45 @@ public class LocomotionJoystickMode : NewControlMode
     public Transform rightControllerTransform;
 
     [Header("Locomotion Settings")]
-    [Tooltip("Meters per second. 1.8 is a comfortable walk speed.")]
-    public float moveSpeed = 1.8f;
-    public bool useSnapTurn = true;
+    public float moveSpeed = 2.0f;
 
     [Header("Flying Settings")]
-    [Tooltip("Meters per second for vertical flying.")]
     public float flySpeed = 1.4f;
 
     [Header("Rotation Settings")]
+    [Tooltip("Degrees per second for smooth turn. Adjustable in inspector.")]
+    public float rotationSpeed = 120f;  // default same as moveSpeed, but editable separately
+
+    [Tooltip("Enable snap turn rotation instead of smooth rotation.")]
+    public bool useSnapTurn = false;    // Disabled by default
+
     [Tooltip("Degrees per snap turn. 25 is comfortable for most users.")]
     public float snapAngle = 25f;
-    [Tooltip("Degrees per second for smooth turn. 30 is comfortable.")]
-    public float smoothTurnSpeed = 30f;
+
     [Tooltip("Minimum stick deflection to trigger snap turn.")]
     public float snapTurnDeadzone = 0.5f;
+
     [Tooltip("Minimum seconds between snap turns.")]
     public float snapTurnCooldown = 0.4f;
+
+    [Tooltip("Enable rotational inertia smoothing on smooth turning.")]
+    public bool useRotationalInertia = false;
+
+    [Tooltip("Acceleration rate for rotational inertia (degrees/sec²).")]
+    public float turnAcceleration = 120f;
+
+    [Tooltip("Damping rate for rotational inertia.")]
+    public float turnDamping = 5f;
+
     public bool vignetteEnabled = false;
 
-    [Header("Rotation Reference")]
-    public RotationReference rotationReference = RotationReference.World;
-
-    // [[ Internal state ]]
+    // Internal state
     private float initialY;
     private bool hasInitialY = false;
     private bool isTriggerHeld = false;
     private float prevJoyX = 0f;
     private float lastSnapTime = 0f;
+    private float currentTurnVelocity = 0f;
 
     public override void ControlUpdate(SpotMode spot, ControllerModel model, ControllerModel _)
     {
@@ -61,7 +64,6 @@ public class LocomotionJoystickMode : NewControlMode
             ? OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger) > 0.5f
             : OVRInput.Get(OVRInput.Axis1D.SecondaryIndexTrigger) > 0.5f;
 
-        // [[ Hand grip for flying ]]
         bool grip = model.isLeft
             ? OVRInput.Get(OVRInput.Axis1D.PrimaryHandTrigger) > 0.5f
             : OVRInput.Get(OVRInput.Axis1D.SecondaryHandTrigger) > 0.5f;
@@ -73,26 +75,65 @@ public class LocomotionJoystickMode : NewControlMode
         }
         isTriggerHeld = trigger;
 
-        // [[ Rotation ]]
-        Vector3 up;
-        switch (rotationReference)
-        {
-            case RotationReference.Head:
-                up = headTransform != null ? headTransform.up : Vector3.up;
-                break;
-            case RotationReference.Controller:
-                Transform controllerTransform = model.isLeft ? leftControllerTransform : rightControllerTransform;
-                up = controllerTransform != null ? controllerTransform.up : Vector3.up;
-                break;
-            default:
-                up = Vector3.up;
-                break;
-        }
+        Vector3 rotationAxis = Vector3.up;
+        Vector3 rotationCenter = headTransform != null ? headTransform.position : cameraRig.transform.position;
 
-        // --- Movement/Rotation/Fly Logic ---
-        if (grip)
+        if (trigger)
         {
-            // [[ Fly ]]
+            if (useSnapTurn)
+            {
+                // Snap turn logic
+                if (joystick.x < -snapTurnDeadzone && prevJoyX >= -snapTurnDeadzone && Time.time - lastSnapTime > snapTurnCooldown)
+                {
+                    cameraRig.transform.RotateAround(rotationCenter, rotationAxis, -snapAngle);
+                    lastSnapTime = Time.time;
+                    currentTurnVelocity = 0f;
+                }
+                else if (joystick.x > snapTurnDeadzone && prevJoyX <= snapTurnDeadzone && Time.time - lastSnapTime > snapTurnCooldown)
+                {
+                    cameraRig.transform.RotateAround(rotationCenter, rotationAxis, snapAngle);
+                    lastSnapTime = Time.time;
+                    currentTurnVelocity = 0f;
+                }
+            }
+            else
+            {
+                // Smooth turning with or without inertia
+                if (Mathf.Abs(joystick.x) > 0.1f)
+                {
+                    if (useRotationalInertia)
+                    {
+                        float targetTurnSpeed = rotationSpeed * joystick.x;
+
+                        currentTurnVelocity = Mathf.MoveTowards(currentTurnVelocity, targetTurnSpeed, turnAcceleration * Time.deltaTime);
+                        currentTurnVelocity = Mathf.Lerp(currentTurnVelocity, 0f, turnDamping * Time.deltaTime);
+
+                        cameraRig.transform.RotateAround(rotationCenter, rotationAxis, currentTurnVelocity * Time.deltaTime);
+                    }
+                    else
+                    {
+                        float angle = rotationSpeed * joystick.x * Time.deltaTime;
+                        cameraRig.transform.RotateAround(rotationCenter, rotationAxis, angle);
+                        currentTurnVelocity = 0f;
+                    }
+                }
+                else
+                {
+                    // Decay inertia velocity if no input
+                    if (useRotationalInertia && Mathf.Abs(currentTurnVelocity) > 0.01f)
+                    {
+                        currentTurnVelocity = Mathf.Lerp(currentTurnVelocity, 0f, turnDamping * Time.deltaTime);
+                        cameraRig.transform.RotateAround(rotationCenter, rotationAxis, currentTurnVelocity * Time.deltaTime);
+                    }
+                    else
+                    {
+                        currentTurnVelocity = 0f;
+                    }
+                }
+            }
+        }
+        else if (grip)
+        {
             if (Mathf.Abs(joystick.y) > 0.1f)
             {
                 Vector3 pos = cameraRig.transform.position;
@@ -100,34 +141,8 @@ public class LocomotionJoystickMode : NewControlMode
                 cameraRig.transform.position = pos;
             }
         }
-        else if (trigger)
-        {
-            // [[ Rotation ]]
-            if (useSnapTurn)
-            {
-                if (joystick.x < -snapTurnDeadzone && prevJoyX >= -snapTurnDeadzone && Time.time - lastSnapTime > snapTurnCooldown)
-                {
-                    cameraRig.transform.RotateAround(cameraRig.transform.position, up, -snapAngle);
-                    lastSnapTime = Time.time;
-                }
-                else if (joystick.x > snapTurnDeadzone && prevJoyX <= snapTurnDeadzone && Time.time - lastSnapTime > snapTurnCooldown)
-                {
-                    cameraRig.transform.RotateAround(cameraRig.transform.position, up, snapAngle);
-                    lastSnapTime = Time.time;
-                }
-            }
-            else
-            {
-                if (Mathf.Abs(joystick.x) > 0.1f)
-                {
-                    float angle = smoothTurnSpeed * joystick.x * Time.deltaTime;
-                    cameraRig.transform.RotateAround(cameraRig.transform.position, up, angle);
-                }
-            }
-        }
         else
         {
-            // [[ Locomotion ]]
             if (joystick.magnitude > 0.1f)
             {
                 Vector3 move = cameraRig.transform.forward * joystick.y + cameraRig.transform.right * joystick.x;
@@ -149,27 +164,12 @@ public class LocomotionJoystickMode : NewControlMode
             cameraRig.transform.position = pos;
         }
 
-        // [[ Labels ]]
-        // A/X, B/Y, start/menu, thumbstick, trigger, gripper
         string[] labels = new string[6];
-
-        // Reset Y label
         labels[0] = model.isLeft ? (hasInitialY ? "Reset Y (X)" : "") : (hasInitialY ? "Reset Y (A)" : "");
         labels[1] = "";
         labels[2] = "";
-
-        // Thumbstick label
-        if (grip)
-            labels[3] = "Fly";
-        else if (trigger)
-            labels[3] = "Rotate";
-        else
-            labels[3] = "Locomote";
-
-        // Trigger label
+        labels[3] = grip ? "Fly" : (trigger ? "Rotate" : "Locomote");
         labels[4] = trigger ? "" : "Hold: Rotate";
-
-        // Gripper label
         labels[5] = grip ? "" : "Hold: Fly";
 
         model.SetLabels(labels);
