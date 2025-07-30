@@ -1683,6 +1683,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cameraRig: {fileID: 117133128}
+  vignette: {fileID: 0}
+  headTransform: {fileID: 0}
+  leftControllerTransform: {fileID: 0}
+  rightControllerTransform: {fileID: 0}
+  moveSpeed: 1.8
+  useSnapTurn: 1
+  flySpeed: 1.4
+  snapAngle: 25
+  smoothTurnSpeed: 30
+  snapTurnDeadzone: 0.5
+  snapTurnCooldown: 0.4
+  vignetteEnabled: 0
+  rotationReference: 0
 --- !u!4 &234239421
 Transform:
   m_ObjectHideFlags: 0
@@ -3541,6 +3554,10 @@ PrefabInstance:
     - target: {fileID: 1137478774429119365, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
       value: ws://128.148.140.230:9090
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478774581538817, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: Mass
+      value: 1.904699
       objectReference: {fileID: 0}
     - target: {fileID: 1137478774599216611, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_IsActive
@@ -14962,6 +14979,7 @@ MonoBehaviour:
   serializer: 0
   protocol: 0
   rosBridgeServerUrl: ws://128.148.140.230:9090
+  rosTicksPerSecond: 100
 --- !u!1 &2127769091
 GameObject:
   m_ObjectHideFlags: 0

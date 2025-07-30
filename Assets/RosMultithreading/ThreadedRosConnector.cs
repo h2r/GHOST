@@ -12,6 +12,7 @@ public class ThreadedRosConnector : MonoBehaviour
     public RosSocket.SerializerEnum serializer;
     public Protocol protocol;
     public string rosBridgeServerUrl = "ws://192.168.1.38:9090";
+    public int rosTicksPerSecond = 100;
 
     private readonly ConcurrentDictionary<string, LoopPublishAgent> lpAgents = new();
     private bool isSpotKilled = false;
@@ -36,7 +37,7 @@ public class ThreadedRosConnector : MonoBehaviour
             foreach (var kvp in lpAgents)
                 kvp.Value.OnRosTick();
             
-            Thread.Sleep(1000 / 100);
+            Thread.Sleep(1000 / rosTicksPerSecond);
         }
     }
 
@@ -57,7 +58,7 @@ public class ThreadedRosConnector : MonoBehaviour
 
     public void KillSpot(string killPublicationId, Message killMessage)
     {
-        LoopPublish(killPublicationId, killMessage, 1);
+        LoopPublish(killPublicationId, killMessage, 3);
 
         isSpotKilled = true;
 
