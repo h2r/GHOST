@@ -1,7 +1,14 @@
+using MathNet.Numerics.Statistics;
 using UnityEngine;
 
 public class UIHeadTrack : MonoBehaviour
 {
+    private enum PanelState {
+        DEFAULT, 
+        MOVING, 
+        MOVED
+    }
+
     public float yawThresholdDegrees = 45f;
     public float moveSpeed = 3.5f;
     public Vector3 panelOffset = new Vector3(0f, -0.2f, 0f);
@@ -11,9 +18,12 @@ public class UIHeadTrack : MonoBehaviour
     private Vector3 defaultPosition;
     private Quaternion defaultRotation;
 
-    private float panelDistance;
+    private Vector3 targetPosition;
+    private Quaternion targetRotation; 
 
-    private bool panelMoved = false;
+    private float panelDistance;
+    private PanelState state = PanelState.DEFAULT;
+    private float baseYaw; 
 
     void Start()
     {
@@ -24,18 +34,23 @@ public class UIHeadTrack : MonoBehaviour
 
         // Calculate initial distance from camera to panel
         panelDistance = Vector3.Distance(cameraTransform.position, transform.position);
+        baseYaw = 0; 
     }
 
     void Update()
     {
         float headYaw = GetHeadYaw();
-
-        if (Mathf.Abs(headYaw) >= yawThresholdDegrees)
+        if (state != PanelState.MOVING  && Mathf.Abs(baseYaw - headYaw) >= yawThresholdDegrees)
         {
-            MovePanelInFront();
-            panelMoved = true;
+            ComputeNewPanelTarget();
+            state = PanelState.MOVING; 
+
         }
-        else if (panelMoved)
+        else if (state == PanelState.MOVING)
+        {
+            MovePanelInFront(); 
+        }
+        else if (state == PanelState.MOVED)
         {
             ReturnPanelToDefault();
         }
@@ -53,10 +68,25 @@ public class UIHeadTrack : MonoBehaviour
 
     void MovePanelInFront()
     {
-        Vector3 targetPosition = cameraTransform.position + cameraTransform.forward * panelDistance + panelOffset;
-        transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * moveSpeed);
-        Quaternion targetRotation = Quaternion.LookRotation(transform.position - cameraTransform.position);
-        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * moveSpeed);
+        transform.position = Vector3.Lerp(transform.position, defaultPosition, Time.deltaTime * moveSpeed);
+        transform.rotation = Quaternion.Slerp(transform.rotation, defaultRotation, Time.deltaTime * moveSpeed);
+        if (Vector3.Distance(transform.position, targetPosition) < 0.01f &&
+            Quaternion.Angle(transform.rotation, targetRotation) < 0.5f)
+        {
+            state = PanelState.MOVED;
+            baseYaw = GetHeadYaw(); 
+        }
+    }
+
+    void ComputeNewPanelTarget()
+    {
+        Vector3 FlatForward = cameraTransform.forward;
+        FlatForward.y = 0;
+        FlatForward.Normalize();
+
+        Vector3 targetPosition = cameraTransform.position + FlatForward * panelDistance + panelOffset;
+        targetPosition.y = defaultPosition.y;
+
     }
 
     void ReturnPanelToDefault()
@@ -67,7 +97,8 @@ public class UIHeadTrack : MonoBehaviour
         if (Vector3.Distance(transform.position, defaultPosition) < 0.01f &&
             Quaternion.Angle(transform.rotation, defaultRotation) < 0.5f)
         {
-            panelMoved = false;
+            state = PanelState.DEFAULT;
+            baseYaw = GetHeadYaw();
         }
     }
 }
