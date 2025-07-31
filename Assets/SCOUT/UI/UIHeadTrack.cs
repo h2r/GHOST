@@ -1,105 +1,135 @@
-using MathNet.Numerics.Statistics;
 using UnityEngine;
 
 public class UIHeadTrack : MonoBehaviour
 {
-    private enum PanelState {
-        DEFAULT, 
-        MOVING, 
-        MOVED
+    private enum PanelState
+    {
+        DEFAULT,       // Stuck at default position
+        MOVING_TO_NEW, // Smoothly moving to new front-facing position (yaw-based)
+        STUCK_AT_NEW,  // Stuck at last moved position
+        RETURNING      // Smoothly returning to default
     }
 
-    public float yawThresholdDegrees = 45f;
-    public float moveSpeed = 3.5f;
+    [Header("Settings")]
+    public float yawThresholdDegrees = 45f;      // Angle to trigger move to new front position
+    public float returnThresholdDegrees = 15f;   // Angle to trigger return to default
+    public float moveSpeed = 5.0f;                // Speed of smooth movement/rotation
     public Vector3 panelOffset = new Vector3(0f, -0.2f, 0f);
 
-    private Transform cameraTransform;
+    [Header("References")]
+    public Transform centerEyeAnchor;
 
     private Vector3 defaultPosition;
     private Quaternion defaultRotation;
+    private float defaultYaw;
 
     private Vector3 targetPosition;
-    private Quaternion targetRotation; 
+    private Quaternion targetRotation;
+    private float targetYaw;
 
-    private float panelDistance;
     private PanelState state = PanelState.DEFAULT;
-    private float baseYaw; 
 
     void Start()
     {
-        cameraTransform = Camera.main.transform;
+        if (centerEyeAnchor == null)
+        {
+            Debug.LogError("Assign centerEyeAnchor in inspector.");
+            enabled = false;
+            return;
+        }
 
         defaultPosition = transform.position;
         defaultRotation = transform.rotation;
-
-        // Calculate initial distance from camera to panel
-        panelDistance = Vector3.Distance(cameraTransform.position, transform.position);
-        baseYaw = 0; 
+        defaultYaw = GetHeadYaw();
     }
 
     void Update()
     {
-        float headYaw = GetHeadYaw();
-        if (state != PanelState.MOVING  && Mathf.Abs(baseYaw - headYaw) >= yawThresholdDegrees)
-        {
-            ComputeNewPanelTarget();
-            state = PanelState.MOVING;
+        float currentYaw = GetHeadYaw();
 
+        switch (state)
+        {
+            case PanelState.DEFAULT:
+                // Panel stuck at default position
+                float yawFromDefault = Mathf.DeltaAngle(defaultYaw, currentYaw);
+                if (Mathf.Abs(yawFromDefault) >= yawThresholdDegrees)
+                {
+                    // Move to new yaw position, based on current head yaw
+                    targetYaw = currentYaw;
+                    ComputeTargetPosition(targetYaw);
+                    state = PanelState.MOVING_TO_NEW;
+                }
+                break;
 
+            case PanelState.MOVING_TO_NEW:
+                MoveTowardsTarget(targetPosition, targetRotation);
+
+                if (IsAtTarget(targetPosition, targetRotation))
+                {
+                    state = PanelState.STUCK_AT_NEW;
+                }
+                break;
+
+            case PanelState.STUCK_AT_NEW:
+                // Panel stuck at last moved position (targetYaw)
+                float yawFromTarget = Mathf.DeltaAngle(targetYaw, currentYaw);
+
+                // Return if looking back near default yaw
+                float yawToDefault = Mathf.DeltaAngle(currentYaw, defaultYaw);
+                if (Mathf.Abs(yawToDefault) < returnThresholdDegrees)
+                {
+                    state = PanelState.RETURNING;
+                }
+                // Optional: update panel target if user keeps looking far away in a different direction?
+                else if (Mathf.Abs(yawFromTarget) >= yawThresholdDegrees)
+                {
+                    // User looks further left/right — update target smoothly
+                    targetYaw = currentYaw;
+                    ComputeTargetPosition(targetYaw);
+                    state = PanelState.MOVING_TO_NEW;
+                }
+                break;
+
+            case PanelState.RETURNING:
+                MoveTowardsTarget(defaultPosition, defaultRotation);
+
+                if (IsAtTarget(defaultPosition, defaultRotation))
+                {
+                    state = PanelState.DEFAULT;
+                }
+                break;
         }
-        else if (state == PanelState.MOVING)
-        {
-            MovePanelInFront();
-        }
-        else if (state == PanelState.MOVED)
-        {
-            ReturnPanelToDefault();
-        }
+    }
+
+    void ComputeTargetPosition(float yaw)
+    {
+        // Compute a forward vector from yaw angle relative to world forward
+        Vector3 flatForward = Quaternion.Euler(0, yaw, 0) * Vector3.forward;
+
+        float distance = Vector3.Distance(centerEyeAnchor.position, defaultPosition);
+
+        targetPosition = centerEyeAnchor.position + flatForward * distance + panelOffset;
+        targetRotation = Quaternion.LookRotation(flatForward, Vector3.up);
+    }
+
+    void MoveTowardsTarget(Vector3 pos, Quaternion rot)
+    {
+        transform.position = Vector3.Lerp(transform.position, pos, Time.deltaTime * moveSpeed);
+        transform.rotation = Quaternion.Slerp(transform.rotation, rot, Time.deltaTime * moveSpeed);
+    }
+
+    bool IsAtTarget(Vector3 pos, Quaternion rot)
+    {
+        return Vector3.Distance(transform.position, pos) < 0.01f &&
+               Quaternion.Angle(transform.rotation, rot) < 0.5f;
     }
 
     float GetHeadYaw()
     {
-        Vector3 forward = cameraTransform.forward;
+        Vector3 forward = centerEyeAnchor.forward;
         forward.y = 0;
         forward.Normalize();
 
-        float yawAngle = Vector3.SignedAngle(Vector3.forward, forward, Vector3.up);
-        return yawAngle;
-    }
-
-    void MovePanelInFront()
-    {
-        transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * moveSpeed);
-        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * moveSpeed);
-        if (Vector3.Distance(transform.position, targetPosition) < 0.01f &&
-            Quaternion.Angle(transform.rotation, targetRotation) < 0.5f)
-        {
-            state = PanelState.MOVED;
-            baseYaw = GetHeadYaw(); 
-        }
-    }
-
-    void ComputeNewPanelTarget()
-    {
-        Vector3 FlatForward = cameraTransform.forward;
-        FlatForward.y = 0;
-        FlatForward.Normalize();
-
-        targetPosition = cameraTransform.position + FlatForward * panelDistance + panelOffset;
-        targetPosition.y = defaultPosition.y;
-
-    }
-
-    void ReturnPanelToDefault()
-    {
-        transform.position = Vector3.Lerp(transform.position, defaultPosition, Time.deltaTime * moveSpeed);
-        transform.rotation = Quaternion.Slerp(transform.rotation, defaultRotation, Time.deltaTime * moveSpeed);
-
-        if (Vector3.Distance(transform.position, defaultPosition) < 0.01f &&
-            Quaternion.Angle(transform.rotation, defaultRotation) < 0.5f)
-        {
-            state = PanelState.DEFAULT;
-            baseYaw = GetHeadYaw();
-        }
+        return Vector3.SignedAngle(Vector3.forward, forward, Vector3.up);
     }
 }

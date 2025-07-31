@@ -13,50 +13,92 @@ public class UIRaycast : MonoBehaviour
 
     private LineRenderer lineRenderer;
 
-    public void Start()
+    // Track if trigger is held for dragging
+    private bool isTriggerHeld = false;
+    private GameObject currentDragObject = null;
+    private PointerEventData pointerEventData;
+
+    void Start()
     {
         lineRenderer = GetComponent<LineRenderer>();
+
+        pointerEventData = new PointerEventData(eventSystem);
     }
 
-    public void Update()
+    void Update()
     {
-        if (uiManager.GetOpen())
-        {
-            lineRenderer.enabled = true;
-
-            Ray ray = new(transform.position, transform.forward);
-            var endPoint = ray.origin + ray.direction * maxDistance;
-
-            // UI Raycast
-            PointerEventData pointerEventData = new(eventSystem)
-            {
-                position = WorldPointToCanvasScreenPoint(ray.origin, ray.direction)
-            };
-            List<RaycastResult> results = new();
-            raycaster.Raycast(pointerEventData, results);
-
-            // If UI hit, set endpoint to the hit location
-            if (results.Count > 0)
-            {
-                var rect = results[0].gameObject.GetComponent<RectTransform>();
-                var button = results[0].gameObject.transform.parent.gameObject;
-                if (rect != null && uiManager.TryRaycastHover(button))
-                {
-                    endPoint = rect.position;
-                    if ((OVRInput.GetDown(OVRInput.Button.Three) && isLeft) ||
-                        (OVRInput.GetDown(OVRInput.Button.One) && !isLeft))
-                        uiManager.RaycastPress(button);
-                }
-            }
-
-            // Draw the ray
-            lineRenderer.SetPosition(0, ray.origin);
-            lineRenderer.SetPosition(1, endPoint);
-        }
-        else
+        if (!uiManager.GetOpen())
         {
             lineRenderer.enabled = false;
+            if (isTriggerHeld && currentDragObject != null)
+            {
+                // Release drag if menu closes while dragging
+                ExecuteEvents.Execute(currentDragObject, pointerEventData, ExecuteEvents.pointerUpHandler);
+                isTriggerHeld = false;
+                currentDragObject = null;
+            }
+            return;
         }
+
+        lineRenderer.enabled = true;
+
+        Ray ray = new(transform.position, transform.forward);
+        Vector3 endPoint = ray.origin + ray.direction * maxDistance;
+
+        // Update pointer event position to the canvas screen point under ray
+        pointerEventData.position = WorldPointToCanvasScreenPoint(ray.origin, ray.direction);
+
+        // Raycast UI elements under pointer
+        List<RaycastResult> results = new();
+        raycaster.Raycast(pointerEventData, results);
+
+        if (results.Count > 0)
+        {
+            GameObject hitGO = results[0].gameObject;
+            RectTransform rect = hitGO.GetComponent<RectTransform>();
+            if (rect != null)
+            {
+                endPoint = rect.position;
+
+                // Handle input
+                bool triggerDown = (OVRInput.GetDown(OVRInput.Button.Three) && isLeft) || (OVRInput.GetDown(OVRInput.Button.One) && !isLeft);
+                bool triggerUp = (OVRInput.GetUp(OVRInput.Button.Three) && isLeft) || (OVRInput.GetUp(OVRInput.Button.One) && !isLeft);
+                bool triggerHeld = (OVRInput.Get(OVRInput.Button.Three) && isLeft) || (OVRInput.Get(OVRInput.Button.One) && !isLeft);
+
+                // First, check if UIManager recognizes this UI for hover/press
+                if (uiManager.TryRaycastHover(hitGO))
+                {
+                    if (triggerDown)
+                        uiManager.RaycastPress(hitGO);
+                }
+                else
+                {
+                    // For things not handled by UIManager, e.g. grab bar, send pointer events manually
+                    pointerEventData.pointerCurrentRaycast = results[0];
+
+                    if (triggerDown)
+                    {
+                        ExecuteEvents.Execute(hitGO, pointerEventData, ExecuteEvents.pointerDownHandler);
+                        isTriggerHeld = true;
+                        currentDragObject = hitGO;
+                    }
+                    else if (triggerUp && isTriggerHeld && currentDragObject != null)
+                    {
+                        ExecuteEvents.Execute(currentDragObject, pointerEventData, ExecuteEvents.pointerUpHandler);
+                        isTriggerHeld = false;
+                        currentDragObject = null;
+                    }
+                    else if (triggerHeld && isTriggerHeld && currentDragObject != null)
+                    {
+                        ExecuteEvents.Execute(currentDragObject, pointerEventData, ExecuteEvents.dragHandler);
+                    }
+                }
+            }
+        }
+
+        // Draw the laser line
+        lineRenderer.SetPosition(0, ray.origin);
+        lineRenderer.SetPosition(1, endPoint);
     }
 
     Vector2 WorldPointToCanvasScreenPoint(Vector3 origin, Vector3 direction)
