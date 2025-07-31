@@ -6,12 +6,12 @@ public class SpotMode : NamedMode
     public GameObject rosConnector, dummyGripper;
     public string modeName;
     public Color color;
-
     private ThreadedMoveSpot moveSpot;
     private SetGripper setGripper;
     private bool isGripperOpen = false;
 
     private ThreadedStowArm stowArm;
+    public int CurrentModeIndex { get; private set; } = -1;
 
     public void Start()
     {
@@ -22,6 +22,10 @@ public class SpotMode : NamedMode
             stowArm = rosConnector.GetComponent<ThreadedStowArm>();
             setGripper.closeGripper();
         }
+    }
+    public void SetCurrentModeIndex(int index)
+    {
+        CurrentModeIndex = index;
     }
 
     public void Drive(Vector2 direction)
@@ -82,6 +86,7 @@ public class SpotMode : NamedMode
             Debug.LogWarning("ThreadedStowArm not found on rosConnector!");
         }
     }
+    
 
 
     public override string GetName()

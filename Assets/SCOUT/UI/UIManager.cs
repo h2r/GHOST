@@ -23,7 +23,7 @@ public class UIManager : MonoBehaviour
     // Single controller lists: left spot, left control, perspective, right control, right spot
     // Dual controller lists: spot, control, perspective
     public ButtonList[] singleControllerLists, dualControllerLists;
-    
+
     public bool useDualController;
     public Transform cameraRig;
 
@@ -48,23 +48,48 @@ public class UIManager : MonoBehaviour
         else
         {
             activeLists = singleControllerLists;
+            // actions = new Action<NamedMode>[] {
+            //     m => leftFlow.SetSpot((SpotMode)m),
+            //     m => leftFlow.SetControl((NewControlMode)m),
+            //     m => ((PerspectiveMode)m).PerspectiveStart(),
+            //     m => rightFlow.SetControl((NewControlMode)m),
+            //     m => rightFlow.SetSpot((SpotMode)m),
+            //     m => this.SwapSpots(),
+            // };
+
+
             actions = new Action<NamedMode>[] {
                 m => leftFlow.SetSpot((SpotMode)m),
-                m => leftFlow.SetControl((NewControlMode)m),
+
+                m => {
+                    var control = (NewControlMode)m;
+                    leftFlow.SetControl(control);
+                    leftFlow.GetSpot()?.SetCurrentModeIndex(control.ModeIndex);
+                },
+
                 m => ((PerspectiveMode)m).PerspectiveStart(),
-                m => rightFlow.SetControl((NewControlMode)m),
-                m => rightFlow.SetSpot((SpotMode)m), 
-                m => this.SwapSpots(), 
+
+                m => {
+                    var control = (NewControlMode)m;
+                    rightFlow.SetControl(control);
+                    rightFlow.GetSpot()?.SetCurrentModeIndex(control.ModeIndex);
+                },
+
+                m => rightFlow.SetSpot((SpotMode)m),
+
+                m => this.SwapSpots(),
             };
-            SetSingleControlPresets(); 
+
+
+            SetSingleControlPresets();
             activeLists[0].gameObject.SetActive(false);
             activeLists[4].gameObject.SetActive(false);
             foreach (var list in dualControllerLists)
                 list.gameObject.SetActive(false);
-            
+
         }
         //manually preselect buttons
-        
+
     }
 
     public void Update()
@@ -116,14 +141,37 @@ public class UIManager : MonoBehaviour
         activeLists[4].PressButtonIndex(0, actions[4]);
     }
 
-    public void SwapSpots()
-    {
-        SpotMode leftSpot = this.leftFlow.GetSpot(); 
-        SpotMode rightSpot = this.rightFlow.GetSpot();
+    // public void SwapSpots()
+    // {
+    //     SpotMode leftSpot = this.leftFlow.GetSpot();
+    //     SpotMode rightSpot = this.rightFlow.GetSpot();
 
-        this.leftFlow.SetSpot(rightSpot);
-        this.rightFlow.SetSpot(leftSpot); 
-        
-        //TODO add some UI toggle swap 
+    //     this.leftFlow.SetSpot(rightSpot);
+    //     this.rightFlow.SetSpot(leftSpot);
+
+    //     //TODO add some UI toggle swap 
+    // }
+    
+
+   public void SwapSpots()
+    {
+        // Swap spots
+        SpotMode leftSpot = leftFlow.GetSpot();
+        SpotMode rightSpot = rightFlow.GetSpot();
+        leftFlow.SetSpot(rightSpot);
+        rightFlow.SetSpot(leftSpot);
+
+        // Swap control modes
+        NewControlMode leftControl = leftFlow.GetControl();
+        NewControlMode rightControl = rightFlow.GetControl();
+        leftFlow.SetControl(rightControl);
+        rightFlow.SetControl(leftControl);
+
+        // Update UI highlights for controls using ModeIndex
+        activeLists[1].PressButtonIndex(leftFlow.GetControl().ModeIndex, actions[1]);  // Left control UI
+        activeLists[3].PressButtonIndex(rightFlow.GetControl().ModeIndex, actions[3]); // Right control UI
+
     }
+
+
 }

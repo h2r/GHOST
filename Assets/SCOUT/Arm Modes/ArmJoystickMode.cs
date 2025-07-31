@@ -19,4 +19,6 @@ public class ArmJoystickMode : NewControlMode
     {
         return "Arm (Joystick)";
     }
+
+    public override int ModeIndex => 5;
 }

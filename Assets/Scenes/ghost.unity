@@ -5792,7 +5792,7 @@ MonoBehaviour:
   iteration_per_threshold: 5
   frames_per_icp: 20
   icp_threshold: 0.1
-  use_manual_threshold: 1
+  use_manual_threshold: 0
   icp_shader: {fileID: 7200000, guid: 554d4ca3d1bda7a42ac84c03b623f26c, type: 3}
   renderer0: {fileID: 326679877}
   renderer1: {fileID: 107554149}
@@ -7438,7 +7438,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d20d9c0adc2961428107103f52df143, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  armControlMode: 1
+  armControlMode: 2
 --- !u!4 &960356929
 Transform:
   m_ObjectHideFlags: 0
@@ -13530,9 +13530,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1816471307}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 1, z: -0, w: 0}
-  m_LocalPosition: {x: 0, y: 0, z: 1.5}
-  m_LocalScale: {x: 1.5, y: 1.5, z: 0.01}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalPosition: {x: 0, y: 0.25, z: 5}
+  m_LocalScale: {x: 1, y: 1, z: 0.01}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -16947,7 +16947,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   armControlMode: 0
-  stowArmPublisher: {fileID: 0}
 --- !u!114 &3575073522687121229
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19380,6 +19379,9 @@ MonoBehaviour:
   returnThresholdDegrees: 15
   moveSpeed: 5
   panelOffset: {x: 0, y: -0.2, z: 0}
+  nodCountThreshold: 2
+  nodDetectionWindow: 1.2
+  pitchThresholdDegrees: 20
   centerEyeAnchor: {fileID: 1747440747}
 --- !u!224 &8949594240785975953
 RectTransform:

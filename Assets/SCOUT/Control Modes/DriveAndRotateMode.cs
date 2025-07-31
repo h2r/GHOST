@@ -37,4 +37,6 @@ public class DriveAndRotateMode : NewControlMode
     {
         return "Drive & Rotate";
     }
+
+    public override int ModeIndex => 4;
 }

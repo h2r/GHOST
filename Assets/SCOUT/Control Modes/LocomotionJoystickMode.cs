@@ -179,4 +179,6 @@ public class LocomotionJoystickMode : NewControlMode
     {
         return "Locomotion (Joystick)";
     }
+
+    public override int ModeIndex => 3;
 }

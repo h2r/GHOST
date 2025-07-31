@@ -165,16 +165,25 @@ public class DriveAndArm : NewControlMode
         var indexTrigger = isLeft ? OVRInput.Button.PrimaryIndexTrigger : OVRInput.Button.SecondaryIndexTrigger;
         var gripButton = isLeft ? OVRInput.Button.PrimaryHandTrigger : OVRInput.Button.SecondaryHandTrigger;
         var joystickAxis = isLeft ? OVRInput.Axis2D.PrimaryThumbstick : OVRInput.Axis2D.SecondaryThumbstick;
+        var stowButton = isLeft ? OVRInput.Button.Two : OVRInput.Button.Four;  // Y for left, B for right
 
         bool isIndexHeld = OVRInput.Get(indexTrigger);
         bool indexPressed = OVRInput.GetDown(indexTrigger);
         bool isGripHeld = OVRInput.Get(gripButton);
         bool gripPressed = OVRInput.GetDown(gripButton);
+        bool stowPressed = OVRInput.GetDown(stowButton);
         Vector2 joystick = OVRInput.Get(joystickAxis);
+
+        // Stow arm if B/Y pressed
+        if (stowPressed)
+        {
+            spot.StowArm();
+        }
 
         string thumbstickLabel = "";
         string triggerLabel = "";
         string gripLabel = "";
+        string stowLabel = stowPressed ? "Stowing Arm..." : $"Press {(isLeft ? "Y" : "B")} to Stow Arm";
 
         if (isIndexHeld)
         {
@@ -247,7 +256,8 @@ public class DriveAndArm : NewControlMode
             "",
             thumbstickLabel,
             triggerLabel,
-            gripLabel
+            gripLabel,
+            stowLabel
         });
     }
 
@@ -255,4 +265,6 @@ public class DriveAndArm : NewControlMode
     {
         return "Dynamic Control";
     }
+    
+    public override int ModeIndex => 0;
 }

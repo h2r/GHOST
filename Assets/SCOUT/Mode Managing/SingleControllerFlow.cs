@@ -32,19 +32,24 @@ public class SingleControllerFlow : MonoBehaviour
         this.spot = spot;
     }
 
+    public SpotMode GetSpot()
+    {
+        return this.spot;
+    }
+
     public void SetControl(NewControlMode control)
     {
         this.control = control;
+    }
+
+    public NewControlMode GetControl()
+    {
+        return this.control;
     }
 
     public void SetPaused(bool isPaused)
     {
         this.isPaused = isPaused;
         model.SetLabels(new[] { "", "", "", "", "", "" });
-    }
-
-    public SpotMode GetSpot()
-    {
-        return this.spot; 
     }
 }

@@ -36,4 +36,6 @@ public class DriveJoystickMode : NewControlMode
     {
         return "Drive (Joystick)";
     }
+
+    public override int ModeIndex => 1;
 }
