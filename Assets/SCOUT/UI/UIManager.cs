@@ -10,8 +10,14 @@ LOCOMOTION
 
 public enum Perspective
 {
-CLOUD, 
-ARM
+    CLOUD,
+    ARM
+}
+
+public enum Spots
+{
+    RED, 
+    BLUE
 }
 
 public class UIManager : MonoBehaviour
@@ -25,6 +31,8 @@ public class UIManager : MonoBehaviour
     public ButtonList[] singleControllerLists, dualControllerLists;
 
     public bool useDualController;
+
+    public bool showSpotButtons; 
     public Transform cameraRig;
 
     private ButtonList[] activeLists;
@@ -82,8 +90,12 @@ public class UIManager : MonoBehaviour
 
 
             SetSingleControlPresets();
-            activeLists[0].gameObject.SetActive(false);
-            activeLists[4].gameObject.SetActive(false);
+            //hide dual controller lists if not using both controllers for one spot 
+            if (!showSpotButtons)
+            {
+                activeLists[0].gameObject.SetActive(false);
+                activeLists[4].gameObject.SetActive(false);  
+            }
             foreach (var list in dualControllerLists)
                 list.gameObject.SetActive(false);
 
@@ -134,44 +146,42 @@ public class UIManager : MonoBehaviour
     {
         //sets left spot to spot one (red) 
         //sets right spot to spot two (blue) 
-        activeLists[0].PressButtonIndex(1, actions[0]);
+        activeLists[0].PressButtonIndex((int) Spots.BLUE, actions[0]);
         activeLists[1].PressButtonIndex((int)SingleControl.LOCOMOTION, actions[1]);
         activeLists[2].PressButtonIndex((int)Perspective.CLOUD, actions[2]);
         activeLists[3].PressButtonIndex((int)SingleControl.DRIVE, actions[3]);
-        activeLists[4].PressButtonIndex(0, actions[4]);
+        activeLists[4].PressButtonIndex((int)Spots.RED, actions[4]);
     }
 
+    public void SwapSpots()
+    {
+        SpotMode leftSpot = this.leftFlow.GetSpot();
+        SpotMode rightSpot = this.rightFlow.GetSpot();
+
+        this.leftFlow.SetSpot(rightSpot);
+        this.rightFlow.SetSpot(leftSpot);
+    }
+
+    //version of swap spots that also swaps control modes
     // public void SwapSpots()
     // {
-    //     SpotMode leftSpot = this.leftFlow.GetSpot();
-    //     SpotMode rightSpot = this.rightFlow.GetSpot();
+    //     // Swap spots
+    //     SpotMode leftSpot = leftFlow.GetSpot();
+    //     SpotMode rightSpot = rightFlow.GetSpot();
+    //     leftFlow.SetSpot(rightSpot);
+    //     rightFlow.SetSpot(leftSpot);
 
-    //     this.leftFlow.SetSpot(rightSpot);
-    //     this.rightFlow.SetSpot(leftSpot);
+    //     // Swap control modes
+    //     NewControlMode leftControl = leftFlow.GetControl();
+    //     NewControlMode rightControl = rightFlow.GetControl();
+    //     leftFlow.SetControl(rightControl);
+    //     rightFlow.SetControl(leftControl);
 
-    //     //TODO add some UI toggle swap 
+    //     // Update UI highlights for controls using ModeIndex
+    //     activeLists[1].PressButtonIndex(leftFlow.GetControl().ModeIndex, actions[1]);  // Left control UI
+    //     activeLists[3].PressButtonIndex(rightFlow.GetControl().ModeIndex, actions[3]); // Right control UI
+
     // }
-    
-
-   public void SwapSpots()
-    {
-        // Swap spots
-        SpotMode leftSpot = leftFlow.GetSpot();
-        SpotMode rightSpot = rightFlow.GetSpot();
-        leftFlow.SetSpot(rightSpot);
-        rightFlow.SetSpot(leftSpot);
-
-        // Swap control modes
-        NewControlMode leftControl = leftFlow.GetControl();
-        NewControlMode rightControl = rightFlow.GetControl();
-        leftFlow.SetControl(rightControl);
-        rightFlow.SetControl(leftControl);
-
-        // Update UI highlights for controls using ModeIndex
-        activeLists[1].PressButtonIndex(leftFlow.GetControl().ModeIndex, actions[1]);  // Left control UI
-        activeLists[3].PressButtonIndex(rightFlow.GetControl().ModeIndex, actions[3]); // Right control UI
-
-    }
 
 
 }
