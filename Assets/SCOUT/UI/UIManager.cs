@@ -3,6 +3,7 @@ using UnityEngine;
 
 public enum SingleControl
 {
+DYNAMIC,
 DRIVE, 
 ARM, 
 LOCOMOTION
@@ -72,7 +73,7 @@ public class UIManager : MonoBehaviour
                 m => {
                     var control = (NewControlMode)m;
                     leftFlow.SetControl(control);
-                    leftFlow.GetSpot()?.SetCurrentModeIndex(control.ModeIndex);
+                    //leftFlow.GetSpot()?.SetCurrentModeIndex(control.ModeIndex);
                 },
 
                 m => ((PerspectiveMode)m).PerspectiveStart(),
@@ -80,7 +81,7 @@ public class UIManager : MonoBehaviour
                 m => {
                     var control = (NewControlMode)m;
                     rightFlow.SetControl(control);
-                    rightFlow.GetSpot()?.SetCurrentModeIndex(control.ModeIndex);
+                    //rightFlow.GetSpot()?.SetCurrentModeIndex(control.ModeIndex);
                 },
 
                 m => rightFlow.SetSpot((SpotMode)m),
