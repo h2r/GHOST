@@ -39,4 +39,5 @@ public class DriveAndRotateMode : NewControlMode
     }
 
     public override int ModeIndex => 4;
+    public override bool ControlsSpot => true;
 }

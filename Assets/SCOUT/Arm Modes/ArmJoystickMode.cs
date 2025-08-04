@@ -21,4 +21,5 @@ public class ArmJoystickMode : NewControlMode
     }
 
     public override int ModeIndex => 5;
+    public override bool ControlsSpot => true;
 }

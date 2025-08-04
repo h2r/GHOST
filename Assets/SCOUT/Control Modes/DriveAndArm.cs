@@ -265,4 +265,6 @@ public class DriveAndArm : NewControlMode
     public override string GetName() => "Dynamic Control";
 
     public override int ModeIndex => 0;
+
+    public override bool ControlsSpot => true;
 }

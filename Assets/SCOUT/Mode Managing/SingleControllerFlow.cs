@@ -16,14 +16,20 @@ public class SingleControllerFlow : MonoBehaviour
 
     public void Update()
     {
-        if (!isPaused && spot != null && control != null)
+        if (spot != null && control != null)
         {
-            control.ControlUpdate(spot, model, null);
-            model.SetColor(spot.color);
-        }
-        else if (isPaused)
-        {
-            model.SetColor(Color.white);
+            if (this.control.ControlsSpot)
+            {
+                model.SetColor(spot.color);
+            }
+            else
+            {
+                model.SetColor(Color.white);
+            }
+            if (!isPaused)
+            {
+                control.ControlUpdate(spot, model, null);
+            }
         }
     }
 

@@ -208,4 +208,5 @@ public class Arm6AxisMode : NewControlMode
     }
 
     public override int ModeIndex => 2;
+    public override bool ControlsSpot => true;
 }

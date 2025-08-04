@@ -181,4 +181,5 @@ public class LocomotionJoystickMode : NewControlMode
     }
 
     public override int ModeIndex => 3;
+    public override bool ControlsSpot => false;
 }

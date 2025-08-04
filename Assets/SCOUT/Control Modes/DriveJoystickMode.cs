@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.Contracts;
 using UnityEngine;
 
 // One controller mode
@@ -38,4 +39,5 @@ public class DriveJoystickMode : NewControlMode
     }
 
     public override int ModeIndex => 1;
+    public override bool ControlsSpot => true;
 }
