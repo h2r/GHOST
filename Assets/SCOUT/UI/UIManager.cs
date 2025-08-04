@@ -15,7 +15,7 @@ public enum Perspective
     ARM
 }
 
-public enum Spots
+public enum SpotColor
 {
     RED, 
     BLUE
@@ -147,20 +147,19 @@ public class UIManager : MonoBehaviour
     {
         //sets left spot to spot one (red) 
         //sets right spot to spot two (blue) 
-        activeLists[0].PressButtonIndex((int) Spots.BLUE, actions[0]);
+        activeLists[0].PressButtonIndex((int) SpotColor.BLUE, actions[0]);
         activeLists[1].PressButtonIndex((int)SingleControl.LOCOMOTION, actions[1]);
         activeLists[2].PressButtonIndex((int)Perspective.CLOUD, actions[2]);
         activeLists[3].PressButtonIndex((int)SingleControl.DRIVE, actions[3]);
-        activeLists[4].PressButtonIndex((int)Spots.RED, actions[4]);
+        activeLists[4].PressButtonIndex((int)SpotColor.RED, actions[4]);
     }
 
     public void SwapSpots()
     {
-        SpotMode leftSpot = this.leftFlow.GetSpot();
-        SpotMode rightSpot = this.rightFlow.GetSpot();
-
-        this.leftFlow.SetSpot(rightSpot);
-        this.rightFlow.SetSpot(leftSpot);
+        SpotColor leftSpot = this.leftFlow.GetSpot().spotColor;
+        SpotColor rightSpot = this.rightFlow.GetSpot().spotColor;
+        activeLists[0].PressButtonIndex((int)rightSpot, actions[0]);
+        activeLists[4].PressButtonIndex((int)leftSpot, actions[4]);
     }
 
     //version of swap spots that also swaps control modes

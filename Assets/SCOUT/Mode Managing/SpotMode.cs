@@ -6,6 +6,8 @@ public class SpotMode : NamedMode
     public GameObject rosConnector, dummyGripper;
     public string modeName;
     public Color color;
+
+    public SpotColor spotColor; 
     private ThreadedMoveSpot moveSpot;
     private SetGripper setGripper;
     private bool isGripperOpen = false;
