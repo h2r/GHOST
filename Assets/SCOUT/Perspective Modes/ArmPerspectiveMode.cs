@@ -6,7 +6,14 @@ public class ArmPerspectiveMode : PerspectiveMode
 
     public override void PerspectiveStart()
     {
-        armCameraView.SetActive(true);
+        if (armCameraView != null)
+            armCameraView.SetActive(true);
+    }
+
+    public override void PerspectiveEnd()
+    {
+        if (armCameraView != null)
+            armCameraView.SetActive(false);
     }
 
     public override string GetName()

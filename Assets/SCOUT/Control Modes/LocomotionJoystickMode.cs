@@ -13,9 +13,6 @@ public class LocomotionJoystickMode : NewControlMode
     [Header("Locomotion Settings")]
     public float moveSpeed = 2.0f;
 
-    [Header("Flying Settings")]
-    public float flySpeed = 1.4f;
-
     [Header("Rotation Settings")]
     [Tooltip("Degrees per second for smooth turn. Adjustable in inspector.")]
     public float rotationSpeed = 120f;  // default same as moveSpeed, but editable separately
@@ -132,15 +129,6 @@ public class LocomotionJoystickMode : NewControlMode
                 }
             }
         }
-        else if (grip)
-        {
-            if (Mathf.Abs(joystick.y) > 0.1f)
-            {
-                Vector3 pos = cameraRig.transform.position;
-                pos.y += joystick.y * flySpeed * Time.deltaTime;
-                cameraRig.transform.position = pos;
-            }
-        }
         else
         {
             if (joystick.magnitude > 0.1f)
@@ -165,19 +153,19 @@ public class LocomotionJoystickMode : NewControlMode
         }
 
         string[] labels = new string[6];
-        labels[0] = model.isLeft ? (hasInitialY ? "Reset Y (X)" : "") : (hasInitialY ? "Reset Y (A)" : "");
+        labels[0] = "";
         labels[1] = "";
         labels[2] = "";
-        labels[3] = grip ? "Fly" : (trigger ? "Rotate" : "Locomote");
+        labels[3] = trigger ? "Rotate" : "Fly";
         labels[4] = trigger ? "" : "Hold: Rotate";
-        labels[5] = grip ? "" : "Hold: Fly";
+        labels[5] = "";
 
         model.SetLabels(labels);
     }
 
     public override string GetName()
     {
-        return "Locomotion (Joystick)";
+        return "Fly";
     }
 
     public override int ModeIndex => 3;

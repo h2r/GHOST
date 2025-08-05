@@ -18,7 +18,7 @@ public class DriveJoystickMode : NewControlMode
             "",
             "",
             doRotate ? "Rotate" : "Drive",
-            doRotate ? "" : "Do Rotate",
+            doRotate ? "" : "Hold: Rotate",
             ""
         });
 
@@ -35,7 +35,7 @@ public class DriveJoystickMode : NewControlMode
 
     public override string GetName()
     {
-        return "Drive (Joystick)";
+        return "Drive"; // "Drive (Joystick)"
     }
 
     public override int ModeIndex => 1;

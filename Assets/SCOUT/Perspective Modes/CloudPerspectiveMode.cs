@@ -6,7 +6,13 @@ public class CloudPerspectiveMode : PerspectiveMode
 
     public override void PerspectiveStart()
     {
-        armCameraView.SetActive(false);
+        if (armCameraView != null)
+            armCameraView.SetActive(false);
+    }
+
+    public override void PerspectiveEnd()
+    {
+        // Nothing needed
     }
 
     public override string GetName()

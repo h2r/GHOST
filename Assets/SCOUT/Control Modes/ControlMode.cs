@@ -8,4 +8,6 @@ public abstract class NewControlMode : NamedMode
     // identify the control mode type for UI mapping
     public abstract int ModeIndex { get; }
     public abstract bool ControlsSpot { get; }
+    public virtual bool RequiresArmCamera => false;
+
 }

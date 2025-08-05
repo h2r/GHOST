@@ -1,12 +1,12 @@
-  using System;
+using System;
 using UnityEngine;
 
 public enum SingleControl
 {
-DYNAMIC,
-DRIVE, 
-ARM, 
-LOCOMOTION
+    DYNAMIC,
+    DRIVE,
+    ARM,
+    LOCOMOTION
 }
 
 public enum Perspective
@@ -17,7 +17,7 @@ public enum Perspective
 
 public enum SpotColor
 {
-    RED, 
+    RED,
     BLUE
 }
 
@@ -26,14 +26,15 @@ public class UIManager : MonoBehaviour
     public SingleControllerFlow leftFlow, rightFlow;
     public DualControllerFlow dualFlow;
 
+    // Changed from single armCameraUIController to two controllers: Right and Left
+    public ArmCameraUIController armCameraUIControllerRight;
+    public ArmCameraUIController armCameraUIControllerLeft;
 
-    // Single controller lists: left spot, left control, perspective, right control, right spot
-    // Dual controller lists: spot, control, perspective
     public ButtonList[] singleControllerLists, dualControllerLists;
 
     public bool useDualController;
 
-    public bool showSpotButtons; 
+    public bool showSpotButtons;
     public Transform cameraRig;
 
     private ButtonList[] activeLists;
@@ -41,15 +42,27 @@ public class UIManager : MonoBehaviour
 
     private bool isOpen = true;
 
+    private Perspective currentPerspective = Perspective.CLOUD;
+
+    private bool spotsSwapped = false;
+
     public void Start()
     {
+        // Turn off both Arm Camera UIs by default
+        if (armCameraUIControllerRight != null)
+            armCameraUIControllerRight.gameObject.SetActive(false);
+
+        if (armCameraUIControllerLeft != null)
+            armCameraUIControllerLeft.gameObject.SetActive(false);
+
         if (useDualController)
         {
             activeLists = dualControllerLists;
-            actions = new Action<NamedMode>[] {
+            actions = new Action<NamedMode>[]
+            {
                 m => dualFlow.SetSpot((SpotMode)m),
                 m => dualFlow.SetControl((NewControlMode)m),
-                m => ((PerspectiveMode)m).PerspectiveStart()
+                m => OnPerspectiveChange((PerspectiveMode)m)
             };
             foreach (var list in singleControllerLists)
                 list.gameObject.SetActive(false);
@@ -57,31 +70,20 @@ public class UIManager : MonoBehaviour
         else
         {
             activeLists = singleControllerLists;
-            // actions = new Action<NamedMode>[] {
-            //     m => leftFlow.SetSpot((SpotMode)m),
-            //     m => leftFlow.SetControl((NewControlMode)m),
-            //     m => ((PerspectiveMode)m).PerspectiveStart(),
-            //     m => rightFlow.SetControl((NewControlMode)m),
-            //     m => rightFlow.SetSpot((SpotMode)m),
-            //     m => this.SwapSpots(),
-            // };
-
-
-            actions = new Action<NamedMode>[] {
+            actions = new Action<NamedMode>[]
+            {
                 m => leftFlow.SetSpot((SpotMode)m),
 
                 m => {
                     var control = (NewControlMode)m;
                     leftFlow.SetControl(control);
-                    //leftFlow.GetSpot()?.SetCurrentModeIndex(control.ModeIndex);
                 },
 
-                m => ((PerspectiveMode)m).PerspectiveStart(),
+                m => OnPerspectiveChange((PerspectiveMode)m),
 
                 m => {
                     var control = (NewControlMode)m;
                     rightFlow.SetControl(control);
-                    //rightFlow.GetSpot()?.SetCurrentModeIndex(control.ModeIndex);
                 },
 
                 m => rightFlow.SetSpot((SpotMode)m),
@@ -89,20 +91,17 @@ public class UIManager : MonoBehaviour
                 m => this.SwapSpots(),
             };
 
-
             SetSingleControlPresets();
-            //hide dual controller lists if not using both controllers for one spot 
+
             if (!showSpotButtons)
             {
                 activeLists[0].gameObject.SetActive(false);
-                activeLists[4].gameObject.SetActive(false);  
+                activeLists[4].gameObject.SetActive(false);
             }
+
             foreach (var list in dualControllerLists)
                 list.gameObject.SetActive(false);
-
         }
-        //manually preselect buttons
-
     }
 
     public void Update()
@@ -114,8 +113,45 @@ public class UIManager : MonoBehaviour
             leftFlow.SetPaused(isOpen);
             rightFlow.SetPaused(isOpen);
             dualFlow.SetPaused(isOpen);
+
+            UpdateArmCameraUIVisibility();
         }
-        cameraRig.position = new(cameraRig.position.x, isOpen ? 100 : 0, cameraRig.position.z);
+
+        cameraRig.position = new Vector3(cameraRig.position.x, isOpen ? 100f : 0f, cameraRig.position.z);
+    }
+
+    private void OnPerspectiveChange(PerspectiveMode mode)
+    {
+        Debug.Log("OnPerspectiveChange called with mode: " + mode.GetName());
+
+        if (mode is ArmPerspectiveMode)
+        {
+            currentPerspective = Perspective.ARM;
+        }
+        else if (mode is CloudPerspectiveMode)
+        {
+            currentPerspective = Perspective.CLOUD;
+        }
+
+        mode.PerspectiveStart();
+
+        UpdateArmCameraUIVisibility();
+    }
+
+    private void UpdateArmCameraUIVisibility()
+    {
+        bool show = !isOpen && currentPerspective == Perspective.ARM;
+
+        if (armCameraUIControllerRight == null || armCameraUIControllerLeft == null)
+        {
+            Debug.LogWarning("ArmCameraUIControllerRight or Left is null");
+            return;
+        }
+
+        armCameraUIControllerRight.gameObject.SetActive(show);
+        armCameraUIControllerLeft.gameObject.SetActive(show);
+
+        Debug.Log($"UpdateArmCameraUIVisibility: isOpen={isOpen}, currentPerspective={currentPerspective}, show={show}");
     }
 
     public bool TryRaycastHover(GameObject hit)
@@ -125,7 +161,6 @@ public class UIManager : MonoBehaviour
             if (list.TryHoverButton(hit))
                 return true;
         }
-
         return false;
     }
 
@@ -143,11 +178,14 @@ public class UIManager : MonoBehaviour
         return isOpen;
     }
 
+    public bool isMenuOpen()
+    {
+        return isOpen;
+    }
+
     private void SetSingleControlPresets()
     {
-        //sets left spot to spot one (red) 
-        //sets right spot to spot two (blue) 
-        activeLists[0].PressButtonIndex((int) SpotColor.BLUE, actions[0]);
+        activeLists[0].PressButtonIndex((int)SpotColor.BLUE, actions[0]);
         activeLists[1].PressButtonIndex((int)SingleControl.LOCOMOTION, actions[1]);
         activeLists[2].PressButtonIndex((int)Perspective.CLOUD, actions[2]);
         activeLists[3].PressButtonIndex((int)SingleControl.DRIVE, actions[3]);
@@ -156,32 +194,22 @@ public class UIManager : MonoBehaviour
 
     public void SwapSpots()
     {
+        spotsSwapped = !spotsSwapped;
+
         SpotColor leftSpot = this.leftFlow.GetSpot().spotColor;
         SpotColor rightSpot = this.rightFlow.GetSpot().spotColor;
         activeLists[0].PressButtonIndex((int)rightSpot, actions[0]);
         activeLists[4].PressButtonIndex((int)leftSpot, actions[4]);
     }
 
-    //version of swap spots that also swaps control modes
-    // public void SwapSpots()
-    // {
-    //     // Swap spots
-    //     SpotMode leftSpot = leftFlow.GetSpot();
-    //     SpotMode rightSpot = rightFlow.GetSpot();
-    //     leftFlow.SetSpot(rightSpot);
-    //     rightFlow.SetSpot(leftSpot);
+    public bool AreSpotsSwapped()
+    {
+        return spotsSwapped;
+    }
 
-    //     // Swap control modes
-    //     NewControlMode leftControl = leftFlow.GetControl();
-    //     NewControlMode rightControl = rightFlow.GetControl();
-    //     leftFlow.SetControl(rightControl);
-    //     rightFlow.SetControl(leftControl);
-
-    //     // Update UI highlights for controls using ModeIndex
-    //     activeLists[1].PressButtonIndex(leftFlow.GetControl().ModeIndex, actions[1]);  // Left control UI
-    //     activeLists[3].PressButtonIndex(rightFlow.GetControl().ModeIndex, actions[3]); // Right control UI
-
-    // }
-
+    public bool IsInArmPerspective()
+    {
+        return currentPerspective == Perspective.ARM;
+    }
 
 }
