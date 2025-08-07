@@ -5983,7 +5983,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rgbdModelAsset: {fileID: 5022602860645237092, guid: 5c0adad9409f35a498f591972a8c1bec, type: 3}
-  Use_UB: 1
+  Use_UB: 0
   UB_Model: {fileID: 420483824}
 --- !u!114 &638278051
 MonoBehaviour:
@@ -8398,13 +8398,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1061447753}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 1, z: -0, w: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 200, y: 200, z: 2}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 1807160463}
-  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1061447755
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8417,7 +8417,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 441fcddae936d184f8196aeed41a9f18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Topic: /spot2/stream_image/hand_color_image/image
+  Topic: /spot/stream_image2/hand_color_image/image
   TimeStep: 0
   meshRenderer: {fileID: 1061447758}
   texture2D: {fileID: 0}
@@ -8865,7 +8865,7 @@ MonoBehaviour:
   leftSubscriber: {fileID: 1061447755}
   rightSubscriber: {fileID: 1907992771}
   spot1Topic: /spot/stream_image/hand_color_image/image
-  spot2Topic: /spot2/stream_image/hand_color_image/image
+  spot2Topic: /spot/stream_image2/hand_color_image/image
 --- !u!1 &1167233215
 GameObject:
   m_ObjectHideFlags: 0
@@ -12338,7 +12338,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rgbdModelAsset: {fileID: 5022602860645237092, guid: 5c0adad9409f35a498f591972a8c1bec, type: 3}
-  Use_UB: 1
+  Use_UB: 0
   UB_Model: {fileID: 420483824}
 --- !u!114 &1639569377
 MonoBehaviour:
@@ -12357,7 +12357,7 @@ MonoBehaviour:
   meanThreshold: 0.1
   activate_CVD: 0
   cvd_weight: 3
-  show_spot: 1
+  show_spot: 0
   another_manager: {fileID: 638278051}
   CVDLeft: {fileID: 1031760795}
   CVDRight: {fileID: 1274553787}
@@ -13912,7 +13912,7 @@ MonoBehaviour:
   centerEyeAnchor: {fileID: 1747440747}
   isRightController: 0
   spot1Topic: /spot/stream_image/hand_color_image/image
-  spot2Topic: /spot2/stream_image/hand_color_image/image
+  spot2Topic: /spot/stream_image2/hand_color_image/image
   positionOffsetRight: {x: 60, y: 8, z: 215}
   positionOffsetLeft: {x: -65, y: 32, z: 275}
 --- !u!4 &1807160463
@@ -14863,13 +14863,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1907992769}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 200, y: 200, z: 2}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 101165731}
-  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1911656122
 GameObject:
   m_ObjectHideFlags: 0

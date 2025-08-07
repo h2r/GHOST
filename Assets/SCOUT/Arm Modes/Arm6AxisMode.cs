@@ -5,12 +5,12 @@ public class Arm6AxisMode : NewControlMode
 {
     public enum ArmControlMode
     {
-        Absolute,  // This mode will behave as it did before (gripper directly follows controller)
-        Relative   // This mode will move the gripper relative to the controller's movement
+        Absolute,
+        Relative
     }
 
     [Header("Arm Control Mode")]
-    public ArmControlMode armControlMode = ArmControlMode.Absolute;  // Default mode is Absolute
+    public ArmControlMode armControlMode = ArmControlMode.Absolute;
 
     private Vector3 initialControllerPosition;
     private Quaternion initialControllerRotation;
@@ -20,50 +20,33 @@ public class Arm6AxisMode : NewControlMode
 
     public override void ControlUpdate(SpotMode spot, ControllerModel model, ControllerModel _)
     {
-        string thumbstickLabel = "";
-        string triggerLabel = "";
-        string gripLabel = "";
+        // --- Input ---
+        bool handDown = model.isLeft
+            ? OVRInput.GetDown(OVRInput.Button.PrimaryHandTrigger)
+            : OVRInput.GetDown(OVRInput.Button.SecondaryHandTrigger);
 
-        model.SetLabels(new[] {
-            "",
-            "",
-            "",
-            thumbstickLabel,
-            triggerLabel,
-            gripLabel,
-            ""
-        });
+        bool triggerHeld = model.isLeft
+            ? OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger)
+            : OVRInput.Get(OVRInput.Button.SecondaryIndexTrigger);
 
-        // Toggle gripper open/close based on the trigger
-        bool indexTrigger;
-        if (model.isLeft)
-            indexTrigger = OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger);
-        else
-            indexTrigger = OVRInput.GetDown(OVRInput.Button.SecondaryIndexTrigger);
-
-        if (indexTrigger)
+        // Toggle gripper on trigger press (works regardless of mode or held state)
+        if (handDown)
             spot.SetGripperOpen(!spot.GetGripperOpen());
 
-        // Handle the Arm Control Modes
+        bool gripperOpen = spot.GetGripperOpen();
+
+        // --- Arm Positioning Logic ---
         switch (armControlMode)
         {
             case ArmControlMode.Absolute:
-                // In absolute mode, the gripper follows the controller directly
                 spot.SetGripperPos(model.anchor.transform);
-                
-                // Set UI labels for absolute mode
-                thumbstickLabel = "Arm Mode";  // Just display "Arm Mode" for the thumbstick
                 break;
 
             case ArmControlMode.Relative:
-                // Only enter relative mode when the index trigger is held
-                bool isIndexHeld = OVRInput.Get(model.isLeft ? OVRInput.Button.PrimaryIndexTrigger : OVRInput.Button.SecondaryIndexTrigger);
-
-                if (isIndexHeld)
+                if (triggerHeld)
                 {
                     if (!isRelativeModeActive)
                     {
-                        // Save the initial state when relative mode is first activated
                         initialControllerPosition = model.anchor.transform.position;
                         initialControllerRotation = model.anchor.transform.rotation;
                         initialGripperPosition = spot.GetGripperPos().position;
@@ -71,34 +54,28 @@ public class Arm6AxisMode : NewControlMode
                         isRelativeModeActive = true;
                     }
 
-                    // Calculate the difference (delta) between the controller's current and initial position
-                    Vector3 controllerDelta = model.anchor.transform.position - initialControllerPosition;
-                    Quaternion controllerDeltaRotation = model.anchor.transform.rotation * Quaternion.Inverse(initialControllerRotation);
+                    Vector3 deltaPos = model.anchor.transform.position - initialControllerPosition;
+                    Quaternion deltaRot = model.anchor.transform.rotation * Quaternion.Inverse(initialControllerRotation);
 
-                    // Update the gripper's position and rotation based on the controller's movement
-                    Vector3 newGripperPosition = initialGripperPosition + controllerDelta;
-                    Quaternion newGripperRotation = controllerDeltaRotation * initialGripperRotation;
+                    Vector3 newPos = initialGripperPosition + deltaPos;
+                    Quaternion newRot = deltaRot * initialGripperRotation;
 
-                    // Apply the relative movement to the gripper
-                    spot.SetGripperWorldPose(newGripperPosition, newGripperRotation);
-
-                    // Set UI labels for relative mode
-                    triggerLabel = "Hold: Move Arm";  // Trigger to hold the arm's relative movement
-                    gripLabel = spot.GetGripperOpen() ? "Close Gripper" : "Open Gripper";  // Toggle gripper state
+                    spot.SetGripperWorldPose(newPos, newRot);
                 }
                 else
                 {
-                    // Reset the relative mode when the trigger is released
                     isRelativeModeActive = false;
-
-                    // Set UI labels for relative mode when trigger is not held
-                    triggerLabel = "Hold: Move Arm";
-                    gripLabel = "Open/Close Gripper";
                 }
                 break;
         }
 
-        model.SetLabels(new[] {
+        // --- UI Labels ---
+        string thumbstickLabel = "Arm Mode";
+        string triggerLabel = triggerHeld ? "" : "Hold: Control Arm";
+        string gripLabel = gripperOpen ? "Close Gripper" : "Open Gripper";
+
+        model.SetLabels(new[]
+        {
             "", "", "",
             thumbstickLabel,
             triggerLabel,
@@ -108,51 +85,7 @@ public class Arm6AxisMode : NewControlMode
     }
 
     public override string GetName() => "Arm (6 Axis)";
-
     public override int ModeIndex => 2;
-
     public override bool ControlsSpot => true;
-
     public override bool RequiresArmCamera => true;
 }
-
-
-
-
-// Simplest version --
-// using System;
-// using UnityEngine;
-
-// public class Arm6AxisMode : NewControlMode
-// {
- 
-//     public override void ControlUpdate(SpotMode spot, ControllerModel model, ControllerModel _)
-//     {
-//         model.SetLabels(new[] {
-//             "",
-//             "",
-//             "",
-//             "",
-//             spot.GetGripperOpen() ? "Close Gripper" : "Open Gripper",
-//             "",
-//             ""
-//         });
-
-//         spot.SetGripperPos(model.anchor.transform);
-
-//         bool indexTrigger;
-//         if (model.isLeft)
-//             indexTrigger = OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger);
-//         else
-//             indexTrigger = OVRInput.GetDown(OVRInput.Button.SecondaryIndexTrigger);
-//         if (indexTrigger)
-//             spot.SetGripperOpen(!spot.GetGripperOpen());
-//     }
-
-
-//     public override string GetName() => "Arm (6 Axis)";
-//     public override int ModeIndex => 2;
-//     public override bool ControlsSpot => true;
-//     public override bool RequiresArmCamera => true;
-
-// }

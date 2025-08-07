@@ -19,7 +19,7 @@ public class ArmCameraUIManager : MonoBehaviour
     public JPEGImageSubscriber rightSubscriber;
 
     public string spot1Topic = "/spot/stream_image/hand_color_image/image";
-    public string spot2Topic = "/spot2/stream_image/hand_color_image/image";
+    public string spot2Topic = "/spot/stream_image2/hand_color_image/image";
 
     private UIManager uiManager;
 

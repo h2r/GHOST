@@ -9,7 +9,7 @@ public class ArmCameraUIController : MonoBehaviour
 
     [Header("ROS Topics")]
     public string spot1Topic = "/spot/stream_image/hand_color_image/image";
-    public string spot2Topic = "/spot2/stream_image/hand_color_image/image";
+    public string spot2Topic = "/spot/stream_image2/hand_color_image/image";
 
     [Header("UI Settings")]
     public Vector3 positionOffsetRight = new Vector3(10f, 8f, 435f); // works for your setup
