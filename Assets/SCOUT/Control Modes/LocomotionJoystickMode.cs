@@ -114,9 +114,9 @@ public class LocomotionJoystickMode : NewControlMode
                         currentTurnVelocity = 0f;
                     }
                 }
+                
                 else
                 {
-                    // Decay inertia velocity if no input
                     if (useRotationalInertia && Mathf.Abs(currentTurnVelocity) > 0.01f)
                     {
                         currentTurnVelocity = Mathf.Lerp(currentTurnVelocity, 0f, turnDamping * Time.deltaTime);
@@ -131,30 +131,52 @@ public class LocomotionJoystickMode : NewControlMode
         }
         else
         {
+            //Up/down movement logic when not rotating 
+            bool moveUp = model.isLeft
+                ? OVRInput.Get(OVRInput.Button.Three)  // X
+                : OVRInput.Get(OVRInput.Button.One);   // A
+
+            bool moveDown = model.isLeft
+                ? OVRInput.Get(OVRInput.Button.Four)   // Y
+                : OVRInput.Get(OVRInput.Button.Two);   // B
+
+            Vector3 move = Vector3.zero;
+
+            if (moveUp)
+                move += Vector3.up;
+            if (moveDown)
+                move += Vector3.down;
+            
+            //horizontal movement/strafe 
             if (joystick.magnitude > 0.1f)
             {
-                Vector3 move = cameraRig.transform.forward * joystick.y + cameraRig.transform.right * joystick.x;
-                move.y = 0;
-                cameraRig.transform.position += move * moveSpeed * Time.deltaTime;
+                Vector3 horizontalMove = cameraRig.transform.forward * joystick.y + cameraRig.transform.right * joystick.x;
+                horizontalMove.y = 0;
+                move += horizontalMove;
             }
+
+            cameraRig.transform.position += move * moveSpeed * Time.deltaTime;
         }
+        
+       
 
         prevJoyX = joystick.x;
 
         bool resetY = model.isLeft
             ? OVRInput.GetDown(OVRInput.Button.Three)
             : OVRInput.GetDown(OVRInput.Button.One);
-
-        if (resetY && hasInitialY)
-        {
-            Vector3 pos = cameraRig.transform.position;
-            pos.y = initialY;
-            cameraRig.transform.position = pos;
-        }
+            
+        //temporarily disable resetting Y to initial position
+        // if (resetY && hasInitialY)
+        // {
+        //     Vector3 pos = cameraRig.transform.position;
+        //     pos.y = initialY;
+        //     cameraRig.transform.position = pos;
+        // }
 
         string[] labels = new string[6];
-        labels[0] = "";
-        labels[1] = "";
+        labels[0] = "Up";
+        labels[1] = "Down"; 
         labels[2] = "";
         labels[3] = trigger ? "Rotate" : "Fly";
         labels[4] = trigger ? "" : "Hold: Rotate";
