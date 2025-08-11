@@ -20,7 +20,7 @@ public class UIRaycast : MonoBehaviour
 
     public void Update()
     {
-        if (uiManager.GetOpen())
+        if (uiManager.modeManager.isMenuOpen)
         {
             lineRenderer.enabled = true;
 

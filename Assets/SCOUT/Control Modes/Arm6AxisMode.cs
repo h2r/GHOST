@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class Arm6AxisMode : NewControlMode
+public class Arm6AxisMode : OneControllerMode
 {
     public enum ArmControlMode
     {
@@ -18,7 +18,7 @@ public class Arm6AxisMode : NewControlMode
     private Quaternion initialGripperRotation;
     private bool isRelativeModeActive = false;
 
-    public override void ControlUpdate(SpotMode spot, ControllerModel model, ControllerModel _)
+    public override void ControlUpdate(SpotMode spot, ControllerModel model)
     {
         // --- Input ---
         bool handDown = model.isLeft
@@ -70,22 +70,18 @@ public class Arm6AxisMode : NewControlMode
         }
 
         // --- UI Labels ---
-        string thumbstickLabel = "Arm Mode";
-        string triggerLabel = triggerHeld ? "" : "Hold: Control Arm";
-        string gripLabel = gripperOpen ? "Close Gripper" : "Open Gripper";
-
-        model.SetLabels(new[]
-        {
-            "", "", "",
-            thumbstickLabel,
-            triggerLabel,
-            gripLabel,
-            ""
-        });
+        model.joystickLabel = "Arm Mode";
+        model.indexLabel = triggerHeld ? "" : "Hold: Control Arm";
+        model.gripLabel = gripperOpen ? "Close Gripper" : "Open Gripper";
     }
 
     public override string GetName() => "Arm (6 Axis)";
     public override int ModeIndex => 2;
     public override bool ControlsSpot => true;
     public override bool RequiresArmCamera => true;
+
+    public override void AssignDefaultLabels(ControllerModel exampleModel)
+    {
+        exampleModel.indexLabel = "Open Gripper";
+    }
 }

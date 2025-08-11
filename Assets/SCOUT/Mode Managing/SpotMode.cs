@@ -1,13 +1,13 @@
 using RosSharp.RosBridgeClient;
 using UnityEngine;
 
-public class SpotMode : NamedMode
+public class SpotMode : NamedOption
 {
     public GameObject rosConnector, dummyGripper;
     public string modeName;
     public Color color;
 
-    public SpotColor spotColor; 
+    public SpotColor spotColor;
     private ThreadedMoveSpot moveSpot;
     private SetGripper setGripper;
     private bool isGripperOpen = false;
@@ -56,7 +56,7 @@ public class SpotMode : NamedMode
     {
         if (dummyGripper == null) return;
         dummyGripper.transform.SetPositionAndRotation(position, rotation);
-     }
+    }
 
     public Transform GetGripperPos()
     {
@@ -88,11 +88,16 @@ public class SpotMode : NamedMode
             Debug.LogWarning("ThreadedStowArm not found on rosConnector!");
         }
     }
-    
+
 
 
     public override string GetName()
     {
         return modeName;
+    }
+    
+    public override Color GetSelectedColor()
+    {
+        return color;
     }
 }

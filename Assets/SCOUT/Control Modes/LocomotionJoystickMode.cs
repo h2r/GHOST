@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class LocomotionJoystickMode : NewControlMode
+public class LocomotionJoystickMode : OneControllerMode
 {
     [Header("References")]
     public GameObject cameraRig;
@@ -48,7 +48,7 @@ public class LocomotionJoystickMode : NewControlMode
     private float lastSnapTime = 0f;
     private float currentTurnVelocity = 0f;
 
-    public override void ControlUpdate(SpotMode spot, ControllerModel model, ControllerModel _)
+    public override void ControlUpdate(SpotMode spot, ControllerModel model)
     {
         if (vignette != null)
             vignette.SetActive(vignetteEnabled);
@@ -114,7 +114,7 @@ public class LocomotionJoystickMode : NewControlMode
                         currentTurnVelocity = 0f;
                     }
                 }
-                
+
                 else
                 {
                     if (useRotationalInertia && Mathf.Abs(currentTurnVelocity) > 0.01f)
@@ -146,7 +146,7 @@ public class LocomotionJoystickMode : NewControlMode
                 move += Vector3.up;
             if (moveDown)
                 move += Vector3.down;
-            
+
             //horizontal movement/strafe 
             if (joystick.magnitude > 0.1f)
             {
@@ -157,15 +157,15 @@ public class LocomotionJoystickMode : NewControlMode
 
             cameraRig.transform.position += move * moveSpeed * Time.deltaTime;
         }
-        
-       
+
+
 
         prevJoyX = joystick.x;
 
         bool resetY = model.isLeft
             ? OVRInput.GetDown(OVRInput.Button.Three)
             : OVRInput.GetDown(OVRInput.Button.One);
-            
+
         //temporarily disable resetting Y to initial position
         // if (resetY && hasInitialY)
         // {
@@ -174,15 +174,22 @@ public class LocomotionJoystickMode : NewControlMode
         //     cameraRig.transform.position = pos;
         // }
 
-        string[] labels = new string[6];
-        labels[0] = "Up";
-        labels[1] = "Down"; 
-        labels[2] = "";
-        labels[3] = trigger ? "Rotate" : "Fly";
-        labels[4] = trigger ? "" : "Hold: Rotate";
-        labels[5] = "";
+        // Reset Y label
+        model.axLabel = model.isLeft ? (hasInitialY ? "Reset Y (X)" : "") : (hasInitialY ? "Reset Y (A)" : "");
 
-        model.SetLabels(labels);
+        // Thumbstick label
+        if (grip)
+            model.joystickLabel = "Fly";
+        else if (trigger)
+            model.joystickLabel = "Rotate";
+        else
+            model.joystickLabel = "Locomote";
+
+        // Trigger label
+        model.indexLabel = trigger ? "" : "Hold: Rotate";
+
+        // Gripper label
+        model.gripLabel = grip ? "" : "Hold: Fly";
     }
 
     public override string GetName()
@@ -192,4 +199,12 @@ public class LocomotionJoystickMode : NewControlMode
 
     public override int ModeIndex => 3;
     public override bool ControlsSpot => false;
+    
+    public override void AssignDefaultLabels(ControllerModel exampleModel)
+    {
+        exampleModel.axLabel = "Reset Y";
+        exampleModel.joystickLabel = "Locomote";
+        exampleModel.indexLabel = "Hold: Rotate";
+        exampleModel.gripLabel = "Hold: Fly";
+    }
 }

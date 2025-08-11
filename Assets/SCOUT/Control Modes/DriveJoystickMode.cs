@@ -3,9 +3,9 @@ using System.Diagnostics.Contracts;
 using UnityEngine;
 
 // One controller mode
-public class DriveJoystickMode : NewControlMode
+public class DriveJoystickMode : OneControllerMode
 {
-    public override void ControlUpdate(SpotMode spot, ControllerModel model, ControllerModel _)
+    public override void ControlUpdate(SpotMode spot, ControllerModel model)
     {
         bool doRotate;
         if (model.isLeft)
@@ -13,14 +13,8 @@ public class DriveJoystickMode : NewControlMode
         else
             doRotate = OVRInput.Get(OVRInput.Button.SecondaryIndexTrigger);
 
-        model.SetLabels(new[] {
-            "",
-            "",
-            "",
-            doRotate ? "Rotate" : "Drive",
-            doRotate ? "" : "Hold: Rotate",
-            ""
-        });
+        model.joystickLabel = doRotate ? "Rotate" : "Drive";
+        model.indexLabel = doRotate ? "" : "Hold: Rotate";
 
         Vector2 joystick;
         if (model.isLeft)
@@ -40,4 +34,10 @@ public class DriveJoystickMode : NewControlMode
 
     public override int ModeIndex => 1;
     public override bool ControlsSpot => true;
+
+    public override void AssignDefaultLabels(ControllerModel exampleModel)
+    {
+        exampleModel.joystickLabel = "Drive";
+        exampleModel.indexLabel = "Rotate";
+    }
 }

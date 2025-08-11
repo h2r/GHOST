@@ -1,7 +1,8 @@
 using System.Linq.Expressions;
 using UnityEngine;
 
-public abstract class NamedMode : MonoBehaviour
+public abstract class NamedOption : MonoBehaviour
 {
     public abstract string GetName();
+    public abstract Color GetSelectedColor();
 }

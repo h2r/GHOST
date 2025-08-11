@@ -2,26 +2,12 @@ using System;
 using UnityEngine;
 
 // Two controller mode
-public class DriveAndRotateMode : NewControlMode
+public class DriveAndRotateMode : TwoControllerMode
 {
     public override void ControlUpdate(SpotMode spot, ControllerModel leftModel, ControllerModel rightModel)
     {
-        leftModel.SetLabels(new[] {
-            "",
-            "",
-            "",
-            "Drive",
-            "",
-            ""
-        });
-        rightModel.SetLabels(new[] {
-            "",
-            "",
-            "",
-            "Rotate",
-            "",
-            ""
-        });
+        leftModel.joystickLabel = "Drive";
+        rightModel.joystickLabel = "Rotate";
 
         var leftJoystick = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick);
         var rightJoystick = OVRInput.Get(OVRInput.Axis2D.SecondaryThumbstick);
@@ -40,4 +26,10 @@ public class DriveAndRotateMode : NewControlMode
 
     public override int ModeIndex => 4;
     public override bool ControlsSpot => true;
+
+    public override void AssignDefaultLabels(ControllerModel leftExampleModel, ControllerModel rightExampleModel)
+    {
+        leftExampleModel.joystickLabel = "Drive";
+        rightExampleModel.joystickLabel = "Rotate";
+    }
 }

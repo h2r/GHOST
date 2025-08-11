@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using Meta.WitAi.Composer;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,29 +7,28 @@ using UnityEngine.UI;
 public class ButtonList : MonoBehaviour
 {
     public string title;
-    public NamedMode[] options;
+    public bool isHorizontal;
+    public NamedOption[] options;
     public GameObject titlePrefab, buttonPrefab;
-    public Sprite redBlueSprite, blueRedSprite; 
-    private bool swap; 
+
+    public Func<NamedOption> optionGetter;
+    public Action<NamedOption> optionSetter;
 
     private GameObject[] buttons;
 
     public void Start()
     {
-        float y = 0;
-        float x = 0; 
-        if (options.Length > 1) {
+        float x = 0, y = 0;
+        
+        if (title != "" && !isHorizontal)
+        {
             var titleObj = Instantiate(titlePrefab, transform);
             titleObj.GetComponent<RectTransform>().localPosition = new(0, 0, 0);
             titleObj.GetComponent<TMP_Text>().text = title;
             y = -55;
         }
-        else
-        {
-            x = -325;
-        }
 
-            buttons = new GameObject[options.Length];
+        buttons = new GameObject[options.Length];
 
         for (int i = 0; i < options.Length; i++)
         {
@@ -38,12 +36,40 @@ public class ButtonList : MonoBehaviour
             buttons[i].GetComponent<RectTransform>().localPosition = new(x, y, 0);
             buttons[i].transform.Find("Text").GetComponent<TMP_Text>().text = options[i].GetName();
 
-            y -= 55;
+            if (isHorizontal)
+                x += 150;
+            else
+                y -= 55;
         }
-        if(options.Length == 1)
+    }
+
+    void Update()
+    {
+        if (optionGetter == null)
+            return;
+
+        var selectedOption = optionGetter();
+        for (int i = 0; i < buttons.Length; i++)
         {
-            buttons[0].GetComponent<Image>().sprite = blueRedSprite;
+            Color color;
+            if (options[i] == selectedOption)
+            {
+                var selectedColor = selectedOption.GetSelectedColor();
+                color = new(selectedColor.r, selectedColor.g, selectedColor.b, 0.5f);
+            }
+            else
+            {
+                color = new(1, 1, 1, 0.5f);
+            }
+            buttons[i].GetComponent<Image>().color = color;
         }
+    }
+
+    public void Reset()
+    {
+        // TEMP - until can distinguish UIOption superclass
+        if (!options[0].GetName().StartsWith("Swap"))
+            optionSetter(options[0]);
     }
 
     public bool TryHoverButton(GameObject hitObj)
@@ -51,54 +77,25 @@ public class ButtonList : MonoBehaviour
         return buttons.Contains(hitObj);
     }
 
-    public bool PressButton(GameObject hitObj, Action<NamedMode> action)
+    public bool PressButton(GameObject hitObj)
     {
         if (!buttons.Contains(hitObj))
             return false;
 
         for (int i = 0; i < buttons.Length; i++)
         {
-            var button = buttons[i];
-            Color color;
-            if (options[i].GetType() == typeof(SwapSpot))
+            if (buttons[i] == hitObj)
             {
-
-                action(options[i]);
-                swap = !swap;
-                var img = button.GetComponent<Image>();
-                img.sprite = swap ? redBlueSprite : blueRedSprite;
-                return true; 
+                optionSetter(options[i]);
+                break;
             }
-            else if (button == hitObj)
-            {
-                if (options[i].GetType() == typeof(SpotMode))
-                {
-                    var spotColor = ((SpotMode)options[i]).color;
-                    color = new(spotColor.r, spotColor.g, spotColor.b, 0.5f);
-                }
-                else
-                {
-                    color = new(0, 1, 0, 0.5f);
-                }
-                action(options[i]);
-            }
-            else
-            {
-                color = new(1, 1, 1, 0.5f);
-            }
-            button.GetComponent<Image>().color = color;
         }
 
         return true;
     }
 
-    public bool PressButtonIndex(int index, Action<NamedMode> action)
+    public bool PressButtonIndex(int index)
     {
-        return PressButton(buttons[index], action); 
-    }
-
-    public GameObject GetButton(int index)
-    {
-        return buttons[index];
+        return PressButton(buttons[index]); 
     }
 }

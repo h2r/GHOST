@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class DriveAndArm : NewControlMode
+public class DriveAndArm : OneControllerMode
 {
     public enum ArmControlMode
     {
@@ -19,7 +19,7 @@ public class DriveAndArm : NewControlMode
     private Quaternion initialGripperRotation;
     private bool isRelativeModeActive = false;
 
-    public override void ControlUpdate(SpotMode spot, ControllerModel model, ControllerModel _)
+    public override void ControlUpdate(SpotMode spot, ControllerModel model)
     {
         bool isLeft = model.isLeft;
 
@@ -112,14 +112,9 @@ public class DriveAndArm : NewControlMode
             gripLabel = "Hold: Rotate";
         }
 
-        model.SetLabels(new[]
-        {
-            "", "", "",
-            thumbstickLabel,
-            triggerLabel,
-            gripLabel,
-            ""
-        });
+        model.joystickLabel = thumbstickLabel;
+        model.indexLabel = triggerLabel;
+        model.gripLabel = gripLabel;
     }
 
     public override string GetName() => "Dynamic Control";
@@ -127,4 +122,11 @@ public class DriveAndArm : NewControlMode
     public override int ModeIndex => 0;
 
     public override bool ControlsSpot => true;
+
+    public override void AssignDefaultLabels(ControllerModel exampleModel)
+    {
+        exampleModel.joystickLabel = "Drive";
+        exampleModel.indexLabel = "Hold to Rotate";
+        exampleModel.gripLabel = "Hold to Control Arm";
+    }
 }

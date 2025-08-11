@@ -1,7 +1,7 @@
 using UnityEngine;
 
 // Abstract base class for perspective modes like "Cloud" or "Arm Camera"
-public abstract class PerspectiveMode : NamedMode
+public abstract class PerspectiveMode : NamedOption
 {
     // Called when the mode is selected
     public virtual void PerspectiveStart() { }
@@ -11,4 +11,9 @@ public abstract class PerspectiveMode : NamedMode
 
     // Display name shown in the UI
     public abstract override string GetName();
+
+    public override Color GetSelectedColor()
+    {
+        return Color.green;
+    }
 }

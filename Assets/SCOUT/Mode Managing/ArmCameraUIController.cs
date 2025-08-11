@@ -45,11 +45,11 @@ public class ArmCameraUIController : MonoBehaviour
         UpdatePosition();
 
         // Check for spot swap changes to update ROS topic
-        if (uiManager.AreSpotsSwapped() != lastSwapState)
-        {
-            UpdateTopic();
-            lastSwapState = uiManager.AreSpotsSwapped();
-        }
+        // if (uiManager.AreSpotsSwapped() != lastSwapState)
+        // {
+        //     UpdateTopic();
+        //     lastSwapState = uiManager.AreSpotsSwapped();
+        // }
     }
 
     private void UpdatePosition()
@@ -76,7 +76,7 @@ public class ArmCameraUIController : MonoBehaviour
         if (jpegSubscriber == null)
             return;
 
-        bool spotsSwapped = uiManager.AreSpotsSwapped();
+        bool spotsSwapped = false;//uiManager.AreSpotsSwapped();
 
         if (isRightController)
         {

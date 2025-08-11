@@ -36,7 +36,7 @@ public class ArmCameraUIManager : MonoBehaviour
     {
         if (uiManager == null || centerEyeAnchor == null) return;
 
-        bool shouldShow = !uiManager.GetOpen() && uiManager.IsInArmPerspective();
+        bool shouldShow = false;//!uiManager.GetOpen() && uiManager.IsInArmPerspective();
 
         leftUI.SetActive(shouldShow);
         rightUI.SetActive(shouldShow);

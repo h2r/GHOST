@@ -2,9 +2,9 @@ using System;
 using UnityEngine;
 
 // Two controller mode
-public class ArmJoystickMode : NewControlMode
+public class ArmJoystickMode : TwoControllerMode
 {
-    public override void ControlUpdate(SpotMode spot, ControllerModel model, ControllerModel _)
+    public override void ControlUpdate(SpotMode spot, ControllerModel leftModel, ControllerModel rightModel)
     {
         var joystick = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick);
         if (joystick.magnitude > 0.1)
@@ -22,4 +22,9 @@ public class ArmJoystickMode : NewControlMode
 
     public override int ModeIndex => 5;
     public override bool ControlsSpot => true;
+
+    public override void AssignDefaultLabels(ControllerModel leftExampleModel, ControllerModel rightExampleModel)
+    {
+        leftExampleModel.joystickLabel = "Move Gripper";
+    }
 }
