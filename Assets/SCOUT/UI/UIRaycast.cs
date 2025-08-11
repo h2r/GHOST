@@ -13,9 +13,22 @@ public class UIRaycast : MonoBehaviour
 
     private LineRenderer lineRenderer;
 
+    // Highlight box for hovered UI element
+    private GameObject highlightBox;
+
     public void Start()
     {
-        lineRenderer = GetComponent<LineRenderer>();
+    lineRenderer = GetComponent<LineRenderer>();
+
+    // Create highlight box (Image with white border)
+    highlightBox = new GameObject("HighlightBox");
+    var image = highlightBox.AddComponent<UnityEngine.UI.Image>();
+    image.color = new Color(1, 1, 1, 0); // Transparent fill
+    image.raycastTarget = false;
+    var outline = highlightBox.AddComponent<UnityEngine.UI.Outline>();
+    outline.effectColor = Color.white;
+    outline.effectDistance = new Vector2(4, 4);
+    highlightBox.SetActive(false);
     }
 
     public void Update()
@@ -43,10 +56,20 @@ public class UIRaycast : MonoBehaviour
                 if (rect != null && uiManager.TryRaycastHover(button))
                 {
                     endPoint = rect.position;
+                    // Show highlight box for hovered UI element 
+                    ShowHighlight(rect);
                     if ((OVRInput.GetDown(OVRInput.Button.Three) && isLeft) ||
                         (OVRInput.GetDown(OVRInput.Button.One) && !isLeft))
                         uiManager.RaycastPress(button);
                 }
+                else
+                {
+                    HideHighlight();
+                }
+            }
+            else
+            {
+                HideHighlight();
             }
 
             // Draw the ray
@@ -56,7 +79,30 @@ public class UIRaycast : MonoBehaviour
         else
         {
             lineRenderer.enabled = false;
+            HideHighlight();
         }
+    }
+    // Show highlight box around the hovered UI element
+    private void ShowHighlight(RectTransform targetRect)
+    {
+        if (highlightBox == null || targetRect == null) return;
+        highlightBox.transform.SetParent(targetRect.parent, false);
+        var highlightRect = highlightBox.GetComponent<RectTransform>();
+        if (highlightRect == null)
+            highlightRect = highlightBox.AddComponent<RectTransform>();
+        highlightRect.anchorMin = targetRect.anchorMin;
+        highlightRect.anchorMax = targetRect.anchorMax;
+        highlightRect.pivot = targetRect.pivot;
+        highlightRect.sizeDelta = targetRect.sizeDelta;
+        highlightRect.anchoredPosition = targetRect.anchoredPosition;
+        highlightBox.SetActive(true);
+    }
+
+    // Hide highlight box
+    private void HideHighlight()
+    {
+        if (highlightBox != null)
+            highlightBox.SetActive(false);
     }
 
     Vector2 WorldPointToCanvasScreenPoint(Vector3 origin, Vector3 direction)
@@ -72,4 +118,5 @@ public class UIRaycast : MonoBehaviour
 
         return Vector2.zero;
     }
-}
+    }
+
