@@ -1928,7 +1928,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 381e127de9f024afab1e8cb841ff9e4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  title: Right Control
+  title: Right Control Mode
   options:
   - {fileID: 960356928}
   - {fileID: 5238201357717281536}
@@ -7585,7 +7585,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 381e127de9f024afab1e8cb841ff9e4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  title: Perspective
+  title: Operator View
   options:
   - {fileID: 1205249646}
   - {fileID: 2094657730}
@@ -9141,7 +9141,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 381e127de9f024afab1e8cb841ff9e4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  title: Perspective
+  title: Operator View
   options:
   - {fileID: 1205249646}
   - {fileID: 2094657730}
@@ -9476,7 +9476,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 381e127de9f024afab1e8cb841ff9e4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  title: Right Spot
+  title: Right Controller Assignment
   options:
   - {fileID: 8166042499262673834}
   - {fileID: 1246843491585836373}
@@ -16354,7 +16354,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rosConnector: {fileID: 669083912}
   dummyGripper: {fileID: 1492351514}
-  modeName: Spot Two
+  modeName: Blue Spot
   color: {r: 0, g: 0.046749115, b: 1, a: 0}
   spotColor: 1
 --- !u!1 &1385481233091570360
@@ -17876,7 +17876,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 381e127de9f024afab1e8cb841ff9e4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  title: Left Spot
+  title: Left Controller Assignment
   options:
   - {fileID: 8166042499262673834}
   - {fileID: 1246843491585836373}
@@ -17978,7 +17978,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 381e127de9f024afab1e8cb841ff9e4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  title: Left Control
+  title: Left Control Mode
   options:
   - {fileID: 960356928}
   - {fileID: 5238201357717281536}
@@ -19613,7 +19613,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rosConnector: {fileID: 2123763348}
   dummyGripper: {fileID: 244727969}
-  modeName: Spot One
+  modeName: Red Spot
   color: {r: 1, g: 0, b: 0, a: 0}
   spotColor: 0
 --- !u!224 &8234443779348987762
