@@ -3728,6 +3728,10 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1137478773745686203, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1137478773798299895, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
       value: ws://128.148.140.230:9090
@@ -4644,6 +4648,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1137478773745686191, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       insertIndex: 8
       addedObject: {fileID: 2123763410}
+    - targetCorrespondingSourceObject: {fileID: 1137478773745686191, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      insertIndex: 9
+      addedObject: {fileID: 2123763445}
     - targetCorrespondingSourceObject: {fileID: 1137478773745686191, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2123763374}
@@ -6207,6 +6214,7 @@ MonoBehaviour:
   serializer: 0
   protocol: 0
   rosBridgeServerUrl: ws://128.148.140.230:9090
+  rosTicksPerSecond: 100
 --- !u!1 &671513986
 GameObject:
   m_ObjectHideFlags: 0
@@ -15867,6 +15875,7 @@ MonoBehaviour:
   serializer: 0
   protocol: 0
   rosBridgeServerUrl: ws://128.148.140.230:9090
+  rosTicksPerSecond: 100
 --- !u!114 &2123763412
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15880,6 +15889,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   topic: /spot/arm_stow
+--- !u!114 &2123763445
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2123763348}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 703ec150f7f22453e8a793889bbc02dd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  topic: /spot/set_gripper
 --- !u!1 &2127769091
 GameObject:
   m_ObjectHideFlags: 0

@@ -9,7 +9,7 @@ public class SpotMode : NamedOption
 
     public SpotColor spotColor;
     private ThreadedMoveSpot moveSpot;
-    private SetGripper setGripper;
+    private ThreadedSetGripper setGripper;
     private bool isGripperOpen = false;
 
     private ThreadedStowArm stowArm;
@@ -20,9 +20,9 @@ public class SpotMode : NamedOption
         if (rosConnector != null)
         {
             moveSpot = rosConnector.GetComponent<ThreadedMoveSpot>();
-            setGripper = rosConnector.GetComponent<SetGripper>();
+            setGripper = rosConnector.GetComponent<ThreadedSetGripper>();
             stowArm = rosConnector.GetComponent<ThreadedStowArm>();
-            setGripper.closeGripper();
+            setGripper.CloseGripper();
         }
     }
     public void SetCurrentModeIndex(int index)
@@ -72,9 +72,9 @@ public class SpotMode : NamedOption
     {
         this.isGripperOpen = isGripperOpen;
         if (isGripperOpen)
-            setGripper.openGripper();
+            setGripper.OpenGripper();
         else
-            setGripper.closeGripper();
+            setGripper.CloseGripper();
     }
 
     public void StowArm()
