@@ -12,23 +12,11 @@ public class UIRaycast : MonoBehaviour
     public bool isLeft;
 
     private LineRenderer lineRenderer;
-
-    // Highlight box for hovered UI element
     private GameObject highlightBox;
 
     public void Start()
     {
     lineRenderer = GetComponent<LineRenderer>();
-
-    // Create highlight box (Image with white border)
-    highlightBox = new GameObject("HighlightBox");
-    var image = highlightBox.AddComponent<UnityEngine.UI.Image>();
-    image.color = new Color(1, 1, 1, 0); // Transparent fill
-    image.raycastTarget = false;
-    var outline = highlightBox.AddComponent<UnityEngine.UI.Outline>();
-    outline.effectColor = Color.white;
-    outline.effectDistance = new Vector2(4, 4);
-    highlightBox.SetActive(false);
     }
 
     public void Update()
@@ -57,7 +45,12 @@ public class UIRaycast : MonoBehaviour
                 {
                     endPoint = rect.position;
                     // Show highlight box for hovered UI element 
-                    ShowHighlight(rect);
+                    if (button != highlightBox)
+                    {
+                        HideHighlight();
+                        ShowHighlight(button);
+                        highlightBox = button; 
+                    }
                     if ((OVRInput.GetDown(OVRInput.Button.Three) && isLeft) ||
                         (OVRInput.GetDown(OVRInput.Button.One) && !isLeft))
                         uiManager.RaycastPress(button);
@@ -83,26 +76,28 @@ public class UIRaycast : MonoBehaviour
         }
     }
     // Show highlight box around the hovered UI element
-    private void ShowHighlight(RectTransform targetRect)
+    private void ShowHighlight(GameObject targetRect)
     {
-        if (highlightBox == null || targetRect == null) return;
-        highlightBox.transform.SetParent(targetRect.parent, false);
-        var highlightRect = highlightBox.GetComponent<RectTransform>();
-        if (highlightRect == null)
-            highlightRect = highlightBox.AddComponent<RectTransform>();
-        highlightRect.anchorMin = targetRect.anchorMin;
-        highlightRect.anchorMax = targetRect.anchorMax;
-        highlightRect.pivot = targetRect.pivot;
-        highlightRect.sizeDelta = targetRect.sizeDelta;
-        highlightRect.anchoredPosition = targetRect.anchoredPosition;
-        highlightBox.SetActive(true);
+        Transform highlightTransform = targetRect.transform.Find("Highlight");
+        if (highlightTransform != null)
+        {
+            highlightTransform.gameObject.SetActive(true);
+        }
     }
 
     // Hide highlight box
     private void HideHighlight()
     {
         if (highlightBox != null)
-            highlightBox.SetActive(false);
+        {
+            //unhighlight graphically and logically
+            Transform highlightTransform = highlightBox.transform.Find("Highlight");
+            if (highlightTransform != null)
+            {
+                highlightTransform.gameObject.SetActive(false);
+            }
+            highlightBox = null; 
+        } 
     }
 
     Vector2 WorldPointToCanvasScreenPoint(Vector3 origin, Vector3 direction)
