@@ -13,7 +13,7 @@ public class ScoutModeManager : MonoBehaviour
     public ControllerModel leftModel, rightModel, leftExampleModel, rightExampleModel;
 
     [NonSerialized]
-    public SuperMode activeSuperMode = SuperMode.Camera;
+    public SuperMode activeSuperMode = SuperMode.SingleDrive;
 
     public SingleDriveSuperMode singleDrive = new();
     public DualDriveSuperMode dualDrive = new();

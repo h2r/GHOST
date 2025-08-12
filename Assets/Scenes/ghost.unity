@@ -20108,7 +20108,8 @@ MonoBehaviour:
   - {fileID: 1208171618}
   - {fileID: 1207437538}
   - {fileID: 1251034219}
-  cameraLists: []
+  cameraLists:
+  - {fileID: 1771937947}
   showSpotButtons: 1
   cameraRig: {fileID: 117133133}
 --- !u!114 &8903260709167177725
