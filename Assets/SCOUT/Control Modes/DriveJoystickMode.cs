@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class DriveJoystickMode : OneControllerMode
 {
+    public PositionPresetController positionPresetController;
+
     public override void ControlUpdate(SpotMode spot, ControllerModel model)
     {
         var doRotate = OVRInput.Get(model.indexButton);
@@ -32,6 +34,11 @@ public class DriveJoystickMode : OneControllerMode
 
         model.indexLabel = (!doRotate && !doHeight) ? "Hold: Rotate" : "";
         model.gripLabel = (!doRotate && !doHeight) ? "Hold: Adjust Height" : "";
+
+        if (OVRInput.GetDown(model.axButton))
+            positionPresetController.CyclePresets();
+
+        model.axLabel = "Cycle Preset";
     }
 
     public override string GetName()
