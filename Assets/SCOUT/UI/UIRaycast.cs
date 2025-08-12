@@ -12,10 +12,11 @@ public class UIRaycast : MonoBehaviour
     public bool isLeft;
 
     private LineRenderer lineRenderer;
+    private GameObject highlightBox;
 
     public void Start()
     {
-        lineRenderer = GetComponent<LineRenderer>();
+    lineRenderer = GetComponent<LineRenderer>();
     }
 
     public void Update()
@@ -43,10 +44,25 @@ public class UIRaycast : MonoBehaviour
                 if (rect != null && uiManager.TryRaycastHover(button))
                 {
                     endPoint = rect.position;
+                    // Show highlight box for hovered UI element 
+                    if (button != highlightBox)
+                    {
+                        HideHighlight();
+                        ShowHighlight(button);
+                        highlightBox = button; 
+                    }
                     if ((OVRInput.GetDown(OVRInput.Button.Three) && isLeft) ||
                         (OVRInput.GetDown(OVRInput.Button.One) && !isLeft))
                         uiManager.RaycastPress(button);
                 }
+                else
+                {
+                    HideHighlight();
+                }
+            }
+            else
+            {
+                HideHighlight();
             }
 
             // Draw the ray
@@ -56,7 +72,32 @@ public class UIRaycast : MonoBehaviour
         else
         {
             lineRenderer.enabled = false;
+            HideHighlight();
         }
+    }
+    // Show highlight box around the hovered UI element
+    private void ShowHighlight(GameObject targetRect)
+    {
+        Transform highlightTransform = targetRect.transform.Find("Highlight");
+        if (highlightTransform != null)
+        {
+            highlightTransform.gameObject.SetActive(true);
+        }
+    }
+
+    // Hide highlight box
+    private void HideHighlight()
+    {
+        if (highlightBox != null)
+        {
+            //unhighlight graphically and logically
+            Transform highlightTransform = highlightBox.transform.Find("Highlight");
+            if (highlightTransform != null)
+            {
+                highlightTransform.gameObject.SetActive(false);
+            }
+            highlightBox = null; 
+        } 
     }
 
     Vector2 WorldPointToCanvasScreenPoint(Vector3 origin, Vector3 direction)
@@ -72,4 +113,5 @@ public class UIRaycast : MonoBehaviour
 
         return Vector2.zero;
     }
-}
+    }
+
