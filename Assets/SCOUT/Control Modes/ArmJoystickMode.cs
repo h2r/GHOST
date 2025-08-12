@@ -6,7 +6,7 @@ public class ArmJoystickMode : TwoControllerMode
 {
     public override void ControlUpdate(SpotMode spot, ControllerModel leftModel, ControllerModel rightModel)
     {
-        var joystick = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick);
+        var joystick = OVRInput.Get(leftModel.joystick);
         if (joystick.magnitude > 0.1)
         {
             var gripperTf = spot.GetGripperPos();

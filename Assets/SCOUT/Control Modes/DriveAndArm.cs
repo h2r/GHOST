@@ -21,18 +21,11 @@ public class DriveAndArm : OneControllerMode
 
     public override void ControlUpdate(SpotMode spot, ControllerModel model)
     {
-        bool isLeft = model.isLeft;
-
-        var indexTrigger = isLeft ? OVRInput.Button.PrimaryIndexTrigger : OVRInput.Button.SecondaryIndexTrigger;
-        var gripButton = isLeft ? OVRInput.Button.PrimaryHandTrigger : OVRInput.Button.SecondaryHandTrigger;
-        var joystickAxis = isLeft ? OVRInput.Axis2D.PrimaryThumbstick : OVRInput.Axis2D.SecondaryThumbstick;
-        var stowButton = isLeft ? OVRInput.Button.Two : OVRInput.Button.Four;  // Y (left) or B (right)
-
-        bool isIndexHeld = OVRInput.Get(indexTrigger);
-        bool indexPressed = OVRInput.GetDown(indexTrigger);
-        bool isGripHeld = OVRInput.Get(gripButton);
-        bool gripPressed = OVRInput.GetDown(gripButton);
-        Vector2 joystick = OVRInput.Get(joystickAxis);
+        bool isIndexHeld = OVRInput.Get(model.indexButton);
+        bool indexPressed = OVRInput.GetDown(model.indexButton);
+        bool isGripHeld = OVRInput.Get(model.gripButton);
+        bool gripPressed = OVRInput.GetDown(model.gripButton);
+        Vector2 joystick = OVRInput.Get(model.joystick);
 
 
         // UI Labels

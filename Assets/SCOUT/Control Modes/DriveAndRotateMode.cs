@@ -9,8 +9,8 @@ public class DriveAndRotateMode : TwoControllerMode
         leftModel.joystickLabel = "Drive";
         rightModel.joystickLabel = "Rotate";
 
-        var leftJoystick = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick);
-        var rightJoystick = OVRInput.Get(OVRInput.Axis2D.SecondaryThumbstick);
+        var leftJoystick = OVRInput.Get(leftModel.joystick);
+        var rightJoystick = OVRInput.Get(rightModel.joystick);
 
         if (leftJoystick.magnitude > 0.1)
             spot.Drive(leftJoystick);

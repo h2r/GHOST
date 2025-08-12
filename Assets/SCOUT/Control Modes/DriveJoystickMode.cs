@@ -7,20 +7,12 @@ public class DriveJoystickMode : OneControllerMode
 {
     public override void ControlUpdate(SpotMode spot, ControllerModel model)
     {
-        bool doRotate;
-        if (model.isLeft)
-            doRotate = OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger);
-        else
-            doRotate = OVRInput.Get(OVRInput.Button.SecondaryIndexTrigger);
+        bool doRotate = OVRInput.Get(model.indexButton);
 
         model.joystickLabel = doRotate ? "Rotate" : "Drive";
         model.indexLabel = doRotate ? "" : "Hold: Rotate";
 
-        Vector2 joystick;
-        if (model.isLeft)
-            joystick = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick);
-        else
-            joystick = OVRInput.Get(OVRInput.Axis2D.SecondaryThumbstick);
+        Vector2 joystick = OVRInput.Get(model.joystick);
         if (doRotate && Mathf.Abs(joystick.x) > 0.1)
             spot.Rotate(joystick.x * 0.5f);
         else if (!doRotate && joystick.magnitude > 0.1)

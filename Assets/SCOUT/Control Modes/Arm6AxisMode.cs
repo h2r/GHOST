@@ -21,13 +21,9 @@ public class Arm6AxisMode : OneControllerMode
     public override void ControlUpdate(SpotMode spot, ControllerModel model)
     {
         // --- Input ---
-        bool handDown = model.isLeft
-            ? OVRInput.GetDown(OVRInput.Button.PrimaryHandTrigger)
-            : OVRInput.GetDown(OVRInput.Button.SecondaryHandTrigger);
+        bool handDown = OVRInput.GetDown(model.gripButton);
 
-        bool triggerHeld = model.isLeft
-            ? OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger)
-            : OVRInput.Get(OVRInput.Button.SecondaryIndexTrigger);
+        bool triggerHeld = OVRInput.Get(model.indexButton);
 
         // Toggle gripper on trigger press (works regardless of mode or held state)
         if (handDown)

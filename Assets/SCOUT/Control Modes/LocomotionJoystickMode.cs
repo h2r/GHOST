@@ -53,17 +53,9 @@ public class LocomotionJoystickMode : OneControllerMode
         if (vignette != null)
             vignette.SetActive(vignetteEnabled);
 
-        Vector2 joystick = model.isLeft
-            ? OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick)
-            : OVRInput.Get(OVRInput.Axis2D.SecondaryThumbstick);
-
-        bool trigger = model.isLeft
-            ? OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger) > 0.5f
-            : OVRInput.Get(OVRInput.Axis1D.SecondaryIndexTrigger) > 0.5f;
-
-        bool grip = model.isLeft
-            ? OVRInput.Get(OVRInput.Axis1D.PrimaryHandTrigger) > 0.5f
-            : OVRInput.Get(OVRInput.Axis1D.SecondaryHandTrigger) > 0.5f;
+        Vector2 joystick = OVRInput.Get(model.joystick);
+        bool trigger = OVRInput.Get(model.indexButton);
+        bool grip = OVRInput.Get(model.gripButton);
 
         if (trigger && !isTriggerHeld)
         {
@@ -132,13 +124,8 @@ public class LocomotionJoystickMode : OneControllerMode
         else
         {
             //Up/down movement logic when not rotating 
-            bool moveUp = model.isLeft
-                ? OVRInput.Get(OVRInput.Button.Three)  // X
-                : OVRInput.Get(OVRInput.Button.One);   // A
-
-            bool moveDown = model.isLeft
-                ? OVRInput.Get(OVRInput.Button.Four)   // Y
-                : OVRInput.Get(OVRInput.Button.Two);   // B
+            bool moveUp = OVRInput.Get(model.axButton);
+            bool moveDown = OVRInput.Get(model.byButton);
 
             Vector3 move = Vector3.zero;
 
@@ -162,9 +149,7 @@ public class LocomotionJoystickMode : OneControllerMode
 
         prevJoyX = joystick.x;
 
-        bool resetY = model.isLeft
-            ? OVRInput.GetDown(OVRInput.Button.Three)
-            : OVRInput.GetDown(OVRInput.Button.One);
+        bool resetY = OVRInput.GetDown(model.axButton);
 
         //temporarily disable resetting Y to initial position
         // if (resetY && hasInitialY)
