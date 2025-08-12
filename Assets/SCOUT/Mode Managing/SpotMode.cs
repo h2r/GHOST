@@ -1,4 +1,5 @@
 using RosSharp.RosBridgeClient;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class SpotMode : NamedOption
@@ -7,16 +8,13 @@ public class SpotMode : NamedOption
     public string modeName;
     public Color color;
 
-    public SpotColor spotColor;
     private ThreadedMoveSpot moveSpot;
+    private ThreadedStowArm stowArm;
     private ThreadedSetGripper setGripper;
     private PoseStampedRelativePublisher armPose;
 
+    private float curHeight = 0f;
     private bool isGripperOpen = false;
-    // private bool armPoseEnabled = false;
-
-    private ThreadedStowArm stowArm;
-    public int CurrentModeIndex { get; private set; } = -1;
 
     public void Start()
     {
@@ -26,6 +24,8 @@ public class SpotMode : NamedOption
             setGripper = rosConnector.GetComponent<ThreadedSetGripper>();
             stowArm = rosConnector.GetComponent<ThreadedStowArm>();
             armPose = rosConnector.GetComponent<PoseStampedRelativePublisher>();
+
+            moveSpot.Move(Vector2.zero, 0, curHeight);
             setGripper.CloseGripper();
         }
     }
@@ -33,11 +33,6 @@ public class SpotMode : NamedOption
     public void SetArmPoseEnabled(bool armPoseEnabled)
     {
         armPose.enabled = armPoseEnabled;
-    }
-
-    public void SetCurrentModeIndex(int index)
-    {
-        CurrentModeIndex = index;
     }
 
     public void Drive(Vector2 direction)
@@ -52,6 +47,15 @@ public class SpotMode : NamedOption
         // print(modeName + " rotate: " + direction);
         if (rosConnector != null)
             moveSpot.Move(Vector2.zero, direction, 0);
+    }
+
+    public void AdjustHeight(float deltaHeight)
+    {
+        if (rosConnector != null)
+        {
+            curHeight += deltaHeight;
+            moveSpot.Move(Vector2.zero, 0, curHeight);
+        }
     }
 
     public void SetGripperPos(Transform tf)
@@ -98,8 +102,6 @@ public class SpotMode : NamedOption
             Debug.LogWarning("ThreadedStowArm not found on rosConnector!");
         }
     }
-
-
 
     public override string GetName()
     {

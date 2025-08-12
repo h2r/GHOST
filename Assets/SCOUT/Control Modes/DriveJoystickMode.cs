@@ -1,22 +1,34 @@
-using System;
-using System.Diagnostics.Contracts;
 using UnityEngine;
 
-// One controller mode
 public class DriveJoystickMode : OneControllerMode
 {
     public override void ControlUpdate(SpotMode spot, ControllerModel model)
     {
-        bool doRotate = OVRInput.Get(model.indexButton);
+        var doRotate = OVRInput.Get(model.indexButton);
+        var doHeight = OVRInput.Get(model.gripButton);
 
-        model.joystickLabel = doRotate ? "Rotate" : "Drive";
-        model.indexLabel = doRotate ? "" : "Hold: Rotate";
+        var joystick = OVRInput.Get(model.joystick);
+        if (doRotate)
+        {
+            model.joystickLabel = "Rotate";
+            if (Mathf.Abs(joystick.x) > 0.1)
+                spot.Rotate(joystick.x * 0.5f);
+        }
+        else if (doHeight)
+        {
+            model.joystickLabel = "Adjust Height";
+            if (Mathf.Abs(joystick.y) > 0.1)
+                spot.AdjustHeight(joystick.y * 0.1f);
+        }
+        else
+        {
+            model.joystickLabel = "Drive";
+            if (joystick.magnitude > 0.1)
+                spot.Drive(joystick * 0.5f);
+        }
 
-        Vector2 joystick = OVRInput.Get(model.joystick);
-        if (doRotate && Mathf.Abs(joystick.x) > 0.1)
-            spot.Rotate(joystick.x * 0.5f);
-        else if (!doRotate && joystick.magnitude > 0.1)
-            spot.Drive(joystick * 0.5f);
+        model.indexLabel = (!doRotate && !doHeight) ? "Hold: Rotate" : "";
+        model.gripLabel = (!doRotate && !doHeight) ? "Hold: Adjust Height" : "";
     }
 
     public override string GetName()
