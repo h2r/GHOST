@@ -4,7 +4,8 @@ using UnityEngine;
 public enum SuperMode
 {
     SingleDrive,
-    DualDrive
+    DualDrive, 
+    Camera
 }
 
 public class ScoutModeManager : MonoBehaviour
@@ -12,38 +13,40 @@ public class ScoutModeManager : MonoBehaviour
     public ControllerModel leftModel, rightModel, leftExampleModel, rightExampleModel;
 
     [NonSerialized]
-    public SuperMode activeSuperMode = SuperMode.SingleDrive;
+    public SuperMode activeSuperMode = SuperMode.Camera;
 
     public SingleDriveSuperMode singleDrive = new();
     public DualDriveSuperMode dualDrive = new();
+    public CameraSuperMode cameraView = new(); 
 
     [NonSerialized]
     public bool isMenuOpen = true;
 
     void Update()
     {
-        if (isMenuOpen)
-        {
-            leftModel.ClearLabels();
-            rightModel.ClearLabels();
-            leftModel.color = Color.white;
-            rightModel.color = Color.white;
+        //commenting out to keep controller colors and labels 
+        //if (isMenuOpen)
+        //{
+        //    leftModel.ClearLabels();
+        //    rightModel.ClearLabels();
+        //    leftModel.color = Color.white;
+        //    rightModel.color = Color.white;
 
-            // leftExampleModel.ClearLabels();
-            // rightExampleModel.ClearLabels();
-            // switch (activeSuperMode)
-            // {
-            //     case SuperMode.SingleDrive:
-            //         singleDrive.AssignExampleModels(leftExampleModel, rightExampleModel);
-            //         break;
+        //    // leftExampleModel.ClearLabels();
+        //    // rightExampleModel.ClearLabels();
+        //    // switch (activeSuperMode)
+        //    // {
+        //    //     case SuperMode.SingleDrive:
+        //    //         singleDrive.AssignExampleModels(leftExampleModel, rightExampleModel);
+        //    //         break;
 
-            //     case SuperMode.DualDrive:
-            //         dualDrive.AssignExampleModels(leftExampleModel, rightExampleModel);
-            //         break;
-            // }
+        //    //     case SuperMode.DualDrive:
+        //    //         dualDrive.AssignExampleModels(leftExampleModel, rightExampleModel);
+        //    //         break;
+        //    // }
 
-            return;
-        }
+        //    return;
+        //}
 
         switch (activeSuperMode)
         {
@@ -122,5 +125,14 @@ public class DualDriveSuperMode
         {
             control.AssignDefaultLabels(leftExampleModel, rightExampleModel);
         }
+    }
+}
+
+public class CameraSuperMode
+{
+    public CameraMode cameraMode; 
+    public void Update()
+    {
+        //um lowkey dont know what ur supposed to put here but uhhh 
     }
 }

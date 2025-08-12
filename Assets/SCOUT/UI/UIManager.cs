@@ -30,9 +30,7 @@ public class UIManager : MonoBehaviour
     public ArmCameraUIController armCameraUIControllerRight;
     public ArmCameraUIController armCameraUIControllerLeft;
 
-    public ButtonList[] singleControllerLists, dualControllerLists;
-
-    public bool useDualController;
+    public ButtonList[] singleControllerLists, dualControllerLists, cameraLists;
 
     public bool showSpotButtons;
     public Transform cameraRig;
@@ -48,7 +46,8 @@ public class UIManager : MonoBehaviour
         superModeLists = new()
         {
             { SuperMode.SingleDrive, singleControllerLists },
-            { SuperMode.DualDrive, dualControllerLists }
+            { SuperMode.DualDrive, dualControllerLists },
+            { SuperMode.Camera, cameraLists }
         };
         var superModeGetters = new Dictionary<SuperMode, Func<NamedOption>[]>()
         {
@@ -82,6 +81,9 @@ public class UIManager : MonoBehaviour
                 m => modeManager.dualDrive.control = (TwoControllerMode)m,
                 m => OnPerspectiveChange((PerspectiveMode)m),
                 m => ((UIOption)m).DoAction(modeManager)
+            } },
+            { SuperMode.Camera, new Action<NamedOption>[] {
+                m => modeManager.cameraView.cameraMode = (CameraMode)m
             } }
         };
 
