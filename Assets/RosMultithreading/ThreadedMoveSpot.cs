@@ -31,6 +31,13 @@ public class ThreadedMoveSpot : ThreadedUnityPublisher<MessageTypes.Geometry.Twi
         }
     }
 
+    public void SetHeight(float height)
+    {
+        message.linear = GetGeometryVector3(new Vector3(0, height, 0).Unity2Ros());
+        message.angular = GetGeometryVector3(new Vector3(0, 0, 0).Unity2Ros());
+        LoopPublish(message, 1);
+    }
+
     private MessageTypes.Geometry.Vector3 GetGeometryVector3(Vector3 vec)
     {
 

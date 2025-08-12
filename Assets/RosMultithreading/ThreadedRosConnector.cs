@@ -3,6 +3,7 @@ using UnityEngine;
 using RosSharp.RosBridgeClient;
 using RosSharp.RosBridgeClient.Protocols;
 using System.Collections.Concurrent;
+using UnityEngine.InputSystem.Interactions;
 
 public class ThreadedRosConnector : MonoBehaviour
 {

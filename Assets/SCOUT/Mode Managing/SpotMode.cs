@@ -1,3 +1,4 @@
+using System;
 using RosSharp.RosBridgeClient;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
@@ -39,23 +40,27 @@ public class SpotMode : NamedOption
     {
         print(modeName + " drive: " + direction);
         if (rosConnector != null)
-            moveSpot.Move(direction, 0, 0);
+            moveSpot.Move(direction, 0, curHeight);
     }
 
     public void Rotate(float direction)
     {
         // print(modeName + " rotate: " + direction);
         if (rosConnector != null)
-            moveSpot.Move(Vector2.zero, direction, 0);
+            moveSpot.Move(Vector2.zero, direction, curHeight);
+    }
+
+    public void SetHeight(float height)
+    {
+        curHeight = height;
+        print(modeName + " set height: " + curHeight);
+        if (rosConnector != null)
+            moveSpot.SetHeight(curHeight);
     }
 
     public void AdjustHeight(float deltaHeight)
     {
-        if (rosConnector != null)
-        {
-            curHeight += deltaHeight;
-            moveSpot.Move(Vector2.zero, 0, curHeight);
-        }
+        SetHeight(Mathf.Clamp(curHeight + deltaHeight, -0.1f, 0.3f));
     }
 
     public void SetGripperPos(Transform tf)

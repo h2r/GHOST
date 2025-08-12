@@ -6,8 +6,11 @@ public class DriveJoystickMode : OneControllerMode
     {
         var doRotate = OVRInput.Get(model.indexButton);
         var doHeight = OVRInput.Get(model.gripButton);
-
         var joystick = OVRInput.Get(model.joystick);
+
+        if (OVRInput.GetDown(model.gripButton))
+            spot.SetHeight(0);
+
         if (doRotate)
         {
             model.joystickLabel = "Rotate";
@@ -18,7 +21,7 @@ public class DriveJoystickMode : OneControllerMode
         {
             model.joystickLabel = "Adjust Height";
             if (Mathf.Abs(joystick.y) > 0.1)
-                spot.AdjustHeight(joystick.y * 0.1f);
+                spot.AdjustHeight(joystick.y * 0.025f);
         }
         else
         {
