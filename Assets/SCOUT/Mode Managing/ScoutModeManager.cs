@@ -68,12 +68,14 @@ public class SingleDriveSuperMode
         if (leftSpot != null && leftControl != null)
         {
             leftControl.ControlUpdate(leftSpot, leftModel);
-            leftModel.color = leftSpot.color;
+            if (leftControl.ControlsSpot)
+                leftModel.color = leftSpot.color;
         }
         if (rightSpot != null && rightControl != null)
         {
             rightControl.ControlUpdate(rightSpot, rightModel);
-            rightModel.color = rightSpot.color;
+            if (rightControl.ControlsSpot)
+                rightModel.color = rightSpot.color;
         }
     }
 
@@ -101,8 +103,11 @@ public class DualDriveSuperMode
         if (spot != null && control != null)
         {
             control.ControlUpdate(spot, leftModel, rightModel);
-            leftModel.color = spot.color;
-            rightModel.color = spot.color;
+            if (control.ControlsSpot)
+            {
+                leftModel.color = spot.color;
+                rightModel.color = spot.color;
+            }
         }
     }
 
