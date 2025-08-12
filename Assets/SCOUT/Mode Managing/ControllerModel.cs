@@ -63,14 +63,14 @@ public class ControllerModel : MonoBehaviour
 
     public string joystickLabel
     {
-        get => labels[2].text;
-        set => labels[2].text = value;
+        get => labels[3].text;
+        set => labels[3].text = value;
     }
 
     public string menuLabel
     {
-        get => labels[3].text;
-        set => labels[3].text = value;
+        get => labels[2].text;
+        set => labels[2].text = value;
     }
 
     public string indexLabel

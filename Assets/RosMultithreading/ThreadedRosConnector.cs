@@ -95,7 +95,7 @@ class LoopPublishAgent
     private readonly RosSocket RosSocket;
     private readonly string publicationId;
 
-    private readonly object dataLock;
+    private readonly object dataLock = new();
     private Message message;
     private int ttlFrames = 0;
 
