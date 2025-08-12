@@ -72,7 +72,7 @@ public class UIManager : MonoBehaviour
             { SuperMode.SingleDrive, new Action<NamedOption>[] {
                 m => modeManager.singleDrive.leftSpot = (SpotMode)m,
                 m => modeManager.singleDrive.leftControl = (OneControllerMode)m,
-                m => ((PerspectiveMode)m).PerspectiveStart(),
+                m => OnPerspectiveChange((PerspectiveMode)m),
                 m => modeManager.singleDrive.rightControl = (OneControllerMode)m,
                 m => modeManager.singleDrive.rightSpot = (SpotMode)m,
                 m => ((UIOption)m).DoAction(modeManager)
@@ -80,7 +80,7 @@ public class UIManager : MonoBehaviour
             { SuperMode.DualDrive, new Action<NamedOption>[] {
                 m => modeManager.dualDrive.spot = (SpotMode)m,
                 m => modeManager.dualDrive.control = (TwoControllerMode)m,
-                m => ((PerspectiveMode)m).PerspectiveStart(),
+                m => OnPerspectiveChange((PerspectiveMode)m),
                 m => ((UIOption)m).DoAction(modeManager)
             } }
         };
@@ -105,7 +105,7 @@ public class UIManager : MonoBehaviour
         if (OVRInput.GetDown(OVRInput.Button.Start))
         {
             modeManager.isMenuOpen = !modeManager.isMenuOpen;
-            // UpdateArmCameraUIVisibility();
+            UpdateArmCameraUIVisibility();
         }
         transform.parent.gameObject.GetComponent<Canvas>().enabled = modeManager.isMenuOpen;
         cameraRig.position = new(cameraRig.position.x, modeManager.isMenuOpen ? 100 : 0, cameraRig.position.z);
@@ -118,39 +118,39 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    // private void OnPerspectiveChange(PerspectiveMode mode)
-    // {
-    //     Debug.Log("OnPerspectiveChange called with mode: " + mode.GetName());
+    private void OnPerspectiveChange(PerspectiveMode mode)
+    {
+        Debug.Log("OnPerspectiveChange called with mode: " + mode.GetName());
 
-    //     if (mode is ArmPerspectiveMode)
-    //     {
-    //         currentPerspective = Perspective.ARM;
-    //     }
-    //     else if (mode is CloudPerspectiveMode)
-    //     {
-    //         currentPerspective = Perspective.CLOUD;
-    //     }
+        if (mode is ArmPerspectiveMode)
+        {
+            currentPerspective = Perspective.ARM;
+        }
+        else if (mode is CloudPerspectiveMode)
+        {
+            currentPerspective = Perspective.CLOUD;
+        }
 
-    //     mode.PerspectiveStart();
+        mode.PerspectiveStart();
 
-    //     UpdateArmCameraUIVisibility();
-    // }
+        UpdateArmCameraUIVisibility();
+    }
 
-    // private void UpdateArmCameraUIVisibility()
-    // {
-    //     bool show = !isOpen && currentPerspective == Perspective.ARM;
+    private void UpdateArmCameraUIVisibility()
+    {
+        bool show = !modeManager.isMenuOpen && currentPerspective == Perspective.ARM;
 
-    //     if (armCameraUIControllerRight == null || armCameraUIControllerLeft == null)
-    //     {
-    //         Debug.LogWarning("ArmCameraUIControllerRight or Left is null");
-    //         return;
-    //     }
+        if (armCameraUIControllerRight == null || armCameraUIControllerLeft == null)
+        {
+            Debug.LogWarning("ArmCameraUIControllerRight or Left is null");
+            return;
+        }
 
-    //     armCameraUIControllerRight.gameObject.SetActive(show);
-    //     armCameraUIControllerLeft.gameObject.SetActive(show);
+        armCameraUIControllerRight.gameObject.SetActive(show);
+        armCameraUIControllerLeft.gameObject.SetActive(show);
 
-    //     Debug.Log($"UpdateArmCameraUIVisibility: isOpen={isOpen}, currentPerspective={currentPerspective}, show={show}");
-    // }
+        Debug.Log($"UpdateArmCameraUIVisibility: isOpen={modeManager.isMenuOpen}, currentPerspective={currentPerspective}, show={show}");
+    }
 
     public bool TryRaycastHover(GameObject hit)
     {
