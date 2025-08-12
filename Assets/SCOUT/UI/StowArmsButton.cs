@@ -2,9 +2,12 @@ using UnityEngine;
 
 public class StowArmsButton : UIOption
 {
+    public SpotMode spotOne, spotTwo;
+
     public override void DoAction(ScoutModeManager modeManager)
     {
-        print("stow now");
+        spotOne.StowArm();
+        spotTwo.StowArm();
     }
 
     public override string GetName()
