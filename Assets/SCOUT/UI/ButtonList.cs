@@ -25,7 +25,7 @@ public class ButtonList : MonoBehaviour
             var titleObj = Instantiate(titlePrefab, transform);
             titleObj.GetComponent<RectTransform>().localPosition = new(0, 0, 0);
             titleObj.GetComponent<TMP_Text>().text = title;
-            y = -55;
+            y = 0;
         }
 
         buttons = new GameObject[options.Length];
@@ -39,7 +39,7 @@ public class ButtonList : MonoBehaviour
             if (isHorizontal)
                 x += 150;
             else
-                y -= 55;
+                y += 55;
         }
     }
 

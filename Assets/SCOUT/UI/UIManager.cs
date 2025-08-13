@@ -30,7 +30,8 @@ public class UIManager : MonoBehaviour
     public ArmCameraUIController armCameraUIControllerRight;
     public ArmCameraUIController armCameraUIControllerLeft;
 
-    public ButtonList[] singleControllerLists, dualControllerLists, cameraLists;
+    public ButtonList topPanelList;
+    public ButtonList[] singleControllerLists, dualControllerLists, cameraLists; 
 
     public bool showSpotButtons;
     public Transform cameraRig;
@@ -38,8 +39,6 @@ public class UIManager : MonoBehaviour
     private Dictionary<SuperMode, ButtonList[]> superModeLists;
 
     private Perspective currentPerspective = Perspective.CLOUD;
-
-    private bool spotsSwapped = false;
 
     public void Start()
     {
@@ -86,6 +85,10 @@ public class UIManager : MonoBehaviour
                 m => modeManager.cameraView.cameraMode = (CameraMode)m
             } }
         };
+        topPanelList.optionSetter = m => ((UITabOptions)m).DoAction(modeManager);  
+        topPanelList.Reset();
+
+
 
         foreach (var kvp in superModeLists)
         {
@@ -156,12 +159,16 @@ public class UIManager : MonoBehaviour
 
     public bool TryRaycastHover(GameObject hit)
     {
-        foreach (var list in superModeLists[modeManager.activeSuperMode])
+        var activeLists = superModeLists[modeManager.activeSuperMode];
+        foreach (var list in activeLists)
         {
             if (list.TryHoverButton(hit))
                 return true;
         }
-
+        if (topPanelList.TryHoverButton(hit))
+        {
+            return true;
+        }
         return false;
     }
 
@@ -172,6 +179,10 @@ public class UIManager : MonoBehaviour
         {
             if (activeLists[i].PressButton(hit))
                 return;
+        }
+        if (topPanelList.PressButton(hit))
+        {
+            return; 
         }
     }
 

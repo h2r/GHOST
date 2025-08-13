@@ -17,7 +17,7 @@ public class ScoutModeManager : MonoBehaviour
 
     public SingleDriveSuperMode singleDrive = new();
     public DualDriveSuperMode dualDrive = new();
-    public CameraSuperMode cameraView = new(); 
+    public CameraSuperMode cameraView = new();
 
     [NonSerialized]
     public bool isMenuOpen = true;
@@ -58,6 +58,11 @@ public class ScoutModeManager : MonoBehaviour
                 dualDrive.Update(leftModel, rightModel);
                 break;
         }
+    }
+
+    public void setActiveSuperMode(SuperMode mode)
+    {
+        activeSuperMode = mode;
     }
 }
 
