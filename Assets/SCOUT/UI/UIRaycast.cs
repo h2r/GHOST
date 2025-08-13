@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class UIRaycast : MonoBehaviour
 {
-    public float maxDistance = 15f;
+    public float maxDistance = 20f;
     public UIManager uiManager;
     public GraphicRaycaster raycaster;
     public EventSystem eventSystem;

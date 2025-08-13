@@ -13,7 +13,8 @@ public class ScoutModeManager : MonoBehaviour
     public ControllerModel leftModel, rightModel, leftExampleModel, rightExampleModel;
 
     [NonSerialized]
-    public SuperMode activeSuperMode = SuperMode.SingleDrive;
+    public SuperMode activeSuperMode = SuperMode.Camera;
+    public SuperMode uiSuperMode = SuperMode.Camera; 
 
     public SingleDriveSuperMode singleDrive = new();
     public DualDriveSuperMode dualDrive = new();
@@ -25,28 +26,26 @@ public class ScoutModeManager : MonoBehaviour
     void Update()
     {
         //commenting out to keep controller colors and labels 
-        //if (isMenuOpen)
-        //{
-        //    leftModel.ClearLabels();
-        //    rightModel.ClearLabels();
-        //    leftModel.color = Color.white;
-        //    rightModel.color = Color.white;
+        if (isMenuOpen)
+        {
+           leftModel.ClearLabels();
+           rightModel.ClearLabels();
 
-        //    // leftExampleModel.ClearLabels();
-        //    // rightExampleModel.ClearLabels();
-        //    // switch (activeSuperMode)
-        //    // {
-        //    //     case SuperMode.SingleDrive:
-        //    //         singleDrive.AssignExampleModels(leftExampleModel, rightExampleModel);
-        //    //         break;
+           // leftExampleModel.ClearLabels();
+           // rightExampleModel.ClearLabels();
+           // switch (activeSuperMode)
+           // {
+           //     case SuperMode.SingleDrive:
+           //         singleDrive.AssignExampleModels(leftExampleModel, rightExampleModel);
+           //         break;
 
-        //    //     case SuperMode.DualDrive:
-        //    //         dualDrive.AssignExampleModels(leftExampleModel, rightExampleModel);
-        //    //         break;
-        //    // }
+           //     case SuperMode.DualDrive:
+           //         dualDrive.AssignExampleModels(leftExampleModel, rightExampleModel);
+           //         break;
+           // }
 
-        //    return;
-        //}
+           return;
+        }
 
         switch (activeSuperMode)
         {
@@ -56,6 +55,9 @@ public class ScoutModeManager : MonoBehaviour
 
             case SuperMode.DualDrive:
                 dualDrive.Update(leftModel, rightModel);
+                break;
+            case SuperMode.Camera:
+                cameraView.Update();
                 break;
         }
     }

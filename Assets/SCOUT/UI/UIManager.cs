@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Meta.WitAi.Events.Editor;
 using UnityEngine;
 
 public enum SingleControl
@@ -29,9 +30,7 @@ public class UIManager : MonoBehaviour
     // Changed from single armCameraUIController to two controllers: Right and Left
     public ArmCameraUIController armCameraUIControllerRight;
     public ArmCameraUIController armCameraUIControllerLeft;
-
-    public ButtonList topPanelList;
-    public ButtonList[] singleControllerLists, dualControllerLists, cameraLists; 
+    public ButtonList[] singleControllerLists, dualControllerLists, cameraLists;
 
     public bool showSpotButtons;
     public Transform cameraRig;
@@ -56,14 +55,21 @@ public class UIManager : MonoBehaviour
                 () => null,
                 () => modeManager.singleDrive.rightControl,
                 () => modeManager.singleDrive.rightSpot,
+                () => null,
                 () => null
             } },
             { SuperMode.DualDrive, new Func<NamedOption>[] {
                 () => modeManager.dualDrive.spot,
                 () => modeManager.dualDrive.control,
                 () => null,
-                () => null
-            } }
+                () => null,
+                () => null,
+            } },
+            { SuperMode.Camera, new Func<NamedOption>[]{
+                () => null,
+                () => null, 
+                () => null, 
+            }}
         };
         var superModeSetters = new Dictionary<SuperMode, Action<NamedOption>[]>()
         {
@@ -73,21 +79,22 @@ public class UIManager : MonoBehaviour
                 m => OnPerspectiveChange((PerspectiveMode)m),
                 m => modeManager.singleDrive.rightControl = (OneControllerMode)m,
                 m => modeManager.singleDrive.rightSpot = (SpotMode)m,
-                m => ((UIOption)m).DoAction(modeManager)
+                m => ((UIOption)m).DoAction(modeManager),
+                m => ((UITabOptions)m).DoAction(modeManager)
             } },
             { SuperMode.DualDrive, new Action<NamedOption>[] {
                 m => modeManager.dualDrive.spot = (SpotMode)m,
                 m => modeManager.dualDrive.control = (TwoControllerMode)m,
                 m => OnPerspectiveChange((PerspectiveMode)m),
-                m => ((UIOption)m).DoAction(modeManager)
+                m => ((UIOption)m).DoAction(modeManager),
+                m => ((UITabOptions)m).DoAction(modeManager)
             } },
             { SuperMode.Camera, new Action<NamedOption>[] {
-                m => modeManager.cameraView.cameraMode = (CameraMode)m
+                m => modeManager.cameraView.cameraMode = (CameraMode)m,
+                m => ((UIOption) m).DoAction(modeManager),
+                m => ((UITabOptions)m).DoAction(modeManager)
             } }
         };
-        topPanelList.optionSetter = m => ((UITabOptions)m).DoAction(modeManager);  
-        topPanelList.Reset();
-
 
 
         foreach (var kvp in superModeLists)
@@ -103,6 +110,7 @@ public class UIManager : MonoBehaviour
                 lists[i].Reset();
             }
         }
+        //SetDefaultControls();
     }
 
     void Update()
@@ -165,10 +173,6 @@ public class UIManager : MonoBehaviour
             if (list.TryHoverButton(hit))
                 return true;
         }
-        if (topPanelList.TryHoverButton(hit))
-        {
-            return true;
-        }
         return false;
     }
 
@@ -180,15 +184,26 @@ public class UIManager : MonoBehaviour
             if (activeLists[i].PressButton(hit))
                 return;
         }
-        if (topPanelList.PressButton(hit))
-        {
-            return; 
-        }
     }
 
     public bool IsInArmPerspective()
     {
         return currentPerspective == Perspective.ARM;
+    }
+
+    private void SetDefaultControls()
+    {
+        var activeLists = superModeLists[modeManager.activeSuperMode];
+        switch (modeManager.activeSuperMode)
+        {
+            case SuperMode.Camera:
+
+            case SuperMode.SingleDrive:
+
+            case SuperMode.DualDrive:
+                break;
+
+        }
     }
 
 }
