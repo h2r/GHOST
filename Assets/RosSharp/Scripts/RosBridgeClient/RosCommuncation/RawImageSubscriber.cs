@@ -25,6 +25,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using System.IO;
 
 namespace RosSharp.RosBridgeClient
 {
@@ -72,6 +73,9 @@ namespace RosSharp.RosBridgeClient
         };
         private DepthInfo[] depthHistory;
 
+        public bool saveImagesToDisk;
+        public string imageSaveDir;
+
 
         protected override void Start()
         {
@@ -106,6 +110,11 @@ namespace RosSharp.RosBridgeClient
             data = image.data;
             timestamp_proc = image.header.stamp;
 
+            if (saveImagesToDisk)
+            {
+                SaveImageToDisk(image);
+            }
+
             // HACK -- width is actually the far plane
             farPlane = image.width;
             //farPlane = 4000f;
@@ -118,6 +127,13 @@ namespace RosSharp.RosBridgeClient
                 messageThread.Start();
                 depthUpdated = true;
             }
+        }
+
+        private void SaveImageToDisk(Image image)
+        {
+            string msTimestamp = (image.header.stamp.secs * 1000 + (int)(image.header.stamp.nsecs * 0.000001)).ToString();
+
+            File.WriteAllBytes(Path.Combine(imageSaveDir, msTimestamp), image.data);
         }
 
         private void processMessageThreaded()
