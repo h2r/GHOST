@@ -1863,6 +1863,8 @@ MonoBehaviour:
   printSyncTime: 0
   printClosestTime: 0
   latest_time: 0
+  saveImagesToDisk: 0
+  imageSaveDir: 
 --- !u!114 &233217833
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4636,6 +4638,14 @@ PrefabInstance:
     - target: {fileID: 1137478774821249055, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: printRate
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478774821249055, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: imageSaveDir
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478774821249055, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: saveImagesToDisk
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1137478774876305373, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Mass

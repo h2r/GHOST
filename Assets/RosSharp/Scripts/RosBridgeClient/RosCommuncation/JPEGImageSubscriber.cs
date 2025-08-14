@@ -16,6 +16,8 @@ limitations under the License.
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using Unity.VisualScripting;
+using System.IO;
 
 namespace RosSharp.RosBridgeClient
 {
@@ -40,6 +42,9 @@ namespace RosSharp.RosBridgeClient
         public double latest_time;
         private bool frameUpdated;
 
+        public bool saveImagesToDisk;
+        public string imageSaveDir;
+
         protected override void Start()
         {
             base.Start();
@@ -61,6 +66,8 @@ namespace RosSharp.RosBridgeClient
             imgBuffer = new MessageTypes.Sensor.Image[bufferLength];
             frameUpdated = false;
 
+            if (saveImagesToDisk && !Directory.Exists(imageSaveDir))
+                Directory.CreateDirectory(imageSaveDir);
         }
 
         private void Update()
@@ -82,12 +89,30 @@ namespace RosSharp.RosBridgeClient
                 Debug.Log("Time between messages: " + totalSeconds.ToString("0.0000") + " seconds, " + (1 / totalSeconds).ToString("0.00") + " FPS");
             }
 
+            if (saveImagesToDisk)
+            {
+                SaveImageToDisk(image);
+            }
+
             imgBuffer[bufferInd] = image;
             bufferInd = (bufferInd + 1) % bufferLength;
             latest_time = image.header.stamp.secs + image.header.stamp.nsecs * 0.000000001;
 
             isMessageReceived = true;
             lastMessageRetrieved = DateTime.Now;
+        }
+
+        private void SaveImageToDisk(MessageTypes.Sensor.Image image)
+        {
+            if (image.encoding != "jpeg" && image.encoding != "jpg")
+            {
+                Debug.LogError("Non-JPEG image received");
+                return;
+            }
+
+            string msTimestamp = (image.header.stamp.secs * 1000 + (int)(image.header.stamp.nsecs * 0.000001)).ToString();
+
+            File.WriteAllBytes(Path.Combine(imageSaveDir, msTimestamp + ".jpg"), image.data);
         }
 
         /// <summary>
