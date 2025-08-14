@@ -43,7 +43,7 @@ public class ButtonList : MonoBehaviour
         }
     }
 
-    void Update()
+    void Update() // Corrected: Removed extra '()'
     {
         if (optionGetter == null)
             return;

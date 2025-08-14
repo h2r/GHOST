@@ -31,6 +31,7 @@ public class UIManager : MonoBehaviour
     public ArmCameraUIController armCameraUIControllerRight;
     public ArmCameraUIController armCameraUIControllerLeft;
     public ButtonList[] singleControllerLists, dualControllerLists, cameraLists;
+    public ButtonList[] tabselectionList; // ADDED: New ButtonList for tab selection
 
     public bool showSpotButtons;
     public Transform cameraRig;
@@ -45,14 +46,15 @@ public class UIManager : MonoBehaviour
         {
             { SuperMode.SingleDrive, singleControllerLists },
             { SuperMode.DualDrive, dualControllerLists },
-            { SuperMode.Camera, cameraLists }
+            { SuperMode.Camera, cameraLists },
+            { SuperMode.TabSelection, tabselectionList } // ADDED: Include tabselectionList
         };
         var superModeGetters = new Dictionary<SuperMode, Func<NamedOption>[]>()
         {
             { SuperMode.SingleDrive, new Func<NamedOption>[] {
                 () => modeManager.singleDrive.leftSpot,
                 () => modeManager.singleDrive.leftControl,
-                () => null,
+                () => modeManager.activePerspectiveMode,
                 () => modeManager.singleDrive.rightControl,
                 () => modeManager.singleDrive.rightSpot,
                 () => null,
@@ -61,14 +63,42 @@ public class UIManager : MonoBehaviour
             { SuperMode.DualDrive, new Func<NamedOption>[] {
                 () => modeManager.dualDrive.spot,
                 () => modeManager.dualDrive.control,
-                () => null,
+                () => modeManager.activePerspectiveMode,
                 () => null,
                 () => null,
             } },
             { SuperMode.Camera, new Func<NamedOption>[]{
+                () => modeManager.cameraView.activeCameraMode, // MODIFIED: Return activeCameraMode
                 () => null,
-                () => null, 
-                () => null, 
+                () => null,
+            }},
+            // MODIFIED: Getters for TabSelection
+            { SuperMode.TabSelection, new Func<NamedOption>[]{
+                () => { // This getter needs to return the currently active UITabOptions based on activeSuperMode
+                    // This is a placeholder. We need a way to map activeSuperMode back to a UITabOptions instance.
+                    // This might require a new property in ScoutModeManager or a lookup.
+                    // For now, let's assume we can get the current UITabOptions from the modeManager.
+                    // This part is tricky because UITabOptions are not directly stored in ScoutModeManager.
+                    // A better approach would be to have a way to get the currently selected UITabOptions from the UIManager itself.
+                    // The ButtonList needs to know which of its *own* options is selected.
+                    // The UIManager's role is to tell the ButtonList which option is active.
+                    // The UITabOptions.superMode property is what we need to match.
+
+                    // This is a more robust way to get the selected UITabOptions for the tabselectionList
+                    if (tabselectionList.Length > 0 && tabselectionList[0] != null && tabselectionList[0].options != null)
+                    {
+                        foreach (var tabOption in tabselectionList[0].options)
+                        {
+                            if (tabOption is UITabOptions uiTabOption && uiTabOption.superMode == modeManager.activeSuperMode)
+                            {
+                                return uiTabOption;
+                            }
+                        }
+                    }
+                    return null;
+                },
+                () => null,
+                () => null,
             }}
         };
         var superModeSetters = new Dictionary<SuperMode, Action<NamedOption>[]>()
@@ -90,10 +120,16 @@ public class UIManager : MonoBehaviour
                 m => ((UITabOptions)m).DoAction(modeManager)
             } },
             { SuperMode.Camera, new Action<NamedOption>[] {
-                m => modeManager.cameraView.cameraMode = (CameraMode)m,
+                m => modeManager.cameraView.SetActiveCameraMode((CameraMode)m), // MODIFIED: Call SetActiveCameraMode
                 m => ((UIOption) m).DoAction(modeManager),
                 m => ((UITabOptions)m).DoAction(modeManager)
-            } }
+            } },
+            // ADDED: Setters for TabSelection
+            { SuperMode.TabSelection, new Action<NamedOption>[] {
+                m => ((UITabOptions)m).DoAction(modeManager), // This will call DoAction on the selected tab option
+                m => ((UIOption)m).DoAction(modeManager),
+                m => ((UITabOptions)m).DoAction(modeManager)
+            }}
         };
 
 
@@ -110,6 +146,12 @@ public class UIManager : MonoBehaviour
                 lists[i].Reset();
             }
         }
+
+        // ADDED: Default selection for Camera SuperMode
+        if (modeManager.activeSuperMode == SuperMode.Camera && cameraLists.Length > 0 && cameraLists[0].options.Length > 0)
+        {
+            modeManager.cameraView.SetActiveCameraMode((CameraMode)cameraLists[0].options[0]);
+        }
         //SetDefaultControls();
     }
 
@@ -123,9 +165,19 @@ public class UIManager : MonoBehaviour
         transform.parent.gameObject.GetComponent<Canvas>().enabled = modeManager.isMenuOpen;
         cameraRig.position = new(cameraRig.position.x, modeManager.isMenuOpen ? 100 : 0, cameraRig.position.z);
 
+        // MODIFIED: Always enable tabselectionList if menu is open
+        foreach (var list in tabselectionList)
+        {
+            list.gameObject.SetActive(modeManager.isMenuOpen);
+        }
+
         foreach (var kvp in superModeLists)
         {
-            bool enableLists = kvp.Key == modeManager.activeSuperMode;
+            // Only enable other lists if their SuperMode is active AND menu is open
+            bool enableLists = kvp.Key == modeManager.activeSuperMode && modeManager.isMenuOpen;
+            // Skip tabselectionList here as it's handled above
+            if (kvp.Key == SuperMode.TabSelection) continue;
+
             foreach (var list in kvp.Value)
                 list.gameObject.SetActive(enableLists);
         }
@@ -134,6 +186,8 @@ public class UIManager : MonoBehaviour
     private void OnPerspectiveChange(PerspectiveMode mode)
     {
         Debug.Log("OnPerspectiveChange called with mode: " + mode.GetName());
+
+        modeManager.activePerspectiveMode = mode;
 
         if (mode is ArmPerspectiveMode)
         {
@@ -167,6 +221,13 @@ public class UIManager : MonoBehaviour
 
     public bool TryRaycastHover(GameObject hit)
     {
+        // MODIFIED: Always check tabselectionList first
+        foreach (var list in tabselectionList)
+        {
+            if (list.TryHoverButton(hit))
+                return true;
+        }
+
         var activeLists = superModeLists[modeManager.activeSuperMode];
         foreach (var list in activeLists)
         {
@@ -178,6 +239,13 @@ public class UIManager : MonoBehaviour
 
     public void RaycastPress(GameObject hit)
     {
+        // MODIFIED: Always check tabselectionList first
+        for (int i = 0; i < tabselectionList.Length; i++)
+        {
+            if (tabselectionList[i].PressButton(hit))
+                return;
+        }
+
         var activeLists = superModeLists[modeManager.activeSuperMode];
         for (int i = 0; i < activeLists.Length; i++)
         {

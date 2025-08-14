@@ -11,7 +11,7 @@ public class UITabOptions : UIOption
 
     public override Color GetSelectedColor()
     {
-        return Color.pink; // Example color, can be customized
+        return Color.magenta; // Darker highlight color
     }
     public override void DoAction(ScoutModeManager modeManager)
     {

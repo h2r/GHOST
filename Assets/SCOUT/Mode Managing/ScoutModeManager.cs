@@ -4,8 +4,9 @@ using UnityEngine;
 public enum SuperMode
 {
     SingleDrive,
-    DualDrive, 
-    Camera
+    DualDrive,
+    Camera,
+    TabSelection // ADDED
 }
 
 public class ScoutModeManager : MonoBehaviour
@@ -14,18 +15,19 @@ public class ScoutModeManager : MonoBehaviour
 
     [NonSerialized]
     public SuperMode activeSuperMode = SuperMode.Camera;
-    public SuperMode uiSuperMode = SuperMode.Camera; 
+    public SuperMode uiSuperMode = SuperMode.Camera;
 
     public SingleDriveSuperMode singleDrive = new();
     public DualDriveSuperMode dualDrive = new();
     public CameraSuperMode cameraView = new();
+    public PerspectiveMode activePerspectiveMode;
 
     [NonSerialized]
     public bool isMenuOpen = true;
 
     void Update()
     {
-        //commenting out to keep controller colors and labels 
+        //commenting out to keep controller colors and labels
         if (isMenuOpen)
         {
            leftModel.ClearLabels();
@@ -72,6 +74,7 @@ public class SingleDriveSuperMode
 {
     public SpotMode leftSpot, rightSpot;
     public OneControllerMode leftControl, rightControl;
+    public PerspectiveMode perspective;
 
     public void Update(ControllerModel leftModel, ControllerModel rightModel)
     {
@@ -107,6 +110,7 @@ public class DualDriveSuperMode
 {
     public SpotMode spot;
     public TwoControllerMode control;
+    public PerspectiveMode perspective;
 
     public void Update(ControllerModel leftModel, ControllerModel rightModel)
     {
@@ -137,9 +141,27 @@ public class DualDriveSuperMode
 
 public class CameraSuperMode
 {
-    public CameraMode cameraMode; 
+    public CameraMode cameraMode;
+    public CameraMode activeCameraMode; // ADDED: To store the currently selected camera mode
+
     public void Update()
     {
-        //um lowkey dont know what ur supposed to put here but uhhh 
+        //um lowkey dont know what ur supposed to put here but uhhh
+    }
+
+    public void SetActiveCameraMode(CameraMode mode)
+    {
+        if (activeCameraMode != null && activeCameraMode.controlledGameObject != null)
+        {
+            activeCameraMode.controlledGameObject.SetActive(false);
+        }
+
+        activeCameraMode = mode;
+
+        if (activeCameraMode != null && activeCameraMode.controlledGameObject != null)
+        {
+            activeCameraMode.controlledGameObject.SetActive(true);
+        }
+        Debug.Log("Active Camera Mode set to: " + mode.GetName()); // For debugging
     }
 }
