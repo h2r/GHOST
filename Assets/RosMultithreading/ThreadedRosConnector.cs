@@ -15,6 +15,7 @@ public class ThreadedRosConnector : MonoBehaviour
     public string rosBridgeServerUrl = "ws://192.168.1.38:9090";
     public int rosTicksPerSecond = 100;
 
+    private bool runRosThread = true;
     private readonly ConcurrentDictionary<string, LoopPublishAgent> lpAgents = new();
     private bool isSpotKilled = false;
 
@@ -33,7 +34,7 @@ public class ThreadedRosConnector : MonoBehaviour
     {
         ConnectAndWait();
 
-        while (true)
+        while (runRosThread)
         {
             foreach (var kvp in lpAgents)
                 kvp.Value.OnRosTick();
@@ -85,8 +86,9 @@ public class ThreadedRosConnector : MonoBehaviour
             Debug.LogWarning("Failed to connect to RosBridge at: " + rosBridgeServerUrl);
     }
 
-    private void OnApplicationQuit()
+    void OnDestroy()
     {
+        runRosThread = false;
         RosSocket.Close();
     }
 }
