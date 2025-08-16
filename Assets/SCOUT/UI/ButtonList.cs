@@ -10,6 +10,7 @@ public class ButtonList : MonoBehaviour
     public bool isHorizontal;
     public NamedOption[] options;
     public GameObject titlePrefab, buttonPrefab;
+    
 
     public Func<NamedOption> optionGetter;
     public Action<NamedOption> optionSetter;
@@ -51,8 +52,10 @@ public class ButtonList : MonoBehaviour
         var selectedOption = optionGetter();
         for (int i = 0; i < buttons.Length; i++)
         {
+            bool isSelected = options[i] == selectedOption;
+
             Color color;
-            if (options[i] == selectedOption)
+            if (isSelected)
             {
                 var selectedColor = selectedOption.GetSelectedColor();
                 color = new(selectedColor.r, selectedColor.g, selectedColor.b, 0.5f);
@@ -62,6 +65,8 @@ public class ButtonList : MonoBehaviour
                 color = new(1, 1, 1, 0.5f);
             }
             buttons[i].GetComponent<Image>().color = color;
+
+            
         }
     }
 
