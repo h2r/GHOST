@@ -11,6 +11,20 @@ public enum SuperMode
 
 public class ScoutModeManager : MonoBehaviour
 {
+    public static ScoutModeManager Instance { get; private set; }
+
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            Instance = this;
+        }
+    }
+
     public ControllerModel leftModel, rightModel, leftExampleModel, rightExampleModel;
     public SpotMode spotOne, spotTwo;
 
@@ -25,13 +39,30 @@ public class ScoutModeManager : MonoBehaviour
 
     [NonSerialized]
     public bool isMenuOpen = true;
+    private bool _previousIsMenuOpen; // To track changes in isMenuOpen
 
     void Update()
     {
         spotOne.SetArmPoseEnabled(!isMenuOpen);
         spotTwo.SetArmPoseEnabled(!isMenuOpen);
 
-        //commenting out to keep controller colors and labels
+        // Check if isMenuOpen has changed
+        if (isMenuOpen != _previousIsMenuOpen)
+        {
+            // If the menu is now closed and a camera mode is active, activate its controlledGameObject
+            if (!isMenuOpen && cameraView.activeCameraMode != null && cameraView.activeCameraMode.controlledGameObject != null)
+            {
+                cameraView.activeCameraMode.controlledGameObject.SetActive(true);
+            }
+            // If the menu is now open and a camera mode is active, deactivate its controlledGameObject
+            else if (isMenuOpen && cameraView.activeCameraMode != null && cameraView.activeCameraMode.controlledGameObject != null)
+            {
+                cameraView.activeCameraMode.controlledGameObject.SetActive(false);
+            }
+            _previousIsMenuOpen = isMenuOpen; // Update the previous state
+        }
+
+        // Update colors while menu is open
         if (isMenuOpen)
         {
             leftModel.ClearLabels();
@@ -160,7 +191,14 @@ public class CameraSuperMode
 
         if (activeCameraMode != null && activeCameraMode.controlledGameObject != null)
         {
-            activeCameraMode.controlledGameObject.SetActive(true);
+            if (ScoutModeManager.Instance != null && !ScoutModeManager.Instance.isMenuOpen)
+            {
+                activeCameraMode.controlledGameObject.SetActive(true);
+            }
+            else
+            {
+                activeCameraMode.controlledGameObject.SetActive(false);
+            }
         }
         Debug.Log("Active Camera Mode set to: " + mode.GetName()); // For debugging
     }
