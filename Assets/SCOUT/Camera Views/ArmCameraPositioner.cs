@@ -36,9 +36,10 @@ public class ArmCameraPositioner : MonoBehaviour
         {
             Vector3 targetPos1 = basePosition + 
                                  headsetRotation * Vector3.forward * forwardOffset +
-                                 headsetRotation * Vector3.right * halfTotalWidth; // Position to the right
-            armCam1.position = new Vector3(targetPos1.x, basePosition.y + armCam1YOffset, targetPos1.z);
-            armCam1.rotation = headsetRotation; // Keep rotation aligned with headset
+                                 headsetRotation * Vector3.right * halfTotalWidth +
+                                 headsetRotation * Vector3.up * armCam1YOffset; // Incorporate Y offset relative to headset's up
+            armCam1.position = targetPos1;
+            armCam1.LookAt(centerEyeAnchor); // Make it look at the headset
             armCam1.localScale = new Vector3(cameraFeedWidth, cameraFeedHeight, 0.001f); // Apply explicit scale, keep Z very small for flatness
         }
 
@@ -47,9 +48,10 @@ public class ArmCameraPositioner : MonoBehaviour
         {
             Vector3 targetPos2 = basePosition + 
                                  headsetRotation * Vector3.forward * forwardOffset +
-                                 headsetRotation * Vector3.left * halfTotalWidth; // Position to the left
-            armCam2.position = new Vector3(targetPos2.x, basePosition.y + armCam2YOffset, targetPos2.z);
-            armCam2.rotation = headsetRotation; // Keep rotation aligned with headset
+                                 headsetRotation * Vector3.left * halfTotalWidth +
+                                 headsetRotation * Vector3.up * armCam2YOffset; // Incorporate Y offset relative to headset's up
+            armCam2.position = targetPos2;
+            armCam2.LookAt(centerEyeAnchor); // Make it look at the headset
             armCam2.localScale = new Vector3(cameraFeedWidth, cameraFeedHeight, 0.001f); // Apply explicit scale, keep Z very small for flatness
         }
     }
