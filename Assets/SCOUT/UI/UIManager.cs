@@ -11,11 +11,7 @@ public enum SingleControl
     LOCOMOTION
 }
 
-public enum Perspective
-{
-    CLOUD,
-    ARM
-}
+
 
 public enum SpotColor
 {
@@ -28,8 +24,7 @@ public class UIManager : MonoBehaviour
     public ScoutModeManager modeManager;
 
     // Changed from single armCameraUIController to two controllers: Right and Left
-    public ArmCameraUIController armCameraUIControllerRight;
-    public ArmCameraUIController armCameraUIControllerLeft;
+    
     public ButtonList[] singleControllerLists, dualControllerLists, cameraLists;
     public ButtonList[] tabselectionList; // ADDED: New ButtonList for tab selection
 
@@ -38,7 +33,7 @@ public class UIManager : MonoBehaviour
 
     private Dictionary<SuperMode, ButtonList[]> superModeLists;
 
-    private Perspective currentPerspective = Perspective.CLOUD;
+    
 
     public void Start()
     {
@@ -160,7 +155,7 @@ public class UIManager : MonoBehaviour
         if (OVRInput.GetDown(OVRInput.Button.Start))
         {
             modeManager.isMenuOpen = !modeManager.isMenuOpen;
-            UpdateArmCameraUIVisibility();
+
         }
         transform.parent.gameObject.GetComponent<Canvas>().enabled = modeManager.isMenuOpen;
         cameraRig.position = new(cameraRig.position.x, modeManager.isMenuOpen ? 100 : 0, cameraRig.position.z);
@@ -184,41 +179,9 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    private void OnPerspectiveChange(PerspectiveMode mode)
-    {
-        Debug.Log("OnPerspectiveChange called with mode: " + mode.GetName());
+    
 
-        modeManager.activePerspectiveMode = mode;
-
-        if (mode is ArmPerspectiveMode)
-        {
-            currentPerspective = Perspective.ARM;
-        }
-        else if (mode is CloudPerspectiveMode)
-        {
-            currentPerspective = Perspective.CLOUD;
-        }
-
-        mode.PerspectiveStart();
-
-        UpdateArmCameraUIVisibility();
-    }
-
-    private void UpdateArmCameraUIVisibility()
-    {
-        bool show = !modeManager.isMenuOpen && currentPerspective == Perspective.ARM;
-
-        if (armCameraUIControllerRight == null || armCameraUIControllerLeft == null)
-        {
-            Debug.LogWarning("ArmCameraUIControllerRight or Left is null");
-            return;
-        }
-
-        armCameraUIControllerRight.gameObject.SetActive(show);
-        armCameraUIControllerLeft.gameObject.SetActive(show);
-
-        Debug.Log($"UpdateArmCameraUIVisibility: isOpen={modeManager.isMenuOpen}, currentPerspective={currentPerspective}, show={show}");
-    }
+    
 
     public bool TryRaycastHover(GameObject hit)
     {
@@ -255,10 +218,7 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public bool IsInArmPerspective()
-    {
-        return currentPerspective == Perspective.ARM;
-    }
+    
 
     private void SetDefaultControls()
     {
