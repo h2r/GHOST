@@ -54,7 +54,7 @@ public class UIManager : MonoBehaviour
             { SuperMode.SingleDrive, new Func<NamedOption>[] {
                 () => modeManager.singleDrive.leftSpot,
                 () => modeManager.singleDrive.leftControl,
-                () => modeManager.activePerspectiveMode,
+                // () => modeManager.activePerspectiveMode,
                 () => modeManager.singleDrive.rightControl,
                 () => modeManager.singleDrive.rightSpot,
                 () => null,
@@ -63,7 +63,7 @@ public class UIManager : MonoBehaviour
             { SuperMode.DualDrive, new Func<NamedOption>[] {
                 () => modeManager.dualDrive.spot,
                 () => modeManager.dualDrive.control,
-                () => modeManager.activePerspectiveMode,
+                // () => modeManager.activePerspectiveMode,
                 () => null,
                 () => null,
             } },
@@ -106,7 +106,7 @@ public class UIManager : MonoBehaviour
             { SuperMode.SingleDrive, new Action<NamedOption>[] {
                 m => modeManager.singleDrive.leftSpot = (SpotMode)m,
                 m => modeManager.singleDrive.leftControl = (OneControllerMode)m,
-                m => OnPerspectiveChange((PerspectiveMode)m),
+                // m => OnPerspectiveChange((PerspectiveMode)m),
                 m => modeManager.singleDrive.rightControl = (OneControllerMode)m,
                 m => modeManager.singleDrive.rightSpot = (SpotMode)m,
                 m => ((UIOption)m).DoAction(modeManager),
@@ -115,7 +115,7 @@ public class UIManager : MonoBehaviour
             { SuperMode.DualDrive, new Action<NamedOption>[] {
                 m => modeManager.dualDrive.spot = (SpotMode)m,
                 m => modeManager.dualDrive.control = (TwoControllerMode)m,
-                m => OnPerspectiveChange((PerspectiveMode)m),
+                // m => OnPerspectiveChange((PerspectiveMode)m),
                 m => ((UIOption)m).DoAction(modeManager),
                 m => ((UITabOptions)m).DoAction(modeManager)
             } },
