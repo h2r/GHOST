@@ -7,7 +7,7 @@ using UnityEngine;
 using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.LinearAlgebra.Single;
 using Meta.WitAi;
-using Unity.Sentis;
+
 using System.IO;
 using System;
 
@@ -56,7 +56,7 @@ public class ICPLauncher : MonoBehaviour
     float3x3 R_all;
     float3 t_all;
 
-    TensorShape depth_shape;
+    Unity.InferenceEngine.TensorShape depth_shape;
 
     float global_min_error = 10000000000.0f;
 
@@ -119,7 +119,7 @@ public class ICPLauncher : MonoBehaviour
     {
         depth3d_return = new float3[W * H];
 
-        depth_shape = new TensorShape(1, 1, 480, 640);
+        depth_shape = new Unity.InferenceEngine.TensorShape(1, 1, 480, 640);
         buffer0 = new ComputeBuffer(480 * 640, sizeof(float));
         buffer1 = new ComputeBuffer(480 * 640, sizeof(float));
         buffer2 = new ComputeBuffer(480 * 640, sizeof(float));

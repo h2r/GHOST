@@ -1,15 +1,15 @@
 using RosSharp.RosBridgeClient;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.Sentis;
+
 using UnityEngine;
 
 public class CVDDataGenerator : MonoBehaviour
 {
     private bool first_run = true;
 
-    Tensor<float> previous_rgbL;
-    Tensor<float> previous_rgbR;
+    Unity.InferenceEngine.Tensor<float> previous_rgbL;
+    Unity.InferenceEngine.Tensor<float> previous_rgbR;
 
     //public BodyPoseSubscriber pose_subscriber;
 
@@ -133,20 +133,20 @@ public class CVDDataGenerator : MonoBehaviour
 
     //}
 
-    public (ComputeBuffer, ComputeBuffer, Matrix4x4, Matrix4x4, ComputeBuffer, ComputeBuffer) generatePoseData(Tensor<float> depthL, Tensor<float> rgbL, Tensor<float> depthR, Tensor<float> rgbR, bool activate_depth_completion, bool activate_CVD)
+    public (ComputeBuffer, ComputeBuffer, Matrix4x4, Matrix4x4, ComputeBuffer, ComputeBuffer) generatePoseData(Unity.InferenceEngine.Tensor<float> depthL, Unity.InferenceEngine.Tensor<float> rgbL, Unity.InferenceEngine.Tensor<float> depthR, Unity.InferenceEngine.Tensor<float> rgbR, bool activate_depth_completion, bool activate_CVD)
     {
         if (first_run)
         {
-            previous_rgbL = new Tensor<float>(rgbL.shape);
-            previous_rgbR = new Tensor<float>(rgbR.shape);
+            previous_rgbL = new Unity.InferenceEngine.Tensor<float>(rgbL.shape);
+            previous_rgbR = new Unity.InferenceEngine.Tensor<float>(rgbR.shape);
 
             //buffer_depthL?.Release();
             //buffer_depthR?.Release();
             //buffer_opticalL?.Release();
             //buffer_opticalR?.Release();
 
-            buffer_depthL = ComputeTensorData.Pin(depthL).buffer;
-            buffer_depthR = ComputeTensorData.Pin(depthR).buffer;
+            buffer_depthL = Unity.InferenceEngine.ComputeTensorData.Pin(depthL).buffer;
+            buffer_depthR = Unity.InferenceEngine.ComputeTensorData.Pin(depthR).buffer;
             buffer_opticalL = new ComputeBuffer(480 * 640 * 2, sizeof(float));
             buffer_opticalR = new ComputeBuffer(480 * 640 * 2, sizeof(float));
 
@@ -167,8 +167,8 @@ public class CVDDataGenerator : MonoBehaviour
             {
                 //buffer_depthL?.Release();
                 //buffer_depthR?.Release();
-                buffer_depthL = ComputeTensorData.Pin(depthL).buffer;
-                buffer_depthR = ComputeTensorData.Pin(depthR).buffer;
+                buffer_depthL = Unity.InferenceEngine.ComputeTensorData.Pin(depthL).buffer;
+                buffer_depthR = Unity.InferenceEngine.ComputeTensorData.Pin(depthR).buffer;
             }
 
 

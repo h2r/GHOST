@@ -40,6 +40,8 @@ public class DrawMeshInstanced : MonoBehaviour
 
     public RawImageSubscriber depthSubscriber;  // ROS subscriber that holds the depth array
     public JPEGImageSubscriber colorSubscriber; // ROS subscriber holding the color image
+    public SpotObserverClient spotObserverClient;
+
     public bool savePointCloud;                 // allow user to save point cloud
 
     public ComputeShader compute;
@@ -296,7 +298,6 @@ public class DrawMeshInstanced : MonoBehaviour
         // Initialize buffer with the given population.
         MeshProperties[] properties = new MeshProperties[population];
 
-
         meshPropertiesBuffer = new ComputeBuffer((int)population, MeshProperties.Size());
         meshPropertiesBuffer.SetData(GetProperties());
 
@@ -396,17 +397,35 @@ public class DrawMeshInstanced : MonoBehaviour
 
         if (use_saved_meshes)
         {
+            Debug.Log("Using saved mesh");
             for (int i = 0; i < 480 * 640; i++)
             {
-                depth_ar[i] = depth_ar_saved[i];
+                //depth_ar[i] = depth_ar_saved[i];
+                depth_ar[i] = 1.0f;
             }
+
+            (color_image, depth_image) = spotObserverClient.GetCameraFeeds(0);
+            Debug.Log("Color image: " + (color_image == null ? "null" : color_image.width + "x" + color_image.height));
+
+            //if (depth_image != null)
+            //{
+            //    depth_ar = depth_image.GetPixelData<float>(0).ToArray();
+            //}
+
             new_depth_to_render = true;
         }
         else
         {
-            DestroyImmediate(color_image, true);
-            color_image = copy_texture(colorSubscriber.texture2D);
-            depth_ar = depthSubscriber.getDepthArr();
+            Debug.Log("Getting camera feeds from Spot Observer Client");
+            (color_image, depth_image) = spotObserverClient.GetCameraFeeds(0);
+            Debug.Log("Color image: " + (color_image == null ? "null" : color_image.width + "x" + color_image.height));
+
+            if (depth_image != null)
+            {
+                depth_ar = depth_image.GetPixelData<float>(0).ToArray();
+            }
+            Debug.Log("Depth image: " + (depth_image == null ? "null" : depth_image.width + "x" + depth_image.height));
+            //depth_ar = depthSubscriber.getDepthArr();
             if (depthSubscriber.new_depth == true)
             {
                 new_depth_to_render = true;
@@ -414,6 +433,7 @@ public class DrawMeshInstanced : MonoBehaviour
             depthSubscriber.new_depth = false;
         }
 
+        Debug.Log("Depth array length: " + depth_ar.Length);
         if (depth_ar.Length < 640 * 480)
         {
             return;
@@ -487,6 +507,7 @@ public class DrawMeshInstanced : MonoBehaviour
             return;
         }
 
+        Debug.Log("UPDATE CALLED");
 
         UpdateTexture();
 

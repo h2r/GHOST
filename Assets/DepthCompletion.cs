@@ -2,24 +2,24 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using Unity.Sentis;
+
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.VFX;
-using static Unity.Sentis.Model;
+using static Unity.InferenceEngine.Model;
 
 public class DepthCompletion : MonoBehaviour
 {
-    public ModelAsset rgbdModelAsset;
-    Model runtimeModelRGBD;
-    Worker workerRGBD;
+    public Unity.InferenceEngine.ModelAsset rgbdModelAsset;
+    Unity.InferenceEngine.Model runtimeModelRGBD;
+    Unity.InferenceEngine.Worker workerRGBD;
 
     public bool Use_UB; // Use UnityBYOM for inference
     public UBModel UB_Model; // Reference to UBModel script
     
     private int run_nconv;
 
-    Tensor<float> depth_outputTensor_0, depth_outputTensor_1;
+    Unity.InferenceEngine.Tensor<float> depth_outputTensor_0, depth_outputTensor_1;
     ComputeBuffer computeTensorData0, computeTensorData1;
 
 
@@ -29,8 +29,8 @@ public class DepthCompletion : MonoBehaviour
     void Start()
     {
         // Setup sentis model
-        runtimeModelRGBD = ModelLoader.Load(rgbdModelAsset);
-        workerRGBD = new Worker(runtimeModelRGBD, BackendType.GPUCompute);
+        runtimeModelRGBD = Unity.InferenceEngine.ModelLoader.Load(rgbdModelAsset);
+        workerRGBD = new Unity.InferenceEngine.Worker(runtimeModelRGBD, Unity.InferenceEngine.BackendType.GPUCompute);
 
         run_nconv = 2;
     }
@@ -47,7 +47,7 @@ public class DepthCompletion : MonoBehaviour
     // =============================================================================== //
     //                               Depth Completion                                  //
     // =============================================================================== //
-    public (ComputeBuffer, ComputeBuffer) complete(Tensor<float> depth_tensor_0, Tensor<float> color_tensor_0, Tensor<float> depth_tensor_1, Tensor<float> color_tensor_1)
+    public (ComputeBuffer, ComputeBuffer) complete(Unity.InferenceEngine.Tensor<float> depth_tensor_0, Unity.InferenceEngine.Tensor<float> color_tensor_0, Unity.InferenceEngine.Tensor<float> depth_tensor_1, Unity.InferenceEngine.Tensor<float> color_tensor_1)
     {
         if (Use_UB)
         {
@@ -88,11 +88,11 @@ public class DepthCompletion : MonoBehaviour
 
             workerRGBD.Schedule();
 
-            Tensor<float> depth_outputTensor_0 = workerRGBD.PeekOutput("output_depth_0") as Tensor<float>;
-            ComputeBuffer computeTensorData0 = ComputeTensorData.Pin(depth_outputTensor_0).buffer;
+            Unity.InferenceEngine.Tensor<float> depth_outputTensor_0 = workerRGBD.PeekOutput("output_depth_0") as Unity.InferenceEngine.Tensor<float>;
+            ComputeBuffer computeTensorData0 = Unity.InferenceEngine.ComputeTensorData.Pin(depth_outputTensor_0).buffer;
 
-            Tensor<float> depth_outputTensor_1 = workerRGBD.PeekOutput("output_depth_1") as Tensor<float>;
-            ComputeBuffer computeTensorData1 = ComputeTensorData.Pin(depth_outputTensor_1).buffer;
+            Unity.InferenceEngine.Tensor<float> depth_outputTensor_1 = workerRGBD.PeekOutput("output_depth_1") as Unity.InferenceEngine.Tensor<float>;
+            ComputeBuffer computeTensorData1 = Unity.InferenceEngine.ComputeTensorData.Pin(depth_outputTensor_1).buffer;
 
             return (computeTensorData0, computeTensorData1);
         }
