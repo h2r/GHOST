@@ -2,19 +2,30 @@ using UnityEngine;
 
 public class PanoCamPositioner : MonoBehaviour
 {
+    public enum RotationOption
+    {
+        None,
+        Left90,
+        Right90,
+        UpsideDown180
+    }
+
+    [System.Serializable]
+    public class CameraSettings
+    {
+        public Transform camera;
+        public RotationOption rotation;
+        public float width = 1.0f;
+        public float height = 0.5f;
+    }
+
     [Header("References")]
     public Transform centerEyeAnchor;
-    public Transform frontLeftCam;
-    public Transform frontRightCam;
-    public Transform backCam;
-    public Transform leftCam;
-    public Transform rightCam;
+    public CameraSettings[] cameraSettings;
 
     [Header("Panorama Settings")]
     public float radius = 2.0f; // Distance of cameras from the center
     public float cameraHeightOffset = 0.0f; // Vertical offset from headset Y
-    public float cameraWidth = 1.0f; // Width of each camera feed
-    public float cameraHeight = 0.5f; // Height of each camera feed
     public float zScale = 0.001f; // For flatness
 
     private Vector3 panoramaCenter;
@@ -28,7 +39,6 @@ public class PanoCamPositioner : MonoBehaviour
             return;
         }
 
-        // Capture the initial position and yaw rotation of the headset
         panoramaCenter = centerEyeAnchor.position;
         initialHeadsetYawRotation = Quaternion.Euler(0, centerEyeAnchor.rotation.eulerAngles.y, 0);
 
@@ -37,69 +47,67 @@ public class PanoCamPositioner : MonoBehaviour
 
     void Update()
     {
-        // In case the centerEyeAnchor moves significantly after OnEnable, re-position
-        // Or if parameters are changed in editor during runtime
+        if (ScoutModeManager.Instance != null && ScoutModeManager.Instance.isMenuOpen)
+        {
+            SetCamerasActive(false);
+            return;
+        }
+        SetCamerasActive(true);
+
         PositionCameras();
+    }
+
+    void SetCamerasActive(bool isActive)
+    {
+        foreach (var settings in cameraSettings)
+        {
+            if (settings.camera != null && settings.camera.gameObject.activeSelf != isActive)
+            {
+                settings.camera.gameObject.SetActive(isActive);
+            }
+        }
     }
 
     void PositionCameras()
     {
         if (centerEyeAnchor == null) return;
 
-        // Calculate the base Y position for all cameras
         float baseCameraY = centerEyeAnchor.position.y + cameraHeightOffset;
 
-        // Apply scale to all cameras
-        Vector3 camScale = new Vector3(cameraWidth, cameraHeight, zScale);
-
-        // Front Left Camera
-        if (frontLeftCam != null)
+        for (int i = 0; i < cameraSettings.Length; i++)
         {
-            Vector3 pos = initialHeadsetYawRotation * Quaternion.Euler(0, -30, 0) * Vector3.forward * radius; // -30 degrees for left
-            frontLeftCam.position = new Vector3(panoramaCenter.x + pos.x, baseCameraY, panoramaCenter.z + pos.z);
-            frontLeftCam.LookAt(panoramaCenter); // Look towards the center
-            frontLeftCam.Rotate(0, 180, 0); // Flip to face outwards
-            frontLeftCam.localScale = camScale;
-        }
+            var settings = cameraSettings[i];
+            if (settings.camera == null) continue;
 
-        // Front Right Camera
-        if (frontRightCam != null)
-        {
-            Vector3 pos = initialHeadsetYawRotation * Quaternion.Euler(0, 30, 0) * Vector3.forward * radius; // +30 degrees for right
-            frontRightCam.position = new Vector3(panoramaCenter.x + pos.x, baseCameraY, panoramaCenter.z + pos.z);
-            frontRightCam.LookAt(panoramaCenter);
-            frontRightCam.Rotate(0, 180, 0);
-            frontRightCam.localScale = camScale;
-        }
+            float angle = 0;
+            if (i == 0) angle = -30;  // Front Left
+            if (i == 1) angle = 30;   // Front Right
+            if (i == 2) angle = 180;  // Back
+            if (i == 3) angle = -90;  // Left
+            if (i == 4) angle = 90;   // Right
 
-        // Back Camera
-        if (backCam != null)
-        {
-            Vector3 pos = initialHeadsetYawRotation * Quaternion.Euler(0, 180, 0) * Vector3.forward * radius;
-            backCam.position = new Vector3(panoramaCenter.x + pos.x, baseCameraY, panoramaCenter.z + pos.z);
-            backCam.LookAt(panoramaCenter);
-            backCam.Rotate(0, 180, 0);
-            backCam.localScale = camScale;
-        }
+            Vector3 pos = initialHeadsetYawRotation * Quaternion.Euler(0, angle, 0) * Vector3.forward * radius;
+            settings.camera.position = new Vector3(panoramaCenter.x + pos.x, baseCameraY, panoramaCenter.z + pos.z);
 
-        // Left Camera
-        if (leftCam != null)
-        {
-            Vector3 pos = initialHeadsetYawRotation * Quaternion.Euler(0, -90, 0) * Vector3.forward * radius;
-            leftCam.position = new Vector3(panoramaCenter.x + pos.x, baseCameraY, panoramaCenter.z + pos.z);
-            leftCam.LookAt(panoramaCenter);
-            leftCam.Rotate(0, 180, 0);
-            leftCam.localScale = camScale;
-        }
+            Quaternion lookRotation = Quaternion.LookRotation(settings.camera.position - panoramaCenter, Vector3.up);
+            settings.camera.rotation = lookRotation * Quaternion.Euler(0, 180, 0); // Base rotation to face outwards
 
-        // Right Camera
-        if (rightCam != null)
-        {
-            Vector3 pos = initialHeadsetYawRotation * Quaternion.Euler(0, 90, 0) * Vector3.forward * radius;
-            rightCam.position = new Vector3(panoramaCenter.x + pos.x, baseCameraY, panoramaCenter.z + pos.z);
-            rightCam.LookAt(panoramaCenter);
-            rightCam.Rotate(0, 180, 0);
-            rightCam.localScale = camScale;
+            // Apply custom rotation
+            switch (settings.rotation)
+            {
+                case RotationOption.Left90:
+                    settings.camera.Rotate(0, 0, 90);
+                    break;
+                case RotationOption.Right90:
+                    settings.camera.Rotate(0, 0, -90);
+                    break;
+                case RotationOption.UpsideDown180:
+                    settings.camera.Rotate(0, 0, 180);
+                    break;
+            }
+
+            // Apply scale
+            settings.camera.localScale = new Vector3(settings.width, settings.height, zScale);
         }
     }
 }
