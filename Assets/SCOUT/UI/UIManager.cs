@@ -89,7 +89,7 @@ public class UIManager : MonoBehaviour
                     {
                         foreach (var tabOption in tabselectionList[0].options)
                         {
-                            if (tabOption is UITabOptions uiTabOption && uiTabOption.superMode == modeManager.activeSuperMode)
+                            if (tabOption is UITabOptions uiTabOption && uiTabOption.superMode == modeManager.uiSuperMode)
                             {
                                 return uiTabOption;
                             }
@@ -148,7 +148,7 @@ public class UIManager : MonoBehaviour
         }
 
         // ADDED: Default selection for Camera SuperMode
-        if (modeManager.activeSuperMode == SuperMode.Camera && cameraLists.Length > 0 && cameraLists[0].options.Length > 0)
+        if (modeManager.uiSuperMode == SuperMode.Camera && cameraLists.Length > 0 && cameraLists[0].options.Length > 0)
         {
             modeManager.cameraView.SetActiveCameraMode((CameraMode)cameraLists[0].options[0]);
         }
@@ -174,7 +174,7 @@ public class UIManager : MonoBehaviour
         foreach (var kvp in superModeLists)
         {
             // Only enable other lists if their SuperMode is active AND menu is open
-            bool enableLists = kvp.Key == modeManager.activeSuperMode && modeManager.isMenuOpen;
+            bool enableLists = kvp.Key == modeManager.uiSuperMode && modeManager.isMenuOpen;
             // Skip tabselectionList here as it's handled above
             if (kvp.Key == SuperMode.TabSelection) continue;
 
@@ -228,7 +228,7 @@ public class UIManager : MonoBehaviour
                 return true;
         }
 
-        var activeLists = superModeLists[modeManager.activeSuperMode];
+        var activeLists = superModeLists[modeManager.uiSuperMode];
         foreach (var list in activeLists)
         {
             if (list.TryHoverButton(hit))
@@ -246,7 +246,7 @@ public class UIManager : MonoBehaviour
                 return;
         }
 
-        var activeLists = superModeLists[modeManager.activeSuperMode];
+        var activeLists = superModeLists[modeManager.uiSuperMode];
         for (int i = 0; i < activeLists.Length; i++)
         {
             if (activeLists[i].PressButton(hit))
@@ -261,8 +261,8 @@ public class UIManager : MonoBehaviour
 
     private void SetDefaultControls()
     {
-        var activeLists = superModeLists[modeManager.activeSuperMode];
-        switch (modeManager.activeSuperMode)
+        var activeLists = superModeLists[modeManager.uiSuperMode];
+        switch (modeManager.uiSuperMode)
         {
             case SuperMode.Camera:
 

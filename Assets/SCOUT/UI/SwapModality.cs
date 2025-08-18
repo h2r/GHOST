@@ -4,10 +4,10 @@ public class SwapModality : UIOption
 {
     public override void DoAction(ScoutModeManager modeManager)
     {
-        if (modeManager.activeSuperMode == SuperMode.DualDrive)
-            modeManager.activeSuperMode = SuperMode.SingleDrive;
+        if (modeManager.uiSuperMode == SuperMode.DualDrive)
+            modeManager.uiSuperMode = SuperMode.SingleDrive;
         else
-            modeManager.activeSuperMode = SuperMode.DualDrive;
+            modeManager.uiSuperMode = SuperMode.DualDrive;
     }
 
     public override string GetName()

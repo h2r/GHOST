@@ -15,7 +15,7 @@ public class UITabOptions : UIOption
     }
     public override void DoAction(ScoutModeManager modeManager)
     {
-        modeManager.setActiveSuperMode(superMode);
+        modeManager.setUISuperMode(superMode);
         Debug.Log("MODE CHANGED TO " + name);
     }
 }
