@@ -117,6 +117,7 @@ MonoBehaviour:
   version: 0.1.0
   featureIdInternal: com.unity.openxr.feature.arfoundation-meta-anchor
   openxrExtensionStrings: XR_FB_spatial_entity XR_META_spatial_entity_discovery XR_META_spatial_entity_persistence
+    XR_META_spatial_entity_sharing XR_META_spatial_entity_group_sharing XR_FB_spatial_entity_query
   company: Unity Technologies
   priority: 0
   required: 0
@@ -138,6 +139,28 @@ MonoBehaviour:
   featureIdInternal: com.meta.openxr.feature.subsampledLayout
   openxrExtensionStrings: XR_META_vulkan_swapchain_create_info
   company: Meta
+  priority: 0
+  required: 0
+--- !u!114 &-5975233314077489818
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6096094d69d82cc40947df806f66ab34, type: 3}
+  m_Name: OpenXRCompositionLayersFeature Android
+  m_EditorClassIdentifier: Unity.XR.OpenXR::UnityEngine.XR.OpenXR.Features.CompositionLayers.OpenXRCompositionLayersFeature
+  m_enabled: 0
+  nameUi: Composition Layers Support
+  version: 1.0.0
+  featureIdInternal: com.unity.openxr.feature.compositionlayers
+  openxrExtensionStrings: XR_KHR_composition_layer_cylinder XR_KHR_composition_layer_equirect
+    XR_KHR_composition_layer_equirect2 XR_KHR_composition_layer_cube XR_KHR_composition_layer_color_scale_bias
+    XR_KHR_android_surface_swapchain
+  company: Unity
   priority: 0
   required: 0
 --- !u!114 &-5398722598577384755
@@ -226,6 +249,28 @@ MonoBehaviour:
   company: Meta
   priority: 0
   required: 0
+--- !u!114 &-4571090997830837056
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6096094d69d82cc40947df806f66ab34, type: 3}
+  m_Name: OpenXRCompositionLayersFeature Standalone
+  m_EditorClassIdentifier: Unity.XR.OpenXR::UnityEngine.XR.OpenXR.Features.CompositionLayers.OpenXRCompositionLayersFeature
+  m_enabled: 1
+  nameUi: Composition Layers Support
+  version: 1.0.0
+  featureIdInternal: com.unity.openxr.feature.compositionlayers
+  openxrExtensionStrings: XR_KHR_composition_layer_cylinder XR_KHR_composition_layer_equirect
+    XR_KHR_composition_layer_equirect2 XR_KHR_composition_layer_cube XR_KHR_composition_layer_color_scale_bias
+    XR_KHR_android_surface_swapchain
+  company: Unity
+  priority: 0
+  required: 0
 --- !u!114 &-4247736531263632017
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -242,7 +287,8 @@ MonoBehaviour:
   nameUi: 'Meta Quest: Planes'
   version: 0.1.0
   featureIdInternal: com.unity.openxr.feature.arfoundation-meta-plane
-  openxrExtensionStrings: XR_FB_scene XR_FB_spatial_entity XR_META_spatial_entity_discovery
+  openxrExtensionStrings: XR_FB_scene XR_FB_spatial_entity XR_FB_spatial_entity_container
+    XR_META_spatial_entity_discovery
   company: Unity Technologies
   priority: 0
   required: 0
@@ -287,6 +333,27 @@ MonoBehaviour:
   company: Unity Technologies
   priority: 0
   required: 0
+--- !u!114 &-3566507896945661697
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01512f11fe5096443ad972feb69271f6, type: 3}
+  m_Name: SpaceWarpFeature Android
+  m_EditorClassIdentifier: Unity.XR.OpenXR::UnityEngine.XR.OpenXR.Features.SpaceWarpFeature
+  m_enabled: 0
+  nameUi: Application SpaceWarp
+  version: 1.0.0
+  featureIdInternal: com.unity.openxr.feature.spacewarp
+  openxrExtensionStrings: XR_FB_space_warp
+  company: Unity
+  priority: 0
+  required: 0
+  m_UseRightHandedNDC: 0
 --- !u!114 &-2987421080943291414
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -397,6 +464,7 @@ MonoBehaviour:
   version: 0.1.0
   featureIdInternal: com.unity.openxr.feature.arfoundation-meta-anchor
   openxrExtensionStrings: XR_FB_spatial_entity XR_META_spatial_entity_discovery XR_META_spatial_entity_persistence
+    XR_META_spatial_entity_sharing XR_META_spatial_entity_group_sharing XR_FB_spatial_entity_query
   company: Unity Technologies
   priority: 0
   required: 0
@@ -548,6 +616,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   features:
   - {fileID: 7438672597232742020}
+  - {fileID: -4571090997830837056}
   - {fileID: -449741914172589832}
   - {fileID: -1992737726343282275}
   - {fileID: 3973412703780260892}
@@ -563,6 +632,7 @@ MonoBehaviour:
   - {fileID: -177000443299484431}
   - {fileID: 8827381569515383560}
   - {fileID: 2530328125348231399}
+  - {fileID: -594876591609520937}
   - {fileID: 4240071139046573350}
   - {fileID: -3820250420026720182}
   - {fileID: 2960767094789127846}
@@ -582,6 +652,7 @@ MonoBehaviour:
   - {fileID: -1259320862161519326}
   - {fileID: -8638663112018935848}
   m_renderMode: 0
+  m_latencyOptimization: 0
   m_autoColorSubmissionMode: 1
   m_colorSubmissionModes:
     m_List: 00000000
@@ -590,7 +661,30 @@ MonoBehaviour:
   m_optimizeBufferDiscards: 0
   m_symmetricProjection: 0
   m_optimizeMultiviewRenderRegions: 0
+  m_multiviewRenderRegionsOptimizationMode: 0
+  m_hasMigratedMultiviewRenderRegionSetting: 1
   m_foveatedRenderingApi: 0
+  m_useOpenXRPredictedTime: 0
+--- !u!114 &-594876591609520937
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 651d103057d74c4d8e51d0b368d3d98b, type: 3}
+  m_Name: ColocationDiscoveryFeature Standalone
+  m_EditorClassIdentifier: Unity.XR.MetaOpenXR::UnityEngine.XR.OpenXR.Features.Meta.ColocationDiscoveryFeature
+  m_enabled: 0
+  nameUi: 'Meta Quest: Colocation Discovery'
+  version: 1.0.0
+  featureIdInternal: com.unity.openxr.feature.meta-colocation-discovery
+  openxrExtensionStrings: XR_META_colocation_discovery
+  company: Unity Technologies
+  priority: 0
+  required: 0
 --- !u!114 &-555646166468275018
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -673,6 +767,7 @@ MonoBehaviour:
   company: Unity Technologies
   priority: 0
   required: 0
+  m_SuppressVisibility: 0
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -733,6 +828,8 @@ MonoBehaviour:
   lateLatchingMode: 0
   lateLatchingDebug: 0
   optimizeMultiviewRenderRegions: 0
+  multiviewRenderRegionsOptimizationMode: 0
+  m_hasMigratedMultiviewRenderRegions: 1
   spacewarpMotionVectorTextureFormat: 0
 --- !u!114 &156886475746385215
 MonoBehaviour:
@@ -956,7 +1053,8 @@ MonoBehaviour:
   nameUi: 'Meta Quest: Planes'
   version: 0.1.0
   featureIdInternal: com.unity.openxr.feature.arfoundation-meta-plane
-  openxrExtensionStrings: XR_FB_scene XR_FB_spatial_entity XR_META_spatial_entity_discovery
+  openxrExtensionStrings: XR_FB_scene XR_FB_spatial_entity XR_FB_spatial_entity_container
+    XR_META_spatial_entity_discovery
   company: Unity Technologies
   priority: 0
   required: 0
@@ -996,7 +1094,8 @@ MonoBehaviour:
   nameUi: 'Meta Quest: Bounding Boxes'
   version: 0.1.0
   featureIdInternal: com.unity.openxr.feature.arfoundation-meta-bounding-boxes
-  openxrExtensionStrings: XR_FB_scene XR_FB_spatial_entity XR_META_spatial_entity_discovery
+  openxrExtensionStrings: XR_FB_scene XR_FB_spatial_entity XR_FB_spatial_entity_container
+    XR_META_spatial_entity_discovery
   company: Unity Technologies
   priority: 0
   required: 0
@@ -1344,6 +1443,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   features:
   - {fileID: -5158844391086987368}
+  - {fileID: -3566507896945661697}
+  - {fileID: -5975233314077489818}
   - {fileID: -1819930393743201246}
   - {fileID: -1201980078073350488}
   - {fileID: 7305062941160009587}
@@ -1358,6 +1459,7 @@ MonoBehaviour:
   - {fileID: 7273668044344639028}
   - {fileID: 1653993578541201969}
   - {fileID: 4507826202002996448}
+  - {fileID: 8130131695087115765}
   - {fileID: 1076638229118490786}
   - {fileID: 7422930540860876341}
   - {fileID: -1823111745317354088}
@@ -1377,6 +1479,7 @@ MonoBehaviour:
   - {fileID: 5187790130119334493}
   - {fileID: -2496776499858408549}
   m_renderMode: 1
+  m_latencyOptimization: 0
   m_autoColorSubmissionMode: 1
   m_colorSubmissionModes:
     m_List: 00000000
@@ -1385,7 +1488,10 @@ MonoBehaviour:
   m_optimizeBufferDiscards: 0
   m_symmetricProjection: 0
   m_optimizeMultiviewRenderRegions: 0
+  m_multiviewRenderRegionsOptimizationMode: 0
+  m_hasMigratedMultiviewRenderRegionSetting: 1
   m_foveatedRenderingApi: 0
+  m_useOpenXRPredictedTime: 0
 --- !u!114 &6199120310985651292
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1426,6 +1532,7 @@ MonoBehaviour:
   company: Unity Technologies
   priority: 0
   required: 0
+  m_SuppressVisibility: 0
 --- !u!114 &7305062941160009587
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1507,6 +1614,26 @@ MonoBehaviour:
   company: Unity Technologies
   priority: 2147483647
   required: 0
+--- !u!114 &8130131695087115765
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 651d103057d74c4d8e51d0b368d3d98b, type: 3}
+  m_Name: ColocationDiscoveryFeature Android
+  m_EditorClassIdentifier: Unity.XR.MetaOpenXR::UnityEngine.XR.OpenXR.Features.Meta.ColocationDiscoveryFeature
+  m_enabled: 0
+  nameUi: 'Meta Quest: Colocation Discovery'
+  version: 1.0.0
+  featureIdInternal: com.unity.openxr.feature.meta-colocation-discovery
+  openxrExtensionStrings: XR_META_colocation_discovery
+  company: Unity Technologies
+  priority: 0
+  required: 0
 --- !u!114 &8410896261977003049
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1565,7 +1692,8 @@ MonoBehaviour:
   nameUi: 'Meta Quest: Bounding Boxes'
   version: 0.1.0
   featureIdInternal: com.unity.openxr.feature.arfoundation-meta-bounding-boxes
-  openxrExtensionStrings: XR_FB_scene XR_FB_spatial_entity XR_META_spatial_entity_discovery
+  openxrExtensionStrings: XR_FB_scene XR_FB_spatial_entity XR_FB_spatial_entity_container
+    XR_META_spatial_entity_discovery
   company: Unity Technologies
   priority: 0
   required: 0

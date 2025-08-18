@@ -1,9 +1,7 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using Unity.Sentis;
-using UnityEditor;
+using Unity.InferenceEngine;
+
 using UnityEngine;
 
 
@@ -14,7 +12,7 @@ public class UBModel : MonoBehaviour
     private static extern bool UB_LoadModel(string modelPath, string backend);
     [DllImport("UnityBYOM")]
     private static extern bool UB_RunInference(
-        IntPtr texResource,      // ID3D12Resource* of the Unity texture
+        IntPtr texResource,      // ID3D12Resource* of the Unity tensor
         IntPtr depthResource,    // another ID3D12Resource*
         IntPtr outputBuffer,     // ComputeBuffer.GetNativeBufferPtr()
         int inputCount,          // Number of input elements

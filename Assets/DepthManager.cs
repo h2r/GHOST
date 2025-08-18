@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using Unity.Sentis;
+
 using Unity.VisualScripting;
 
 public class DepthManager : MonoBehaviour
@@ -29,11 +29,11 @@ public class DepthManager : MonoBehaviour
 
     public DepthAveraging AveragerLeft, AveragerRight;
 
-    private Tensor<float> depth_left_t_1;
-    private Tensor<float> rgb_left_t_1;
+    private Unity.InferenceEngine.Tensor<float> depth_left_t_1;
+    private Unity.InferenceEngine.Tensor<float> rgb_left_t_1;
 
-    private Tensor<float> depth_right_t_1;
-    private Tensor<float> rgb_right_t_1;
+    private Unity.InferenceEngine.Tensor<float> depth_right_t_1;
+    private Unity.InferenceEngine.Tensor<float> rgb_right_t_1;
 
     private bool received_left_1 = false;
     private bool received_right_1 = false;
@@ -74,8 +74,8 @@ public class DepthManager : MonoBehaviour
 
     private ComputeBuffer final_out;
 
-    TensorShape depth_shape = new TensorShape(1, 1, 480, 640);
-    TensorShape color_shape = new TensorShape(1, 3, 480, 640);
+    Unity.InferenceEngine.TensorShape depth_shape = new Unity.InferenceEngine.TensorShape(1, 1, 480, 640);
+    Unity.InferenceEngine.TensorShape color_shape = new Unity.InferenceEngine.TensorShape(1, 3, 480, 640);
 
     Matrix4x4 ICP_trans = Matrix4x4.identity;
     Matrix4x4 icp_trans_temp = Matrix4x4.identity;
@@ -125,11 +125,11 @@ public class DepthManager : MonoBehaviour
         //left_eye_data_timer_id = fps_timer.registerTimer("Left eye data");
         //right_eye_data_timer_id = fps_timer.registerTimer("Right eye data");
 
-        depth_left_t_1 = new Tensor<float>(depth_shape);
-        depth_right_t_1 = new Tensor<float>(depth_shape);
+        depth_left_t_1 = new Unity.InferenceEngine.Tensor<float>(depth_shape);
+        depth_right_t_1 = new Unity.InferenceEngine.Tensor<float>(depth_shape);
 
-        rgb_left_t_1 = new Tensor<float>(color_shape, data: null);
-        rgb_right_t_1 = new Tensor<float>(color_shape, data: null);
+        rgb_left_t_1 = new Unity.InferenceEngine.Tensor<float>(color_shape, data: null);
+        rgb_right_t_1 = new Unity.InferenceEngine.Tensor<float>(color_shape, data: null);
 
         received_left_1 = false;
         received_right_1 = false;
@@ -209,7 +209,7 @@ public class DepthManager : MonoBehaviour
 
     public (ComputeBuffer, Matrix4x4, float[]) update_depth_from_renderer(Texture2D rgb, float[] depth, int camera_index, bool calculate_icp, bool new_depth, bool avg_before_complete)
     {
-        TextureTransform tform = new();
+        Unity.InferenceEngine.TextureTransform tform = new();
         tform.SetDimensions(rgb.width, rgb.height, 3);
 
 
@@ -237,10 +237,10 @@ public class DepthManager : MonoBehaviour
             }
             else
             {
-                depth_left_t_1 = new Tensor<float>(depth_shape, left_depth_avg);
+                depth_left_t_1 = new Unity.InferenceEngine.Tensor<float>(depth_shape, left_depth_avg);
                 //depth_left_t_1 = new Tensor<float>(depth_shape, depth);
             }
-            TextureConverter.ToTensor(rgb, rgb_left_t_1, tform);
+            Unity.InferenceEngine.TextureConverter.ToTensor(rgb, rgb_left_t_1, tform);
             rgb_left_t_1.Reshape(color_shape);
 
             received_left_1 = true;
@@ -259,10 +259,10 @@ public class DepthManager : MonoBehaviour
             }
             else
             {
-                depth_right_t_1 = new Tensor<float>(depth_shape, right_depth_avg);
+                depth_right_t_1 = new Unity.InferenceEngine.Tensor<float>(depth_shape, right_depth_avg);
                 //depth_right_t_1 = new Tensor<float>(depth_shape, depth);
             }
-            TextureConverter.ToTensor(rgb, rgb_right_t_1, tform);
+            Unity.InferenceEngine.TextureConverter.ToTensor(rgb, rgb_right_t_1, tform);
             rgb_right_t_1.Reshape(color_shape);
 
             received_right_1 = true;
@@ -282,7 +282,7 @@ public class DepthManager : MonoBehaviour
         return (temp_output_left_1, icp_trans_temp, right_depth_avg);
     }
 
-    private (ComputeBuffer, ComputeBuffer, Matrix4x4) process_depth(Tensor<float> depthL_1, Tensor<float> rgbL_1, Tensor<float> depthR_1, Tensor<float> rgbR_1, bool is_not_moving, bool calculate_icp)
+    private (ComputeBuffer, ComputeBuffer, Matrix4x4) process_depth(Unity.InferenceEngine.Tensor<float> depthL_1, Unity.InferenceEngine.Tensor<float> rgbL_1, Unity.InferenceEngine.Tensor<float> depthR_1, Unity.InferenceEngine.Tensor<float> rgbR_1, bool is_not_moving, bool calculate_icp)
     {
         ICP_trans = Matrix4x4.identity;
         if (calculate_icp && activate_ICP) 
@@ -294,8 +294,8 @@ public class DepthManager : MonoBehaviour
 
 
         // Get compute buffers for depth
-        ComputeBuffer depthL_1_buf = ComputeTensorData.Pin(depthL_1).buffer;
-        ComputeBuffer depthR_1_buf = ComputeTensorData.Pin(depthR_1).buffer;
+        ComputeBuffer depthL_1_buf = Unity.InferenceEngine.ComputeTensorData.Pin(depthL_1).buffer;
+        ComputeBuffer depthR_1_buf = Unity.InferenceEngine.ComputeTensorData.Pin(depthR_1).buffer;
 
         AveragerLeft.prev_filling(depthL_1_buf);
         AveragerRight.prev_filling(depthR_1_buf);
