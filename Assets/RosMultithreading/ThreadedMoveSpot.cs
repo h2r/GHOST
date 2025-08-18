@@ -23,7 +23,7 @@ public class ThreadedMoveSpot : ThreadedUnityPublisher<MessageTypes.Geometry.Twi
         {
             message.linear = GetGeometryVector3(new Vector3(drive[0], height, drive[1]).Unity2Ros());
             message.angular = GetGeometryVector3(new Vector3(0, -rotate, 0).Unity2Ros());
-            LoopPublish(message);
+            LoopPublish(message, 3);
         }
         else
         {

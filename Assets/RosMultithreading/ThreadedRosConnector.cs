@@ -107,36 +107,39 @@ class LoopPublishAgent
 
     public void OnFrame()
     {
-        lock (dataLock)
-        {
+        // lock (dataLock)
+        // {
             if (ttlFrames > 0)
                 ttlFrames--;
-        }
+        // }
     }
 
     public void OnRosTick()
     {
         bool isValidMessage;
 
-        lock (dataLock)
+        // lock (dataLock)
             isValidMessage = ttlFrames > 0;
 
         if (isValidMessage)
+        {
+            Debug.Log("publish " + publicationId + " " + message);
             RosSocket.Publish(publicationId, message);
+        }
     }
 
     public void SetMessage(Message message, int ttlFrames)
     {
-        lock (dataLock)
-        {
+        // lock (dataLock)
+        // {
             this.message = message;
             this.ttlFrames = ttlFrames;
-        }
+        // }
     }
 
     public void ClearMessage()
     {
-        lock (dataLock)
+        // lock (dataLock)
             ttlFrames = 0;
     }
 }

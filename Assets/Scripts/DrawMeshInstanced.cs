@@ -389,8 +389,8 @@ public class DrawMeshInstanced : MonoBehaviour
         material.SetVector("intrinsics", intr);
 
         Vector4 screenData = new Vector4((float)width, (float)height, 1 / (float)width, FY);
-        Debug.Log("Screen Data: " + screenData.ToString());
-        Debug.Log("screenData[2] = " + screenData[2].ToString());
+        // Debug.Log("Screen Data: " + screenData.ToString());
+        // Debug.Log("screenData[2] = " + screenData[2].ToString());
         compute.SetVector("screenData", screenData);
         material.SetVector("screenData", screenData);
 

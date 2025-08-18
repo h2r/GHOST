@@ -22,7 +22,7 @@ namespace RosSharp.RosBridgeClient
         {
             Debug.Log("Stowing arm (Threaded)");
             message.data = true;
-            LoopPublish(message);
+            LoopPublish(message, 3);
         }
     }
 }
