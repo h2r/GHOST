@@ -1905,7 +1905,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 150, y: 217.5}
+  m_AnchoredPosition: {x: 75, y: 217.5}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &233482398
@@ -4133,6 +4133,10 @@ PrefabInstance:
       propertyPath: Mass
       value: 1.904699
       objectReference: {fileID: 0}
+    - target: {fileID: 3310871051872386189, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: Mass
+      value: 1.904699
+      objectReference: {fileID: 0}
     - target: {fileID: 3310871052305709435, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
       value: ws://128.148.140.230:9090
@@ -4747,11 +4751,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8353130026847437883, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8353130027234416000, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8551647604095721092, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Mass
@@ -4762,6 +4766,7 @@ PrefabInstance:
     - {fileID: 1137478774082161501, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
     m_RemovedGameObjects:
     - {fileID: 4598551966875127978, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+    - {fileID: 8551647604095721100, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 1137478774082161500, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       insertIndex: 1
@@ -7802,7 +7807,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &905749121
 RectTransform:
   m_ObjectHideFlags: 0
@@ -8913,7 +8918,9 @@ MonoBehaviour:
   rightModel: {fileID: 1827367824}
   leftExampleModel: {fileID: 0}
   rightExampleModel: {fileID: 0}
-  uiSuperMode: 2
+  spotOne: {fileID: 8166042499262673834}
+  spotTwo: {fileID: 1246843491585836373}
+  activeSuperMode: 0
   activePerspectiveMode: {fileID: 0}
 --- !u!1 &1085138238
 GameObject:
@@ -9484,7 +9491,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1207437537
 RectTransform:
   m_ObjectHideFlags: 0
@@ -9556,7 +9563,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 217.5}
+  m_AnchoredPosition: {x: 75, y: 217.5}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1208171618
@@ -9832,7 +9839,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 300, y: 217.5}
+  m_AnchoredPosition: {x: 225, y: 217.5}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1220052246
@@ -10173,7 +10180,6 @@ MonoBehaviour:
   title: 
   isHorizontal: 1
   options:
-  - {fileID: 394175928}
   - {fileID: 1232521057}
   titlePrefab: {fileID: 3278048788002158022, guid: bfe2b15985d2d437fb47203f0df723ee, type: 3}
   buttonPrefab: {fileID: 1520795838076098022, guid: 39fc7b698942e4ac18e866a2f1f87352, type: 3}
@@ -11028,7 +11034,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -150, y: 217.5}
+  m_AnchoredPosition: {x: -75, y: 217.5}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1421008789
@@ -13289,7 +13295,7 @@ MonoBehaviour:
   Topic: /spot2/status/battery_percentage_states
   TimeStep: 0
   spotIdentifier: Blue
-  batteryText: {fileID: 0}
+  batteryText: {fileID: 1898441714}
   batteryLevel: 0
 --- !u!114 &1656242564
 MonoBehaviour:
@@ -13567,7 +13573,7 @@ MonoBehaviour:
   Topic: /spot/status/battery_percentage_states
   TimeStep: 0
   spotIdentifier: Red
-  batteryText: {fileID: 0}
+  batteryText: {fileID: 1708685320}
   batteryLevel: 0
 --- !u!114 &1706821476
 MonoBehaviour:
@@ -15733,8 +15739,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -360, y: -259}
-  m_SizeDelta: {x: 200, y: 50}
+  m_AnchoredPosition: {x: -360, y: -290}
+  m_SizeDelta: {x: 210, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1898441714
 MonoBehaviour:
@@ -15756,7 +15762,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Red Spot Battery: 75.5%'
+  m_text: 'Blue Spot Battery: 75.5%'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -16255,7 +16261,6 @@ MonoBehaviour:
   isHorizontal: 1
   options:
   - {fileID: 2077909367}
-  - {fileID: 394175928}
   - {fileID: 1232521057}
   titlePrefab: {fileID: 3278048788002158022, guid: bfe2b15985d2d437fb47203f0df723ee, type: 3}
   buttonPrefab: {fileID: 1520795838076098022, guid: 39fc7b698942e4ac18e866a2f1f87352, type: 3}
@@ -18644,7 +18649,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -150, y: 217.5}
+  m_AnchoredPosition: {x: -75, y: 217.5}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &3023118529113998934
@@ -21107,14 +21112,12 @@ MonoBehaviour:
   singleControllerLists:
   - {fileID: 4355652861202809075}
   - {fileID: 4618507676574224503}
-  - {fileID: 905749122}
   - {fileID: 233482398}
   - {fileID: 1220052246}
   - {fileID: 1962067507}
   dualControllerLists:
   - {fileID: 1421008789}
   - {fileID: 1208171618}
-  - {fileID: 1207437538}
   - {fileID: 1251034219}
   cameraLists:
   - {fileID: 1771937947}
@@ -21159,7 +21162,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -300, y: 217.5}
+  m_AnchoredPosition: {x: -225, y: 217.5}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &8977999410118048698
