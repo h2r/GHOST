@@ -169,6 +169,7 @@ public class UIManager : MonoBehaviour
         foreach (var list in tabselectionList)
         {
             list.gameObject.SetActive(modeManager.isMenuOpen);
+            list.UpdateTabSelections(modeManager);
         }
 
         foreach (var kvp in superModeLists)

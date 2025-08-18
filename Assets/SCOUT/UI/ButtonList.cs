@@ -65,6 +65,21 @@ public class ButtonList : MonoBehaviour
         }
     }
 
+    public void UpdateTabSelections(ScoutModeManager modeManager)
+    {
+        for (int i = 0; i < buttons.Length; i++)
+        {
+            Color color;
+            if (((UITabOptions)options[i]).superMode == modeManager.uiSuperMode)
+                color = Color.magenta;
+            else if (((UITabOptions)options[i]).superMode == modeManager.activeSuperMode)
+                color = Color.purple;
+            else
+                color = Color.gray;
+            buttons[i].GetComponent<Image>().color = color;
+        }
+    }
+
     public void Reset()
     {
         // TEMP - until can distinguish UIOption superclass
