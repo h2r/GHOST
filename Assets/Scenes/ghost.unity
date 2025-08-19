@@ -10781,6 +10781,7 @@ MonoBehaviour:
   rightExampleModel: {fileID: 0}
   spotOne: {fileID: 8166042499262673834}
   spotTwo: {fileID: 1246843491585836373}
+  positionPresetController: {fileID: 750974936}
   activeSuperMode: 0
   activePerspectiveMode: {fileID: 0}
 --- !u!1 &1085138238

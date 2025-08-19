@@ -6,7 +6,7 @@ public enum SuperMode
     SingleDrive,
     DualDrive,
     Camera,
-    TabSelection // ADDED
+    TabSelection
 }
 
 public class ScoutModeManager : MonoBehaviour
@@ -27,6 +27,7 @@ public class ScoutModeManager : MonoBehaviour
 
     public ControllerModel leftModel, rightModel, leftExampleModel, rightExampleModel;
     public SpotMode spotOne, spotTwo;
+    public PositionPresetController positionPresetController;
 
     [NonSerialized]
     public SuperMode uiSuperMode = SuperMode.Camera;
@@ -40,6 +41,7 @@ public class ScoutModeManager : MonoBehaviour
     [NonSerialized]
     public bool isMenuOpen = true;
     private bool _previousIsMenuOpen; // To track changes in isMenuOpen
+    private bool hasMenuClosed = false;
 
     void Update()
     {
@@ -62,26 +64,32 @@ public class ScoutModeManager : MonoBehaviour
             _previousIsMenuOpen = isMenuOpen; // Update the previous state
         }
 
-        // Update colors while menu is open
-        if (isMenuOpen)
+        if (!isMenuOpen && !hasMenuClosed)
         {
-            leftModel.ClearLabels();
-            rightModel.ClearLabels();
-            // leftExampleModel.ClearLabels();
-            // rightExampleModel.ClearLabels();
-            // switch (activeSuperMode)
-            // {
-            //     case SuperMode.SingleDrive:
-            //         singleDrive.AssignExampleModels(leftExampleModel, rightExampleModel);
-            //         break;
-
-            //     case SuperMode.DualDrive:
-            //         dualDrive.AssignExampleModels(leftExampleModel, rightExampleModel);
-            //         break;
-            // }
-
-            return;
+            positionPresetController.SetInitialPreset();
+            hasMenuClosed = true;
         }
+
+        // Update colors while menu is open
+            if (isMenuOpen)
+            {
+                leftModel.ClearLabels();
+                rightModel.ClearLabels();
+                // leftExampleModel.ClearLabels();
+                // rightExampleModel.ClearLabels();
+                // switch (activeSuperMode)
+                // {
+                //     case SuperMode.SingleDrive:
+                //         singleDrive.AssignExampleModels(leftExampleModel, rightExampleModel);
+                //         break;
+
+                //     case SuperMode.DualDrive:
+                //         dualDrive.AssignExampleModels(leftExampleModel, rightExampleModel);
+                //         break;
+                // }
+
+                return;
+            }
 
         switch (activeSuperMode)
         {
