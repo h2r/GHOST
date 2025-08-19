@@ -405,10 +405,12 @@ public class DrawMeshInstanced : MonoBehaviour
             Debug.Log("Using saved mesh");
             for (int i = 0; i < 480 * 640; i++)
             {
-                depth_ar[i] = depth_ar_saved[i];
+                //depth_ar[i] = depth_ar_saved[i];
+                depth_ar[i] = 2.0f;
             }
 
-            (color_image, depth_tensor) = spotObserverClient.GetCameraFeeds(0);
+            Debug.Log("SpotObserverCameraIndex: " + (int)SpotObserverCameraIndex);
+            (color_image, depth_tensor) = spotObserverClient.GetCameraFeeds(SpotObserverCameraIndex);
 
             Debug.Log("Color image: " + (color_image == null ? "null" : color_image.width + "x" + color_image.height));
             // HACK
@@ -422,7 +424,7 @@ public class DrawMeshInstanced : MonoBehaviour
         else
         {
             Debug.Log("Getting camera feeds from Spot Observer Client");
-            (color_image, depth_tensor) = spotObserverClient.GetCameraFeeds(0);
+           //(color_image, depth_tensor) = spotObserverClient.GetCameraFeeds(0);
             Debug.Log("Color image: " + (color_image == null ? "null" : color_image.width + "x" + color_image.height));
 
             if (depth_image != null)
