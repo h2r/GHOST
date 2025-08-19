@@ -164,17 +164,17 @@ public class LocomotionJoystickMode : OneControllerMode
 
         // Thumbstick label
         if (grip)
-            model.joystickLabel = "Fly";
+            model.joystickLabel = "Up/Down";
         else if (trigger)
             model.joystickLabel = "Rotate";
         else
-            model.joystickLabel = "Locomote";
+            model.joystickLabel = "Fly";
 
         // Trigger label
         model.indexLabel = trigger ? "" : "Hold: Rotate";
 
         // Gripper label
-        model.gripLabel = grip ? "" : "Hold: Fly";
+        model.gripLabel = grip ? "" : "Hold: Up/Down";
     }
 
     public override string GetName()
@@ -188,8 +188,8 @@ public class LocomotionJoystickMode : OneControllerMode
     public override void AssignDefaultLabels(ControllerModel exampleModel)
     {
         exampleModel.axLabel = "Reset Y";
-        exampleModel.joystickLabel = "Locomote";
+        exampleModel.joystickLabel = "Fly";
         exampleModel.indexLabel = "Hold: Rotate";
-        exampleModel.gripLabel = "Hold: Fly";
+        exampleModel.gripLabel = "Hold: Up/Down";
     }
 }

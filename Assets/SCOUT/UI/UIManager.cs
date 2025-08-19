@@ -15,8 +15,9 @@ public enum SingleControl
 
 public enum DualControl
 {
-    DRIVE, 
-    ARM
+    DRIVE,
+    ARM, 
+    FLY
 }
 
 public enum CameraSettings
@@ -247,10 +248,10 @@ public class UIManager : MonoBehaviour
                 if (activeLists.Length > 0 && activeLists[0].options.Length > 0)
                 {
                     // Set default left spot and control
-                    modeManager.singleDrive.leftSpot = (SpotMode)activeLists[0].options[SpotColor.BLUE];
-                    modeManager.singleDrive.leftControl = (OneControllerMode)activeLists[0].options[SingleControl.FLY];
-                    modeManager.singleDrive.rightControl = (OneControllerMode)activeLists[0].options[SingleControl.FLY];
-                    modeManager.singleDrive.rightSpot = (SpotMode)activeLists[0].options[SpotColor.RED];
+                    modeManager.singleDrive.leftSpot = (SpotMode)activeLists[0].options[(int) SpotColor.BLUE];
+                    modeManager.singleDrive.leftControl = (OneControllerMode)activeLists[0].options[(int) SingleControl.FLY];
+                    modeManager.singleDrive.rightControl = (OneControllerMode)activeLists[0].options[(int) SingleControl.FLY];
+                    modeManager.singleDrive.rightSpot = (SpotMode)activeLists[0].options[(int) SpotColor.RED];
                 }
                 break; 
 
@@ -258,9 +259,9 @@ public class UIManager : MonoBehaviour
                 if (activeLists.Length > 0 && activeLists[0].options.Length > 0)
                 {
                     // Set default spot and control
-                    modeManager.dualDrive.spot = (SpotMode)activeLists[0].options[SpotColor.RED];
+                    modeManager.dualDrive.spot = (SpotMode)activeLists[0].options[(int) SpotColor.RED];
                     // preset to drive mode because fly mode is not implemented yet 
-                    modeManager.dualDrive.control = (TwoControllerMode)activeLists[0].options[DualControl.DRIVE];
+                    modeManager.dualDrive.control = (TwoControllerMode)activeLists[0].options[(int) DualControl.FLY];
                 }
                 break;
 
