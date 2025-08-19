@@ -87,22 +87,22 @@ public class UIManager : MonoBehaviour
             }},
             // MODIFIED: Getters for TabSelection
             { SuperMode.TabSelection, new Func<NamedOption>[]{
-                () => { // This getter needs to return the currently active UITabOptions based on activeSuperMode
-                    // This is a placeholder. We need a way to map activeSuperMode back to a UITabOptions instance.
+                () => { // This getter needs to return the currently active UITabOption based on activeSuperMode
+                    // This is a placeholder. We need a way to map activeSuperMode back to a UITabOption instance.
                     // This might require a new property in ScoutModeManager or a lookup.
-                    // For now, let's assume we can get the current UITabOptions from the modeManager.
-                    // This part is tricky because UITabOptions are not directly stored in ScoutModeManager.
-                    // A better approach would be to have a way to get the currently selected UITabOptions from the UIManager itself.
+                    // For now, let's assume we can get the current UITabOption from the modeManager.
+                    // This part is tricky because UITabOption are not directly stored in ScoutModeManager.
+                    // A better approach would be to have a way to get the currently selected UITabOption from the UIManager itself.
                     // The ButtonList needs to know which of its *own* options is selected.
                     // The UIManager's role is to tell the ButtonList which option is active.
-                    // The UITabOptions.superMode property is what we need to match.
+                    // The UITabOption.superMode property is what we need to match.
 
-                    // This is a more robust way to get the selected UITabOptions for the tabselectionList
+                    // This is a more robust way to get the selected UITabOption for the tabselectionList
                     if (tabselectionList.Length > 0 && tabselectionList[0] != null && tabselectionList[0].options != null)
                     {
                         foreach (var tabOption in tabselectionList[0].options)
                         {
-                            if (tabOption is UITabOptions uiTabOption && uiTabOption.superMode == modeManager.uiSuperMode)
+                            if (tabOption is UITabOption uiTabOption && uiTabOption.superMode == modeManager.uiSuperMode)
                             {
                                 return uiTabOption;
                             }
@@ -123,25 +123,25 @@ public class UIManager : MonoBehaviour
                 m => modeManager.singleDrive.rightControl = (OneControllerMode)m,
                 m => modeManager.singleDrive.rightSpot = (SpotMode)m,
                 m => ((UIOption)m).DoAction(modeManager),
-                m => ((UITabOptions)m).DoAction(modeManager)
+                m => ((UITabOption)m).DoAction(modeManager)
             } },
             { SuperMode.DualDrive, new Action<NamedOption>[] {
                 m => modeManager.dualDrive.spot = (SpotMode)m,
                 m => modeManager.dualDrive.control = (TwoControllerMode)m,
                 // m => OnPerspectiveChange((PerspectiveMode)m),
                 m => ((UIOption)m).DoAction(modeManager),
-                m => ((UITabOptions)m).DoAction(modeManager)
+                m => ((UITabOption)m).DoAction(modeManager)
             } },
             { SuperMode.Camera, new Action<NamedOption>[] {
                 m => modeManager.cameraView.SetActiveCameraMode((CameraMode)m), // MODIFIED: Call SetActiveCameraMode
                 m => ((UIOption) m).DoAction(modeManager),
-                m => ((UITabOptions)m).DoAction(modeManager)
+                m => ((UITabOption)m).DoAction(modeManager)
             } },
             // ADDED: Setters for TabSelection
             { SuperMode.TabSelection, new Action<NamedOption>[] {
-                m => ((UITabOptions)m).DoAction(modeManager), // This will call DoAction on the selected tab option
+                m => ((UITabOption)m).DoAction(modeManager), // This will call DoAction on the selected tab option
                 m => ((UIOption)m).DoAction(modeManager),
-                m => ((UITabOptions)m).DoAction(modeManager)
+                m => ((UITabOption)m).DoAction(modeManager)
             }}
         };
 

@@ -75,9 +75,9 @@ public class ButtonList : MonoBehaviour
         for (int i = 0; i < buttons.Length; i++)
         {
             Color color;
-            if (((UITabOptions)options[i]).superMode == modeManager.uiSuperMode)
+            if (((UITabOption)options[i]).superMode == modeManager.uiSuperMode)
                 color = Color.magenta;
-            else if (((UITabOptions)options[i]).superMode == modeManager.activeSuperMode)
+            else if (((UITabOption)options[i]).superMode == modeManager.activeSuperMode)
                 color = Color.purple;
             else
                 color = Color.gray;

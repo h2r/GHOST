@@ -31,12 +31,12 @@ public class ScoutModeManager : MonoBehaviour
 
     [NonSerialized]
     public SuperMode uiSuperMode = SuperMode.Camera;
+    [NonSerialized]
     public SuperMode activeSuperMode = SuperMode.SingleDrive;
 
     public SingleDriveSuperMode singleDrive = new();
     public DualDriveSuperMode dualDrive = new();
     public CameraSuperMode cameraView = new();
-    public PerspectiveMode activePerspectiveMode;
 
     [NonSerialized]
     public bool isMenuOpen = true;
@@ -103,7 +103,7 @@ public class ScoutModeManager : MonoBehaviour
         }
     }
 
-    public void setUISuperMode(SuperMode mode)
+    public void SetUISuperMode(SuperMode mode)
     {
         uiSuperMode = mode;
         if (mode == SuperMode.SingleDrive || mode == SuperMode.DualDrive)
@@ -117,7 +117,6 @@ public class SingleDriveSuperMode
 {
     public SpotMode leftSpot, rightSpot;
     public OneControllerMode leftControl, rightControl;
-    public PerspectiveMode perspective;
 
     public void Update(ControllerModel leftModel, ControllerModel rightModel)
     {
@@ -161,7 +160,6 @@ public class DualDriveSuperMode
 {
     public SpotMode spot;
     public TwoControllerMode control;
-    public PerspectiveMode perspective;
 
     public void Update(ControllerModel leftModel, ControllerModel rightModel)
     {
