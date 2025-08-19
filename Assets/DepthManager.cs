@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Unity.InferenceEngine;
 
 using Unity.VisualScripting;
 
@@ -209,7 +210,7 @@ public class DepthManager : MonoBehaviour
 
     public (ComputeBuffer, Matrix4x4, float[]) update_depth_from_renderer(Texture2D rgb, float[] depth, int camera_index, bool calculate_icp, bool new_depth, bool avg_before_complete)
     {
-        Unity.InferenceEngine.TextureTransform tform = new();
+        TextureTransform tform = new();
         tform.SetDimensions(rgb.width, rgb.height, 3);
 
 

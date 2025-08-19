@@ -4197,12 +4197,20 @@ PrefabInstance:
       value: 1.904699
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775010377568, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: width
+      value: 640
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478775010377568, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: y_min
       value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775010377568, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: z_max
       value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478775010377568, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: height
+      value: 480
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775010377568, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: target
@@ -4235,6 +4243,14 @@ PrefabInstance:
     - target: {fileID: 1137478775010377568, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: savePointCloud
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478775010377568, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: colorSubscriber
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478775010377568, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: depthSubscriber
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775010377568, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: use_saved_meshes
@@ -4584,6 +4600,10 @@ PrefabInstance:
       propertyPath: use_saved_meshes
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3310871052733856933, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: SpotObserverCameraIndex
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 3310871052733856935, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -4695,6 +4715,10 @@ PrefabInstance:
     - target: {fileID: 3310871053306987607, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: use_saved_meshes
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871053306987607, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: SpotObserverCameraIndex
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3310871053646093096, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Topic
@@ -4824,6 +4848,22 @@ PrefabInstance:
       propertyPath: rightPress
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 4598551965991344262, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: 'colorSubscribers.Array.data[0]'
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4598551965991344262, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: 'colorSubscribers.Array.data[1]'
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4598551965991344262, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: 'depthSubscribers.Array.data[0]'
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4598551965991344262, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: 'depthSubscribers.Array.data[1]'
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 4598551965991344281, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: objectsOfModeToEnable.Array.size
       value: 0
@@ -4940,6 +4980,14 @@ PrefabInstance:
       propertyPath: rightController
       value: 
       objectReference: {fileID: 1052391961}
+    - target: {fileID: 5143370623281230805, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: 'depthSubscribers.Array.data[0]'
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5143370623281230805, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: 'depthSubscribers.Array.data[1]'
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 6095128873530598835, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Mass
       value: 1.904699
@@ -9955,7 +10003,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdc798fc4b250c04b91b6a0767d25d31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RobotIP: 128.148.140.22
+  RobotIP: 128.148.138.88
   username: user
   password: bigbubbabigbubba
   EnableDebugDumps: 0
