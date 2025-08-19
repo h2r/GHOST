@@ -16,12 +16,12 @@ public class ControllerModel : MonoBehaviour
 
     public OVRInput.Button axButton
     {
-        get => isLeft ? OVRInput.Button.One : OVRInput.Button.Three;
+        get => isLeft ? OVRInput.Button.Three : OVRInput.Button.One;
     }
 
     public OVRInput.Button byButton
     {
-        get => isLeft ? OVRInput.Button.Two : OVRInput.Button.Four;
+        get => isLeft ? OVRInput.Button.Four : OVRInput.Button.Two;
     }
 
     public OVRInput.Button joystickButton
