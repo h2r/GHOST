@@ -4200,7 +4200,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 441fcddae936d184f8196aeed41a9f18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Topic: /spot2/stream_image/hand_color_image/image
+  Topic: /spot/stream_image2/hand_color_image/image
   TimeStep: 0
   meshRenderer: {fileID: 382958515}
   texture2D: {fileID: 0}
@@ -9105,40 +9105,40 @@ MonoBehaviour:
   spot1Cams:
     frontLeftCam:
       camera: {fileID: 281616761}
-      rotation: 0
+      rotation: 1
     frontRightCam:
       camera: {fileID: 1027179636}
-      rotation: 0
+      rotation: 1
     backCam:
       camera: {fileID: 317192004}
-      rotation: 0
+      rotation: 3
     leftCam:
       camera: {fileID: 245660909}
-      rotation: 0
+      rotation: 3
     rightCam:
       camera: {fileID: 2073366578}
-      rotation: 0
+      rotation: 3
   spot2Cams:
     frontLeftCam:
-      camera: {fileID: 694198498}
-      rotation: 0
-    frontRightCam:
       camera: {fileID: 1034386578}
-      rotation: 0
+      rotation: 1
+    frontRightCam:
+      camera: {fileID: 694198498}
+      rotation: 1
     backCam:
       camera: {fileID: 529267776}
-      rotation: 0
+      rotation: 3
     leftCam:
       camera: {fileID: 1175510104}
-      rotation: 0
+      rotation: 3
     rightCam:
       camera: {fileID: 1079337969}
-      rotation: 0
+      rotation: 3
   swapLayouts: 0
-  horizontalSpacing: 2.5
-  verticalPadding: 0.1
+  horizontalSpacing: 3
+  verticalPadding: 0.3
   cameraWidth: 1
-  cameraHeight: 0.75
+  cameraHeight: 1
   zScale: 0.001
   layoutOffset: {x: 0, y: 0, z: 2}
 --- !u!4 &948545954
@@ -18898,15 +18898,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99cef7ec5a369480f8273d12d41f6b19, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  layoutMode: 1
+  wristLayoutMode: 1
+  rotationMode: 0
+  commonRotation: {x: 0, y: 0, z: 0}
+  cam1RotationOffset: {x: 0, y: 0, z: 0}
+  cam2RotationOffset: {x: 0, y: 0, z: 0}
   centerEyeAnchor: {fileID: 1747440747}
   armCam1: {fileID: 1124056467}
   armCam2: {fileID: 382958517}
-  armCam1YOffset: 0.45
-  armCam2YOffset: 0.45
-  cameraFeedWidth: 0.65
-  cameraFeedHeight: 0.65
-  horizontalSpacing: 0.5
-  forwardOffset: 0.5
+  leftController: {fileID: 1843185004}
+  rightController: {fileID: 1774275839}
+  frontFeedWidth: 0.5
+  frontFeedHeight: 0.3
+  frontCam1Offset: {x: 0.25, y: 0.5, z: 1}
+  frontCam2Offset: {x: -0.25, y: 0.5, z: 1}
+  wristFeedWidth: 0.25
+  wristFeedHeight: 0.25
+  commonWristOffset: {x: 0, y: 0.1, z: 0}
+  wristCam1Offset: {x: 0.05, y: 0.075, z: 0}
+  wristCam2Offset: {x: -0.05, y: 0.075, z: 0}
 --- !u!1 &1980373407
 GameObject:
   m_ObjectHideFlags: 0
