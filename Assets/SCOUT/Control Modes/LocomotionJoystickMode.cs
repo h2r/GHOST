@@ -202,8 +202,4 @@ public class LocomotionJoystickMode : OneControllerMode
         exampleModel.indexLabel = "Hold: Rotate";
         exampleModel.gripLabel = "Hold: Up/Down";
     }
-    public override Color GetSelectedColor()
-    {
-        return Color.white;
-    }
 }

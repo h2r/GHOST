@@ -248,10 +248,10 @@ public class UIManager : MonoBehaviour
                 if (activeLists.Length > 0 && activeLists[0].options.Length > 0)
                 {
                     // Set default left spot and control
-                    modeManager.singleDrive.leftSpot = (SpotMode)activeLists[0].options[(int) SpotColor.BLUE];
-                    modeManager.singleDrive.leftControl = (OneControllerMode)activeLists[0].options[(int) SingleControl.FLY];
-                    modeManager.singleDrive.rightControl = (OneControllerMode)activeLists[0].options[(int) SingleControl.FLY];
-                    modeManager.singleDrive.rightSpot = (SpotMode)activeLists[0].options[(int) SpotColor.RED];
+                    activeLists[0].PressButtonIndex((int)SpotColor.BLUE);
+                    activeLists[1].PressButtonIndex((int)SingleControl.FLY); // select fly as teh default for left and right control 
+                    activeLists[2].PressButtonIndex((int)SingleControl.FLY);
+                    activeLists[3].PressButtonIndex((int)SpotColor.RED);
                 }
                 break; 
 
