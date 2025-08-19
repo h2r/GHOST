@@ -3,14 +3,30 @@ using System.Collections.Generic;
 using Meta.WitAi.Events.Editor;
 using UnityEngine;
 
+
+// enums used for default controller settings for readability 
 public enum SingleControl
 {
     DYNAMIC,
     DRIVE,
     ARM,
-    LOCOMOTION
+    FLY
 }
 
+public enum DualControl
+{
+    DRIVE, 
+    ARM
+}
+
+public enum CameraSettings
+{
+    ALL_OFF,
+    RED_PANO,
+    BLUE_PANO,
+    ARM, 
+    ALL_CAMS
+}
 
 
 public enum SpotColor
@@ -18,6 +34,7 @@ public enum SpotColor
     RED,
     BLUE
 }
+
 
 public class UIManager : MonoBehaviour
 {
@@ -147,7 +164,7 @@ public class UIManager : MonoBehaviour
         {
             modeManager.cameraView.SetActiveCameraMode((CameraMode)cameraLists[0].options[0]);
         }
-        //SetDefaultControls();
+        SetDefaultControls();
     }
 
     void Update()
@@ -225,11 +242,26 @@ public class UIManager : MonoBehaviour
         var activeLists = superModeLists[modeManager.uiSuperMode];
         switch (modeManager.uiSuperMode)
         {
-            case SuperMode.Camera:
 
             case SuperMode.SingleDrive:
+                if (activeLists.Length > 0 && activeLists[0].options.Length > 0)
+                {
+                    // Set default left spot and control
+                    modeManager.singleDrive.leftSpot = (SpotMode)activeLists[0].options[SpotColor.BLUE];
+                    modeManager.singleDrive.leftControl = (OneControllerMode)activeLists[0].options[SingleControl.FLY];
+                    modeManager.singleDrive.rightControl = (OneControllerMode)activeLists[0].options[SingleControl.FLY];
+                    modeManager.singleDrive.rightSpot = (SpotMode)activeLists[0].options[SpotColor.RED];
+                }
+                break; 
 
             case SuperMode.DualDrive:
+                if (activeLists.Length > 0 && activeLists[0].options.Length > 0)
+                {
+                    // Set default spot and control
+                    modeManager.dualDrive.spot = (SpotMode)activeLists[0].options[SpotColor.RED];
+                    // preset to drive mode because fly mode is not implemented yet 
+                    modeManager.dualDrive.control = (TwoControllerMode)activeLists[0].options[DualControl.DRIVE];
+                }
                 break;
 
         }
