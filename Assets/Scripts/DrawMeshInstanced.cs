@@ -1,17 +1,19 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using System.IO;
+using JetBrains.Annotations;
 using RosSharp.RosBridgeClient;
 using RosSharp.RosBridgeClient.MessageTypes.Nav;
-using System.Text;
-using static RosSharp.Urdf.Link.Visual.Material;
 using System;
-using JetBrains.Annotations;
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
-using Debug = UnityEngine.Debug;
+using System.IO;
+using System.Text;
+using Unity.InferenceEngine;
 using Unity.Mathematics;
 using Unity.VisualScripting;
+using UnityEngine;
+using static RosSharp.Urdf.Link.Visual.Material;
+using static SpotObserverClient;
+using Debug = UnityEngine.Debug;
 //using System;
 
 
@@ -27,12 +29,15 @@ public class DrawMeshInstanced : MonoBehaviour
     public DepthManager depthManager;
     public int camera_index;
 
+    public SpotCamera SpotObserverCameraIndex;
+
     public Transform mainCameraRot;
 
     public float range;
 
     public Texture2D color_image;
     public Texture2D depth_image;
+    public Tensor depth_tensor;
 
     public int imageScriptIndex;
 
@@ -400,24 +405,24 @@ public class DrawMeshInstanced : MonoBehaviour
             Debug.Log("Using saved mesh");
             for (int i = 0; i < 480 * 640; i++)
             {
-                //depth_ar[i] = depth_ar_saved[i];
-                depth_ar[i] = 1.0f;
+                depth_ar[i] = depth_ar_saved[i];
             }
 
-            (color_image, depth_image) = spotObserverClient.GetCameraFeeds(0);
-            Debug.Log("Color image: " + (color_image == null ? "null" : color_image.width + "x" + color_image.height));
+            (color_image, depth_tensor) = spotObserverClient.GetCameraFeeds(0);
 
-            //if (depth_image != null)
-            //{
-            //    depth_ar = depth_image.GetPixelData<float>(0).ToArray();
-            //}
+            Debug.Log("Color image: " + (color_image == null ? "null" : color_image.width + "x" + color_image.height));
+            // HACK
+            if (depth_tensor != null)
+            {
+                ComputeTensorData.Pin(depth_tensor).buffer.GetData(depth_ar);
+            }
 
             new_depth_to_render = true;
         }
         else
         {
             Debug.Log("Getting camera feeds from Spot Observer Client");
-            (color_image, depth_image) = spotObserverClient.GetCameraFeeds(0);
+            (color_image, depth_tensor) = spotObserverClient.GetCameraFeeds(0);
             Debug.Log("Color image: " + (color_image == null ? "null" : color_image.width + "x" + color_image.height));
 
             if (depth_image != null)

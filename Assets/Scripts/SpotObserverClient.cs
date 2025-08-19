@@ -1,6 +1,7 @@
 using RosSharp.RosBridgeClient.MessageTypes.Std;
 using System;
 using System.Runtime.InteropServices;
+using Unity.Collections;
 using Unity.InferenceEngine;
 
 using UnityEngine;
@@ -82,11 +83,12 @@ public class SpotObserverClient : MonoBehaviour
     private Texture2D[] depth_textures;
 
     //private Tensor<byte>[] rgb_tensors;
-    //private Tensor<float>[] depth_tensors;
+    private Tensor<float>[] depth_tensors;
     
     private IntPtr[] rgb_resources;
     private IntPtr[] depth_resources;
 
+    private NativeHashMap<int, int> SpotCamToIdx;
 
     void Start()
     {
@@ -124,33 +126,38 @@ public class SpotObserverClient : MonoBehaviour
         //    new Tensor<byte>(rgb_shape),
         //    new Tensor<byte>(rgb_shape)
         //};
-        //depth_tensors = new Tensor<float>[]
-        //{
-        //    new Tensor<float>(depth_shape),
-        //    new Tensor<float>(depth_shape),
-        //    new Tensor<float>(depth_shape)
-        //};
+        depth_tensors = new Tensor<float>[]
+        {
+            new Tensor<float>(depth_shape),
+            new Tensor<float>(depth_shape),
+            new Tensor<float>(depth_shape)
+        };
 
         uint[] cams = {
-            (uint)SpotCamera.FRONTRIGHT,
             (uint)SpotCamera.FRONTLEFT,
+            (uint)SpotCamera.FRONTRIGHT,
             (uint)SpotCamera.HAND,
-
         };
+
+        SpotCamToIdx = new NativeHashMap<int, int>(cams.Length, Allocator.Persistent);
+        for (int i = 0; i < cams.Length; i++)
+        {
+            SpotCamToIdx[(int)cams[i]] = i;
+        }
 
         uint all_cams = 0;
         for (var i = 0; i < rgb_textures.Length; i++)
         {
             rgb_textures[i] = new Texture2D(640, 480, TextureFormat.RGB24, false);
-            depth_textures[i] = new Texture2D(640, 480, TextureFormat.RFloat, false);
+            //depth_textures[i] = new Texture2D(640, 480, TextureFormat.RFloat, false);
             rgb_resources[i] = rgb_textures[i].GetNativeTexturePtr();
-            depth_resources[i] = depth_textures[i].GetNativeTexturePtr();
+            //depth_resources[i] = depth_textures[i].GetNativeTexturePtr();
 
             //rgb_resources[i] = ComputeTensorData.Pin(rgb_tensors[i]).buffer.GetNativeBufferPtr();
-            //depth_resources[i] = ComputeTensorData.Pin(depth_tensors[i]).buffer.GetNativeBufferPtr();
+            depth_resources[i] = ComputeTensorData.Pin(depth_tensors[i]).buffer.GetNativeBufferPtr();
 
             // Register textures with the Spot observer
-            if (!SOb_RegisterUnityReadbackBuffers(robot_id, cams[i], rgb_resources[i], depth_resources[i], 640 * 480 * 3, 640 * 480 * 4))
+            if (!SOb_RegisterUnityReadbackBuffers(robot_id, cams[i], rgb_resources[i], depth_resources[i], 640 * 480 * 4, 640 * 480 * 4))
             {
                 Debug.LogError("Failed to register textures for camera " + cams[i]);
             }
@@ -186,10 +193,10 @@ public class SpotObserverClient : MonoBehaviour
         //{
         //    tensor.Dispose();
         //}
-        //foreach (var tensor in depth_tensors)
-        //{
-        //    tensor.Dispose();
-        //}
+        foreach (var tensor in depth_tensors)
+        {
+            tensor.Dispose();
+        }
         foreach (var texture in rgb_textures)
         {
             if (texture != null)
@@ -197,6 +204,14 @@ public class SpotObserverClient : MonoBehaviour
                 Destroy(texture);
             }
         }
+        foreach (var texture in depth_textures)
+        {
+            if (texture != null)
+            {
+                Destroy(texture);
+            }
+        }
+        SpotCamToIdx.Dispose();
     }
 
     void Update()
@@ -215,7 +230,7 @@ public class SpotObserverClient : MonoBehaviour
         Debug.LogWarning("SUCCESSFULLY READ CAMERA FEEDS");
     }
 
-    public (Texture2D, Texture2D) GetCameraFeeds(int id)
+    public (Texture2D, Tensor) GetCameraFeeds(SpotCamera id)
     {
         if (!isConnected)
         {
@@ -223,6 +238,18 @@ public class SpotObserverClient : MonoBehaviour
             return (null, null);
         }
         Debug.LogWarning("Returning RGB and Depth for " + id);
-        return (rgb_textures[id], depth_textures[id]);
+
+        for (int i = 0; i < 3; i++)
+        {
+            Debug.Log("Camera " + SpotCamToIdx[i] + " mapped to index " + SpotCamToIdx[(int)SpotCamToIdx[i]]);
+        }
+
+
+        if (!SpotCamToIdx.TryGetValue((int)id, out int idx))
+        {
+            Debug.LogError("Invalid camera ID: " + id);
+            return (null, null);
+        }
+        return (rgb_textures[idx], depth_tensors[idx]);
     }
 }
