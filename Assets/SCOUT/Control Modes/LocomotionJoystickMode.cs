@@ -135,10 +135,20 @@ public class LocomotionJoystickMode : OneControllerMode
                 move += Vector3.down;
 
             //horizontal movement/strafe 
+            //potential locomotion fix, taking into account the camera rig's rotation 
             if (joystick.magnitude > 0.1f)
             {
-                Vector3 horizontalMove = cameraRig.transform.forward * joystick.y + cameraRig.transform.right * joystick.x;
-                horizontalMove.y = 0;
+                Quaternion rigRotation = cameraRig.transform.rotation;
+
+                Vector3 forward = rigRotation * Vector3.forward;
+                forward.y = 0;
+                forward.Normalize();
+
+                Vector3 right = rigRotation * Vector3.right;
+                right.y = 0;
+                right.Normalize();
+
+                Vector3 horizontalMove = forward * joystick.y + right * joystick.x;
                 move += horizontalMove;
             }
 
@@ -184,12 +194,16 @@ public class LocomotionJoystickMode : OneControllerMode
 
     public override int ModeIndex => 3;
     public override bool ControlsSpot => false;
-    
+
     public override void AssignDefaultLabels(ControllerModel exampleModel)
     {
         exampleModel.axLabel = "Reset Y";
         exampleModel.joystickLabel = "Fly";
         exampleModel.indexLabel = "Hold: Rotate";
         exampleModel.gripLabel = "Hold: Up/Down";
+    }
+    public override Color GetSelectedColor()
+    {
+        return Color.white;
     }
 }

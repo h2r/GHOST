@@ -67,7 +67,6 @@ public class ScoutModeManager : MonoBehaviour
         {
             leftModel.ClearLabels();
             rightModel.ClearLabels();
-
             // leftExampleModel.ClearLabels();
             // rightExampleModel.ClearLabels();
             // switch (activeSuperMode)
@@ -119,12 +118,20 @@ public class SingleDriveSuperMode
             leftControl.ControlUpdate(leftSpot, leftModel);
             if (leftControl.ControlsSpot)
                 leftModel.color = leftSpot.color;
+            else
+            {
+                leftModel.color = Color.white; // Reset color if not controlling spot
+            }
         }
         if (rightSpot != null && rightControl != null)
         {
             rightControl.ControlUpdate(rightSpot, rightModel);
             if (rightControl.ControlsSpot)
                 rightModel.color = rightSpot.color;
+            else
+            {
+                rightModel.color = Color.white; // Reset color if not controlling spot
+            }
         }
     }
 
@@ -157,6 +164,11 @@ public class DualDriveSuperMode
             {
                 leftModel.color = spot.color;
                 rightModel.color = spot.color;
+            }
+            else
+            {
+                leftModel.color = Color.white; // Reset color if not controlling spot
+                rightModel.color = Color.white; // Reset color if not controlling spot
             }
         }
     }
