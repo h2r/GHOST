@@ -90,6 +90,11 @@ public class SpotObserverClient : MonoBehaviour
 
     private NativeHashMap<int, int> SpotCamToIdx;
 
+    private uint[] cams = {
+        (uint)SpotCamera.FRONTLEFT,
+        (uint)SpotCamera.FRONTRIGHT
+    };
+
     void Start()
     {
         SOb_SetUnityLogCallback(PluginLogCallback);
@@ -114,11 +119,13 @@ public class SpotObserverClient : MonoBehaviour
         TensorShape rgb_shape = new TensorShape(1, 3, 480, 640); // RGB shape
         TensorShape depth_shape = new TensorShape(1, 1, 480, 640); // Depth shape
 
+        int num_cams = cams.Length;
+
         // Initialize textures and tensors for each camera
-        rgb_textures = new Texture2D[3];
-        depth_textures = new Texture2D[3];
-        rgb_resources = new IntPtr[3];
-        depth_resources = new IntPtr[3];
+        rgb_textures = new Texture2D[num_cams];
+        depth_textures = new Texture2D[num_cams];
+        rgb_resources = new IntPtr[num_cams];
+        depth_resources = new IntPtr[num_cams];
 
         //rgb_tensors = new Tensor<byte>[]
         //{
@@ -126,18 +133,7 @@ public class SpotObserverClient : MonoBehaviour
         //    new Tensor<byte>(rgb_shape),
         //    new Tensor<byte>(rgb_shape)
         //};
-        depth_tensors = new Tensor<float>[]
-        {
-            new Tensor<float>(depth_shape),
-            new Tensor<float>(depth_shape),
-            new Tensor<float>(depth_shape)
-        };
-
-        uint[] cams = {
-            (uint)SpotCamera.FRONTLEFT,
-            (uint)SpotCamera.FRONTRIGHT,
-            (uint)SpotCamera.HAND,
-        };
+        depth_tensors = new Tensor<float>[num_cams];
 
         SpotCamToIdx = new NativeHashMap<int, int>(cams.Length, Allocator.Persistent);
         for (int i = 0; i < cams.Length; i++)
@@ -146,7 +142,7 @@ public class SpotObserverClient : MonoBehaviour
         }
 
         uint all_cams = 0;
-        for (var i = 0; i < rgb_textures.Length; i++)
+        for (var i = 0; i < num_cams; i++)
         {
             rgb_textures[i] = new Texture2D(640, 480, TextureFormat.RGB24, false);
             //depth_textures[i] = new Texture2D(640, 480, TextureFormat.RFloat, false);
@@ -154,6 +150,7 @@ public class SpotObserverClient : MonoBehaviour
             //depth_resources[i] = depth_textures[i].GetNativeTexturePtr();
 
             //rgb_resources[i] = ComputeTensorData.Pin(rgb_tensors[i]).buffer.GetNativeBufferPtr();
+            depth_tensors[i] = new Tensor<float>(depth_shape);
             depth_resources[i] = ComputeTensorData.Pin(depth_tensors[i]).buffer.GetNativeBufferPtr();
 
             // Register textures with the Spot observer
@@ -211,7 +208,7 @@ public class SpotObserverClient : MonoBehaviour
                 Destroy(texture);
             }
         }
-        SpotCamToIdx.Dispose();
+        SpotCamToIdx.Clear();
     }
 
     void Update()
@@ -237,19 +234,13 @@ public class SpotObserverClient : MonoBehaviour
             Debug.LogError("Not connected to Spot robot. Cannot get camera feeds.");
             return (null, null);
         }
-        Debug.LogWarning("Returning RGB and Depth for " + id);
-
-        for (int i = 0; i < 3; i++)
-        {
-            Debug.Log("Camera " + SpotCamToIdx[i] + " mapped to index " + SpotCamToIdx[(int)SpotCamToIdx[i]]);
-        }
-
-
         if (!SpotCamToIdx.TryGetValue((int)id, out int idx))
         {
-            Debug.LogError("Invalid camera ID: " + id);
+            Debug.LogError("Invalid camera ID: " + (int)id);
             return (null, null);
         }
+        Debug.Log("Returning RGB and Depth for " + id);
+
         return (rgb_textures[idx], depth_tensors[idx]);
     }
 }
