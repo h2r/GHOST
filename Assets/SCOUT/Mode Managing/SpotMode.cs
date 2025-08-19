@@ -60,7 +60,7 @@ public class SpotMode : NamedOption
 
     public void AdjustHeight(float deltaHeight)
     {
-        SetHeight(Mathf.Clamp(curHeight + deltaHeight, -0.1f, 0.3f));
+        SetHeight(Mathf.Clamp(curHeight + deltaHeight, -0.1f, 0.15f));
     }
 
     public void SetGripperPos(Transform tf)

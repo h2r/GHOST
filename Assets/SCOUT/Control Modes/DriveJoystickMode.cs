@@ -21,7 +21,7 @@ public class DriveJoystickMode : OneControllerMode
         {
             model.joystickLabel = "Adjust Height";
             if (Mathf.Abs(joystick.y) > 0.1)
-                spot.AdjustHeight(joystick.y * 0.025f);
+                spot.AdjustHeight(joystick.y * 0.005f);
         }
         else
         {

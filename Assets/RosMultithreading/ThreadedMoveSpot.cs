@@ -27,7 +27,7 @@ public class ThreadedMoveSpot : ThreadedUnityPublisher<MessageTypes.Geometry.Twi
         }
         else
         {
-            LoopUnpublish();
+            // LoopUnpublish();
         }
     }
 
@@ -35,7 +35,7 @@ public class ThreadedMoveSpot : ThreadedUnityPublisher<MessageTypes.Geometry.Twi
     {
         message.linear = GetGeometryVector3(new Vector3(0, height, 0).Unity2Ros());
         message.angular = GetGeometryVector3(new Vector3(0, 0, 0).Unity2Ros());
-        LoopPublish(message, 1);
+        LoopPublish(message, 3);
     }
 
     private MessageTypes.Geometry.Vector3 GetGeometryVector3(Vector3 vec)
