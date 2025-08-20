@@ -17176,7 +17176,7 @@ GameObject:
   - component: {fileID: 1788702587}
   - component: {fileID: 1788702588}
   m_Layer: 0
-  m_Name: TabSelectionPanel
+  m_Name: Tab Selection Panel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -23989,7 +23989,7 @@ MonoBehaviour:
   cameraLists:
   - {fileID: 1771937947}
   - {fileID: 237632495}
-  tabselectionList:
+  tabSelectionLists:
   - {fileID: 1788702587}
   showSpotButtons: 1
   cameraRig: {fileID: 117133133}
