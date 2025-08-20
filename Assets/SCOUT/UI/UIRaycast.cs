@@ -113,7 +113,8 @@ public class UIRaycast : MonoBehaviour
         if (canvasPlane.Raycast(ray, out float enter))
         {
             Vector3 hitPoint = ray.GetPoint(enter);
-            return Camera.main.WorldToScreenPoint(hitPoint);
+            // Edited this line to fix issue with UI raycast not working properly after panel moving
+            return raycaster.eventCamera.WorldToScreenPoint(hitPoint);
         }
 
         return Vector2.zero;
