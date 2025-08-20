@@ -51,9 +51,14 @@ public class UIRaycast : MonoBehaviour
                         ShowHighlight(button);
                         highlightBox = button; 
                     }
+                    // Allow A button and trigger presses to interact with the UI
                     if ((OVRInput.GetDown(OVRInput.Button.Three) && isLeft) ||
-                        (OVRInput.GetDown(OVRInput.Button.One) && !isLeft))
+                        (OVRInput.GetDown(OVRInput.Button.One) && !isLeft) ||
+                        OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger && !isLeft) ||
+                        OVRInput.GetDown(OVRInput.Button.SecondaryIndexTrigger && isLeft))
+                    {
                         uiManager.RaycastPress(button);
+                    }
                 }
                 else
                 {
