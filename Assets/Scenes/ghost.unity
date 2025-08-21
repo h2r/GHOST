@@ -5185,7 +5185,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42c5c42437e094441929da3e64cb7559, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  UB_Model_file: C:/Users/brown/Documents/fmz/GHOST/Assets/onnx/promptda/prompt-depth-anything-vitl-rotated_optimized.onnx
+  UB_Model_file: C:/Users/brown/Documents/fmz/GHOST/Assets/onnxqg-vitl-rotated_optimized.onnx
   UB_debug_dump: 1
 --- !u!4 &420483825
 Transform:
@@ -10027,7 +10027,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdc798fc4b250c04b91b6a0767d25d31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RobotIP: 128.148.138.88
+  RobotIP: 128.148.138.21
   username: user
   password: bigbubbabigbubba
   EnableDebugDumps: 0
