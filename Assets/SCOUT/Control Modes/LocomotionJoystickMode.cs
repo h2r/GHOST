@@ -137,18 +137,16 @@ public class LocomotionJoystickMode : OneControllerMode
                 }
             }
         }
+        else if (grip)
+        {
+            if (Mathf.Abs(joystick.y) > 0.1)
+            {
+                cameraRig.transform.position += joystick.y * moveSpeed * Time.deltaTime * Vector3.up;
+            }
+        }
         else
         {
-            //Up/down movement logic when not rotating 
-            bool moveUp = OVRInput.Get(model.axButton);
-            bool moveDown = OVRInput.Get(model.byButton);
-
             Vector3 move = Vector3.zero;
-
-            if (moveUp)
-                move += Vector3.up;
-            if (moveDown)
-                move += Vector3.down;
 
             //horizontal movement/strafe 
             if (IsJoystickInUse)
@@ -174,6 +172,14 @@ public class LocomotionJoystickMode : OneControllerMode
 
         bool resetY = OVRInput.GetDown(model.axButton);
 
+        if (resetY && hasInitialY)
+        {
+            Vector3 pos = cameraRig.transform.position;
+            pos.y = initialY;
+            cameraRig.transform.position = pos;
+        }
+
+        // Reset Y label
         model.axLabel = model.isLeft ? (hasInitialY ? "Reset Y (X)" : "") : (hasInitialY ? "Reset Y (A)" : "");
 
         if (grip)
