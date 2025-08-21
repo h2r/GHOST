@@ -43,10 +43,12 @@ public class UIManager : MonoBehaviour
 
     public ButtonList[] singleControllerLists, dualControllerLists, cameraLists, tabSelectionLists;
 
-    public bool showSpotButtons;
     public Transform cameraRig;
 
     private Dictionary<SuperMode, ButtonList[]> superModeLists;
+
+    private float robotWorldY = 0;
+
 
     public void Start()
     {
@@ -136,10 +138,17 @@ public class UIManager : MonoBehaviour
         if (OVRInput.GetDown(OVRInput.Button.Start))
         {
             modeManager.isMenuOpen = !modeManager.isMenuOpen;
-
+            if (modeManager.isMenuOpen)
+            {
+                robotWorldY = cameraRig.position.y;
+                cameraRig.position = new(cameraRig.position.x, 100, cameraRig.position.z);
+            }
+            else
+            {
+                cameraRig.position = new(cameraRig.position.x, robotWorldY, cameraRig.position.z);
+            }
         }
         transform.parent.gameObject.GetComponent<Canvas>().enabled = modeManager.isMenuOpen;
-        cameraRig.position = new(cameraRig.position.x, modeManager.isMenuOpen ? 100 : 0, cameraRig.position.z);
 
         // Always enable tabSelectionLists if menu is open
         foreach (var list in tabSelectionLists)

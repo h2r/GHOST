@@ -49,85 +49,85 @@ public class DualMovement : MonoBehaviour
 
     void Update()
     {
-        // Get left joystick input (movement)
-        Vector2 leftJoy = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick);
+        // // Get left joystick input (movement)
+        // Vector2 leftJoy = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick);
 
-        // Get right joystick input (rotation)
-        Vector2 rightJoy = OVRInput.Get(OVRInput.Axis2D.SecondaryThumbstick);
+        // // Get right joystick input (rotation)
+        // Vector2 rightJoy = OVRInput.Get(OVRInput.Axis2D.SecondaryThumbstick);
 
-        // Movement - left joystick controls horizontal locomotion
-        if (leftJoy.magnitude > 0.1f)
-        {
-            Vector3 forward = cameraRig.transform.forward;
-            Vector3 right = cameraRig.transform.right;
+        // // Movement - left joystick controls horizontal locomotion
+        // if (leftJoy.magnitude > 0.1f)
+        // {
+        //     Vector3 forward = cameraRig.transform.forward;
+        //     Vector3 right = cameraRig.transform.right;
 
-            forward.y = 0;
-            right.y = 0;
+        //     forward.y = 0;
+        //     right.y = 0;
 
-            Vector3 move = forward.normalized * leftJoy.y + right.normalized * leftJoy.x;
-            cameraRig.transform.position += move * moveSpeed * Time.deltaTime;
-        }
+        //     Vector3 move = forward.normalized * leftJoy.y + right.normalized * leftJoy.x;
+        //     cameraRig.transform.position += move * moveSpeed * Time.deltaTime;
+        // }
 
-        // Rotation - right joystick controls rotation around orbitPivot or self
-        Vector3 rotationAxis = Vector3.up;
-        Vector3 rotationCenter = useOrbitMode && orbitPivot != null ? orbitPivot.position : cameraRig.transform.position;
+        // // Rotation - right joystick controls rotation around orbitPivot or self
+        // Vector3 rotationAxis = Vector3.up;
+        // Vector3 rotationCenter = useOrbitMode && orbitPivot != null ? orbitPivot.position : cameraRig.transform.position;
 
-        // Snap turn logic
-        if (useSnapTurn)
-        {
-            if (rightJoy.x < -snapTurnDeadzone && Time.time - lastSnapTime > snapTurnCooldown)
-            {
-                cameraRig.transform.RotateAround(rotationCenter, rotationAxis, -snapAngle);
-                lastSnapTime = Time.time;
-                currentTurnVelocity = 0f;
-            }
-            else if (rightJoy.x > snapTurnDeadzone && Time.time - lastSnapTime > snapTurnCooldown)
-            {
-                cameraRig.transform.RotateAround(rotationCenter, rotationAxis, snapAngle);
-                lastSnapTime = Time.time;
-                currentTurnVelocity = 0f;
-            }
-        }
-        else
-        {
-            // Smooth rotation with inertia smoothing
-            if (Mathf.Abs(rightJoy.x) > 0.1f)
-            {
-                float targetTurnSpeed = rotationSpeed * rightJoy.x;
+        // // Snap turn logic
+        // if (useSnapTurn)
+        // {
+        //     if (rightJoy.x < -snapTurnDeadzone && Time.time - lastSnapTime > snapTurnCooldown)
+        //     {
+        //         cameraRig.transform.RotateAround(rotationCenter, rotationAxis, -snapAngle);
+        //         lastSnapTime = Time.time;
+        //         currentTurnVelocity = 0f;
+        //     }
+        //     else if (rightJoy.x > snapTurnDeadzone && Time.time - lastSnapTime > snapTurnCooldown)
+        //     {
+        //         cameraRig.transform.RotateAround(rotationCenter, rotationAxis, snapAngle);
+        //         lastSnapTime = Time.time;
+        //         currentTurnVelocity = 0f;
+        //     }
+        // }
+        // else
+        // {
+        //     // Smooth rotation with inertia smoothing
+        //     if (Mathf.Abs(rightJoy.x) > 0.1f)
+        //     {
+        //         float targetTurnSpeed = rotationSpeed * rightJoy.x;
 
-                currentTurnVelocity = Mathf.MoveTowards(currentTurnVelocity, targetTurnSpeed, turnAcceleration * Time.deltaTime);
-                currentTurnVelocity = Mathf.Lerp(currentTurnVelocity, 0f, turnDamping * Time.deltaTime);
+        //         currentTurnVelocity = Mathf.MoveTowards(currentTurnVelocity, targetTurnSpeed, turnAcceleration * Time.deltaTime);
+        //         currentTurnVelocity = Mathf.Lerp(currentTurnVelocity, 0f, turnDamping * Time.deltaTime);
 
-                cameraRig.transform.RotateAround(rotationCenter, rotationAxis, currentTurnVelocity * Time.deltaTime);
-            }
-            else
-            {
-                // Decay rotation velocity when no input
-                currentTurnVelocity = Mathf.Lerp(currentTurnVelocity, 0f, turnDamping * Time.deltaTime);
-                if (Mathf.Abs(currentTurnVelocity) > 0.01f)
-                {
-                    cameraRig.transform.RotateAround(rotationCenter, rotationAxis, currentTurnVelocity * Time.deltaTime);
-                }
-                else
-                {
-                    currentTurnVelocity = 0f;
-                }
-            }
-        }
+        //         cameraRig.transform.RotateAround(rotationCenter, rotationAxis, currentTurnVelocity * Time.deltaTime);
+        //     }
+        //     else
+        //     {
+        //         // Decay rotation velocity when no input
+        //         currentTurnVelocity = Mathf.Lerp(currentTurnVelocity, 0f, turnDamping * Time.deltaTime);
+        //         if (Mathf.Abs(currentTurnVelocity) > 0.01f)
+        //         {
+        //             cameraRig.transform.RotateAround(rotationCenter, rotationAxis, currentTurnVelocity * Time.deltaTime);
+        //         }
+        //         else
+        //         {
+        //             currentTurnVelocity = 0f;
+        //         }
+        //     }
+        // }
 
-        // Update UI labels if assigned
-        if (leftJoystickLabel != null)
-            leftJoystickLabel.text = $"Left Joystick:\nMove ({leftJoy.x:F2}, {leftJoy.y:F2})";
+        // // Update UI labels if assigned
+        // if (leftJoystickLabel != null)
+        //     leftJoystickLabel.text = $"Left Joystick:\nMove ({leftJoy.x:F2}, {leftJoy.y:F2})";
 
-        if (rightJoystickLabel != null)
-            rightJoystickLabel.text = $"Right Joystick:\nRotate ({rightJoy.x:F2}, {rightJoy.y:F2})";
+        // if (rightJoystickLabel != null)
+        //     rightJoystickLabel.text = $"Right Joystick:\nRotate ({rightJoy.x:F2}, {rightJoy.y:F2})";
 
-        if (modeLabel != null)
-        {
-            string modeText = useOrbitMode ? "Orbit Mode: ON" : "Orbit Mode: OFF";
-            modeText += $"\nSnap Turn: {(useSnapTurn ? "ON" : "OFF")}";
-            modeText += $"\nRotation Speed: {rotationSpeed}°/sec";
-            modeLabel.text = modeText;
-        }
+        // if (modeLabel != null)
+        // {
+        //     string modeText = useOrbitMode ? "Orbit Mode: ON" : "Orbit Mode: OFF";
+        //     modeText += $"\nSnap Turn: {(useSnapTurn ? "ON" : "OFF")}";
+        //     modeText += $"\nRotation Speed: {rotationSpeed}°/sec";
+        //     modeLabel.text = modeText;
+        // }
     }
 }
