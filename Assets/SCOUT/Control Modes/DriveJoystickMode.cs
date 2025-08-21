@@ -38,7 +38,7 @@ public class DriveJoystickMode : OneControllerMode
         if (OVRInput.GetDown(model.axButton))
             positionPresetController.CyclePresets();
 
-        model.axLabel = "Cycle Preset";
+        model.axLabel = "Cycle Views";
     }
 
     public override string GetName()
