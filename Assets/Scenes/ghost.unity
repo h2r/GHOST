@@ -5185,7 +5185,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42c5c42437e094441929da3e64cb7559, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  UB_Model_file: C:/Users/brown/Documents/fmz/GHOST/Assets/onnxqg-vitl-rotated_optimized.onnx
+  UB_Model_file: C:/Users/brown/Documents/fmz/GHOST/Assets/onnx/promptda/prompt-depth-anything-vitl-rotated_optimized.onnx
   UB_debug_dump: 1
 --- !u!4 &420483825
 Transform:
@@ -7095,7 +7095,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rgbdModelAsset: {fileID: 5022602860645237092, guid: 5c0adad9409f35a498f591972a8c1bec, type: 3}
-  Use_UB: 0
+  Use_UB: 1
   UB_Model: {fileID: 420483824}
 --- !u!114 &638278051
 MonoBehaviour:
@@ -7118,7 +7118,7 @@ MonoBehaviour:
   another_manager: {fileID: 1639569377}
   CVDLeft: {fileID: 305849529}
   CVDRight: {fileID: 1814602523}
-  activate_depth_estimation: 0
+  activate_depth_estimation: 1
   activate_ICP: 0
   activate_edge_detection: 1
   edgeThreshold: 21
@@ -10027,10 +10027,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdc798fc4b250c04b91b6a0767d25d31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RobotIP: 128.148.138.21
+  RobotIP: 128.148.138.88
   username: user
   password: bigbubbabigbubba
-  EnableDebugDumps: 0
+  useVisionPipeline: 1
+  enableDebugDumps: 0
 --- !u!1 &973382266
 GameObject:
   m_ObjectHideFlags: 0
@@ -10385,7 +10386,8 @@ MonoBehaviour:
   RobotIP: 128.148.138.87
   username: user
   password: bigbubbabigbubba
-  EnableDebugDumps: 0
+  useVisionPipeline: 1
+  enableDebugDumps: 0
 --- !u!4 &1028337601
 Transform:
   m_ObjectHideFlags: 0
@@ -14925,7 +14927,7 @@ MonoBehaviour:
   meanThreshold: 0.1
   activate_CVD: 0
   cvd_weight: 3
-  show_spot: 1
+  show_spot: 0
   another_manager: {fileID: 638278051}
   CVDLeft: {fileID: 1031760795}
   CVDRight: {fileID: 1274553787}
