@@ -41,6 +41,23 @@ public class SpotObserverClient : MonoBehaviour
         int robot_id
     );
 
+    [DllImport("SpotObserverLib", CharSet = CharSet.Ansi)]
+    private static extern IntPtr SOb_LoadModel(string modelPath, string backend);
+
+    [DllImport("SpotObserverLib")]
+    private static extern void SOb_UnloadModel(IntPtr model);
+
+    [DllImport("SpotObserverLib")]
+    private static extern bool SOb_LaunchVisionPipeline(int robot_id, IntPtr model);
+
+    [DllImport("SpotObserverLib")]
+    private static extern bool SOb_StopVisionPipeline(int robot_id);
+
+    [DllImport("SpotObserverLib")]
+    private static extern bool SOb_PushNextVisionPipelineImageSetToUnityBuffers(
+        int robot_id
+    );
+
     [DllImport("SpotObserverLib")]
     private static extern bool SOb_SetUnityLogCallback(
         LogCallback callback
@@ -50,6 +67,7 @@ public class SpotObserverClient : MonoBehaviour
     private static extern void SOb_ToggleDebugDumps(
         string dump_path
     );
+
 
     // Make sure the enum matches the C++ enum in spot-observer.h
     public enum SpotCamera
@@ -74,10 +92,12 @@ public class SpotObserverClient : MonoBehaviour
     public string username;
     public string password;
 
-    public bool EnableDebugDumps = false;
+    public bool useVisionPipeline = true;
+    public bool enableDebugDumps = false;
 
     private int robot_id = -1;
     private bool isConnected = false;
+    private IntPtr model;
 
     private Texture2D[] rgb_textures;
     private Texture2D[] depth_textures;
@@ -94,7 +114,7 @@ public class SpotObserverClient : MonoBehaviour
         (uint)SpotCamera.FRONTLEFT,
         (uint)SpotCamera.FRONTRIGHT
     };
-
+    
     void Start()
     {
         SOb_SetUnityLogCallback(PluginLogCallback);
@@ -109,7 +129,23 @@ public class SpotObserverClient : MonoBehaviour
         Debug.Log("Connected to Spot robot at " + RobotIP);
         isConnected = true;
 
-        if (EnableDebugDumps)
+        model = SOb_LoadModel("vision_pipeline.onnx", "cuda");
+        if (model == IntPtr.Zero)
+        {
+            Debug.LogError("Failed to load vision pipeline model.");
+            isConnected = false;
+            return;
+        }
+
+        bool ret = SOb_LaunchVisionPipeline(robot_id, model);
+        if (!ret)
+        {
+            Debug.LogError("Failed to launch vision pipeline on Spot robot.");
+            isConnected = false;
+            return;
+        }
+
+        if (enableDebugDumps)
         {
             SOb_ToggleDebugDumps("SPOT_OBSERVER_DUMPS");
         }
@@ -219,10 +255,16 @@ public class SpotObserverClient : MonoBehaviour
             return;
         }
 
-        if (!SOb_PushNextImageSetToUnityBuffers(robot_id))
+        //if (!SOb_PushNextImageSetToUnityBuffers(robot_id))
+        //{
+        //    return;
+        //}
+
+        if (!SOb_PushNextVisionPipelineImageSetToUnityBuffers(robot_id))
         {
             return;
         }
+
 
         Debug.LogWarning("SUCCESSFULLY READ CAMERA FEEDS");
     }
