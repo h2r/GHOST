@@ -307,8 +307,8 @@ public class DepthManager : MonoBehaviour
         AveragerRight.update_depth_buffer(temp_depth_right);
 
 
-        temp_depth_left_return = CVDLeft.consistent_depth(temp_depth_left, mat_l, temp_optical_left, activate_CVD && is_not_moving, edgethreshold, activate_edge_detection, activate_depth_estimation, cvd_weight);
-        temp_depth_right_return = CVDRight.consistent_depth(temp_depth_right, mat_r, temp_optical_right, activate_CVD && is_not_moving, edgethreshold, activate_edge_detection, activate_depth_estimation, cvd_weight);
+        temp_depth_left_return = CVDLeft.consistent_depth(temp_depth_left, mat_l, temp_optical_left, activate_CVD && is_not_moving, edgethreshold, activate_depth_estimation, cvd_weight);
+        temp_depth_right_return = CVDRight.consistent_depth(temp_depth_right, mat_r, temp_optical_right, activate_CVD && is_not_moving, edgethreshold, activate_depth_estimation, cvd_weight);
 
         return (temp_depth_left_return, temp_depth_right_return, ICP_trans);
     }

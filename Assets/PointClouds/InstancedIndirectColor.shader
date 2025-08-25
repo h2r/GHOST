@@ -3,6 +3,7 @@ Shader "Custom/InstancedIndirectColor" {
         Tags { "RenderType" = "Opaque" }
 
         Pass {
+            Cull Off
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
@@ -90,7 +91,7 @@ Shader "Custom/InstancedIndirectColor" {
                 
                 //float4 coor = {floor(instanceID * width), floor(instanceID * width), 0.0, 0.0};
                 float2 uv = TRANSFORM_TEX(coor.xy, _colorMap);
-                coor.x = uv.x; coor.y = uv.y;
+                coor.x = uv.x; coor.y = 1.0-uv.y;
                 //float4 coor = {0.2,0.5,0.0,0.0};
                 o.color = tex2Dlod(_colorMap, coor);
 
