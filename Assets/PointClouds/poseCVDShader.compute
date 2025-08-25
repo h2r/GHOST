@@ -73,39 +73,6 @@ void Transformation(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupThreadI
     }
 }
 
-
-// EdgeDetection
-[numthreads(16, 8, 1)]
-void EdgeDetection(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupThreadID)
-{
-    int xIndex = groupId.x * 16 + threadId.x;
-    int yIndex = groupId.y * 8 + threadId.y;
-
-    int index = xIndex + yIndex * WIDTH;
-
-    if (xIndex > 1 && xIndex < WIDTH - 1 - 1 && yIndex > 1 && yIndex < HEIGHT - 1 - 1)
-    {
-        //float3 P = output_ar[index];
-        //float3 Px_prev = output_ar[(xIndex - 1) + yIndex * WIDTH];
-        //float3 Px_next = output_ar[(xIndex + 1) + yIndex * WIDTH];
-        //float3 Py_prev = output_ar[xIndex + (yIndex - 1) * WIDTH];
-        //float3 Py_next = output_ar[xIndex + (yIndex + 1) * WIDTH];
-
-        //// Compute gradients in each direction
-        //float3 gradX = length(Px_next - Px_prev);
-        //float3 gradY = length(Py_next - Py_prev);
-
-        //// Calculate the gradient magnitude in 3D
-        //float gradientMagnitude = gradX * gradX + gradY * gradY;
-
-        //// Apply threshold to detect edges
-        //if (sqrt(gradientMagnitude) > edgethreshold)
-        //{
-        //    output_ar[index] = float3(0.0f, 0.0f, 0.0f);
-        //}
-    }
-}
-
 int calc_pre_buffer_pos(int pos)
 {
     if (pos == 0)
@@ -214,69 +181,3 @@ void CVD(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupThreadID)
 
     }
 }
-
-//// EdgeDetection
-//[numthreads(16, 16, 1)]
-//void CVD(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupThreadID)
-//{
-//    int xIndex = groupId.x * 16 + threadId.x;
-//    int yIndex = groupId.y * 16 + threadId.y;
-
-//    int index = xIndex + yIndex * WIDTH;
-
-//    if (xIndex > 45 && xIndex < WIDTH - 1 - 45 && yIndex > 45 && yIndex < HEIGHT - 1 - 45)
-//    {
-//        float3 currentPoint = output_ar[index];
-        
-//        float3 sumPoints = currentPoint;
-//        float total_weight = 1.0f;
-        
-//        for (int i = 0; i < num_frames; i++)
-//        {
-//            int frameIndex = (buffer_pos - i - 1 + num_frames) % num_frames;
-
-//            // extrinsic
-//            float4x4 historicalPose = pose_buffer[frameIndex];
-//            float4x4 transform = mul(inverse_pose, historicalPose);
-//            float4 currentPoint4 = float4(currentPoint, 1.0);
-//            float4 transformedPoint4 = mul(transform, currentPoint4);
-
-//            // intrinsic
-//            float fx = intrinsics.x;
-//            float fy = intrinsics.y;
-//            float cx = intrinsics.z;
-//            float cy = intrinsics.w;
-//            float x = transformedPoint4.x / transformedPoint4.z * fx + cx;
-//            float y = transformedPoint4.y / transformedPoint4.z * fy + cy;s
-//            int xPrev = (int) (x + 0.5);
-//            int yPrev = (int) (y + 0.5);
-
-//            if (xPrev > 45 && xPrev < WIDTH - 1 - 45 && yPrev > 45 && yPrev < HEIGHT - 1 - 45)
-//            {
-//                int prevIndex = xPrev + yPrev * WIDTH + frameIndex * WIDTH * HEIGHT;
-
-//                float3 historicalPoint = depth_buffer[prevIndex];
-
-//                if (historicalPoint.z > 0)
-//                {
-//                    sumPoints += historicalPoint * 1.0f;
-//                    total_weight = total_weight + 1.0f;
-//                }
-                
-//            }
-//        }
-        
-//        float3 final_point = sumPoints / total_weight;
-//        depth_buffer[buffer_pos * WIDTH * HEIGHT + index] = final_point;
-//        pose_buffer[buffer_pos] = pose;
-        
-//        output_ar[index] = mul(inverse_pose, float4(final_point, 1.0f));
-
-//    }
-//}
-
-
-
-
-
-

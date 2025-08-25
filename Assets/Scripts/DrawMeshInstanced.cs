@@ -46,6 +46,7 @@ public class DrawMeshInstanced : MonoBehaviour
     public RawImageSubscriber depthSubscriber;  // ROS subscriber that holds the depth array
     public JPEGImageSubscriber colorSubscriber; // ROS subscriber holding the color image
     public SpotObserverClient spotObserverClient;
+    public PoseConsistentVideoDepth CVD;
 
     public bool savePointCloud;                 // allow user to save point cloud
 
@@ -56,6 +57,8 @@ public class DrawMeshInstanced : MonoBehaviour
     private ComputeBuffer sparseBuffer;
     private ComputeBuffer edge_buffer;
     private ComputeBuffer icp_res_buffer;
+
+    private ComputeBuffer optical_flow_buffer;
 
     public Transform target;
     public Transform auxTarget; // In case someone changes the offset rotation
@@ -209,7 +212,7 @@ public class DrawMeshInstanced : MonoBehaviour
 
         globalProps = GetProperties();
 
-
+        icp_trans = Matrix4x4.identity;
 
         //inp_stm.Close();
 
@@ -241,6 +244,20 @@ public class DrawMeshInstanced : MonoBehaviour
         InitializeBuffers();
 
         meshPropertiesBuffer.SetData(globalProps);
+    }
+
+    private ComputeBuffer process_depth(ComputeBuffer in_depth)
+    {
+        float edgethreshold = 0.0f;
+
+        ComputeBuffer posed_depth;
+
+        Matrix4x4 tform = get_current_pose();
+
+        // NOTE: Optical flow is not currently being used.
+        posed_depth = CVD.consistent_depth(in_depth, tform, optical_flow_buffer, false, edgethreshold, false, 0);
+
+        return posed_depth;
     }
 
     private float get_target_rota()
@@ -316,6 +333,8 @@ public class DrawMeshInstanced : MonoBehaviour
         sparseBuffer = new ComputeBuffer((int)(480 * 640), sizeof(float));
         edge_buffer = new ComputeBuffer((int)(480 * 640), sizeof(float));
         depthBuffer.SetData(depth_ar);
+
+        optical_flow_buffer = new ComputeBuffer(480 * 640 * 2, sizeof(float));
 
         SetProperties();
         SetGOPosition();
@@ -406,8 +425,16 @@ public class DrawMeshInstanced : MonoBehaviour
             for (int i = 0; i < 480 * 640; i++)
             {
                 //depth_ar[i] = depth_ar_saved[i];
-                depth_ar[i] = 2.0f;
+                depth_ar[i] = 0.0f;
             }
+            sparseBuffer.SetData(depth_ar);
+            for (int i = 0; i < 480 * 640; i++)
+            {
+                //depth_ar[i] = depth_ar_saved[i];
+                depth_ar[i] = 1.0f;
+            }
+            depth_ar_buffer.SetData(depth_ar);
+
 
             Debug.Log("SpotObserverCameraIndex: " + (int)SpotObserverCameraIndex);
             (color_image, depth_tensor) = spotObserverClient.GetCameraFeeds(SpotObserverCameraIndex);
@@ -416,8 +443,13 @@ public class DrawMeshInstanced : MonoBehaviour
             // HACK
             if (depth_tensor != null)
             {
-                ComputeTensorData.Pin(depth_tensor).buffer.GetData(depth_ar);
+                //ComputeTensorData.Pin(depth_tensor).buffer.GetData(depth_ar);
+                //depth_ar_buffer.SetData(depth_ar);
+
+                depth_ar_buffer = ComputeTensorData.Pin(depth_tensor).buffer;
             }
+
+            depth_ar_buffer = process_depth(depth_ar_buffer);
 
             new_depth_to_render = true;
         }
@@ -429,7 +461,8 @@ public class DrawMeshInstanced : MonoBehaviour
 
             if (depth_image != null)
             {
-                depth_ar = depth_image.GetPixelData<float>(0).ToArray();
+                depth_ar_buffer.SetData(depth_ar);
+                //depth_ar = depth_image.GetPixelData<float>(0).ToArray();
             }
             Debug.Log("Depth image: " + (depth_image == null ? "null" : depth_image.width + "x" + depth_image.height));
             //depth_ar = depthSubscriber.getDepthArr();
@@ -445,7 +478,7 @@ public class DrawMeshInstanced : MonoBehaviour
         {
             return;
         }
-        sparseBuffer.SetData(avged_sparse);
+        //sparseBuffer.SetData(avged_sparse);
 
         calculate_icp = true;
         if (imageScriptIndex > 1) { calculate_icp = false; } // depth manager 2
@@ -488,10 +521,8 @@ public class DrawMeshInstanced : MonoBehaviour
         //}
 
 
-
         //temp_output_left = Averager.averaging(temp_output_left, is_not_moving, mean_averaging, median_averaging, edge_detection, edge_threshold);
-        (depth_ar_buffer, icp_trans, avged_sparse) = depthManager.update_depth_from_renderer(color_image, depth_ar, camera_index, calculate_icp, new_depth_to_render, depthManager.avg_before_completion);
-
+        //(depth_ar_buffer, icp_trans, avged_sparse) = depthManager.update_depth_from_renderer(color_image, depth_ar, camera_index, calculate_icp, new_depth_to_render, depthManager.avg_before_completion);
         //if (depthManager.avg_before_completion)
         //{
         //    (depth_ar_buffer, icp_trans) = depthManager.update_depth_from_renderer(color_image, res_depth, camera_index, calculate_icp, new_depth_to_render);
