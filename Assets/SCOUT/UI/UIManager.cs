@@ -43,7 +43,7 @@ public class UIManager : MonoBehaviour
 
     public ButtonList[] singleControllerLists, dualControllerLists, cameraLists, tabSelectionLists;
 
-    public Transform cameraRig;
+    public RigPositioner rigPositioner;
 
     private Dictionary<SuperMode, ButtonList[]> superModeLists;
 
@@ -140,12 +140,12 @@ public class UIManager : MonoBehaviour
             modeManager.isMenuOpen = !modeManager.isMenuOpen;
             if (modeManager.isMenuOpen)
             {
-                robotWorldY = cameraRig.position.y;
-                cameraRig.position = new(cameraRig.position.x, 100, cameraRig.position.z);
+                robotWorldY = rigPositioner.y;
+                rigPositioner.y = 100;
             }
             else
             {
-                cameraRig.position = new(cameraRig.position.x, robotWorldY, cameraRig.position.z);
+                rigPositioner.y = robotWorldY;
             }
         }
         transform.parent.gameObject.GetComponent<Canvas>().enabled = modeManager.isMenuOpen;
