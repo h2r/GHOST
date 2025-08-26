@@ -230,6 +230,7 @@ public class DualDriveSuperMode
 
     public void AssignArmPoseEnabled()
     {
+        Debug.Log(spot);
         if (spot != null && control != null)
         {
             spot.SetArmPoseEnabled(control.RequiresArmCamera);
