@@ -7,6 +7,7 @@ public class UIRaycast : MonoBehaviour
 {
     public float maxDistance = 20f;
     public UIManager uiManager;
+    public Canvas canvas;
     public GraphicRaycaster raycaster;
     public EventSystem eventSystem;
     public bool isLeft;
@@ -108,12 +109,11 @@ public class UIRaycast : MonoBehaviour
     Vector2 WorldPointToCanvasScreenPoint(Vector3 origin, Vector3 direction)
     {
         Ray ray = new(origin, direction);
-        Plane canvasPlane = new(-raycaster.transform.forward, raycaster.transform.position);
+        Plane canvasPlane = new(-canvas.GetComponent<RectTransform>().forward, canvas.GetComponent<RectTransform>().position);
 
         if (canvasPlane.Raycast(ray, out float enter))
         {
             Vector3 hitPoint = ray.GetPoint(enter);
-            // Edited this line to fix issue with UI raycast not working properly after panel moving
             return raycaster.eventCamera.WorldToScreenPoint(hitPoint);
         }
 
