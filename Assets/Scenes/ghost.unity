@@ -8188,7 +8188,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6ee67238f5ad41439bdf2554f5bfc62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cameraRig: {fileID: 117133128}
+  rigPositioner: {fileID: 117133134}
   spotOne: {fileID: 1207070414}
   spotTwo: {fileID: 1329254406}
   spotOneArm: {fileID: 244727969}

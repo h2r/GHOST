@@ -2,7 +2,8 @@ using UnityEngine;
 
 public class PositionPresetController : MonoBehaviour
 {
-    public GameObject cameraRig, spotOne, spotTwo, spotOneArm, spotTwoArm;
+    public RigPositioner rigPositioner;
+    public GameObject spotOne, spotTwo, spotOneArm, spotTwoArm;
 
     enum Preset
     {
@@ -50,7 +51,8 @@ public class PositionPresetController : MonoBehaviour
                 break;
         }
 
-        cameraRig.transform.position = cameraPosition;
+        rigPositioner.x = cameraPosition.x;
+        rigPositioner.z = cameraPosition.z;
     }
 
     public void SetInitialPreset()

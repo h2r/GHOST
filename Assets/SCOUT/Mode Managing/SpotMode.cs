@@ -39,7 +39,6 @@ public class SpotMode : NamedOption
     public void SetArmPoseEnabled(bool armPoseEnabled)
     {
         armPose.enabled = armPoseEnabled;
-        print("setting " + armPose.enabled);
     }
 
     public void Drive(Vector2 direction)
