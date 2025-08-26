@@ -86,57 +86,66 @@ public class LocomotionJoystickMode : OneControllerMode
 
         if (trigger)
         {
-            if (useSnapTurn)
+            if (Mathf.Abs(joystick.x) > 0.1)
             {
-                // Snap turn logic
-                if (joystick.x < -snapTurnDeadzone && prevJoyX >= -snapTurnDeadzone && Time.time - lastSnapTime > snapTurnCooldown)
+                if (useSnapTurn)
                 {
-                    cameraRig.transform.RotateAround(rotationCenter, rotationAxis, -snapAngle);
-                    lastSnapTime = Time.time;
-                    currentTurnVelocity = 0f;
-                }
-                else if (joystick.x > snapTurnDeadzone && prevJoyX <= snapTurnDeadzone && Time.time - lastSnapTime > snapTurnCooldown)
-                {
-                    cameraRig.transform.RotateAround(rotationCenter, rotationAxis, snapAngle);
-                    lastSnapTime = Time.time;
-                    currentTurnVelocity = 0f;
-                }
-            }
-            else
-            {
-                // Smooth turning with or without inertia
-                if (Mathf.Abs(joystick.x) > 0.1f)
-                {
-                    if (useRotationalInertia)
+                    // Snap turn logic
+                    if (joystick.x < -snapTurnDeadzone && prevJoyX >= -snapTurnDeadzone && Time.time - lastSnapTime > snapTurnCooldown)
                     {
-                        float targetTurnSpeed = rotationSpeed * joystick.x;
-
-                        currentTurnVelocity = Mathf.MoveTowards(currentTurnVelocity, targetTurnSpeed, turnAcceleration * Time.deltaTime);
-                        currentTurnVelocity = Mathf.Lerp(currentTurnVelocity, 0f, turnDamping * Time.deltaTime);
-
-                        cameraRig.transform.RotateAround(rotationCenter, rotationAxis, currentTurnVelocity * Time.deltaTime);
+                        cameraRig.transform.RotateAround(rotationCenter, rotationAxis, -snapAngle);
+                        lastSnapTime = Time.time;
+                        currentTurnVelocity = 0f;
                     }
-                    else
+                    else if (joystick.x > snapTurnDeadzone && prevJoyX <= snapTurnDeadzone && Time.time - lastSnapTime > snapTurnCooldown)
                     {
-                        float angle = rotationSpeed * joystick.x * Time.deltaTime;
-                        cameraRig.transform.RotateAround(rotationCenter, rotationAxis, angle);
+                        cameraRig.transform.RotateAround(rotationCenter, rotationAxis, snapAngle);
+                        lastSnapTime = Time.time;
                         currentTurnVelocity = 0f;
                     }
                 }
-
                 else
                 {
-                    if (useRotationalInertia && Mathf.Abs(currentTurnVelocity) > 0.01f)
+                    // Smooth turning with or without inertia
+                    if (Mathf.Abs(joystick.x) > 0.1f)
                     {
-                        currentTurnVelocity = Mathf.Lerp(currentTurnVelocity, 0f, turnDamping * Time.deltaTime);
-                        cameraRig.transform.RotateAround(rotationCenter, rotationAxis, currentTurnVelocity * Time.deltaTime);
+                        if (useRotationalInertia)
+                        {
+                            float targetTurnSpeed = rotationSpeed * joystick.x;
+
+                            currentTurnVelocity = Mathf.MoveTowards(currentTurnVelocity, targetTurnSpeed, turnAcceleration * Time.deltaTime);
+                            currentTurnVelocity = Mathf.Lerp(currentTurnVelocity, 0f, turnDamping * Time.deltaTime);
+
+                            cameraRig.transform.RotateAround(rotationCenter, rotationAxis, currentTurnVelocity * Time.deltaTime);
+                        }
+                        else
+                        {
+                            float angle = rotationSpeed * joystick.x * Time.deltaTime;
+                            cameraRig.transform.RotateAround(rotationCenter, rotationAxis, angle);
+                            currentTurnVelocity = 0f;
+                        }
                     }
+
                     else
                     {
-                        currentTurnVelocity = 0f;
+                        if (useRotationalInertia && Mathf.Abs(currentTurnVelocity) > 0.01f)
+                        {
+                            currentTurnVelocity = Mathf.Lerp(currentTurnVelocity, 0f, turnDamping * Time.deltaTime);
+                            cameraRig.transform.RotateAround(rotationCenter, rotationAxis, currentTurnVelocity * Time.deltaTime);
+                        }
+                        else
+                        {
+                            currentTurnVelocity = 0f;
+                        }
                     }
                 }
             }
+
+            if (Mathf.Abs(joystick.y) > 0.1)
+            {
+                cameraRig.transform.RotateAround(rotationCenter, cameraRig.transform.right, -joystick.y * rotationSpeed * 0.5f * Time.deltaTime);
+            }
+
             rigPositioner.pos = cameraRig.transform.position;
         }
         else if (grip)
