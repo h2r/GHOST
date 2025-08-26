@@ -31,6 +31,7 @@ public class SpotMode : NamedOption
 
     public virtual void SetArmPoseEnabled(bool armPoseEnabled)
     {
+        print(modeName + " arm pose " + armPoseEnabled);
         armPose.enabled = armPoseEnabled;
     }
 

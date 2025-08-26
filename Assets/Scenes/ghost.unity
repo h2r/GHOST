@@ -6056,7 +6056,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5897453567102578359, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6095128873530598835, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Mass
@@ -18823,6 +18823,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxDistance: 10
   uiManager: {fileID: 8903260709167177724}
+  canvas: {fileID: 524890644885198037}
   raycaster: {fileID: 4090785759194855383}
   eventSystem: {fileID: 1526506749}
   isLeft: 0
@@ -19675,6 +19676,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxDistance: 10
   uiManager: {fileID: 8903260709167177724}
+  canvas: {fileID: 0}
   raycaster: {fileID: 4090785759194855383}
   eventSystem: {fileID: 1526506749}
   isLeft: 1
@@ -22611,6 +22613,7 @@ GameObject:
   - component: {fileID: 524890644885198037}
   - component: {fileID: 4266652528734801959}
   - component: {fileID: 4090785759194855383}
+  - component: {fileID: 4266652528734801960}
   m_Layer: 0
   m_Name: UI Canvas
   m_TagString: Untagged
@@ -23854,7 +23857,6 @@ GameObject:
   - component: {fileID: 7746903456321617326}
   - component: {fileID: 3708788928900924300}
   - component: {fileID: 8903260709167177724}
-  - component: {fileID: 8903260709167177725}
   m_Layer: 0
   m_Name: UI Root
   m_TagString: Untagged
@@ -24295,6 +24297,26 @@ MonoBehaviour:
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
   m_PresetInfoIsWorld: 1
+--- !u!114 &4266652528734801960
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 452262238513819737}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5278d0557f8ce6a47a15ddc6c661c0be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  yawThresholdDegrees: 45
+  returnThresholdDegrees: 15
+  moveSpeed: 5
+  panelOffset: {x: 0, y: -0.2, z: 0}
+  nodCountThreshold: 2
+  nodDetectionWindow: 1.2
+  pitchThresholdDegrees: 20
+  centerEyeAnchor: {fileID: 1747440747}
 --- !u!114 &4355652861202809075
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -26148,26 +26170,6 @@ MonoBehaviour:
   tabSelectionLists:
   - {fileID: 1788702587}
   rigPositioner: {fileID: 117133134}
---- !u!114 &8903260709167177725
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3278476787374081275}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5278d0557f8ce6a47a15ddc6c661c0be, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  yawThresholdDegrees: 45
-  returnThresholdDegrees: 15
-  moveSpeed: 5
-  panelOffset: {x: 0, y: -0.2, z: 0}
-  nodCountThreshold: 2
-  nodDetectionWindow: 1.2
-  pitchThresholdDegrees: 20
-  centerEyeAnchor: {fileID: 1747440747}
 --- !u!224 &8949594240785975953
 RectTransform:
   m_ObjectHideFlags: 0

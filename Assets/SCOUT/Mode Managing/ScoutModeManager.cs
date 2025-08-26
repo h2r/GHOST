@@ -174,11 +174,12 @@ public class SingleDriveSuperMode
 
     public void AssignArmPoseEnabled()
     {
-        if (leftSpot != null && leftControl != null)
+        if (leftSpot != null && leftControl != null && leftControl.ControlsSpot)
         {
+            Debug.Log(leftControl.RequiresArmCamera);
             leftSpot.SetArmPoseEnabled(leftControl.RequiresArmCamera);
         }
-        if (rightSpot != null && rightControl != null)
+        if (rightSpot != null && rightControl != null && rightControl.ControlsSpot)
         {
             rightSpot.SetArmPoseEnabled(rightControl.RequiresArmCamera);
         }
@@ -213,7 +214,7 @@ public class DualDriveSuperMode
 
     public void AssignColors(ControllerModel leftModel, ControllerModel rightModel)
     {
-        if (spot != null && control != null)
+        if (spot != null && control != null && control.ControlsSpot)
         {
             if (control.ControlsSpot)
             {
