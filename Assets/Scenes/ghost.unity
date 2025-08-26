@@ -5479,6 +5479,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1137478773745686191, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2123763400}
+    - targetCorrespondingSourceObject: {fileID: 1137478773745686191, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2123763478}
     - targetCorrespondingSourceObject: {fileID: 3310871052575190424, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       insertIndex: 4
       addedObject: {fileID: 669084032}
@@ -5497,6 +5500,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3310871052575190424, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 669083999}
+    - targetCorrespondingSourceObject: {fileID: 3310871052575190424, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 669084094}
   m_SourcePrefab: {fileID: 100100000, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
 --- !u!4 &409472600 stripped
 Transform:
@@ -6240,6 +6246,56 @@ Transform:
   m_Children: []
   m_Father: {fileID: 599089802}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &508518378
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 508518379}
+  - component: {fileID: 508518380}
+  m_Layer: 0
+  m_Name: Multi Spot Mode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &508518379
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 508518378}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2759006306583026147}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &508518380
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 508518378}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d90da9e41e4cc443b9aaef4b02ca5e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rosConnector: {fileID: 2123763348}
+  dummyGripper: {fileID: 244727969}
+  modeName: All Spots
+  color: {r: 0.5450981, g: 0, b: 0.5450981, a: 1}
+  rosConnectorOne: {fileID: 2123763348}
+  rosConnectorTwo: {fileID: 669083912}
 --- !u!1 &529267775
 GameObject:
   m_ObjectHideFlags: 0
@@ -7397,6 +7453,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   topic: /spot2/set_gripper
+--- !u!114 &669084094
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 669083912}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 122f83f7d825f3544bbbf58f40e983fe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  topic: /multi_spot/cmd_vel
 --- !u!1 &671513986
 GameObject:
   m_ObjectHideFlags: 0
@@ -13021,6 +13090,7 @@ MonoBehaviour:
   options:
   - {fileID: 8166042499262673834}
   - {fileID: 1246843491585836373}
+  - {fileID: 508518380}
   titlePrefab: {fileID: 3278048788002158022, guid: bfe2b15985d2d437fb47203f0df723ee, type: 3}
   buttonPrefab: {fileID: 1520795838076098022, guid: 39fc7b698942e4ac18e866a2f1f87352, type: 3}
 --- !u!1 &1421883542
@@ -19886,7 +19956,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2123763348}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 34e9d399e5b037545bceeceb261e0bd3, type: 3}
   m_Name: 
@@ -19960,6 +20030,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   topic: /spot/set_gripper
+--- !u!114 &2123763478
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2123763348}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 122f83f7d825f3544bbbf58f40e983fe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  topic: /multi_spot/cmd_vel
 --- !u!1 &2127769091
 GameObject:
   m_ObjectHideFlags: 0
@@ -21362,6 +21445,7 @@ Transform:
   - {fileID: 1084576510}
   - {fileID: 6581363336947861054}
   - {fileID: 4172529428087357182}
+  - {fileID: 508518379}
   - {fileID: 1727288749668216979}
   - {fileID: 5167267815406251389}
   - {fileID: 1873849992}

@@ -19,7 +19,7 @@ public class SpotMode : NamedOption
     private Vector3 gripperReadyPos;
     private Quaternion gripperReadyRot; 
 
-    public void Start()
+    public virtual void Start()
     {
         if (rosConnector != null)
         {
@@ -36,26 +36,26 @@ public class SpotMode : NamedOption
         }
     }
 
-    public void SetArmPoseEnabled(bool armPoseEnabled)
+    public virtual void SetArmPoseEnabled(bool armPoseEnabled)
     {
         armPose.enabled = armPoseEnabled;
     }
 
-    public void Drive(Vector2 direction)
+    public virtual void Drive(Vector2 direction)
     {
         print(modeName + " drive: " + direction);
         if (rosConnector != null)
             moveSpot.Move(direction, 0, curHeight);
     }
 
-    public void Rotate(float direction)
+    public virtual void Rotate(float direction)
     {
         // print(modeName + " rotate: " + direction);
         if (rosConnector != null)
             moveSpot.Move(Vector2.zero, direction, curHeight);
     }
 
-    public void SetHeight(float height)
+    public virtual void SetHeight(float height)
     {
         curHeight = height;
         print(modeName + " set height: " + curHeight);
@@ -63,12 +63,12 @@ public class SpotMode : NamedOption
             moveSpot.SetHeight(curHeight);
     }
 
-    public void AdjustHeight(float deltaHeight)
+    public virtual void AdjustHeight(float deltaHeight)
     {
         SetHeight(Mathf.Clamp(curHeight + deltaHeight, -0.1f, 0.15f));
     }
 
-    public void SetGripperPos(Transform tf)
+    public virtual void SetGripperPos(Transform tf)
     {
         // print(modeName + " move gripper");
         if (dummyGripper == null) return;
@@ -76,23 +76,23 @@ public class SpotMode : NamedOption
         dummyGripper.transform.SetPositionAndRotation(tf.position, tf.rotation);
     }
 
-    public void SetGripperWorldPose(Vector3 position, Quaternion rotation)
+    public virtual void SetGripperWorldPose(Vector3 position, Quaternion rotation)
     {
         if (dummyGripper == null) return;
         dummyGripper.transform.SetPositionAndRotation(position, rotation);
     }
 
-    public Transform GetGripperPos()
+    public virtual Transform GetGripperPos()
     {
         return dummyGripper.transform;
     }
 
-    public bool GetGripperOpen()
+    public virtual bool GetGripperOpen()
     {
         return isGripperOpen;
     }
 
-    public void SetGripperOpen(bool isGripperOpen)
+    public virtual void SetGripperOpen(bool isGripperOpen)
     {
         this.isGripperOpen = isGripperOpen;
         if (isGripperOpen)
@@ -101,7 +101,7 @@ public class SpotMode : NamedOption
             setGripper.CloseGripper();
     }
 
-    public void StowArm()
+    public virtual void StowArm()
     {
         if (stowArm != null)
         {
