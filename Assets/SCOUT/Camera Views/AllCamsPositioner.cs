@@ -34,14 +34,23 @@ public class AllCamsPositioner : MonoBehaviour
     public SpotCams spot1Cams;
     public SpotCams spot2Cams;
 
-    [Header("Layout Settings")]
-    public bool swapLayouts = false;
-    public float horizontalSpacing = 2.5f;
+    [Header("Curved Grid Layout Settings")]
+    [Tooltip("The distance of the camera grid from the player.")]
+    public float radius = 2.5f;
+    [Tooltip("The vertical distance between rows of cameras.")]
     public float verticalPadding = 0.1f;
+    [Tooltip("The angle in degrees separating the center of the two columns.")]
+    public float columnSeparationAngle = 45f;
+    [Tooltip("The angle in degrees separating cameras within a single column.")]
+    public float columnWidthAngle = 15f;
+    [Tooltip("A global position offset for the entire camera rig.")]
+    public Vector3 globalOffset = new Vector3(0, 0, 0);
+
+    [Header("Camera View Settings")]
     public float cameraWidth = 1.0f;
     public float cameraHeight = 0.75f;
     public float zScale = 0.001f;
-    public Vector3 layoutOffset = new Vector3(0, 0, 2);
+    public bool swapLayouts = false;
 
     void Update()
     {
@@ -51,65 +60,78 @@ public class AllCamsPositioner : MonoBehaviour
             return;
         }
 
-        if (ScoutModeManager.Instance != null && ScoutModeManager.Instance.isMenuOpen)
-        {
-            SetAllCamerasActive(false);
-            return;
-        }
-        SetAllCamerasActive(true);
+        bool shouldBeActive = ScoutModeManager.Instance == null || !ScoutModeManager.Instance.isMenuOpen;
+        SetAllCamerasActive(shouldBeActive);
 
-        // Calculate the base positions for the left and right layouts
-        Vector3 leftLayoutBase = centerEyeAnchor.position + centerEyeAnchor.forward * layoutOffset.z - centerEyeAnchor.right * (horizontalSpacing / 2);
-        Vector3 rightLayoutBase = centerEyeAnchor.position + centerEyeAnchor.forward * layoutOffset.z + centerEyeAnchor.right * (horizontalSpacing / 2);
+        if (shouldBeActive)
+        {
+            PositionCameraRig();
+        }
+    }
+
+    void PositionCameraRig()
+    {
+        float leftColumnBaseAngle = -columnSeparationAngle / 2f;
+        float rightColumnBaseAngle = columnSeparationAngle / 2f;
 
         if (swapLayouts)
         {
-            PositionSingleColumnLayout(spot2Cams, leftLayoutBase);
-            PositionSingleColumnLayout(spot1Cams, rightLayoutBase);
+            PositionSingleColumnLayout(spot2Cams, leftColumnBaseAngle);
+            PositionSingleColumnLayout(spot1Cams, rightColumnBaseAngle);
         }
         else
         {
-            PositionSingleColumnLayout(spot1Cams, leftLayoutBase);
-            PositionSingleColumnLayout(spot2Cams, rightLayoutBase);
+            PositionSingleColumnLayout(spot1Cams, leftColumnBaseAngle);
+            PositionSingleColumnLayout(spot2Cams, rightColumnBaseAngle);
         }
     }
 
-    void PositionSingleColumnLayout(SpotCams cams, Vector3 basePosition)
+    void PositionSingleColumnLayout(SpotCams cams, float baseAngle)
     {
+        float halfWidthAngle = columnWidthAngle / 2f;
+        float row1Y = centerEyeAnchor.position.y + globalOffset.y + cameraHeight + verticalPadding;
+        float row2Y = centerEyeAnchor.position.y + globalOffset.y;
+        float row3Y = centerEyeAnchor.position.y + globalOffset.y - cameraHeight - verticalPadding;
+
         // Row 1: Front-left and Front-right
-        PositionCamera(cams.frontLeftCam, basePosition + centerEyeAnchor.up * (cameraHeight + verticalPadding) - centerEyeAnchor.right * (cameraWidth / 2));
-        PositionCamera(cams.frontRightCam, basePosition + centerEyeAnchor.up * (cameraHeight + verticalPadding) + centerEyeAnchor.right * (cameraWidth / 2));
+        PositionCamera(cams.frontLeftCam, baseAngle - halfWidthAngle, row1Y);
+        PositionCamera(cams.frontRightCam, baseAngle + halfWidthAngle, row1Y);
 
         // Row 2: Left and Right
-        PositionCamera(cams.leftCam, basePosition - centerEyeAnchor.right * (cameraWidth / 2));
-        PositionCamera(cams.rightCam, basePosition + centerEyeAnchor.right * (cameraWidth / 2));
+        PositionCamera(cams.leftCam, baseAngle - halfWidthAngle, row2Y);
+        PositionCamera(cams.rightCam, baseAngle + halfWidthAngle, row2Y);
 
-        // Row 3: Back
-        PositionCamera(cams.backCam, basePosition - centerEyeAnchor.up * (cameraHeight + verticalPadding));
+        // Row 3: Back (centered)
+        PositionCamera(cams.backCam, baseAngle, row3Y);
     }
 
-    void PositionCamera(CameraSetting setting, Vector3 position)
+    void PositionCamera(CameraSetting setting, float angle, float yPos)
     {
         if (setting == null || setting.camera == null) return;
 
-        setting.camera.position = position;
-        setting.camera.rotation = centerEyeAnchor.rotation;
+        // Calculate position on a cylinder around the player
+        Vector3 centerPoint = centerEyeAnchor.position + new Vector3(globalOffset.x, 0, globalOffset.z);
+        Vector3 position = centerPoint + (Quaternion.Euler(0, centerEyeAnchor.eulerAngles.y + angle, 0) * Vector3.forward * radius);
+        position.y = yPos;
 
-        // Apply custom rotation
-        switch (setting.rotation)
-        {
-            case RotationOption.Left90:
-                setting.camera.Rotate(0, 0, 90, Space.Self);
-                break;
-            case RotationOption.Right90:
-                setting.camera.Rotate(0, 0, -90, Space.Self);
-                break;
-            case RotationOption.UpsideDown180:
-                setting.camera.Rotate(0, 0, 180, Space.Self);
-                break;
-        }
+        setting.camera.position = position;
+        setting.camera.LookAt(centerEyeAnchor.position);
+
+        // Apply custom Z-axis rotation
+        setting.camera.Rotate(0, 0, GetZRotationFromOption(setting.rotation), Space.Self);
 
         setting.camera.localScale = new Vector3(cameraWidth, cameraHeight, zScale);
+    }
+
+    private float GetZRotationFromOption(RotationOption option)
+    {
+        switch (option)
+        {
+            case RotationOption.Left90: return 90f;
+            case RotationOption.Right90: return -90f;
+            case RotationOption.UpsideDown180: return 180f;
+            default: return 0f;
+        }
     }
 
     void SetAllCamerasActive(bool isActive)
@@ -120,6 +142,7 @@ public class AllCamsPositioner : MonoBehaviour
 
     void SetSpotCamerasActive(SpotCams cams, bool isActive)
     {
+        if (cams == null) return;
         SetCameraActive(cams.frontLeftCam, isActive);
         SetCameraActive(cams.frontRightCam, isActive);
         SetCameraActive(cams.backCam, isActive);
