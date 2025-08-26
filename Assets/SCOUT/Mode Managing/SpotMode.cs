@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class SpotMode : NamedOption
 {
-    public GameObject rosConnector, dummyGripper;
+    public GameObject rosConnector, dummyGripper, readyDummyGripper;
     public string modeName;
     public Color color;
 
@@ -16,9 +16,6 @@ public class SpotMode : NamedOption
 
     private float curHeight = 0f;
     private bool isGripperOpen = false;
-    private Vector3 gripperReadyPos;
-    private Quaternion gripperReadyRot; 
-
     public virtual void Start()
     {
         if (rosConnector != null)
@@ -30,9 +27,6 @@ public class SpotMode : NamedOption
 
             moveSpot.Move(Vector2.zero, 0, curHeight);
             setGripper.CloseGripper();
-
-            gripperReadyPos = dummyGripper.transform.position;
-            gripperReadyRot = dummyGripper.transform.rotation;
         }
     }
 
@@ -106,8 +100,8 @@ public class SpotMode : NamedOption
         if (stowArm != null)
         {
             stowArm.Stow();
-            dummyGripper.transform.position = gripperReadyPos;
-            dummyGripper.transform.rotation = gripperReadyRot;
+            dummyGripper.transform.position = readyDummyGripper.transform.position;
+            dummyGripper.transform.rotation = readyDummyGripper.transform.rotation;
         }
         else
         {
