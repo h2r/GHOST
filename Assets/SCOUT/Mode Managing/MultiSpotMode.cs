@@ -32,7 +32,7 @@ public class MultiSpotMode : SpotMode
 
     public override void Drive(Vector2 direction)
     {
-        print(modeName + " drive: " + direction + " " + moveSpotOne.topic + " " + moveSpotTwo.topic);
+        print(modeName + " drive: " + direction);
         if (rosConnectorOne != null)
             moveSpotOne.Move(direction, 0, curHeight);
         if (rosConnectorTwo != null)
