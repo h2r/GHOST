@@ -1,4 +1,4 @@
-using UnityEngine;
+  using UnityEngine;
 
 public class ArmCameraPositioner : MonoBehaviour
 {
@@ -18,7 +18,16 @@ public class ArmCameraPositioner : MonoBehaviour
     public enum RotationMode
     {
         Default, // LookAtHeadset for Front, AlignWithController for Wrist
+        LookAtHeadset, // Always look at the headset
         Manual
+    }
+
+    public enum WristRotation
+    {
+        None,
+        Flip,
+        TurnLeft,
+        TurnRight
     }
 
     [Header("Layout Settings")]
@@ -28,12 +37,19 @@ public class ArmCameraPositioner : MonoBehaviour
 
     [Header("Rotation Settings")]
     public RotationMode rotationMode = RotationMode.Default;
-    [Tooltip("Common rotation applied to both cameras in Manual mode")]
+    [Tooltip("Manual rotation for both cameras")]
     public Vector3 commonRotation = Vector3.zero;
-    [Tooltip("Specific rotation for camera 1 in Manual mode, added to the common rotation")]
+    [Tooltip("Manual rotation offset for camera 1")]
     public Vector3 cam1RotationOffset = Vector3.zero;
-    [Tooltip("Specific rotation for camera 2 in Manual mode, added to the common rotation")]
+    [Tooltip("Manual rotation offset for camera 2")]
     public Vector3 cam2RotationOffset = Vector3.zero;
+
+    [Header("Wrist Rotation Toggles")]
+    [Tooltip("Additional rotation for the first camera in Wrist mode")]
+    public WristRotation wristCam1Rotation = WristRotation.None;
+    [Tooltip("Additional rotation for the second camera in Wrist mode")]
+    public WristRotation wristCam2Rotation = WristRotation.None;
+
 
     [Header("References")]
     public Transform centerEyeAnchor;
@@ -53,7 +69,7 @@ public class ArmCameraPositioner : MonoBehaviour
     [Header("Wrist Layout Settings")]
     public float wristFeedWidth = 0.3f;
     public float wristFeedHeight = 0.2f;
-    [Tooltip("A common offset for both wrist cameras")]
+    [Tooltip("A common offset for both wrist cameras, should be 'above' the controller.")]
     public Vector3 commonWristOffset = new Vector3(0, 0.1f, 0);
     [Tooltip("A specific offset for the first wrist camera, added to the common offset")]
     public Vector3 wristCam1Offset = Vector3.zero;
@@ -94,6 +110,7 @@ public class ArmCameraPositioner : MonoBehaviour
             switch (rotationMode)
             {
                 case RotationMode.Default:
+                case RotationMode.LookAtHeadset:
                     armCam1.LookAt(centerEyeAnchor);
                     break;
                 case RotationMode.Manual:
@@ -111,6 +128,7 @@ public class ArmCameraPositioner : MonoBehaviour
             switch (rotationMode)
             {
                 case RotationMode.Default:
+                case RotationMode.LookAtHeadset:
                     armCam2.LookAt(centerEyeAnchor);
                     break;
                 case RotationMode.Manual:
@@ -131,36 +149,57 @@ public class ArmCameraPositioner : MonoBehaviour
         switch (wristLayoutMode)
         {
             case WristLayoutMode.Respective:
-                PositionCameraOnWrist(armCam1, rightController, commonWristOffset + wristCam1Offset);
-                PositionCameraOnWrist(armCam2, leftController, commonWristOffset + wristCam2Offset);
+                PositionCameraOnWrist(armCam1, rightController, commonWristOffset + wristCam1Offset, wristCam1Rotation);
+                PositionCameraOnWrist(armCam2, leftController, commonWristOffset + wristCam2Offset, wristCam2Rotation);
                 break;
             case WristLayoutMode.BothOnRight:
-                PositionCameraOnWrist(armCam1, rightController, commonWristOffset + wristCam1Offset);
-                PositionCameraOnWrist(armCam2, rightController, commonWristOffset + wristCam2Offset);
+                PositionCameraOnWrist(armCam1, rightController, commonWristOffset + wristCam1Offset, wristCam1Rotation);
+                PositionCameraOnWrist(armCam2, rightController, commonWristOffset + wristCam2Offset, wristCam2Rotation);
                 break;
             case WristLayoutMode.BothOnLeft:
-                PositionCameraOnWrist(armCam1, leftController, commonWristOffset + wristCam1Offset);
-                PositionCameraOnWrist(armCam2, leftController, commonWristOffset + wristCam2Offset);
+                PositionCameraOnWrist(armCam1, leftController, commonWristOffset + wristCam1Offset, wristCam1Rotation);
+                PositionCameraOnWrist(armCam2, leftController, commonWristOffset + wristCam2Offset, wristCam2Rotation);
                 break;
         }
     }
 
-    void PositionCameraOnWrist(Transform camera, Transform controller, Vector3 offset)
+    void PositionCameraOnWrist(Transform camera, Transform controller, Vector3 offset, WristRotation rotationToggle)
     {
         if (camera == null || controller == null) return;
 
-        camera.position = controller.position + controller.rotation * offset;
+        // Position the camera above the controller, regardless of controller rotation
+        camera.position = controller.position + (controller.rotation * commonWristOffset) + offset;
         camera.localScale = new Vector3(wristFeedWidth, wristFeedHeight, 0.001f);
 
+        // Base rotation
         switch (rotationMode)
         {
             case RotationMode.Default:
                 camera.rotation = controller.rotation;
+                break;
+            case RotationMode.LookAtHeadset:
+                camera.LookAt(centerEyeAnchor);
                 break;
             case RotationMode.Manual:
                 Vector3 rotationOffset = (camera == armCam1) ? cam1RotationOffset : cam2RotationOffset;
                 camera.rotation = Quaternion.Euler(commonRotation + rotationOffset);
                 break;
         }
+
+        // Apply additional toggle-based rotation
+        Quaternion additionalRotation = Quaternion.identity;
+        switch (rotationToggle)
+        {
+            case WristRotation.Flip:
+                additionalRotation = Quaternion.Euler(0, 0, 180);
+                break;
+            case WristRotation.TurnLeft:
+                additionalRotation = Quaternion.Euler(0, 90, 0);
+                break;
+            case WristRotation.TurnRight:
+                additionalRotation = Quaternion.Euler(0, -90, 0);
+                break;
+        }
+        camera.rotation *= additionalRotation;
     }
 }

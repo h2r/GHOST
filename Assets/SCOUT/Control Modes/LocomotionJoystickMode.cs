@@ -40,6 +40,10 @@ public class LocomotionJoystickMode : OneControllerMode
 
     public bool vignetteEnabled = false;
 
+    // Public properties to expose state
+    public Vector3 LastMoveDelta { get; private set; }
+    public bool IsJoystickInUse { get; private set; }
+
     // Internal state
     private float initialY;
     private bool hasInitialY = false;
@@ -48,12 +52,24 @@ public class LocomotionJoystickMode : OneControllerMode
     private float lastSnapTime = 0f;
     private float currentTurnVelocity = 0f;
 
+    private void Awake()
+    {
+        LastMoveDelta = Vector3.zero;
+        IsJoystickInUse = false;
+    }
+
     public override void ControlUpdate(SpotMode spot, ControllerModel model)
     {
+        if (cameraRig == null) return;
+
+        Vector3 positionBeforeUpdate = cameraRig.transform.position;
+
         if (vignette != null)
             vignette.SetActive(vignetteEnabled);
 
         Vector2 joystick = OVRInput.Get(model.joystick);
+        IsJoystickInUse = joystick.magnitude > 0.1f; // Set the public property
+
         bool trigger = OVRInput.Get(model.indexButton);
         bool grip = OVRInput.Get(model.gripButton);
 
@@ -135,8 +151,7 @@ public class LocomotionJoystickMode : OneControllerMode
                 move += Vector3.down;
 
             //horizontal movement/strafe 
-            //potential locomotion fix, taking into account the camera rig's rotation 
-            if (joystick.magnitude > 0.1f)
+            if (IsJoystickInUse)
             {
                 Quaternion rigRotation = cameraRig.transform.rotation;
 
@@ -155,24 +170,12 @@ public class LocomotionJoystickMode : OneControllerMode
             cameraRig.transform.position += move * moveSpeed * Time.deltaTime;
         }
 
-
-
         prevJoyX = joystick.x;
 
         bool resetY = OVRInput.GetDown(model.axButton);
 
-        //temporarily disable resetting Y to initial position
-        // if (resetY && hasInitialY)
-        // {
-        //     Vector3 pos = cameraRig.transform.position;
-        //     pos.y = initialY;
-        //     cameraRig.transform.position = pos;
-        // }
-
-        // Reset Y label
         model.axLabel = model.isLeft ? (hasInitialY ? "Reset Y (X)" : "") : (hasInitialY ? "Reset Y (A)" : "");
 
-        // Thumbstick label
         if (grip)
             model.joystickLabel = "Up/Down";
         else if (trigger)
@@ -180,11 +183,11 @@ public class LocomotionJoystickMode : OneControllerMode
         else
             model.joystickLabel = "Fly";
 
-        // Trigger label
         model.indexLabel = trigger ? "" : "Hold: Rotate";
-
-        // Gripper label
         model.gripLabel = grip ? "" : "Hold: Up/Down";
+
+        // Calculate the final delta
+        LastMoveDelta = cameraRig.transform.position - positionBeforeUpdate;
     }
 
     public override string GetName()
