@@ -45,8 +45,25 @@ public class ScoutModeManager : MonoBehaviour
 
     void Update()
     {
-        spotOne.SetArmPoseEnabled(!isMenuOpen);
-        spotTwo.SetArmPoseEnabled(!isMenuOpen);
+        if (isMenuOpen)
+        {
+            spotOne.SetArmPoseEnabled(false);
+            spotTwo.SetArmPoseEnabled(false);
+        }
+        else
+        {
+            // Debug.Log("test");
+            switch (activeSuperMode)
+            {
+                case SuperMode.SingleDrive:
+                    singleDrive.AssignArmPoseEnabled();
+                    break;
+
+                case SuperMode.DualDrive:
+                    dualDrive.AssignArmPoseEnabled();
+                    break;
+            }
+        }
 
         // Check if isMenuOpen has changed
         if (isMenuOpen != _previousIsMenuOpen)
@@ -156,6 +173,19 @@ public class SingleDriveSuperMode
         }
     }
 
+    public void AssignArmPoseEnabled()
+    {
+        if (leftSpot != null && leftControl != null)
+        {
+            Debug.Log(leftControl.RequiresArmCamera);
+            leftSpot.SetArmPoseEnabled(leftControl.RequiresArmCamera);
+        }
+        if (rightSpot != null && rightControl != null)
+        {
+            rightSpot.SetArmPoseEnabled(rightControl.RequiresArmCamera);
+        }
+    }
+
     public void AssignExampleModels(ControllerModel leftExampleModel, ControllerModel rightExampleModel)
     {
         if (leftSpot != null)
@@ -197,6 +227,14 @@ public class DualDriveSuperMode
                 leftModel.color = Color.white; // Reset color if not controlling spot
                 rightModel.color = Color.white; // Reset color if not controlling spot
             }
+        }
+    }
+
+    public void AssignArmPoseEnabled()
+    {
+        if (spot != null && control != null)
+        {
+            spot.SetArmPoseEnabled(control.RequiresArmCamera);
         }
     }
 

@@ -16,6 +16,8 @@ public class SpotMode : NamedOption
 
     private float curHeight = 0f;
     private bool isGripperOpen = false;
+    private Vector3 gripperReadyPos;
+    private Quaternion gripperReadyRot; 
 
     public void Start()
     {
@@ -28,12 +30,16 @@ public class SpotMode : NamedOption
 
             moveSpot.Move(Vector2.zero, 0, curHeight);
             setGripper.CloseGripper();
+
+            gripperReadyPos = dummyGripper.transform.position;
+            gripperReadyRot = dummyGripper.transform.rotation;
         }
     }
 
     public void SetArmPoseEnabled(bool armPoseEnabled)
     {
         armPose.enabled = armPoseEnabled;
+        print("setting " + armPose.enabled);
     }
 
     public void Drive(Vector2 direction)
@@ -101,6 +107,8 @@ public class SpotMode : NamedOption
         if (stowArm != null)
         {
             stowArm.Stow();
+            dummyGripper.transform.position = gripperReadyPos;
+            dummyGripper.transform.rotation = gripperReadyRot;
         }
         else
         {
