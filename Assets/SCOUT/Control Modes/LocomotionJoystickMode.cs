@@ -5,6 +5,7 @@ public class LocomotionJoystickMode : OneControllerMode
 {
     [Header("References")]
     public GameObject cameraRig;
+    public RigPositioner rigPositioner;
     public GameObject vignette;
     public Transform headTransform;
     public Transform leftControllerTransform;
@@ -75,13 +76,13 @@ public class LocomotionJoystickMode : OneControllerMode
 
         if (trigger && !isTriggerHeld)
         {
-            initialY = cameraRig.transform.position.y;
+            initialY = rigPositioner.y;
             hasInitialY = true;
         }
         isTriggerHeld = trigger;
 
         Vector3 rotationAxis = Vector3.up;
-        Vector3 rotationCenter = headTransform != null ? headTransform.position : cameraRig.transform.position;
+        Vector3 rotationCenter = headTransform != null ? headTransform.position : rigPositioner.pos;
 
         if (trigger)
         {
@@ -136,12 +137,13 @@ public class LocomotionJoystickMode : OneControllerMode
                     }
                 }
             }
+            rigPositioner.pos = cameraRig.transform.position;
         }
         else if (grip)
         {
             if (Mathf.Abs(joystick.y) > 0.1)
             {
-                cameraRig.transform.position += joystick.y * moveSpeed * Time.deltaTime * Vector3.up;
+                rigPositioner.pos += joystick.y * moveSpeed * Time.deltaTime * Vector3.up;
             }
         }
         else
@@ -165,7 +167,7 @@ public class LocomotionJoystickMode : OneControllerMode
                 move += horizontalMove;
             }
 
-            cameraRig.transform.position += move * moveSpeed * Time.deltaTime;
+            rigPositioner.pos += move * moveSpeed * Time.deltaTime;
         }
 
         prevJoyX = joystick.x;
@@ -174,9 +176,9 @@ public class LocomotionJoystickMode : OneControllerMode
 
         if (resetY && hasInitialY)
         {
-            Vector3 pos = cameraRig.transform.position;
+            Vector3 pos = rigPositioner.pos;
             pos.y = initialY;
-            cameraRig.transform.position = pos;
+            rigPositioner.pos = pos;
         }
 
         // Reset Y label

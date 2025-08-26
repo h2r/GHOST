@@ -126,7 +126,7 @@ class LoopPublishAgent
 
         if (isValidMessage)
         {
-            Debug.Log("publish " + publicationId + " " + message);
+            // Debug.Log("publish " + publicationId + " " + message);
             RosSocket.Publish(publicationId, message);
         }
     }

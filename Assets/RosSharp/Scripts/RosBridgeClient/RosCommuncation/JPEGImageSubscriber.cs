@@ -86,7 +86,7 @@ namespace RosSharp.RosBridgeClient
             if (printRate)
             {
                 totalSeconds = (DateTime.Now - lastMessageRetrieved).TotalSeconds;
-                Debug.Log("Time between messages: " + totalSeconds.ToString("0.0000") + " seconds, " + (1 / totalSeconds).ToString("0.00") + " FPS");
+                // Debug.Log("Time between messages: " + totalSeconds.ToString("0.0000") + " seconds, " + (1 / totalSeconds).ToString("0.00") + " FPS");
             }
 
             if (saveImagesToDisk)
