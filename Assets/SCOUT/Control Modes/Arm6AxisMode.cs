@@ -35,7 +35,7 @@ public class Arm6AxisMode : OneControllerMode
         switch (armControlMode)
         {
             case ArmControlMode.Absolute:
-                spot.SetGripperPos(model.anchor.transform);
+                spot.SetGripperTf(model.anchor.transform);
                 break;
 
             case ArmControlMode.Relative:

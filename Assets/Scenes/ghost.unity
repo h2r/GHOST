@@ -2456,7 +2456,7 @@ GameObject:
   - component: {fileID: 248697797}
   - component: {fileID: 248697796}
   m_Layer: 0
-  m_Name: dummy_arm0.link_wr1 (1)
+  m_Name: ready_dummy_arm0.link_wr1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3248,7 +3248,7 @@ GameObject:
   - component: {fileID: 285103320}
   - component: {fileID: 285103319}
   m_Layer: 0
-  m_Name: dummy_arm0.link_wr1 (1)
+  m_Name: ready_dummy_arm0.link_wr1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4542,6 +4542,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9090ae501ff9cd459bec5271d40249c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &351027996 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1137478775422990296, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &356626389
 GameObject:
   m_ObjectHideFlags: 0
@@ -6997,6 +7002,9 @@ MonoBehaviour:
   rosConnector: {fileID: 2123763348}
   dummyGripper: {fileID: 244727969}
   readyDummyGripper: {fileID: 0}
+  armBase: {fileID: 0}
+  greenMaterial: {fileID: 0}
+  redMaterial: {fileID: 0}
   modeName: All Spots
   color: {r: 0.5450981, g: 0, b: 0.5450981, a: 1}
   rosConnectorOne: {fileID: 2123763348}
@@ -7041,7 +7049,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 516413124}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -13406,7 +13414,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1251863154}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -15514,6 +15522,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 967881922}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1490297143 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3310871053178539247, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1492222407
 GameObject:
   m_ObjectHideFlags: 0
@@ -21107,7 +21120,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2038727452}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -22837,6 +22850,9 @@ MonoBehaviour:
   rosConnector: {fileID: 669083912}
   dummyGripper: {fileID: 1492351514}
   readyDummyGripper: {fileID: 285103316}
+  armBase: {fileID: 1490297143}
+  greenMaterial: {fileID: 2100000, guid: 16383d4a013de5c48a21373bba66acd4, type: 2}
+  redMaterial: {fileID: 2100000, guid: 473de7e89bd5f52418e58ed83c841b9d, type: 2}
   modeName: Blue Spot
   color: {r: 0, g: 0.046749115, b: 1, a: 0}
 --- !u!1 &1385481233091570360
@@ -25841,6 +25857,9 @@ MonoBehaviour:
   rosConnector: {fileID: 2123763348}
   dummyGripper: {fileID: 244727969}
   readyDummyGripper: {fileID: 248697795}
+  armBase: {fileID: 351027996}
+  greenMaterial: {fileID: 2100000, guid: 16383d4a013de5c48a21373bba66acd4, type: 2}
+  redMaterial: {fileID: 2100000, guid: 473de7e89bd5f52418e58ed83c841b9d, type: 2}
   modeName: Red Spot
   color: {r: 1, g: 0, b: 0, a: 0}
 --- !u!224 &8234443779348987762

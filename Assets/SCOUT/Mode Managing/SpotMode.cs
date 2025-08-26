@@ -1,11 +1,10 @@
-using System;
 using RosSharp.RosBridgeClient;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class SpotMode : NamedOption
 {
-    public GameObject rosConnector, dummyGripper, readyDummyGripper;
+    public GameObject rosConnector, dummyGripper, readyDummyGripper, armBase;
+    public Material greenMaterial, redMaterial;
     public string modeName;
     public Color color;
 
@@ -14,7 +13,7 @@ public class SpotMode : NamedOption
     private ThreadedSetGripper setGripper;
     private PoseStampedRelativePublisher armPose;
 
-    private float curHeight = 0f;
+    protected float curHeight = 0f;
     private bool isGripperOpen = false;
     public virtual void Start()
     {
@@ -62,18 +61,19 @@ public class SpotMode : NamedOption
         SetHeight(Mathf.Clamp(curHeight + deltaHeight, -0.1f, 0.15f));
     }
 
-    public virtual void SetGripperPos(Transform tf)
+    public virtual void SetGripperTf(Transform tf)
     {
-        // print(modeName + " move gripper");
-        if (dummyGripper == null) return;
-
-        dummyGripper.transform.SetPositionAndRotation(tf.position, tf.rotation);
+        SetGripperWorldPose(tf.position, tf.rotation);
     }
 
     public virtual void SetGripperWorldPose(Vector3 position, Quaternion rotation)
     {
-        if (dummyGripper == null) return;
         dummyGripper.transform.SetPositionAndRotation(position, rotation);
+
+        var armLength = (dummyGripper.transform.position - armBase.transform.position).magnitude;
+        var dummyMaterial = armLength > 0.73 ? redMaterial : greenMaterial;
+        foreach (var mr in dummyGripper.GetComponentsInChildren<MeshRenderer>())
+            mr.material = dummyMaterial;
     }
 
     public virtual Transform GetGripperPos()

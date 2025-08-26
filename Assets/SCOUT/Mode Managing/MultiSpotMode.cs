@@ -1,6 +1,4 @@
 using System;
-using RosSharp.RosBridgeClient;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class MultiSpotMode : SpotMode
@@ -8,8 +6,6 @@ public class MultiSpotMode : SpotMode
     public GameObject rosConnectorOne, rosConnectorTwo;
 
     private ThreadedSyncMoveSpot moveSpotOne, moveSpotTwo;
-
-    private float curHeight;
 
     public override void Start()
     {
@@ -63,7 +59,7 @@ public class MultiSpotMode : SpotMode
         SetHeight(Mathf.Clamp(curHeight + deltaHeight, -0.1f, 0.15f));
     }
 
-    public override void SetGripperPos(Transform tf)
+    public override void SetGripperTf(Transform tf)
     {
         // not implemented on multi spot
     }
