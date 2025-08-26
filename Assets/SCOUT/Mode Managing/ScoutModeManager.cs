@@ -52,7 +52,6 @@ public class ScoutModeManager : MonoBehaviour
         }
         else
         {
-            // Debug.Log("test");
             switch (activeSuperMode)
             {
                 case SuperMode.SingleDrive:
@@ -177,7 +176,6 @@ public class SingleDriveSuperMode
     {
         if (leftSpot != null && leftControl != null)
         {
-            Debug.Log(leftControl.RequiresArmCamera);
             leftSpot.SetArmPoseEnabled(leftControl.RequiresArmCamera);
         }
         if (rightSpot != null && rightControl != null)
