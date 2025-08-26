@@ -95,7 +95,7 @@ public class Arm6AxisMode : OneControllerMode
             case ArmControlMode.Absolute:
                 if (triggerHeld && !anyJoystickInUse)
                 {
-                    spot.SetGripperPos(model.anchor.transform);
+                    spot.SetGripperTf(model.anchor.transform);
                 }
                 break;
 

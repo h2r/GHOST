@@ -51,7 +51,7 @@ public class DriveAndArm : OneControllerMode
             switch (armControlMode)
             {
                 case ArmControlMode.AbsolutePos:
-                    spot.SetGripperPos(model.anchor.transform);
+                    spot.SetGripperTf(model.anchor.transform);
                     isRelativeModeActive = false;
                     break;
 
