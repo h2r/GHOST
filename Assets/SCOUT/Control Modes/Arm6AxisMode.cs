@@ -14,6 +14,7 @@ public class Arm6AxisMode : OneControllerMode
 
     [Header("Locomotion")]
     public GameObject cameraRig;
+    public RigPositioner rigPositioner;
     public Transform headTransform;
     public float moveSpeed = 2.0f;
     public float rotationSpeed = 120f;
@@ -56,6 +57,7 @@ public class Arm6AxisMode : OneControllerMode
                 Vector3 rotationCenter = headTransform.position;
                 float angle = rotationSpeed * thumbstick.x * Time.deltaTime;
                 cameraRig.transform.RotateAround(rotationCenter, rotationAxis, angle);
+                rigPositioner.pos = cameraRig.transform.position;
             }
         }
         else
@@ -74,7 +76,7 @@ public class Arm6AxisMode : OneControllerMode
                 right.Normalize();
 
                 Vector3 horizontalMove = forward * thumbstick.y + right * thumbstick.x;
-                cameraRig.transform.position += horizontalMove * moveSpeed * Time.deltaTime;
+                rigPositioner.pos += horizontalMove * moveSpeed * Time.deltaTime;
             }
         }
 

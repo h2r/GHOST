@@ -115,6 +115,7 @@ public class DriveAndArm : OneControllerMode
     public override int ModeIndex => 0;
 
     public override bool ControlsSpot => true;
+    public override bool RequiresArmCamera => true;
 
     public override void AssignDefaultLabels(ControllerModel exampleModel)
     {

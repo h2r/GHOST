@@ -20743,11 +20743,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   layoutMode: 1
-  wristLayoutMode: 1
+  wristLayoutMode: 0
   rotationMode: 0
   commonRotation: {x: 0, y: 0, z: 0}
   cam1RotationOffset: {x: 0, y: 0, z: 0}
   cam2RotationOffset: {x: 0, y: 0, z: 0}
+  wristCam1Rotation: 0
+  wristCam2Rotation: 0
   centerEyeAnchor: {fileID: 1747440747}
   armCam1: {fileID: 1124056467}
   armCam2: {fileID: 382958517}
@@ -20759,9 +20761,9 @@ MonoBehaviour:
   frontCam2Offset: {x: -0.25, y: 0.5, z: 1}
   wristFeedWidth: 0.25
   wristFeedHeight: 0.25
-  commonWristOffset: {x: 0, y: 0.1, z: 0}
-  wristCam1Offset: {x: 0.05, y: 0.075, z: 0}
-  wristCam2Offset: {x: -0.05, y: 0.075, z: 0}
+  commonWristOffset: {x: 0, y: 0.15, z: 0.025}
+  wristCam1Offset: {x: 0.05, y: 0, z: 0}
+  wristCam2Offset: {x: -0.05, y: 0, z: 0}
 --- !u!1 &1980373407
 GameObject:
   m_ObjectHideFlags: 0
@@ -23957,6 +23959,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   armControlMode: 1
+  cameraRig: {fileID: 117133128}
+  rigPositioner: {fileID: 117133134}
+  headTransform: {fileID: 1747440747}
+  moveSpeed: 2
+  rotationSpeed: 120
 --- !u!114 &3575073522687121229
 MonoBehaviour:
   m_ObjectHideFlags: 0

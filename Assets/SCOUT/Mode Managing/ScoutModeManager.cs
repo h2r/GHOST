@@ -174,14 +174,30 @@ public class SingleDriveSuperMode
 
     public void AssignArmPoseEnabled()
     {
-        if (leftSpot != null && leftControl != null && leftControl.ControlsSpot)
+        bool leftArmEnable = false, rightArmEnable = false;
+        if (leftControl != null && leftControl.ControlsSpot)
         {
-            Debug.Log(leftControl.RequiresArmCamera);
-            leftSpot.SetArmPoseEnabled(leftControl.RequiresArmCamera);
+            leftArmEnable = leftControl.RequiresArmCamera;
         }
-        if (rightSpot != null && rightControl != null && rightControl.ControlsSpot)
+        if (rightControl != null && rightControl.ControlsSpot)
         {
-            rightSpot.SetArmPoseEnabled(rightControl.RequiresArmCamera);
+            rightArmEnable = rightControl.RequiresArmCamera;
+        }
+
+        if (leftSpot != null && leftSpot == rightSpot)
+        {
+            leftSpot.SetArmPoseEnabled(leftArmEnable || rightArmEnable);
+        }
+        else
+        {
+            if (leftSpot != null)
+            {
+                leftSpot.SetArmPoseEnabled(leftArmEnable);
+            }
+            if (rightSpot != null)
+            {
+                rightSpot.SetArmPoseEnabled(rightArmEnable);
+            }
         }
     }
 
