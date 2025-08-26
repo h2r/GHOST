@@ -71,25 +71,28 @@ public class ScoutModeManager : MonoBehaviour
         }
 
         // Update colors while menu is open
-            if (isMenuOpen)
+        if (isMenuOpen)
+        {
+            leftModel.ClearLabels();
+            rightModel.ClearLabels();
+            leftModel.menuLabel = "Menu";
+            // leftExampleModel.ClearLabels();
+            // rightExampleModel.ClearLabels();
+            switch (activeSuperMode)
             {
-                leftModel.ClearLabels();
-                rightModel.ClearLabels();
-                // leftExampleModel.ClearLabels();
-                // rightExampleModel.ClearLabels();
-                // switch (activeSuperMode)
-                // {
-                //     case SuperMode.SingleDrive:
-                //         singleDrive.AssignExampleModels(leftExampleModel, rightExampleModel);
-                //         break;
+                case SuperMode.SingleDrive:
+                    singleDrive.AssignColors(leftModel, rightModel);
+                    // singleDrive.AssignExampleModels(leftExampleModel, rightExampleModel);
+                    break;
 
-                //     case SuperMode.DualDrive:
-                //         dualDrive.AssignExampleModels(leftExampleModel, rightExampleModel);
-                //         break;
-                // }
-
-                return;
+                case SuperMode.DualDrive:
+                    dualDrive.AssignColors(leftModel, rightModel);
+                    // dualDrive.AssignExampleModels(leftExampleModel, rightExampleModel);
+                    break;
             }
+
+            return;
+        }
 
         switch (activeSuperMode)
         {
@@ -123,6 +126,18 @@ public class SingleDriveSuperMode
         if (leftSpot != null && leftControl != null)
         {
             leftControl.ControlUpdate(leftSpot, leftModel);
+        }
+        if (rightSpot != null && rightControl != null)
+        {
+            rightControl.ControlUpdate(rightSpot, rightModel);
+        }
+        AssignColors(leftModel, rightModel);
+    }
+
+    public void AssignColors(ControllerModel leftModel, ControllerModel rightModel)
+    {
+        if (leftSpot != null && leftControl != null)
+        {
             if (leftControl.ControlsSpot)
                 leftModel.color = leftSpot.color;
             else
@@ -132,7 +147,6 @@ public class SingleDriveSuperMode
         }
         if (rightSpot != null && rightControl != null)
         {
-            rightControl.ControlUpdate(rightSpot, rightModel);
             if (rightControl.ControlsSpot)
                 rightModel.color = rightSpot.color;
             else
@@ -166,6 +180,13 @@ public class DualDriveSuperMode
         if (spot != null && control != null)
         {
             control.ControlUpdate(spot, leftModel, rightModel);
+        }
+    }
+
+    public void AssignColors(ControllerModel leftModel, ControllerModel rightModel)
+    {
+        if (spot != null && control != null)
+        {
             if (control.ControlsSpot)
             {
                 leftModel.color = spot.color;
