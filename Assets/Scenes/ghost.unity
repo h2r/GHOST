@@ -4307,7 +4307,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775010377568, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: use_saved_meshes
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775010377568, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: spotObserverClient
@@ -4415,7 +4415,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775515482002, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: use_saved_meshes
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775515482002, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: spotObserverClient
@@ -4667,7 +4667,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052733856933, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: use_saved_meshes
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052733856933, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: spotObserverClient
@@ -4791,7 +4791,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3310871053306987607, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: use_saved_meshes
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3310871053306987607, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: spotObserverClient
@@ -5263,7 +5263,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UB_Model_file: C:/Users/brown/Documents/fmz/GHOST/Assets/onnx/promptda/prompt-depth-anything-vitl-rotated_optimized.onnx
-  UB_debug_dump: 0
+  UB_debug_dump: 1
 --- !u!4 &420483825
 Transform:
   m_ObjectHideFlags: 0
@@ -7191,13 +7191,13 @@ MonoBehaviour:
   meanThreshold: 0.1
   activate_CVD: 0
   cvd_weight: 3
-  show_spot: 0
+  show_spot: 1
   another_manager: {fileID: 1639569377}
   CVDLeft: {fileID: 305849529}
   CVDRight: {fileID: 1814602523}
-  activate_depth_estimation: 1
+  activate_depth_estimation: 0
   activate_ICP: 0
-  activate_edge_detection: 0
+  activate_edge_detection: 1
   edgeThreshold: 21
   maxNeighbourNum: 10
   AveragerLeft: {fileID: 1823001778}
@@ -10206,8 +10206,8 @@ MonoBehaviour:
   username: user
   password: bigbubbabigbubba
   useVisionPipeline: 1
-  depthCompletionModelFile: C:/Users/brown/Documents/fmz/GHOST/Assets/onnx/promptda/prompt-depth-anything-vitl-rotated_optimized.onnx
-  enableDebugDumps: 1
+  depthCompletionModelFile: C:/Users/brown/Documents/fmz/GHOST/Assets/onnx/promptda/promptda-vitl-rotated_optimized.onnx
+  enableDebugDumps: 0
 --- !u!1 &973382266
 GameObject:
   m_ObjectHideFlags: 0
@@ -10568,7 +10568,7 @@ MonoBehaviour:
   username: user
   password: bigbubbabigbubba
   useVisionPipeline: 1
-  depthCompletionModelFile: C:/Users/brown/Documents/fmz/GHOST/Assets/onnx/promptda/prompt-depth-anything-vitl-rotated_optimized.onnx
+  depthCompletionModelFile: C:/Users/brown/Documents/fmz/GHOST/Assets/onnx/promptda/promptda-vitl-rotated_optimized.onnx
   enableDebugDumps: 0
 --- !u!4 &1028337601
 Transform:
