@@ -244,6 +244,13 @@ public class DrawMeshInstanced : MonoBehaviour
         InitializeBuffers();
 
         meshPropertiesBuffer.SetData(globalProps);
+
+        // Hack: Initialize sparsebuffer to 0
+        for (int i = 0; i < 480 * 640; i++)
+        {
+            depth_ar[i] = 0.0f;
+        }
+        sparseBuffer.SetData(depth_ar);
     }
 
     private ComputeBuffer process_depth(ComputeBuffer in_depth)
@@ -414,8 +421,7 @@ public class DrawMeshInstanced : MonoBehaviour
         material.SetVector("intrinsics", intr);
 
         Vector4 screenData = new Vector4((float)width, (float)height, 1 / (float)width, FY);
-        Debug.Log("Screen Data: " + screenData.ToString());
-        Debug.Log("screenData[2] = " + screenData[2].ToString());
+        depth_ar_buffer = process_depth(depth_ar_buffer);
         compute.SetVector("screenData", screenData);
         material.SetVector("screenData", screenData);
 
@@ -428,13 +434,7 @@ public class DrawMeshInstanced : MonoBehaviour
                 depth_ar[i] = 0.0f;
             }
             sparseBuffer.SetData(depth_ar);
-            for (int i = 0; i < 480 * 640; i++)
-            {
-                //depth_ar[i] = depth_ar_saved[i];
-                depth_ar[i] = 1.0f;
-            }
-            depth_ar_buffer.SetData(depth_ar);
-
+            
 
             Debug.Log("SpotObserverCameraIndex: " + (int)SpotObserverCameraIndex);
             (color_image, depth_tensor) = spotObserverClient.GetCameraFeeds(SpotObserverCameraIndex);
@@ -444,98 +444,24 @@ public class DrawMeshInstanced : MonoBehaviour
             if (depth_tensor != null)
             {
                 //ComputeTensorData.Pin(depth_tensor).buffer.GetData(depth_ar);
-                //depth_ar_buffer.SetData(depth_ar);
-
+                depth_ar_buffer.SetData(depth_ar);
                 depth_ar_buffer = ComputeTensorData.Pin(depth_tensor).buffer;
             }
 
             depth_ar_buffer = process_depth(depth_ar_buffer);
-
-            new_depth_to_render = true;
         }
         else
         {
-            Debug.Log("Getting camera feeds from Spot Observer Client");
-           //(color_image, depth_tensor) = spotObserverClient.GetCameraFeeds(0);
-            Debug.Log("Color image: " + (color_image == null ? "null" : color_image.width + "x" + color_image.height));
-
+            (color_image, depth_tensor) = spotObserverClient.GetCameraFeeds(SpotObserverCameraIndex);
+         
             if (depth_image != null)
             {
                 depth_ar_buffer.SetData(depth_ar);
-                //depth_ar = depth_image.GetPixelData<float>(0).ToArray();
+                depth_ar_buffer = ComputeTensorData.Pin(depth_tensor).buffer;
             }
-            Debug.Log("Depth image: " + (depth_image == null ? "null" : depth_image.width + "x" + depth_image.height));
-            //depth_ar = depthSubscriber.getDepthArr();
-            if (depthSubscriber.new_depth == true)
-            {
-                new_depth_to_render = true;
-            }
-            depthSubscriber.new_depth = false;
+
+            depth_ar_buffer = process_depth(depth_ar_buffer);
         }
-
-        Debug.Log("Depth array length: " + depth_ar.Length);
-        if (depth_ar.Length < 640 * 480)
-        {
-            return;
-        }
-        //sparseBuffer.SetData(avged_sparse);
-
-        calculate_icp = true;
-        if (imageScriptIndex > 1) { calculate_icp = false; } // depth manager 2
-
-        //if (depthManager.avg_before_completion)
-        //{
-        //    for (int j = 0; j < depth_ar.Length; j++)
-        //    {
-        //        depth_avg_buffer[buffer_pos, j] = depth_ar[j];
-        //        res_depth[j] = 0.0f;
-        //    }
-
-        //    int num_valid = 0;
-        //    float total_sum = 0.0f;
-        //    for (int j = 0; j < 480 * 640; j++)
-        //    {
-        //        num_valid = 0;
-        //        total_sum = 0.0f;
-        //        for (int i = 0; i < 30; i++)
-        //        {
-
-        //            if (depth_avg_buffer[i, j] >= 1.0f)
-        //            {
-        //                num_valid += 1;
-        //                total_sum += depth_avg_buffer[i, j];
-        //            }
-        //        }
-        //        if (num_valid != 0)
-        //        {
-        //            res_depth[j] = total_sum / num_valid;
-        //        }
-        //    }
-
-
-        //    buffer_pos += 1;
-        //    if (buffer_pos >= 30)
-        //    {
-        //        buffer_pos = 0;
-        //    }
-        //}
-
-
-        //temp_output_left = Averager.averaging(temp_output_left, is_not_moving, mean_averaging, median_averaging, edge_detection, edge_threshold);
-        //(depth_ar_buffer, icp_trans, avged_sparse) = depthManager.update_depth_from_renderer(color_image, depth_ar, camera_index, calculate_icp, new_depth_to_render, depthManager.avg_before_completion);
-        //if (depthManager.avg_before_completion)
-        //{
-        //    (depth_ar_buffer, icp_trans) = depthManager.update_depth_from_renderer(color_image, res_depth, camera_index, calculate_icp, new_depth_to_render);
-        //}
-        //else
-        //{
-        //    (depth_ar_buffer, icp_trans) = depthManager.update_depth_from_renderer(color_image, depth_ar, camera_index, calculate_icp, new_depth_to_render);
-        //}
-
-        new_depth_to_render = false;
-        if (imageScriptIndex > 1) { icp_trans = Matrix4x4.identity; } // depth manager 2
-
-
     }
 
     private void Update()
