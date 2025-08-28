@@ -36,18 +36,18 @@ public class AllCamsPositioner : MonoBehaviour
 
     [Header("Curved Grid Layout Settings")]
     [Tooltip("The distance of the camera grid from the player.")]
-    public float radius = 2.5f;
+    public float radius = 3f;
     [Tooltip("The vertical distance between rows of cameras.")]
-    public float verticalPadding = 0.1f;
+    public float verticalPadding = 0.05f;
     [Tooltip("The angle in degrees separating the center of the two columns.")]
     public float columnSeparationAngle = 45f;
     [Tooltip("The angle in degrees separating cameras within a single column.")]
-    public float columnWidthAngle = 15f;
+    public float columnWidthAngle = 16.6f;
     [Tooltip("A global position offset for the entire camera rig.")]
     public Vector3 globalOffset = new Vector3(0, 0, 0);
 
     [Header("Camera View Settings")]
-    public float cameraWidth = 1.0f;
+    public float cameraWidth = 0.75f;
     public float cameraHeight = 0.75f;
     public float zScale = 0.001f;
     public bool swapLayouts = false;

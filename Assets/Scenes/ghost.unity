@@ -2335,7 +2335,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 441fcddae936d184f8196aeed41a9f18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Topic: /spot/stream_image/hand_color_image/image
+  Topic: /spot/stream_image/left_fisheye_image/image
   TimeStep: 0
   meshRenderer: {fileID: 245660913}
   texture2D: {fileID: 0}
@@ -4035,7 +4035,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 441fcddae936d184f8196aeed41a9f18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Topic: /spot/stream_image/hand_color_image/image
+  Topic: /spot/stream_image/back_fisheye_image/image
   TimeStep: 0
   meshRenderer: {fileID: 317192008}
   texture2D: {fileID: 0}
@@ -7143,7 +7143,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 441fcddae936d184f8196aeed41a9f18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Topic: /spot/stream_image2/hand_color_image/image
+  Topic: /spot/stream_image2/back_fisheye_image/image
   TimeStep: 0
   meshRenderer: {fileID: 529267780}
   texture2D: {fileID: 0}
@@ -8103,7 +8103,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 441fcddae936d184f8196aeed41a9f18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Topic: /spot/stream_image/hand_color_image/image
+  Topic: /spot/stream_image/right_fisheye_image/image
   TimeStep: 0
   meshRenderer: {fileID: 659843993}
   texture2D: {fileID: 0}
@@ -10260,17 +10260,17 @@ MonoBehaviour:
   centerEyeAnchor: {fileID: 1747440747}
   spot1Cams:
     frontLeftCam:
-      camera: {fileID: 281616761}
+      camera: {fileID: 1027179636}
       rotation: 1
     frontRightCam:
-      camera: {fileID: 1027179636}
+      camera: {fileID: 281616761}
       rotation: 1
     backCam:
       camera: {fileID: 317192004}
-      rotation: 3
+      rotation: 0
     leftCam:
       camera: {fileID: 245660909}
-      rotation: 3
+      rotation: 0
     rightCam:
       camera: {fileID: 2073366578}
       rotation: 3
@@ -10283,20 +10283,22 @@ MonoBehaviour:
       rotation: 1
     backCam:
       camera: {fileID: 529267776}
-      rotation: 3
+      rotation: 0
     leftCam:
       camera: {fileID: 1175510104}
-      rotation: 3
+      rotation: 0
     rightCam:
       camera: {fileID: 1079337969}
       rotation: 3
-  swapLayouts: 0
-  horizontalSpacing: 3
-  verticalPadding: 0.3
+  radius: 3
+  verticalPadding: 0.025
+  columnSeparationAngle: 45
+  columnWidthAngle: 25
+  globalOffset: {x: 0, y: -0.45, z: 0}
   cameraWidth: 1
   cameraHeight: 1
   zScale: 0.001
-  layoutOffset: {x: 0, y: 0, z: 2}
+  swapLayouts: 0
 --- !u!4 &948545954
 Transform:
   m_ObjectHideFlags: 0
@@ -10538,7 +10540,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 441fcddae936d184f8196aeed41a9f18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Topic: /spot/stream_image/hand_color_image/image
+  Topic: /spot/stream_image/back_fisheye_image/image
   TimeStep: 0
   meshRenderer: {fileID: 965145352}
   texture2D: {fileID: 0}
@@ -11475,7 +11477,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 441fcddae936d184f8196aeed41a9f18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Topic: /spot2/stream_image/hand_color_image/image
+  Topic: /spot/stream_image2/left_fisheye_image/image
   TimeStep: 0
   meshRenderer: {fileID: 1068727298}
   texture2D: {fileID: 0}
@@ -11722,7 +11724,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 441fcddae936d184f8196aeed41a9f18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Topic: /spot/stream_image2/hand_color_image/image
+  Topic: /spot/stream_image2/right_fisheye_image/image
   TimeStep: 0
   meshRenderer: {fileID: 1079337973}
   texture2D: {fileID: 0}
@@ -12420,7 +12422,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 441fcddae936d184f8196aeed41a9f18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Topic: /spot/stream_image2/hand_color_image/image
+  Topic: /spot/stream_image2/left_fisheye_image/image
   TimeStep: 0
   meshRenderer: {fileID: 1175510108}
   texture2D: {fileID: 0}
@@ -14929,7 +14931,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 441fcddae936d184f8196aeed41a9f18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Topic: /spot/stream_image/hand_color_image/image
+  Topic: /spot/stream_image/left_fisheye_image/image
   TimeStep: 0
   meshRenderer: {fileID: 1441336994}
   texture2D: {fileID: 0}
@@ -16438,7 +16440,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 441fcddae936d184f8196aeed41a9f18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Topic: /spot2/stream_image/hand_color_image/image
+  Topic: /spot/stream_image2/back_fisheye_image/image
   TimeStep: 0
   meshRenderer: {fileID: 1544650562}
   texture2D: {fileID: 0}
@@ -17447,25 +17449,25 @@ MonoBehaviour:
   cameraSettings:
   - camera: {fileID: 1899962295}
     rotation: 1
-    width: 4
-    height: 3
+    width: 2
+    height: 1.5
   - camera: {fileID: 2142237818}
     rotation: 1
-    width: 4
-    height: 3
+    width: 2
+    height: 1.5
   - camera: {fileID: 659843989}
     rotation: 0
-    width: 4
-    height: 3
+    width: 2
+    height: 1.5
   - camera: {fileID: 1441336990}
     rotation: 0
-    width: 1
-    height: 1
+    width: 2
+    height: 1.5
   - camera: {fileID: 965145348}
     rotation: 0
-    width: 4
-    height: 3
-  radius: 2.5
+    width: 2
+    height: 1.5
+  radius: 1.5
   cameraHeightOffset: 0
   zScale: 0.001
 --- !u!1 &1656242561
@@ -20564,7 +20566,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 441fcddae936d184f8196aeed41a9f18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Topic: /spot2/stream_image/hand_color_image/image
+  Topic: /spot/stream_image2/right_fisheye_image/image
   TimeStep: 0
   meshRenderer: {fileID: 1966186904}
   texture2D: {fileID: 0}
@@ -20748,14 +20750,14 @@ MonoBehaviour:
   commonRotation: {x: 0, y: 0, z: 0}
   cam1RotationOffset: {x: 0, y: 0, z: 0}
   cam2RotationOffset: {x: 0, y: 0, z: 0}
-  wristCam1Rotation: 0
-  wristCam2Rotation: 0
+  wristCam1Rotation: 1
+  wristCam2Rotation: 1
   centerEyeAnchor: {fileID: 1747440747}
   armCam1: {fileID: 1124056467}
   armCam2: {fileID: 382958517}
   leftController: {fileID: 1843185004}
   rightController: {fileID: 1774275839}
-  frontFeedWidth: 0.5
+  frontFeedWidth: 0.4
   frontFeedHeight: 0.3
   frontCam1Offset: {x: 0.25, y: 0.5, z: 1}
   frontCam2Offset: {x: -0.25, y: 0.5, z: 1}
@@ -21523,7 +21525,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 441fcddae936d184f8196aeed41a9f18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Topic: /spot/stream_image/hand_color_image/image
+  Topic: /spot/stream_image/right_fisheye_image/image
   TimeStep: 0
   meshRenderer: {fileID: 2073366582}
   texture2D: {fileID: 0}
@@ -22227,25 +22229,25 @@ MonoBehaviour:
   cameraSettings:
   - camera: {fileID: 215709645}
     rotation: 1
-    width: 4
-    height: 3
+    width: 2
+    height: 1.5
   - camera: {fileID: 1533282814}
     rotation: 1
-    width: 4
-    height: 3
+    width: 2
+    height: 1.5
   - camera: {fileID: 1966186900}
     rotation: 0
-    width: 4
-    height: 3
+    width: 2
+    height: 1.5
   - camera: {fileID: 1068727294}
     rotation: 0
-    width: 1
-    height: 1
+    width: 2
+    height: 1.5
   - camera: {fileID: 1544650558}
     rotation: 0
-    width: 4
-    height: 3
-  radius: 2.5
+    width: 2
+    height: 1.5
+  radius: 1.5
   cameraHeightOffset: 0
   zScale: 0.001
 --- !u!1 &2142237817
@@ -23962,8 +23964,8 @@ MonoBehaviour:
   cameraRig: {fileID: 117133128}
   rigPositioner: {fileID: 117133134}
   headTransform: {fileID: 1747440747}
-  moveSpeed: 2
-  rotationSpeed: 120
+  moveSpeed: 1.25
+  rotationSpeed: 100
 --- !u!114 &3575073522687121229
 MonoBehaviour:
   m_ObjectHideFlags: 0

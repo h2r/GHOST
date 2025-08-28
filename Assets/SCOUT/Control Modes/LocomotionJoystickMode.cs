@@ -81,7 +81,7 @@ public class LocomotionJoystickMode : OneControllerMode
         }
         isTriggerHeld = trigger;
 
-        Vector3 rotationAxis = Vector3.up;
+        Vector3 rotationAxis = transform.up;
         Vector3 rotationCenter = headTransform != null ? headTransform.position : rigPositioner.pos;
 
         if (trigger)
@@ -141,10 +141,10 @@ public class LocomotionJoystickMode : OneControllerMode
                 }
             }
 
-            if (Mathf.Abs(joystick.y) > 0.1)
-            {
-                cameraRig.transform.RotateAround(rotationCenter, cameraRig.transform.right, -joystick.y * rotationSpeed * 0.5f * Time.deltaTime);
-            }
+            // if (Mathf.Abs(joystick.y) > 0.1)
+            // {
+            //     cameraRig.transform.RotateAround(rotationCenter, cameraRig.transform.right, -joystick.y * rotationSpeed * 0.5f * Time.deltaTime);
+            // }
 
             rigPositioner.pos = cameraRig.transform.position;
         }
