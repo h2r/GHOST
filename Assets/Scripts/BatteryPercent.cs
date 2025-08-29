@@ -1,53 +1,45 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
+using UnityEngine;
+using TMPro;
 using RosSharp.RosBridgeClient;
 using RosSharp.RosBridgeClient.MessageTypes.Std;
-using UnityEngine;
-using UnityEngine.Experimental.GlobalIllumination;
-using UnityEngine.UI;
-using TMPro;
-                     
 
 namespace RosSharp.RosBridgeClient
 {
-    public class FloatSubscriber : UnitySubscriber<MessageTypes.Std.Float64>
+    public class FloatSubscriber : UnitySubscriber<Float64>
     {
-       //rooter's
-        private Image batteryBar;
-        public TextMeshProUGUI batteryText;
-        public double batteryLevel;
+        [Header("Spot Identifier")]
+        [Tooltip("Label for the robot or device this subscriber is monitoring.")]
+        public string spotIdentifier = "Red";
 
-       //tusker's 
-        private Image batteryBar1;  
-        public TextMeshProUGUI batteryText1;
-        public double batteryLevel1;
+        [Header("Battery UI")]
+        public TextMeshProUGUI batteryText;
+        public double batteryLevel = -1; // Set default value to -1 (indicating no data)
 
         protected override void Start()
         {
-            base.Start(); 
-            batteryBar = GetComponent<Image> ();
+            base.Start();
         }
 
-        protected override void ReceiveMessage(MessageTypes.Std.Float64 message)
+        protected override void ReceiveMessage(Float64 message)
         {
-            // messages recieved from the battery_percentage_states topic
-            batteryLevel = message.data; // message contains a single field for the battery %age
+            batteryLevel = message.data;
+            Debug.Log($"{spotIdentifier} Spot Battery: {batteryLevel}%");
         }
 
-        //this is for tusker 
-        /*
-        protected override void ReceiveMessage1(MessageTypes.Std.Float64 message)
+        private void Update()
         {
-            // messages recieved from the battery_percentage_states topic
-            batteryLevel = message.data; // message contains a single field for the battery %age
-        }
-        */
-
-        void Update()
-        {
-            batteryBar.fillAmount = (float) (batteryLevel / 100.0);
-            batteryText.text = "" + batteryLevel + "%"; 
+            if (batteryText != null)
+            {
+                // Check if batteryLevel is -1 (no data)
+                if (batteryLevel == -1)
+                {
+                    batteryText.text = $"{spotIdentifier} Spot Battery: No Data";
+                }
+                else
+                {
+                    batteryText.text = $"{spotIdentifier} Spot Battery: {batteryLevel}%";
+                }
+            }
         }
     }
 }
