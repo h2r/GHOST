@@ -39,7 +39,7 @@ public class ScoutModeManager : MonoBehaviour
     public CameraSuperMode cameraView = new();
 
     [NonSerialized]
-    public bool isMenuOpen = true;
+    public bool isMenuOpen = false;
     private bool _previousIsMenuOpen; // To track changes in isMenuOpen
     private bool hasMenuClosed = false;
 
