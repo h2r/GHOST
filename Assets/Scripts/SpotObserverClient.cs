@@ -173,17 +173,10 @@ public class SpotObserverClient : MonoBehaviour
         int num_cams = cams.Length;
 
         // Initialize textures and tensors for each camera
-        rgb_textures = new Texture2D[num_cams];
-        rgb_resources = new IntPtr[num_cams];
+        rgb_textures    = new Texture2D[num_cams];
+        rgb_resources   = new IntPtr[num_cams];
         depth_resources = new IntPtr[num_cams];
-
-        //rgb_tensors = new Tensor<byte>[]
-        //{
-        //    new Tensor<byte>(rgb_shape),
-        //    new Tensor<byte>(rgb_shape),
-        //    new Tensor<byte>(rgb_shape)
-        //};
-        depth_tensors = new Tensor<float>[num_cams];
+        depth_tensors   = new Tensor<float>[num_cams];
 
         SpotCamToIdx = new NativeHashMap<int, int>(cams.Length, Allocator.Persistent);
         for (int i = 0; i < cams.Length; i++)
@@ -194,10 +187,10 @@ public class SpotObserverClient : MonoBehaviour
         uint all_cams = 0;
         for (var i = 0; i < num_cams; i++)
         {
-            rgb_textures[i] = new Texture2D(640, 480, TextureFormat.RGB24, false);
-            rgb_resources[i] = rgb_textures[i].GetNativeTexturePtr();
+            rgb_textures[i]    = new Texture2D(640, 480, TextureFormat.RGB24, false);
+            rgb_resources[i]   = rgb_textures[i].GetNativeTexturePtr();
 
-            depth_tensors[i] = new Tensor<float>(depth_shape);
+            depth_tensors[i]   = new Tensor<float>(depth_shape);
             depth_resources[i] = ComputeTensorData.Pin(depth_tensors[i]).buffer.GetNativeBufferPtr();
 
             // Register textures with the Spot observer
@@ -247,6 +240,8 @@ public class SpotObserverClient : MonoBehaviour
     {
         Debug.Log("Disconnecting from Spot robot " + robot_id + ". isConnected = " + isConnected);
         
+        stop_vision_pipeline();
+
         if (isConnected)
         {
             SOb_DisconnectFromSpot(robot_id);

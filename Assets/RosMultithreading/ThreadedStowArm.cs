@@ -10,8 +10,8 @@ namespace RosSharp.RosBridgeClient
 
         protected override void Start()
         {
-            base.Start();
             message = new MessageTypes.Std.Bool();
+            base.Start();
         }
 
         // Call this function from other scripts to stow the arm
@@ -20,9 +20,16 @@ namespace RosSharp.RosBridgeClient
         // the arm won't stow because it's still trying to finish closing the gripper
         public void Stow()
         {
-            Debug.Log("Stowing arm (Threaded)");
-            message.data = true;
-            LoopPublish(message, 3);
+            if (ready)
+            {
+                Debug.Log("Stowing arm (Threaded)");
+                message.data = true;
+                LoopPublish(message, 3);
+            }
+            else
+            {
+                Debug.Log("ThreadedStowArm is not ready!");
+            }
         }
     }
 }

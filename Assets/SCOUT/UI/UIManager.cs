@@ -67,6 +67,10 @@ public class UIManager : MonoBehaviour
 
     public void Start()
     {
+
+        rigPositioner.y = 1; // Initial Height change; 0 is ground level, 
+        robotWorldY = 0;
+
         superModeLists = new()
         {
             { SuperMode.SingleDrive, singleControllerLists },

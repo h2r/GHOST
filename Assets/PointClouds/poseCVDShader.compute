@@ -1,6 +1,5 @@
 // Each #kernel tells which function to compile; you can have many kernels
 #pragma kernel Transformation
-#pragma kernel EdgeDetection
 #pragma kernel CVD
 
 #define WIDTH 640
