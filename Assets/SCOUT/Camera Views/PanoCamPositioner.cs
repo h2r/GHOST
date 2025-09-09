@@ -72,6 +72,9 @@ public class PanoCamPositioner : MonoBehaviour
     {
         if (centerEyeAnchor == null) return;
 
+        panoramaCenter.y = centerEyeAnchor.position.y;
+        
+
         float baseCameraY = centerEyeAnchor.position.y + cameraHeightOffset;
 
         for (int i = 0; i < cameraSettings.Length; i++)
