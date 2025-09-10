@@ -14,6 +14,9 @@ public class LocomotionJoystickMode : OneControllerMode
     [Header("Locomotion Settings")]
     public float moveSpeed = 2.0f;
 
+    [Tooltip("Use head-relative direction for joystick locomotion.")]
+    public bool useHeadRelativeMovement = true;
+
     [Header("Rotation Settings")]
     [Tooltip("Degrees per second for smooth turn. Adjustable in inspector.")]
     public float rotationSpeed = 120f;  // default same as moveSpeed, but editable separately
@@ -162,18 +165,31 @@ public class LocomotionJoystickMode : OneControllerMode
             //horizontal movement/strafe 
             if (IsJoystickInUse)
             {
-                Quaternion rigRotation = cameraRig.transform.rotation;
+                if (useHeadRelativeMovement)
+                {
+                    Quaternion headYaw = Quaternion.Euler(0, headTransform.eulerAngles.y, 0);
 
-                Vector3 forward = rigRotation * Vector3.forward;
-                forward.y = 0;
-                forward.Normalize();
+                    Vector3 forward = headYaw * Vector3.forward;
+                    Vector3 right = headYaw * Vector3.right;
 
-                Vector3 right = rigRotation * Vector3.right;
-                right.y = 0;
-                right.Normalize();
+                    Vector3 horizontalMove = forward * joystick.y + right * joystick.x;
+                    move += horizontalMove;
+                }
+                else
+                {
+                    Quaternion rigRotation = cameraRig.transform.rotation;
 
-                Vector3 horizontalMove = forward * joystick.y + right * joystick.x;
-                move += horizontalMove;
+                    Vector3 forward = rigRotation * Vector3.forward;
+                    forward.y = 0;
+                    forward.Normalize();
+
+                    Vector3 right = rigRotation * Vector3.right;
+                    right.y = 0;
+                    right.Normalize();
+
+                    Vector3 horizontalMove = forward * joystick.y + right * joystick.x;
+                    move += horizontalMove;
+                }
             }
 
             rigPositioner.pos += move * moveSpeed * Time.deltaTime;
