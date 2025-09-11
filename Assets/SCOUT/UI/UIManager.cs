@@ -261,8 +261,7 @@ public class UIManager : MonoBehaviour
                 {
                     // Set default spot and control
                     modeManager.dualDrive.spot = (SpotMode)activeLists[0].options[(int) SpotColor.RED];
-                    // preset to drive mode because fly mode is not implemented yet 
-                    modeManager.dualDrive.control = (TwoControllerMode)activeLists[0].options[(int) DualControl.FLY];
+                    modeManager.dualDrive.control = (TwoControllerMode)activeLists[1].options[(int) DualControl.FLY];
                 }
                 break;
         }
