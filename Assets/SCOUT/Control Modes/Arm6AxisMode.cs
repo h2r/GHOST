@@ -19,6 +19,9 @@ public class Arm6AxisMode : OneControllerMode
     public float moveSpeed = 2.0f;
     public float rotationSpeed = 120f;
 
+    [Header("Haptics")]
+    public OVRInput.Controller controller;
+
     private Vector3 initialControllerPosition;
     private Quaternion initialControllerRotation;
     private Vector3 initialGripperPosition;
@@ -40,7 +43,10 @@ public class Arm6AxisMode : OneControllerMode
 
         // Toggle gripper on trigger press
         if (handDown)
+        {
             spot.SetGripperOpen(!spot.GetGripperOpen());
+            spot.StartCoroutine(VibrateController(0.1f, 0.1f, 0.2f, controller));
+        }
 
         bool gripperOpen = spot.GetGripperOpen();
 
@@ -147,5 +153,12 @@ public class Arm6AxisMode : OneControllerMode
         exampleModel.joystickLabel = "Move";
         exampleModel.indexLabel = "Hold: Control Arm";
         exampleModel.gripLabel = "Toggle Gripper";
+    }
+
+    System.Collections.IEnumerator VibrateController(float duration, float frequency, float amplitude, OVRInput.Controller controller)
+    {
+        OVRInput.SetControllerVibration(frequency, amplitude, controller);
+        yield return new WaitForSeconds(duration);
+        OVRInput.SetControllerVibration(0, 0, controller);
     }
 }
