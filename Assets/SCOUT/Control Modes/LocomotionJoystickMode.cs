@@ -219,6 +219,8 @@ public class LocomotionJoystickMode : OneControllerMode
         model.indexLabel = trigger ? "" : "Hold: Rotate";
         model.gripLabel = grip ? "" : "Hold: Up/Down";
 
+        HandleShowSpotToggle(model);
+
         // Calculate the final delta
         LastMoveDelta = cameraRig.transform.position - positionBeforeUpdate;
     }
@@ -228,14 +230,53 @@ public class LocomotionJoystickMode : OneControllerMode
         return "Fly";
     }
 
+    public DepthManager depthManager1;
+    public DepthManager depthManager2;
+    private int showSpotState = 0;
+
     public override int ModeIndex => 3;
     public override bool ControlsSpot => false;
 
     public override void AssignDefaultLabels(ControllerModel exampleModel)
     {
         exampleModel.axLabel = "Reset Y";
+        exampleModel.byLabel = "Show Spot";
         exampleModel.joystickLabel = "Fly";
         exampleModel.indexLabel = "Hold: Rotate";
         exampleModel.gripLabel = "Hold: Up/Down";
     }
+
+    private void HandleShowSpotToggle(ControllerModel model)
+    {
+        if (OVRInput.GetDown(model.byButton))
+        {
+            showSpotState = (showSpotState + 1) % 3;
+        }
+
+        if (depthManager1 != null)
+        {
+            depthManager1.show_spot = (showSpotState == 0 || showSpotState == 1);
+        }
+        if (depthManager2 != null)
+        {
+            depthManager2.show_spot = (showSpotState == 0 || showSpotState == 2);
+        }
+
+        string byLabel = "Show Spot: ";
+        switch (showSpotState)
+        {
+            case 0:
+                byLabel += "Both";
+                break;
+            case 1:
+                byLabel += "1";
+                break;
+            case 2:
+                byLabel += "2";
+                break;
+        }
+        model.byLabel = byLabel;
+    }
+
+    
 }
