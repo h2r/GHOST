@@ -100,9 +100,17 @@ public class DriveAndArm : OneControllerMode
             if (joystick.magnitude > 0.1f)
                 spot.Drive(joystick * 0.5f);
 
+            if (OVRInput.Get(model.byButton))
+                spot.AdjustHeight(0.005f);
+
+            if (OVRInput.Get(model.axButton))
+                spot.AdjustHeight(-0.005f);
+
             thumbstickLabel = "Drive Spot";
             triggerLabel = "Hold: Control Arm";
             gripLabel = "Hold: Rotate";
+            model.axLabel = "Lower Body";
+            model.byLabel = "Raise Body";
         }
 
         model.joystickLabel = thumbstickLabel;

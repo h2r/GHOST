@@ -6,11 +6,11 @@ public class DriveJoystickMode : OneControllerMode
 
     public override void ControlUpdate(SpotMode spot, ControllerModel model)
     {
-        var doRotate = OVRInput.Get(model.indexButton);
-        var doHeight = OVRInput.Get(model.gripButton);
+        var doRotate = OVRInput.Get(model.gripButton);
+        var doHeight = OVRInput.Get(model.indexButton);
         var joystick = OVRInput.Get(model.joystick);
 
-        if (OVRInput.GetDown(model.gripButton))
+        if (OVRInput.GetDown(model.indexButton))
             spot.SetHeight(0);
 
         if (doRotate)
@@ -32,8 +32,8 @@ public class DriveJoystickMode : OneControllerMode
                 spot.Drive(joystick * 0.5f);
         }
 
-        model.indexLabel = (!doRotate && !doHeight) ? "Hold: Rotate" : "";
-        model.gripLabel = (!doRotate && !doHeight) ? "Hold: Adjust Height" : "";
+        model.indexLabel = (!doRotate && !doHeight) ? "Hold: Adjust Height" : "";
+        model.gripLabel = (!doRotate && !doHeight) ? "Hold: Rotate" : "";
 
         if (OVRInput.GetDown(model.axButton))
             positionPresetController.CyclePresets();
