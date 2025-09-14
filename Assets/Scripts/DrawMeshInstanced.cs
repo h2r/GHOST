@@ -43,8 +43,6 @@ public class DrawMeshInstanced : MonoBehaviour
 
     public Material material;
 
-    public RawImageSubscriber depthSubscriber;  // ROS subscriber that holds the depth array
-    public JPEGImageSubscriber colorSubscriber; // ROS subscriber holding the color image
     public SpotObserverClient spotObserverClient;
     public PoseConsistentVideoDepth CVD;
 
