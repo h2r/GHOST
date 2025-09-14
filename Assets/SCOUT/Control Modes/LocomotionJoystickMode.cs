@@ -251,28 +251,28 @@ public class LocomotionJoystickMode : OneControllerMode
         if (OVRInput.GetDown(model.byButton))
         {
             showSpotState = (showSpotState + 1) % 3;
+            if (depthManager1 != null)
+            {
+                depthManager1.show_spot = (showSpotState == 0 || showSpotState == 1);
+            }
+            if (depthManager2 != null)
+            {
+                depthManager2.show_spot = (showSpotState == 0 || showSpotState == 2);
+            }
         }
 
-        if (depthManager1 != null)
-        {
-            depthManager1.show_spot = (showSpotState == 0 || showSpotState == 1);
-        }
-        if (depthManager2 != null)
-        {
-            depthManager2.show_spot = (showSpotState == 0 || showSpotState == 2);
-        }
-
-        string byLabel = "Show Spot: ";
+        string byLabel = "Toggle pointcloud"; // can add "Show spot: " to show "Show spot: Both/1/2"
+        // dynamic label for show spot button        
         switch (showSpotState)
         {
             case 0:
-                byLabel += "Both";
+                byLabel += "";
                 break;
             case 1:
-                byLabel += "1";
+                byLabel += "";
                 break;
             case 2:
-                byLabel += "2";
+                byLabel += "";
                 break;
         }
         model.byLabel = byLabel;
