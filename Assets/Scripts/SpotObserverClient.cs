@@ -37,6 +37,9 @@ public class SpotObserverClient : MonoBehaviour
     );
 
     [DllImport("SpotObserverLib")]
+    private static extern void SOb_ClearUnityReadbackBuffers(int robot_id);
+
+    [DllImport("SpotObserverLib")]
     private static extern bool SOb_PushNextImageSetToUnityBuffers(
         int robot_id
     );
@@ -59,9 +62,9 @@ public class SpotObserverClient : MonoBehaviour
     );
 
     [DllImport("SpotObserverLib")]
-    private static extern bool SOb_SetUnityLogCallback(
-        LogCallback callback
-    );
+    private static extern bool SOb_SetUnityLogCallback(LogCallback callback);
+    [DllImport("SpotObserverLib")]
+    private static extern void SOb_ToggleLogging(bool enable_logging);
 
     [DllImport("SpotObserverLib", CharSet = CharSet.Ansi)]
     private static extern void SOb_ToggleDebugDumps(
@@ -95,6 +98,8 @@ public class SpotObserverClient : MonoBehaviour
     public bool useVisionPipeline = true;
     public string depthCompletionModelFile;
 
+    public bool enableLogging = false;
+    private bool lastLoggingState = false;
     public bool enableDebugDumps = false;
 
     private int robot_id = -1;
@@ -149,6 +154,14 @@ public class SpotObserverClient : MonoBehaviour
     void Start()
     {
         SOb_SetUnityLogCallback(PluginLogCallback);
+
+        if (enableLogging)
+        {
+            SOb_ToggleLogging(true);
+        } else {
+            SOb_ToggleLogging(false);
+        }
+        lastLoggingState = enableLogging;
         if (enableDebugDumps)
         {
             SOb_ToggleDebugDumps("SPOT_OBSERVER_DUMPS");
@@ -239,8 +252,11 @@ public class SpotObserverClient : MonoBehaviour
     void OnDestroy()
     {
         Debug.Log("Disconnecting from Spot robot " + robot_id + ". isConnected = " + isConnected);
-        
-        stop_vision_pipeline();
+
+        if (isVisionPipelineRunning)
+        {
+            stop_vision_pipeline();
+        }
 
         if (isConnected)
         {
@@ -267,10 +283,24 @@ public class SpotObserverClient : MonoBehaviour
         // TODO: Destroy the model
         
         SpotCamToIdx.Clear();
+        SOb_ClearUnityReadbackBuffers(robot_id);
     }
 
     void Update()
     {
+        if (lastLoggingState != enableLogging)
+        {
+            if (enableLogging)
+            {
+                SOb_ToggleLogging(true);
+            }
+            else
+            {
+                SOb_ToggleLogging(false);
+            }
+            lastLoggingState = enableLogging;
+        } 
+
         if (robot_id < 0 || !isStreaming)
         {
             return;
