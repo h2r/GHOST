@@ -50,7 +50,7 @@ public class UIManager : MonoBehaviour
     private float robotWorldY = 0;
 
 
-    private CameraMode FindCameraMode<T>() where T : CameraMode
+    public CameraMode FindCameraMode<T>() where T : CameraMode
     {
         foreach (var list in cameraLists)
         {
@@ -111,6 +111,9 @@ public class UIManager : MonoBehaviour
             { SuperMode.SingleDrive, new Action<NamedOption>[] {
                 m => modeManager.singleDrive.leftSpot = (SpotMode)m,
                 m => {
+                    if (modeManager.singleDrive.leftControl != null) {
+                        modeManager.leftModel.ClearLabels();
+                    }
                     modeManager.singleDrive.leftControl = (OneControllerMode)m;
                     if (m is Arm6AxisMode) {
                         var armCameraView = FindCameraMode<ArmCameraView>();
@@ -120,6 +123,9 @@ public class UIManager : MonoBehaviour
                     }
                 },
                 m => {
+                    if (modeManager.singleDrive.rightControl != null) {
+                        modeManager.rightModel.ClearLabels();
+                    }
                     modeManager.singleDrive.rightControl = (OneControllerMode)m;
                     if (m is Arm6AxisMode) {
                         var armCameraView = FindCameraMode<ArmCameraView>();

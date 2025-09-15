@@ -10,7 +10,7 @@ public class Arm6AxisMode : OneControllerMode
     }
 
     [Header("Arm Control Mode")]
-    public ArmControlMode armControlMode = ArmControlMode.Absolute;
+    public ArmControlMode armControlMode = ArmControlMode.Relative;
 
     [Header("Locomotion")]
     public GameObject cameraRig;
@@ -19,146 +19,172 @@ public class Arm6AxisMode : OneControllerMode
     public float moveSpeed = 2.0f;
     public float rotationSpeed = 120f;
 
-    [Header("Haptics")]
-    public OVRInput.Controller controller;
-
     private Vector3 initialControllerPosition;
     private Quaternion initialControllerRotation;
     private Vector3 initialGripperPosition;
     private Quaternion initialGripperRotation;
     private bool isRelativeModeActive = false;
 
-    private ScoutModeManager modeManager;
-
-    private void Awake()
-    {
-        modeManager = ScoutModeManager.Instance;
-    }
+    public bool armCamera = true;
 
     public override void ControlUpdate(SpotMode spot, ControllerModel model)
     {
-        // --- Input ---
-        bool handDown = OVRInput.GetDown(model.gripButton);
-        bool triggerHeld = OVRInput.Get(model.indexButton);
-
-        // Toggle gripper on trigger press
-        if (handDown)
+        try
         {
-            spot.SetGripperOpen(!spot.GetGripperOpen());
-            spot.StartCoroutine(VibrateController(0.1f, 0.1f, 0.2f, controller));
-        }
+            // --- Input ---
+            bool handDown = OVRInput.GetDown(model.gripButton);
+            bool triggerHeld = OVRInput.Get(model.indexButton);
 
-        bool gripperOpen = spot.GetGripperOpen();
-
-        // --- VR Navigation (Locomotion & Rotation) ---
-        Vector2 thumbstick = OVRInput.Get(model.joystick);
-        bool thumbstickPressed = OVRInput.Get(model.joystickButton);
-
-        if (thumbstickPressed)
-        {
-            // VR Rotation
-            if (cameraRig != null && headTransform != null && Mathf.Abs(thumbstick.x) > 0.1f)
+            if (OVRInput.GetDown(model.byButton))
             {
-                Vector3 rotationAxis = Vector3.up;
-                Vector3 rotationCenter = headTransform.position;
-                float angle = rotationSpeed * thumbstick.x * Time.deltaTime;
-                cameraRig.transform.RotateAround(rotationCenter, rotationAxis, angle);
-                rigPositioner.pos = cameraRig.transform.position;
-            }
-        }
-        else
-        {
-            // VR Locomotion
-            if (cameraRig != null && thumbstick.magnitude > 0.1f)
-            {
-                Quaternion rigRotation = cameraRig.transform.rotation;
-
-                Vector3 forward = rigRotation * Vector3.forward;
-                forward.y = 0;
-                forward.Normalize();
-
-                Vector3 right = rigRotation * Vector3.right;
-                right.y = 0;
-                right.Normalize();
-
-                Vector3 horizontalMove = forward * thumbstick.y + right * thumbstick.x;
-                rigPositioner.pos += horizontalMove * moveSpeed * Time.deltaTime;
-            }
-        }
-
-        // --- Arm Positioning Logic ---
-        
-        // Check for joystick use on EITHER controller
-        bool isOwnJoystickInUse = thumbstick != Vector2.zero || thumbstickPressed;
-        bool isOtherJoystickInUse = false;
-        OneControllerMode otherMode = (this == modeManager.singleDrive.leftControl) ? modeManager.singleDrive.rightControl : modeManager.singleDrive.leftControl;
-        if (otherMode is LocomotionJoystickMode locoMode)
-        {
-            isOtherJoystickInUse = locoMode.IsJoystickInUse;
-        }
-        bool anyJoystickInUse = isOwnJoystickInUse || isOtherJoystickInUse;
-
-        switch (armControlMode)
-        {
-            case ArmControlMode.Absolute:
-                if (triggerHeld && !anyJoystickInUse)
+                var uiManager = GameObject.FindObjectOfType<UIManager>();
+                if (uiManager != null)
                 {
-                    spot.SetGripperTf(model.anchor.transform);
-                }
-                break;
-
-            case ArmControlMode.Relative:
-                if (triggerHeld && !anyJoystickInUse)
-                {
-                    if (!isRelativeModeActive)
+                    var armCameraView = uiManager.FindCameraMode<ArmCameraView>();
+                    var allOffView = uiManager.FindCameraMode<AllOffView>();
+                    if (ScoutModeManager.Instance.cameraView.activeCameraMode == armCameraView)
                     {
-                        // Start of a new relative movement
-                        initialControllerPosition = model.anchor.transform.position;
-                        initialControllerRotation = model.anchor.transform.rotation;
-                        initialGripperPosition = spot.GetGripperPos().position;
-                        initialGripperRotation = spot.GetGripperPos().rotation;
-                        isRelativeModeActive = true;
+                        ScoutModeManager.Instance.cameraView.SetActiveCameraMode(allOffView);
                     }
-
-                    // Apply relative movement
-                    Vector3 deltaPos = model.anchor.transform.position - initialControllerPosition;
-                    Quaternion deltaRot = model.anchor.transform.rotation * Quaternion.Inverse(initialControllerRotation);
-
-                    Vector3 newPos = initialGripperPosition + deltaPos;
-                    Quaternion newRot = deltaRot * initialGripperRotation;
-
-                    spot.SetGripperWorldPose(newPos, newRot);
+                    else
+                    {
+                        ScoutModeManager.Instance.cameraView.SetActiveCameraMode(armCameraView);
+                    }
                 }
-                else
+            }
+
+            // Toggle gripper on trigger press
+            if (handDown)
+            {
+                spot.SetGripperOpen(!spot.GetGripperOpen());
+            }
+
+            bool gripperOpen = spot.GetGripperOpen();
+
+            // --- VR Navigation (Locomotion & Rotation) ---
+            Vector2 thumbstick = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick);
+            bool thumbstickPressed = OVRInput.Get(OVRInput.Button.PrimaryThumbstick);
+
+            // --- Arm Positioning Logic ---
+            bool canControlArm = model.anchor != null;
+
+            // Check for joystick use on EITHER controller
+            bool isOwnJoystickInUse = thumbstick.magnitude > 0.1f || thumbstickPressed;
+            bool isOtherJoystickInUse = false;
+            OneControllerMode otherMode = (this == ScoutModeManager.Instance.singleDrive.leftControl) ? ScoutModeManager.Instance.singleDrive.rightControl : ScoutModeManager.Instance.singleDrive.leftControl;
+            if (otherMode is LocomotionJoystickMode locoMode)
+            {
+                isOtherJoystickInUse = locoMode.IsJoystickInUse;
+            }
+            bool anyJoystickInUse = isOwnJoystickInUse || isOtherJoystickInUse;
+
+            if (thumbstickPressed)
+            {
+                // VR Rotation
+                if (cameraRig != null && headTransform != null && Mathf.Abs(thumbstick.x) > 0.1f)
                 {
-                    // Stop relative movement if trigger is released or any joystick is used
-                    isRelativeModeActive = false;
+                    Vector3 rotationAxis = Vector3.up;
+                    Vector3 rotationCenter = headTransform.position;
+                    float angle = rotationSpeed * thumbstick.x * Time.deltaTime;
+                    cameraRig.transform.RotateAround(rotationCenter, rotationAxis, angle);
+                    rigPositioner.pos = cameraRig.transform.position;
                 }
-                break;
-        }
+            }
+            else
+            {
+                // VR Locomotion
+                if (cameraRig != null && thumbstick.magnitude > 0.1f)
+                {
+                    Quaternion rigRotation = cameraRig.transform.rotation;
 
-        // --- UI Labels ---
-        model.joystickLabel = thumbstickPressed ? "Rotate" : "Move";
-        model.indexLabel = triggerHeld ? (isRelativeModeActive ? "Controlling Arm" : "") : "Hold: Control Arm";
-        model.gripLabel = gripperOpen ? "Close Gripper" : "Open Gripper";
+                    Vector3 forward = rigRotation * Vector3.forward;
+                    forward.y = 0;
+                    forward.Normalize();
+
+                    Vector3 right = rigRotation * Vector3.right;
+                    right.y = 0;
+                    right.Normalize();
+
+                    Vector3 horizontalMove = forward * thumbstick.y + right * thumbstick.x;
+                    rigPositioner.pos += horizontalMove * moveSpeed * Time.deltaTime;
+                }
+            }
+
+            switch (armControlMode)
+            {
+                case ArmControlMode.Absolute:
+                    if (canControlArm && triggerHeld && !anyJoystickInUse)
+                    {
+                        spot.SetGripperTf(model.anchor.transform);
+                    }
+                    break;
+
+                case ArmControlMode.Relative:
+                    if (canControlArm && triggerHeld && !anyJoystickInUse)
+                    {
+                        if (!isRelativeModeActive)
+                        {
+                            if (spot.GetGripperPos() != null)
+                            {
+                                // Start of a new relative movement
+                                initialControllerPosition = model.anchor.transform.position;
+                                initialControllerRotation = model.anchor.transform.rotation;
+                                initialGripperPosition = spot.GetGripperPos().position;
+                                initialGripperRotation = spot.GetGripperPos().rotation;
+                                isRelativeModeActive = true;
+                            }
+                        }
+
+                        if (isRelativeModeActive)
+                        {
+                            // Apply relative movement
+                            Vector3 deltaPos = model.anchor.transform.position - initialControllerPosition;
+                            Quaternion deltaRot = model.anchor.transform.rotation * Quaternion.Inverse(initialControllerRotation);
+
+                            Vector3 newPos = initialGripperPosition + deltaPos;
+                            Quaternion newRot = deltaRot * initialGripperRotation;
+
+                            spot.SetGripperWorldPose(newPos, newRot);
+                        }
+                    }
+                    else
+                    {
+                        // Stop relative movement if trigger is released or any joystick is used
+                        isRelativeModeActive = false;
+                    }
+                    break;
+            }
+
+            // --- UI Labels ---
+            model.joystickLabel = thumbstickPressed ? "Rotate" : "Move";
+            if (canControlArm)
+            {
+                model.indexLabel = triggerHeld ? (isRelativeModeActive ? "Controlling Arm" : "") : "Hold: Control Arm";
+            }
+            else
+            {
+                model.indexLabel = "Error: Anchor not assigned";
+            }
+            model.gripLabel = gripperOpen ? "Close Gripper" : "Open Gripper";
+            model.byLabel = armCamera ? "Arm Cam: On" : "Arm Cam: Off";
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"Error in Arm6AxisMode: {e.Message}\n{e.StackTrace}");
+            model.indexLabel = "Error";
+        }
     }
 
     public override string GetName() => "Arm (6 Axis)";
     public override int ModeIndex => 2;
     public override bool ControlsSpot => true;
-    public override bool RequiresArmCamera => true;
+    public override bool RequiresArmCamera => armCamera;
 
     public override void AssignDefaultLabels(ControllerModel exampleModel)
     {
         exampleModel.joystickLabel = "Move";
         exampleModel.indexLabel = "Hold: Control Arm";
         exampleModel.gripLabel = "Toggle Gripper";
-    }
-
-    System.Collections.IEnumerator VibrateController(float duration, float frequency, float amplitude, OVRInput.Controller controller)
-    {
-        OVRInput.SetControllerVibration(frequency, amplitude, controller);
-        yield return new WaitForSeconds(duration);
-        OVRInput.SetControllerVibration(0, 0, controller);
+        exampleModel.byLabel = "Toggle Arm Cam";
     }
 }
