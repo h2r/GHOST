@@ -21979,6 +21979,8 @@ MonoBehaviour:
   turnAcceleration: 120
   turnDamping: 5
   vignetteEnabled: 0
+  depthManager1: {fileID: 638278051}
+  depthManager2: {fileID: 1639569377}
 --- !u!33 &158934217379710121
 MeshFilter:
   m_ObjectHideFlags: 0

@@ -50,19 +50,6 @@ public class ScoutModeManager : MonoBehaviour
             spotOne.SetArmPoseEnabled(false);
             spotTwo.SetArmPoseEnabled(false);
         }
-        else
-        {
-            switch (activeSuperMode)
-            {
-                case SuperMode.SingleDrive:
-                    singleDrive.AssignArmPoseEnabled();
-                    break;
-
-                case SuperMode.DualDrive:
-                    dualDrive.AssignArmPoseEnabled();
-                    break;
-            }
-        }
 
         // Check if isMenuOpen has changed
         if (isMenuOpen != _previousIsMenuOpen)
@@ -120,6 +107,8 @@ public class ScoutModeManager : MonoBehaviour
                 dualDrive.Update(leftModel, rightModel);
                 break;
         }
+
+        
     }
 
     public void SetUISuperMode(SuperMode mode)
@@ -172,34 +161,7 @@ public class SingleDriveSuperMode
         }
     }
 
-    public void AssignArmPoseEnabled()
-    {
-        bool leftArmEnable = false, rightArmEnable = false;
-        if (leftControl != null && leftControl.ControlsSpot)
-        {
-            leftArmEnable = leftControl.RequiresArmCamera;
-        }
-        if (rightControl != null && rightControl.ControlsSpot)
-        {
-            rightArmEnable = rightControl.RequiresArmCamera;
-        }
-
-        if (leftSpot != null && leftSpot == rightSpot)
-        {
-            leftSpot.SetArmPoseEnabled(leftArmEnable || rightArmEnable);
-        }
-        else
-        {
-            if (leftSpot != null)
-            {
-                leftSpot.SetArmPoseEnabled(leftArmEnable);
-            }
-            if (rightSpot != null)
-            {
-                rightSpot.SetArmPoseEnabled(rightArmEnable);
-            }
-        }
-    }
+    
 
     public void AssignExampleModels(ControllerModel leftExampleModel, ControllerModel rightExampleModel)
     {
@@ -245,14 +207,7 @@ public class DualDriveSuperMode
         }
     }
 
-    public void AssignArmPoseEnabled()
-    {
-        Debug.Log(spot);
-        if (spot != null && control != null)
-        {
-            spot.SetArmPoseEnabled(control.RequiresArmCamera);
-        }
-    }
+    
 
     public void AssignExampleModels(ControllerModel leftExampleModel, ControllerModel rightExampleModel)
     {
