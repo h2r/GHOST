@@ -69,14 +69,17 @@ public class Arm6AxisMode : OneControllerMode
             bool canControlArm = model.anchor != null;
 
             // Check for joystick use on EITHER controller
-            bool isOwnJoystickInUse = thumbstick.magnitude > 0.1f || thumbstickPressed;
             bool isOtherJoystickInUse = false;
             OneControllerMode otherMode = (this == ScoutModeManager.Instance.singleDrive.leftControl) ? ScoutModeManager.Instance.singleDrive.rightControl : ScoutModeManager.Instance.singleDrive.leftControl;
             if (otherMode is LocomotionJoystickMode locoMode)
             {
                 isOtherJoystickInUse = locoMode.IsJoystickInUse;
             }
-            bool anyJoystickInUse = isOwnJoystickInUse || isOtherJoystickInUse;
+            else if (otherMode is Arm6AxisMode armMode)
+            {
+                isOtherJoystickInUse = armMode.IsJoystickInUse;
+            }
+            bool anyJoystickInUse = IsJoystickInUse || isOtherJoystickInUse;
 
             if (thumbstickPressed)
             {
