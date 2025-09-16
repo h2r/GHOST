@@ -108,7 +108,19 @@ public class ScoutModeManager : MonoBehaviour
                 break;
         }
 
-        
+        if (!isMenuOpen)
+        {
+            bool spotOneArm = (activeSuperMode == SuperMode.SingleDrive && singleDrive.leftSpot == spotOne && singleDrive.leftControl != null && singleDrive.leftControl.RequiresArmCamera) ||
+                              (activeSuperMode == SuperMode.SingleDrive && singleDrive.rightSpot == spotOne && singleDrive.rightControl != null && singleDrive.rightControl.RequiresArmCamera) ||
+                              (activeSuperMode == SuperMode.DualDrive && dualDrive.spot == spotOne && dualDrive.control != null && dualDrive.control.RequiresArmCamera);
+
+            bool spotTwoArm = (activeSuperMode == SuperMode.SingleDrive && singleDrive.leftSpot == spotTwo && singleDrive.leftControl != null && singleDrive.leftControl.RequiresArmCamera) ||
+                              (activeSuperMode == SuperMode.SingleDrive && singleDrive.rightSpot == spotTwo && singleDrive.rightControl != null && singleDrive.rightControl.RequiresArmCamera) ||
+                              (activeSuperMode == SuperMode.DualDrive && dualDrive.spot == spotTwo && dualDrive.control != null && dualDrive.control.RequiresArmCamera);
+
+            if (spotOne != null) spotOne.SetArmPoseEnabled(spotOneArm);
+            if (spotTwo != null) spotTwo.SetArmPoseEnabled(spotTwoArm);
+        }
     }
 
     public void SetUISuperMode(SuperMode mode)
