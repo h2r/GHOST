@@ -25,6 +25,8 @@ public class Arm6AxisMode : OneControllerMode
     private Quaternion initialGripperRotation;
     private bool isRelativeModeActive = false;
 
+    public bool IsJoystickInUse { get; private set; }
+
     public bool armCamera = true;
 
     public override void ControlUpdate(SpotMode spot, ControllerModel model)
@@ -62,8 +64,9 @@ public class Arm6AxisMode : OneControllerMode
             bool gripperOpen = spot.GetGripperOpen();
 
             // --- VR Navigation (Locomotion & Rotation) ---
-            Vector2 thumbstick = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick);
-            bool thumbstickPressed = OVRInput.Get(OVRInput.Button.PrimaryThumbstick);
+            Vector2 thumbstick = OVRInput.Get(model.joystick);
+            bool thumbstickPressed = OVRInput.Get(model.joystickButton);
+            IsJoystickInUse = thumbstick.magnitude > 0.1f || thumbstickPressed;
 
             // --- Arm Positioning Logic ---
             bool canControlArm = model.anchor != null;
