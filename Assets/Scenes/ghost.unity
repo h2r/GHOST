@@ -686,7 +686,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 82047171}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -2636,7 +2636,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 254585668}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -5032,6 +5032,10 @@ PrefabInstance:
       propertyPath: RosBridgeServerUrl
       value: ws://128.148.138.132:9090
       objectReference: {fileID: 0}
+    - target: {fileID: 1137478774581538817, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: Mass
+      value: 1.904699
+      objectReference: {fileID: 0}
     - target: {fileID: 1137478774599216611, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -5840,6 +5844,10 @@ PrefabInstance:
       propertyPath: planePublisher2
       value: 
       objectReference: {fileID: 616808292}
+    - target: {fileID: 5050333314984075171, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5050333314984075172, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_LocalScale.x
       value: 1.02
@@ -5851,6 +5859,14 @@ PrefabInstance:
     - target: {fileID: 5050333314984075172, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_LocalScale.z
       value: 1.02
+      objectReference: {fileID: 0}
+    - target: {fileID: 5050333314984075172, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5050333314984075172, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 5050333314984075174, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
@@ -5931,6 +5947,18 @@ PrefabInstance:
     - target: {fileID: 7218656818355299475, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_LocalScale.z
       value: 1.02
+      objectReference: {fileID: 0}
+    - target: {fileID: 7218656818355299475, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7218656818355299475, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7218656818355299476, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8551647604095721092, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Mass
@@ -6194,7 +6222,7 @@ Transform:
   m_GameObject: {fileID: 423304872}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.02, y: 0.27782, z: 0.45}
+  m_LocalPosition: {x: 0, y: 0.3, z: 0.45}
   m_LocalScale: {x: 1.02, y: 1.02, z: 1.02}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -10423,7 +10451,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 852407996}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -11155,10 +11183,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdc798fc4b250c04b91b6a0767d25d31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RobotIP: 128.148.138.88
+  RobotIP: 128.148.138.21
   username: user
   password: bigbubbabigbubba
-  useVisionPipeline: 0
+  useVisionPipeline: 1
   depthCompletionModelFile: Assets/onnx/promptda/promptda-vitl-rotated_optimized_batch2_fp16.onnx
   enableDebugDumps: 0
 --- !u!1 &973382266
@@ -11495,10 +11523,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdc798fc4b250c04b91b6a0767d25d31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RobotIP: 128.148.138.21
+  RobotIP: 128.148.138.22
   username: user
   password: bigbubbabigbubba
-  useVisionPipeline: 0
+  useVisionPipeline: 1
   depthCompletionModelFile: Assets/onnx/promptda/promptda-vitl-rotated_optimized_batch2_fp16.onnx
   enableDebugDumps: 0
 --- !u!4 &1028337601
@@ -13610,7 +13638,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1353487718}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -13888,7 +13916,7 @@ Transform:
   m_GameObject: {fileID: 1404339517}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.02, y: 0.27782, z: 0.45}
+  m_LocalPosition: {x: 0, y: 0.3, z: 0.45}
   m_LocalScale: {x: 1.02, y: 1.02, z: 1.02}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -23137,7 +23165,7 @@ MonoBehaviour:
   headTransform: {fileID: 1747440747}
   moveSpeed: 1.25
   rotationSpeed: 100
-  controller: 0
+  armCamera: 1
 --- !u!1 &2342858475928234633
 GameObject:
   m_ObjectHideFlags: 0
