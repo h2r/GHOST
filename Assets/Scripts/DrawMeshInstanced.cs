@@ -71,10 +71,6 @@ public class DrawMeshInstanced : MonoBehaviour
     public uint downsample;
     public uint height;
     public uint width;
-    public int CX;
-    public int CY;
-    public float FX;
-    public float FY;
     public float facedAngle;
     public float t;
     public float pS;    // point scalar
@@ -228,11 +224,11 @@ public class DrawMeshInstanced : MonoBehaviour
         material.SetFloat("a", get_target_rota());
         material.SetFloat("pS", pS);
 
-        Vector4 intr = new Vector4((float)CX, (float)CY, FX, FY);
+        Vector4 intr = new Vector4(CVD.CX, CVD.CY, CVD.FX, CVD.FY);
         compute.SetVector("intrinsics", intr);
         material.SetVector("intrinsics", intr);
 
-        Vector4 screenData = new Vector4((float)width, (float)height, 1 / (float)width, FY);
+        Vector4 screenData = new Vector4((float)width, (float)height, 1 / (float)width, CVD.FY);
         compute.SetVector("screenData", screenData);
         material.SetVector("screenData", screenData);
 
@@ -378,20 +374,6 @@ public class DrawMeshInstanced : MonoBehaviour
 
 
         material.SetTexture("_colorMap", color_image);
-
-        //compute.SetBuffer(kernel, "_Depth", depthBuffer);
-
-
-        //Vector4 intr = new Vector4((float)CX, (float)CY, FX, FY);
-        //compute.SetVector("intrinsics", intr);
-        //material.SetVector("intrinsics", intr);
-
-        //Vector4 screenData = new Vector4((float)width, (float)height, 1 / (float)width, FY);
-        //compute.SetVector("screenData", screenData);
-        //material.SetVector("screenData", screenData);
-
-        //compute.SetFloat("samplingSize", downsample);
-        //material.SetFloat("samplingSize", downsample);
     }
 
     private Texture2D copy_texture(Texture2D input_texture)
@@ -414,12 +396,12 @@ public class DrawMeshInstanced : MonoBehaviour
     {
         compute.SetFloat("t", t);
 
-        Vector4 intr = new Vector4((float)CX, (float)CY, FX, FY);
+        Vector4 intr = new Vector4(CVD.CX, CVD.CY, CVD.FX, CVD.FY);
         compute.SetVector("intrinsics", intr);
         material.SetVector("intrinsics", intr);
 
-        Vector4 screenData = new Vector4((float)width, (float)height, 1 / (float)width, FY);
-        depth_ar_buffer = process_depth(depth_ar_buffer);
+        Vector4 screenData = new Vector4((float)width, (float)height, 1 / (float)width, CVD.FY);
+
         compute.SetVector("screenData", screenData);
         material.SetVector("screenData", screenData);
 
@@ -520,8 +502,8 @@ public class DrawMeshInstanced : MonoBehaviour
         //float FX = (float)552.029101;
         //float FY = (float)552.029101;
 
-        float x = (j - CX) * depth / FX;
-        float y = (i - CY) * depth / FY;
+        float x = (j - CVD.CX) * depth / CVD.FX;
+        float y = (i - CVD.CY) * depth / CVD.FY;
 
         Vector4 ret = new Vector4(x, y, depth, 1f);
         return (ret);
@@ -535,12 +517,12 @@ public class DrawMeshInstanced : MonoBehaviour
 
     public Vector4 get_screenData()
     {
-        return new Vector4((float)width, (float)height, 1 / (float)width, FY);
+        return new Vector4((float)width, (float)height, 1 / (float)width, CVD.FY);
     }
 
     public Vector4 get_intrinsics()
     {
-        return new Vector4((float)CX, (float)CY, FX, FY);
+        return new Vector4(CVD.CX, CVD.CY, CVD.FX, CVD.FY);
     }
 
     public bool get_ready_to_freeze()
