@@ -6008,6 +6008,51 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1137478774082161500, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
   m_PrefabInstance: {fileID: 409472599}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &410575831
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 410575833}
+  - component: {fileID: 410575832}
+  m_Layer: 0
+  m_Name: (right) Dynamic Controll
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &410575832
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 410575831}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d20d9c0adc2961428107103f52df143, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  armControlMode: 2
+--- !u!4 &410575833
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 410575831}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.67219, y: 0, z: -0.07181}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 9217194773734636244}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &415673816
 GameObject:
   m_ObjectHideFlags: 0
@@ -10827,6 +10872,7 @@ MonoBehaviour:
   password: bigbubbabigbubba
   useVisionPipeline: 1
   depthCompletionModelFile: Assets/onnx/promptda/promptda-vitl-rotated_optimized_batch2_fp16.onnx
+  enableLogging: 0
   enableDebugDumps: 0
 --- !u!1 &973382266
 GameObject:
@@ -11162,11 +11208,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdc798fc4b250c04b91b6a0767d25d31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RobotIP: 128.148.138.22
+  RobotIP: 128.148.138.88
   username: user
   password: bigbubbabigbubba
   useVisionPipeline: 1
   depthCompletionModelFile: Assets/onnx/promptda/promptda-vitl-rotated_optimized_batch2_fp16.onnx
+  enableLogging: 0
   enableDebugDumps: 0
 --- !u!4 &1028337601
 Transform:
@@ -17438,6 +17485,57 @@ MonoBehaviour:
   CY: 236
   FX: 330.699
   FY: 329.77
+--- !u!1 &1751756648
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1751756650}
+  - component: {fileID: 1751756649}
+  m_Layer: 0
+  m_Name: (right) Arm 6 Axis Mode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1751756649
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1751756648}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f733726ed7a754ab1bfcc55ed94f0399, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  armControlMode: 1
+  cameraRig: {fileID: 117133128}
+  rigPositioner: {fileID: 117133134}
+  headTransform: {fileID: 1747440747}
+  moveSpeed: 1.25
+  rotationSpeed: 100
+  armCamera: 1
+--- !u!4 &1751756650
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1751756648}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -39.04689, y: 0, z: 289.45258}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 9217194773734636244}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1752620064
 GameObject:
   m_ObjectHideFlags: 0
@@ -24776,7 +24874,7 @@ GameObject:
   - component: {fileID: 7955795633094917879}
   - component: {fileID: 2330555322345709735}
   m_Layer: 0
-  m_Name: Arm 6 Axis Mode
+  m_Name: (left) Arm 6 Axis Mode
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -24829,7 +24927,7 @@ GameObject:
   - component: {fileID: 6749092369239308048}
   - component: {fileID: 4075332289178829249}
   m_Layer: 0
-  m_Name: Dynamic Control
+  m_Name: (left) Dynamic Control
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -25995,9 +26093,9 @@ MonoBehaviour:
   title: Right Control Mode
   isHorizontal: 0
   options:
-  - {fileID: 4075332289178829249}
+  - {fileID: 410575832}
   - {fileID: 3361989143556469971}
-  - {fileID: 2330555322345709735}
+  - {fileID: 1751756649}
   - {fileID: 76886083940517756}
   titlePrefab: {fileID: 3278048788002158022, guid: bfe2b15985d2d437fb47203f0df723ee, type: 3}
   buttonPrefab: {fileID: 1520795838076098022, guid: 39fc7b698942e4ac18e866a2f1f87352, type: 3}
@@ -26255,8 +26353,10 @@ Transform:
   - {fileID: 2926933717261197310}
   - {fileID: 5544920777372107914}
   - {fileID: 7955795633094917879}
+  - {fileID: 1751756650}
   - {fileID: 2897920449665981325}
   - {fileID: 6749092369239308048}
+  - {fileID: 410575833}
   - {fileID: 2631310550994927846}
   - {fileID: 2569328214210577947}
   - {fileID: 1675898212186617671}
