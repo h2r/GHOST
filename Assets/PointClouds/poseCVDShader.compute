@@ -47,8 +47,10 @@ void Transformation(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupThreadI
         
         float3 pos;
         pos.z = depth_ar[index];
-        pos.x = (xIndex - intrinsics.x) * pos.z / intrinsics.z;
-        pos.y = (yIndex - intrinsics.y) * pos.z / intrinsics.w;
+        //pos.x = (xIndex - intrinsics.x) * pos.z / intrinsics.z;
+        //pos.y = (yIndex - intrinsics.y) * pos.z / intrinsics.w;
+        pos.x = xIndex;
+        pos.y = yIndex;
         
         depth_buffer[buffer_pos * HEIGHT * WIDTH + index] = pos;
         //pos.w = 1.0f;
