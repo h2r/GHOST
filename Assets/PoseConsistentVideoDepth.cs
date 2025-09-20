@@ -59,12 +59,13 @@ public class PoseConsistentVideoDepth : MonoBehaviour
     {
         depthBufferCompute.Release();
         poseBufferCompute.Release();
+        opticalBufferCompute.Release();
+        depthReturnCompute.Release();
     }
 
     public ComputeBuffer consistent_depth(ComputeBuffer depth_buffer, Matrix4x4 pose_mat, ComputeBuffer optical_buffer, bool activate_CVD, float edgethreshold, bool activate_depth_completion, float cvd_weight)
     {
         intrinsics = new Vector4(CX, CY, FX, FY);
-        Debug.Log("intrinsics: " + intrinsics);
         pose_consistent_depth_shader.SetInt("buffer_pos", buffer_pos);
         pose_consistent_depth_shader.SetInt("num_frames", num_frames);
         pose_consistent_depth_shader.SetVector("intrinsics", intrinsics);

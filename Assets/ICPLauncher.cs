@@ -191,6 +191,27 @@ public class ICPLauncher : MonoBehaviour
             correspondenceBuffer.Release();
             correspondenceBuffer = null;
         }
+
+        if (buffer0 != null)
+        {
+            buffer0.Release();
+            buffer0 = null;
+        }
+        if (buffer1 != null)
+        {
+            buffer1.Release();
+            buffer1 = null;
+        }
+        if (buffer2 != null)
+        {
+            buffer2.Release();
+            buffer2 = null;
+        }
+        if (buffer3 != null)
+        {
+            buffer3.Release();
+            buffer3 = null;
+        }
     }
 
     public Matrix4x4 run_ICP()
