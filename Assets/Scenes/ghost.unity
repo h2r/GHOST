@@ -23524,9 +23524,9 @@ MonoBehaviour:
   frontFeedHeight: 0.3
   frontCam1Offset: {x: 0.25, y: 0.5, z: 1}
   frontCam2Offset: {x: -0.25, y: 0.5, z: 1}
-  wristFeedWidth: 0.25
-  wristFeedHeight: 0.25
-  commonWristOffset: {x: 0, y: 0.1, z: 0.025}
+  wristFeedWidth: 0.2
+  wristFeedHeight: 0.15
+  commonWristOffset: {x: 0, y: 0.05, z: 0.025}
   wristCam1Offset: {x: 0.05, y: 0, z: 0}
   wristCam2Offset: {x: -0.05, y: 0, z: 0}
 --- !u!4 &4021286285207285070
