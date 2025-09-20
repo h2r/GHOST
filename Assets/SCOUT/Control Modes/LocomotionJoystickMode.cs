@@ -51,7 +51,7 @@ public class LocomotionJoystickMode : OneControllerMode
     // Internal state
     private float initialY;
     private bool hasInitialY = false;
-    private bool isTriggerHeld = false;
+    private bool isGripHeld = false;
     private float prevJoyX = 0f;
     private float lastSnapTime = 0f;
     private float currentTurnVelocity = 0f;
@@ -77,17 +77,17 @@ public class LocomotionJoystickMode : OneControllerMode
         bool trigger = OVRInput.Get(model.indexButton);
         bool grip = OVRInput.Get(model.gripButton);
 
-        if (trigger && !isTriggerHeld)
+        if (grip && !isGripHeld)
         {
             initialY = rigPositioner.y;
             hasInitialY = true;
         }
-        isTriggerHeld = trigger;
+        isGripHeld = grip;
 
         Vector3 rotationAxis = transform.up;
         Vector3 rotationCenter = headTransform != null ? headTransform.position : rigPositioner.pos;
 
-        if (trigger)
+        if (grip)
         {
             if (Mathf.Abs(joystick.x) > 0.1)
             {
@@ -151,7 +151,7 @@ public class LocomotionJoystickMode : OneControllerMode
 
             rigPositioner.pos = cameraRig.transform.position;
         }
-        else if (grip)
+        else if (trigger)
         {
             if (Mathf.Abs(joystick.y) > 0.1)
             {
@@ -210,14 +210,14 @@ public class LocomotionJoystickMode : OneControllerMode
         model.axLabel = model.isLeft ? (hasInitialY ? "Reset Y (X)" : "") : (hasInitialY ? "Reset Y (A)" : "");
 
         if (grip)
-            model.joystickLabel = "Up/Down";
-        else if (trigger)
             model.joystickLabel = "Rotate";
+        else if (trigger)
+            model.joystickLabel = "Up/Down";
         else
             model.joystickLabel = "Fly";
 
-        model.indexLabel = trigger ? "" : "Hold: Rotate";
-        model.gripLabel = grip ? "" : "Hold: Up/Down";
+        model.indexLabel = trigger ? "" : "Hold: Up/Down";
+        model.gripLabel = grip ? "" : "Hold: Rotate";
 
         HandleShowSpotToggle(model);
 
@@ -237,13 +237,13 @@ public class LocomotionJoystickMode : OneControllerMode
     public override int ModeIndex => 3;
     public override bool ControlsSpot => false;
 
-    public override void AssignDefaultLabels(ControllerModel exampleModel)
+    public override void AssignDefaultLabels(ControllerModel controller_model)
     {
-        exampleModel.axLabel = "Reset Y";
-        exampleModel.byLabel = "Show Spot";
-        exampleModel.joystickLabel = "Fly";
-        exampleModel.indexLabel = "Hold: Rotate";
-        exampleModel.gripLabel = "Hold: Up/Down";
+        controller_model.axLabel = "Reset Y";
+        controller_model.byLabel = "Show Spot";
+        controller_model.joystickLabel = "Fly";
+        controller_model.indexLabel = "Hold: Up/Down";
+        controller_model.gripLabel = "Hold: Rotate";
     }
 
     private void HandleShowSpotToggle(ControllerModel model)
