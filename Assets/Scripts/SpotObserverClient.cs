@@ -281,8 +281,8 @@ public class SpotObserverClient : MonoBehaviour
         }
 
         // TODO: Destroy the model
-        
-        SpotCamToIdx.Clear();
+
+        SpotCamToIdx.Dispose();
         SOb_ClearUnityReadbackBuffers(robot_id);
     }
 

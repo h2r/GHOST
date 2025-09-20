@@ -49,6 +49,8 @@ public class DrawMeshInstanced : MonoBehaviour
     public bool savePointCloud;                 // allow user to save point cloud
 
     public ComputeShader compute;
+
+    private ComputeBuffer depth_ar_buffer;
     private ComputeBuffer meshPropertiesBuffer;
     private ComputeBuffer argsBuffer;
     private ComputeBuffer depthBuffer;
@@ -97,10 +99,6 @@ public class DrawMeshInstanced : MonoBehaviour
     float[] res_depth = new float[640 * 480];
 
     //private MeshProperties[] generalUseProps;
-
-    ComputeBuffer depth_ar_buffer;
-
-    int buffer_pos = 0;
 
     int kernel;
     int edge_kernel;
@@ -821,11 +819,23 @@ public class DrawMeshInstanced : MonoBehaviour
         }
         sparseBuffer = null;
 
-        if (depth_ar_buffer != null)
+        if (edge_buffer != null)
         {
-            depth_ar_buffer.Release();
+            edge_buffer.Release();
         }
-        depth_ar_buffer = null;
+        edge_buffer = null;
+
+        if (icp_res_buffer != null)
+        {
+            icp_res_buffer.Release();
+        }
+        icp_res_buffer = null;
+
+        if (optical_flow_buffer != null)
+        {
+            optical_flow_buffer.Release();
+        }
+        optical_flow_buffer = null;
     }
 
     private void OnEnable()
