@@ -95,6 +95,13 @@
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
+    "com.siemens.ros-sharp": {
+      "version": "https://github.com/siemens/ros-sharp.git?path=/com.siemens.ros-sharp",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "ea80541a4f3e5a5733df175122dd8475127d4736"
+    },
     "com.unity.ai.inference": {
       "version": "2.2.1",
       "depth": 1,
