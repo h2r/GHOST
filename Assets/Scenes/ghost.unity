@@ -4930,6 +4930,14 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1137478773745686199, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: Topic
+      value: /spot/arm_pose_commands
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478773745686199, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: FrameId
+      value: body
+      objectReference: {fileID: 0}
     - target: {fileID: 1137478773745686203, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_Enabled
       value: 0
@@ -5264,7 +5272,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052575190400, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Topic
-      value: /spot2/arm_pose_stamped
+      value: /spot2/arm_pose_commands
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871052575190400, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: FrameId
+      value: body
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052575190401, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Topic
@@ -5300,11 +5312,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052575190430, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
-      value: ws://128.148.138.132:9090
+      value: ws://128.148.138.233:9090
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052575190431, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Topic
-      value: /joint_states
+      value: /spot2/joint_states
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052575190431, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: prefix
@@ -5313,6 +5325,82 @@ PrefabInstance:
     - target: {fileID: 3310871052575190431, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_Enabled
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871052575190431, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: 'JointNames.Array.data[0]'
+      value: spot2/front_left_hip_x
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871052575190431, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: 'JointNames.Array.data[1]'
+      value: spot2/front_left_hip_y
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871052575190431, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: 'JointNames.Array.data[2]'
+      value: spot2/front_left_knee
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871052575190431, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: 'JointNames.Array.data[3]'
+      value: spot2/front_right_hip_x
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871052575190431, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: 'JointNames.Array.data[4]'
+      value: spot2/front_right_hip_y
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871052575190431, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: 'JointNames.Array.data[5]'
+      value: spot2/front_right_knee
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871052575190431, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: 'JointNames.Array.data[6]'
+      value: spot2/rear_left_hip_x
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871052575190431, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: 'JointNames.Array.data[7]'
+      value: spot2/rear_left_hip_y
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871052575190431, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: 'JointNames.Array.data[8]'
+      value: spot2/rear_left_knee
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871052575190431, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: 'JointNames.Array.data[9]'
+      value: spot2/rear_right_hip_x
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871052575190431, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: 'JointNames.Array.data[10]'
+      value: spot2/rear_right_hip_y
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871052575190431, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: 'JointNames.Array.data[11]'
+      value: spot2/rear_right_knee
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871052575190431, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: 'JointNames.Array.data[12]'
+      value: spot2/arm_sh0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871052575190431, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: 'JointNames.Array.data[13]'
+      value: spot2/arm_sh1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871052575190431, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: 'JointNames.Array.data[14]'
+      value: spot2/arm_el0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871052575190431, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: 'JointNames.Array.data[15]'
+      value: spot2/arm_el1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871052575190431, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: 'JointNames.Array.data[16]'
+      value: spot2/arm_wr0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871052575190431, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: 'JointNames.Array.data[17]'
+      value: spot2/arm_wr1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871052575190431, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: 'JointNames.Array.data[18]'
+      value: spot2/arm_f1x
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052575190435, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Topic
@@ -5484,7 +5572,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052953474548, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052953474555, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_LocalPosition.x
@@ -5613,6 +5701,10 @@ PrefabInstance:
     - target: {fileID: 3310871053646093103, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
       value: ws://128.148.138.132:9090
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871053709528298, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: Mass
+      value: 1.904699
       objectReference: {fileID: 0}
     - target: {fileID: 3699985937472072438, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_IsActive
@@ -5944,7 +6036,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 5143370623281230838, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
-    - {fileID: 1137478774082161501, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
     - {fileID: 1137478773745686196, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
     - {fileID: 3310871052575190401, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
     - {fileID: 3310871052575190406, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
