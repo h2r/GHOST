@@ -335,11 +335,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1499995371}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!23 &43937879 stripped
-MeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 1137478774641359479, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
-  m_PrefabInstance: {fileID: 409472599}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &56630452
 GameObject:
   m_ObjectHideFlags: 0
@@ -1646,6 +1641,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff98778ae051cfd40a6e4effdf851ebd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectedRosVersion: 1
   SecondsTimeout: 10
   Serializer: 0
   protocol: 1
@@ -1659,11 +1655,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 147311265}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f88981aeb3483944785bdbed96c04bf4, type: 3}
+  m_Script: {fileID: 11500000, guid: 18248b76219ab8540a928c049ec90ecd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   Topic: /spot/stream_image2/hand_depth_in_hand_color_frame/image
   TimeStep: 0
+  EnsureThreadSafety: 0
   timestamp_synced: 0
   printMessageReceiveRate: 0
   printMessageProcRate: 0
@@ -2229,15 +2226,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 441fcddae936d184f8196aeed41a9f18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Topic: /spot/stream_image2/frontleft_fisheye_image/image
-  TimeStep: 0
-  meshRenderer: {fileID: 233780888}
-  texture2D: {fileID: 0}
-  associatedDepth: {fileID: 0}
-  printRate: 0
-  printSyncTime: 0
-  printClosestTime: 0
-  latest_time: 0
 --- !u!114 &233780886
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2250,6 +2238,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff98778ae051cfd40a6e4effdf851ebd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectedRosVersion: 1
   SecondsTimeout: 10
   Serializer: 0
   protocol: 0
@@ -2448,15 +2437,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 441fcddae936d184f8196aeed41a9f18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Topic: /spot/stream_image/left_fisheye_image/image
-  TimeStep: 0
-  meshRenderer: {fileID: 245902177}
-  texture2D: {fileID: 0}
-  associatedDepth: {fileID: 0}
-  printRate: 0
-  printSyncTime: 0
-  printClosestTime: 0
-  latest_time: 0
 --- !u!114 &245902175
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2469,6 +2449,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff98778ae051cfd40a6e4effdf851ebd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectedRosVersion: 1
   SecondsTimeout: 10
   Serializer: 0
   protocol: 0
@@ -4843,15 +4824,99 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1137478773745686184, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Topic
-      value: /joint_states
+      value: /spot/joint_states
       objectReference: {fileID: 0}
     - target: {fileID: 1137478773745686184, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: prefix
       value: spot/
       objectReference: {fileID: 0}
+    - target: {fileID: 1137478773745686184, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: 'JointNames.Array.data[0]'
+      value: spot/front_left_hip_x
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478773745686184, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: 'JointNames.Array.data[1]'
+      value: spot/front_left_hip_y
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478773745686184, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: 'JointNames.Array.data[2]'
+      value: spot/front_left_knee
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478773745686184, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: 'JointNames.Array.data[3]'
+      value: spot/front_right_hip_x
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478773745686184, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: 'JointNames.Array.data[4]'
+      value: spot/front_right_hip_y
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478773745686184, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: 'JointNames.Array.data[5]'
+      value: spot/front_right_knee
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478773745686184, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: 'JointNames.Array.data[6]'
+      value: spot/rear_left_hip_x
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478773745686184, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: 'JointNames.Array.data[7]'
+      value: spot/rear_left_hip_y
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478773745686184, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: 'JointNames.Array.data[8]'
+      value: spot/rear_left_knee
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478773745686184, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: 'JointNames.Array.data[9]'
+      value: spot/rear_right_hip_x
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478773745686184, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: 'JointNames.Array.data[10]'
+      value: spot/rear_right_hip_y
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478773745686184, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: 'JointNames.Array.data[11]'
+      value: spot/rear_right_knee
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478773745686184, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: 'JointNames.Array.data[12]'
+      value: spot/arm_sh0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478773745686184, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: 'JointNames.Array.data[13]'
+      value: spot/arm_sh1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478773745686184, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: 'JointNames.Array.data[14]'
+      value: spot/arm_el0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478773745686184, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: 'JointNames.Array.data[15]'
+      value: spot/arm_el1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478773745686184, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: 'JointNames.Array.data[16]'
+      value: spot/arm_wr0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478773745686184, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: 'JointNames.Array.data[17]'
+      value: spot/arm_wr1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478773745686184, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: 'JointNames.Array.data[18]'
+      value: spot/arm_f1x
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478773745686184, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: 'JointNames.Array.data[19]'
+      value: spot/arm_wr1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478773745686184, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: 'JointNames.Array.data[20]'
+      value: spot/arm_f1x
+      objectReference: {fileID: 0}
     - target: {fileID: 1137478773745686185, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
-      value: ws://128.148.138.132:9090
+      value: ws://128.148.138.233:9090
       objectReference: {fileID: 0}
     - target: {fileID: 1137478773745686192, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_Enabled
@@ -5156,7 +5221,7 @@ PrefabInstance:
     - target: {fileID: 1137478775557145278, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: subscriber
       value: 
-      objectReference: {fileID: 2123763409}
+      objectReference: {fileID: 0}
     - target: {fileID: 1731835587416712801, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -5419,7 +5484,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052953474548, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052953474555, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_LocalPosition.x
@@ -5825,6 +5890,10 @@ PrefabInstance:
       propertyPath: 'depthSubscribers.Array.data[1]'
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 5926854348849661184, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: rosBridgeServerUrl
+      value: ws://128.148.138.233:9090
+      objectReference: {fileID: 0}
     - target: {fileID: 6095128873530598835, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Mass
       value: 1.904699
@@ -5864,6 +5933,10 @@ PrefabInstance:
     - target: {fileID: 7218656818355299476, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8105313734531972663, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: rosBridgeServerUrl
+      value: ws://128.148.138.132:9090
       objectReference: {fileID: 0}
     - target: {fileID: 8551647604095721092, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Mass
@@ -5919,23 +5992,20 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 810747191}
     - targetCorrespondingSourceObject: {fileID: 3310871052038647825, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
-      insertIndex: 1
+      insertIndex: -1
       addedObject: {fileID: 147311266}
     - targetCorrespondingSourceObject: {fileID: 3310871052038647825, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
-      insertIndex: 2
+      insertIndex: -1
       addedObject: {fileID: 1527530487}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 1137478773745686191, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       insertIndex: 4
-      addedObject: {fileID: 2123763438}
-    - targetCorrespondingSourceObject: {fileID: 1137478773745686191, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
-      insertIndex: 5
       addedObject: {fileID: 2123763437}
     - targetCorrespondingSourceObject: {fileID: 1137478773745686191, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
-      insertIndex: 6
+      insertIndex: 5
       addedObject: {fileID: 2123763436}
     - targetCorrespondingSourceObject: {fileID: 1137478773745686191, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
-      insertIndex: 7
+      insertIndex: 6
       addedObject: {fileID: 2123763435}
     - targetCorrespondingSourceObject: {fileID: 1137478773745686191, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       insertIndex: -1
@@ -5947,19 +6017,16 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 2123763434}
     - targetCorrespondingSourceObject: {fileID: 3310871052575190424, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
-      insertIndex: 4
-      addedObject: {fileID: 669084027}
-    - targetCorrespondingSourceObject: {fileID: 3310871052575190424, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
-      insertIndex: 7
+      insertIndex: 6
       addedObject: {fileID: 669084031}
     - targetCorrespondingSourceObject: {fileID: 3310871052575190424, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
-      insertIndex: 8
+      insertIndex: 7
       addedObject: {fileID: 669084030}
     - targetCorrespondingSourceObject: {fileID: 3310871052575190424, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
-      insertIndex: 9
+      insertIndex: 8
       addedObject: {fileID: 669084026}
     - targetCorrespondingSourceObject: {fileID: 3310871052575190424, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
-      insertIndex: 10
+      insertIndex: 9
       addedObject: {fileID: 669084029}
     - targetCorrespondingSourceObject: {fileID: 3310871052575190424, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       insertIndex: -1
@@ -6213,6 +6280,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff98778ae051cfd40a6e4effdf851ebd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectedRosVersion: 1
   SecondsTimeout: 10
   Serializer: 0
   protocol: 0
@@ -8332,6 +8400,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Topic: /spot_tf_compute
   TimeStep: 0
+  EnsureThreadSafety: 0
   target: spot/body
   source: spot2/body
   targetObject: {fileID: 1583796087}
@@ -8362,23 +8431,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RosSharp.RosBridgeClient.ThreadedStowArm
   topic: /spot2/arm_stow
---- !u!114 &669084027
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 669083912}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: db59377061e8c4fbe9e48b87bb31ff75, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ThreadedRosConnector
-  secondsTimeout: 10
-  serializer: 0
-  protocol: 0
-  rosBridgeServerUrl: ws://128.148.138.132:9090
-  rosTicksPerSecond: 100
 --- !u!114 &669084028
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10061,15 +10113,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 441fcddae936d184f8196aeed41a9f18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Topic: /spot/stream_image2/back_fisheye_image/image
-  TimeStep: 0
-  meshRenderer: {fileID: 842827529}
-  texture2D: {fileID: 0}
-  associatedDepth: {fileID: 0}
-  printRate: 0
-  printSyncTime: 0
-  printClosestTime: 0
-  latest_time: 0
 --- !u!114 &842827527
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10082,6 +10125,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff98778ae051cfd40a6e4effdf851ebd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectedRosVersion: 1
   SecondsTimeout: 10
   Serializer: 0
   protocol: 0
@@ -12743,6 +12787,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 503282580}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &1297213128 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 3310871051864228160, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1304602696
 GameObject:
   m_ObjectHideFlags: 0
@@ -13509,6 +13558,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff98778ae051cfd40a6e4effdf851ebd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectedRosVersion: 1
   SecondsTimeout: 10
   Serializer: 0
   protocol: 0
@@ -13722,15 +13772,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 441fcddae936d184f8196aeed41a9f18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Topic: /spot/stream_image2/right_fisheye_image/image
-  TimeStep: 0
-  meshRenderer: {fileID: 1417051217}
-  texture2D: {fileID: 0}
-  associatedDepth: {fileID: 0}
-  printRate: 0
-  printSyncTime: 0
-  printClosestTime: 0
-  latest_time: 0
 --- !u!114 &1417051215
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13743,6 +13784,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff98778ae051cfd40a6e4effdf851ebd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectedRosVersion: 1
   SecondsTimeout: 10
   Serializer: 0
   protocol: 0
@@ -14623,15 +14665,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 441fcddae936d184f8196aeed41a9f18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Topic: /spot/stream_image/right_fisheye_image/image
-  TimeStep: 0
-  meshRenderer: {fileID: 1484428277}
-  texture2D: {fileID: 0}
-  associatedDepth: {fileID: 0}
-  printRate: 0
-  printSyncTime: 0
-  printClosestTime: 0
-  latest_time: 0
 --- !u!114 &1484428275
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14644,6 +14677,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff98778ae051cfd40a6e4effdf851ebd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectedRosVersion: 1
   SecondsTimeout: 10
   Serializer: 0
   protocol: 0
@@ -15251,6 +15285,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff98778ae051cfd40a6e4effdf851ebd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectedRosVersion: 1
   SecondsTimeout: 10
   Serializer: 0
   protocol: 1
@@ -15264,14 +15299,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 1527530486}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 441fcddae936d184f8196aeed41a9f18, type: 3}
+  m_Script: {fileID: 11500000, guid: 1d126323b63a9db4db268b1bd7fd36b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   Topic: /spot/stream_image2/hand_color_image/image
   TimeStep: 0
-  meshRenderer: {fileID: 43937879}
+  EnsureThreadSafety: 0
+  meshRenderer: {fileID: 1297213128}
   texture2D: {fileID: 0}
-  associatedDepth: {fileID: 0}
+  associatedDepth: {fileID: 147311268}
   printRate: 0
   printSyncTime: 0
   printClosestTime: 0
@@ -15329,15 +15365,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 441fcddae936d184f8196aeed41a9f18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Topic: /spot/stream_image2/left_fisheye_image/image
-  TimeStep: 0
-  meshRenderer: {fileID: 1534932285}
-  texture2D: {fileID: 0}
-  associatedDepth: {fileID: 0}
-  printRate: 0
-  printSyncTime: 0
-  printClosestTime: 0
-  latest_time: 0
 --- !u!114 &1534932283
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15350,6 +15377,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff98778ae051cfd40a6e4effdf851ebd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectedRosVersion: 1
   SecondsTimeout: 10
   Serializer: 0
   protocol: 0
@@ -18096,15 +18124,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 441fcddae936d184f8196aeed41a9f18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Topic: /spot/stream_image2/frontright_fisheye_image/image
-  TimeStep: 0
-  meshRenderer: {fileID: 1780268931}
-  texture2D: {fileID: 0}
-  associatedDepth: {fileID: 0}
-  printRate: 0
-  printSyncTime: 0
-  printClosestTime: 0
-  latest_time: 0
 --- !u!114 &1780268929
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18117,6 +18136,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff98778ae051cfd40a6e4effdf851ebd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectedRosVersion: 1
   SecondsTimeout: 10
   Serializer: 0
   protocol: 0
@@ -19595,15 +19615,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 441fcddae936d184f8196aeed41a9f18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Topic: /spot/stream_image/frontleft_fisheye_image/image
-  TimeStep: 0
-  meshRenderer: {fileID: 1978628314}
-  texture2D: {fileID: 0}
-  associatedDepth: {fileID: 0}
-  printRate: 0
-  printSyncTime: 0
-  printClosestTime: 0
-  latest_time: 0
 --- !u!114 &1978628312
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19616,6 +19627,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff98778ae051cfd40a6e4effdf851ebd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectedRosVersion: 1
   SecondsTimeout: 10
   Serializer: 0
   protocol: 0
@@ -20020,15 +20032,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 441fcddae936d184f8196aeed41a9f18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Topic: /spot/stream_image/frontright_fisheye_image/image
-  TimeStep: 0
-  meshRenderer: {fileID: 2030473360}
-  texture2D: {fileID: 0}
-  associatedDepth: {fileID: 0}
-  printRate: 0
-  printSyncTime: 0
-  printClosestTime: 0
-  latest_time: 0
 --- !u!114 &2030473358
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20041,6 +20044,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff98778ae051cfd40a6e4effdf851ebd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectedRosVersion: 1
   SecondsTimeout: 10
   Serializer: 0
   protocol: 0
@@ -20424,15 +20428,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 441fcddae936d184f8196aeed41a9f18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Topic: /spot/stream_image/back_fisheye_image/image
-  TimeStep: 0
-  meshRenderer: {fileID: 2055724985}
-  texture2D: {fileID: 0}
-  associatedDepth: {fileID: 0}
-  printRate: 0
-  printSyncTime: 0
-  printClosestTime: 0
-  latest_time: 0
 --- !u!114 &2055724983
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20445,6 +20440,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff98778ae051cfd40a6e4effdf851ebd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectedRosVersion: 1
   SecondsTimeout: 10
   Serializer: 0
   protocol: 0
@@ -21028,17 +21024,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Topic: /multi_spot/cmd_vel
   save: 0
---- !u!114 &2123763409 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1137478773745686167, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
-  m_PrefabInstance: {fileID: 409472599}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2123763348}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 08c18dd85b068194398cf479e6bbd467, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &2123763434
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21091,23 +21076,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RosSharp.RosBridgeClient.ThreadedStowArm
   topic: /spot/arm_stow
---- !u!114 &2123763438
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2123763348}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: db59377061e8c4fbe9e48b87bb31ff75, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ThreadedRosConnector
-  secondsTimeout: 10
-  serializer: 0
-  protocol: 0
-  rosBridgeServerUrl: ws://128.148.138.132:9090
-  rosTicksPerSecond: 100
 --- !u!1 &2127769091
 GameObject:
   m_ObjectHideFlags: 0
@@ -21496,15 +21464,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 441fcddae936d184f8196aeed41a9f18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Topic: /spot/stream_image2/hand_color_image/image
-  TimeStep: 0
-  meshRenderer: {fileID: 7700864136377476653}
-  texture2D: {fileID: 0}
-  associatedDepth: {fileID: 0}
-  printRate: 0
-  printSyncTime: 0
-  printClosestTime: 0
-  latest_time: 0
 --- !u!114 &370302357843924224
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21592,6 +21551,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff98778ae051cfd40a6e4effdf851ebd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectedRosVersion: 1
   SecondsTimeout: 10
   Serializer: 0
   protocol: 0
@@ -21629,15 +21589,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 441fcddae936d184f8196aeed41a9f18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Topic: /spot/stream_image2/right_fisheye_image/image
-  TimeStep: 0
-  meshRenderer: {fileID: 758492290014997255}
-  texture2D: {fileID: 0}
-  associatedDepth: {fileID: 0}
-  printRate: 0
-  printSyncTime: 0
-  printClosestTime: 0
-  latest_time: 0
 --- !u!4 &708188389574442797
 Transform:
   m_ObjectHideFlags: 0
@@ -21735,15 +21686,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 441fcddae936d184f8196aeed41a9f18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Topic: /spot/stream_image/frontright_fisheye_image/image
-  TimeStep: 0
-  meshRenderer: {fileID: 1215300558235714511}
-  texture2D: {fileID: 0}
-  associatedDepth: {fileID: 0}
-  printRate: 0
-  printSyncTime: 0
-  printClosestTime: 0
-  latest_time: 0
 --- !u!224 &767961125950139057
 RectTransform:
   m_ObjectHideFlags: 0
@@ -22159,6 +22101,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff98778ae051cfd40a6e4effdf851ebd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectedRosVersion: 1
   SecondsTimeout: 10
   Serializer: 0
   protocol: 0
@@ -22432,15 +22375,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 441fcddae936d184f8196aeed41a9f18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Topic: /spot/stream_image/hand_color_image/image
-  TimeStep: 0
-  meshRenderer: {fileID: 1142502447079962882}
-  texture2D: {fileID: 0}
-  associatedDepth: {fileID: 0}
-  printRate: 0
-  printSyncTime: 0
-  printClosestTime: 0
-  latest_time: 0
 --- !u!65 &2003060975321691261
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -22510,15 +22444,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 441fcddae936d184f8196aeed41a9f18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Topic: /spot/stream_image2/frontright_fisheye_image/image
-  TimeStep: 0
-  meshRenderer: {fileID: 7172525273618583393}
-  texture2D: {fileID: 0}
-  associatedDepth: {fileID: 0}
-  printRate: 0
-  printSyncTime: 0
-  printClosestTime: 0
-  latest_time: 0
 --- !u!114 &2228162574880614873
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22607,6 +22532,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff98778ae051cfd40a6e4effdf851ebd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectedRosVersion: 1
   SecondsTimeout: 10
   Serializer: 0
   protocol: 0
@@ -22681,15 +22607,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 441fcddae936d184f8196aeed41a9f18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Topic: /spot/stream_image/right_fisheye_image/image
-  TimeStep: 0
-  meshRenderer: {fileID: 5738171343639689341}
-  texture2D: {fileID: 0}
-  associatedDepth: {fileID: 0}
-  printRate: 0
-  printSyncTime: 0
-  printClosestTime: 0
-  latest_time: 0
 --- !u!65 &2561068329919422422
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -22806,6 +22723,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff98778ae051cfd40a6e4effdf851ebd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectedRosVersion: 1
   SecondsTimeout: 10
   Serializer: 0
   protocol: 0
@@ -23089,6 +23007,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff98778ae051cfd40a6e4effdf851ebd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectedRosVersion: 1
   SecondsTimeout: 10
   Serializer: 0
   protocol: 0
@@ -23615,6 +23534,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff98778ae051cfd40a6e4effdf851ebd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectedRosVersion: 1
   SecondsTimeout: 10
   Serializer: 0
   protocol: 0
@@ -23705,6 +23625,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff98778ae051cfd40a6e4effdf851ebd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectedRosVersion: 1
   SecondsTimeout: 10
   Serializer: 0
   protocol: 1
@@ -23955,6 +23876,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Topic: /spot2/status/battery_percentage_states
   TimeStep: 0
+  EnsureThreadSafety: 0
   spotIdentifier: Blue
   batteryText: {fileID: 8976075098727268183}
   batteryLevel: 0
@@ -23982,6 +23904,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff98778ae051cfd40a6e4effdf851ebd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectedRosVersion: 1
   SecondsTimeout: 10
   Serializer: 0
   protocol: 0
@@ -24015,6 +23938,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff98778ae051cfd40a6e4effdf851ebd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectedRosVersion: 1
   SecondsTimeout: 10
   Serializer: 0
   protocol: 1
@@ -24056,6 +23980,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff98778ae051cfd40a6e4effdf851ebd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectedRosVersion: 1
   SecondsTimeout: 10
   Serializer: 0
   protocol: 0
@@ -24218,15 +24143,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 441fcddae936d184f8196aeed41a9f18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Topic: /spot/stream_image/left_fisheye_image/image
-  TimeStep: 0
-  meshRenderer: {fileID: 869404359873389375}
-  texture2D: {fileID: 0}
-  associatedDepth: {fileID: 0}
-  printRate: 0
-  printSyncTime: 0
-  printClosestTime: 0
-  latest_time: 0
 --- !u!4 &5544920777372107914
 Transform:
   m_ObjectHideFlags: 0
@@ -24565,15 +24481,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 441fcddae936d184f8196aeed41a9f18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Topic: /spot/stream_image2/frontleft_fisheye_image/image
-  TimeStep: 0
-  meshRenderer: {fileID: 8134138996202867040}
-  texture2D: {fileID: 0}
-  associatedDepth: {fileID: 0}
-  printRate: 0
-  printSyncTime: 0
-  printClosestTime: 0
-  latest_time: 0
 --- !u!1 &6116970160647104239
 GameObject:
   m_ObjectHideFlags: 0
@@ -24686,15 +24593,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 441fcddae936d184f8196aeed41a9f18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Topic: /spot/stream_image/frontleft_fisheye_image/image
-  TimeStep: 0
-  meshRenderer: {fileID: 9175174633188972618}
-  texture2D: {fileID: 0}
-  associatedDepth: {fileID: 0}
-  printRate: 0
-  printSyncTime: 0
-  printClosestTime: 0
-  latest_time: 0
 --- !u!1 &6305392753868467143
 GameObject:
   m_ObjectHideFlags: 0
@@ -24786,6 +24684,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff98778ae051cfd40a6e4effdf851ebd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectedRosVersion: 1
   SecondsTimeout: 10
   Serializer: 0
   protocol: 0
@@ -25167,15 +25066,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 441fcddae936d184f8196aeed41a9f18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Topic: /spot/stream_image/back_fisheye_image/image
-  TimeStep: 0
-  meshRenderer: {fileID: 3558281327371168571}
-  texture2D: {fileID: 0}
-  associatedDepth: {fileID: 0}
-  printRate: 0
-  printSyncTime: 0
-  printClosestTime: 0
-  latest_time: 0
 --- !u!224 &7107862713069122006
 RectTransform:
   m_ObjectHideFlags: 0
@@ -25393,15 +25283,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 441fcddae936d184f8196aeed41a9f18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Topic: /spot/stream_image2/left_fisheye_image/image
-  TimeStep: 0
-  meshRenderer: {fileID: 1726664724384231282}
-  texture2D: {fileID: 0}
-  associatedDepth: {fileID: 0}
-  printRate: 0
-  printSyncTime: 0
-  printClosestTime: 0
-  latest_time: 0
 --- !u!1 &7635187904285357915
 GameObject:
   m_ObjectHideFlags: 0
@@ -25494,6 +25375,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff98778ae051cfd40a6e4effdf851ebd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectedRosVersion: 1
   SecondsTimeout: 10
   Serializer: 0
   protocol: 0
@@ -25625,6 +25507,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff98778ae051cfd40a6e4effdf851ebd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectedRosVersion: 1
   SecondsTimeout: 10
   Serializer: 0
   protocol: 0
@@ -25848,15 +25731,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 441fcddae936d184f8196aeed41a9f18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Topic: /spot/stream_image2/back_fisheye_image/image
-  TimeStep: 0
-  meshRenderer: {fileID: 4800988145067236181}
-  texture2D: {fileID: 0}
-  associatedDepth: {fileID: 0}
-  printRate: 0
-  printSyncTime: 0
-  printClosestTime: 0
-  latest_time: 0
 --- !u!1 &8464902181859705486
 GameObject:
   m_ObjectHideFlags: 0
@@ -26019,6 +25893,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff98778ae051cfd40a6e4effdf851ebd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectedRosVersion: 1
   SecondsTimeout: 10
   Serializer: 0
   protocol: 0
@@ -26266,6 +26141,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Topic: /spot/status/battery_percentage_states
   TimeStep: 0
+  EnsureThreadSafety: 0
   spotIdentifier: Red
   batteryText: {fileID: 8475420282403359433}
   batteryLevel: 0
