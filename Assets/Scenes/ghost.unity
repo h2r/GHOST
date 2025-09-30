@@ -1645,7 +1645,7 @@ MonoBehaviour:
   SecondsTimeout: 10
   Serializer: 0
   protocol: 1
-  RosBridgeServerUrl: ws://128.148.138.132:9090
+  RosBridgeServerUrl: ws://128.148.138.233:9090
 --- !u!114 &147311268
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4915,6 +4915,10 @@ PrefabInstance:
       value: spot/arm_f1x
       objectReference: {fileID: 0}
     - target: {fileID: 1137478773745686185, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: Serializer
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478773745686185, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
       value: ws://128.148.138.233:9090
       objectReference: {fileID: 0}
@@ -4935,12 +4939,20 @@ PrefabInstance:
       value: /spot/arm_pose_commands
       objectReference: {fileID: 0}
     - target: {fileID: 1137478773745686199, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: Offset
+      value: 
+      objectReference: {fileID: 1646444124}
+    - target: {fileID: 1137478773745686199, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: FrameId
       value: body
       objectReference: {fileID: 0}
     - target: {fileID: 1137478773745686203, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: Topic
+      value: /spot/set_gripper_angle
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478773745686203, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1137478773798299895, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
@@ -5309,6 +5321,14 @@ PrefabInstance:
     - target: {fileID: 3310871052575190412, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Topic
       value: /spot2/set_gripper
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871052575190430, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: protocol
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871052575190430, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: Serializer
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052575190430, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
@@ -5983,6 +6003,18 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 5926854348849661184, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: protocol
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5926854348849661184, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5926854348849661184, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: serializer
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5926854348849661184, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: rosBridgeServerUrl
       value: ws://128.148.138.233:9090
       objectReference: {fileID: 0}
@@ -6027,8 +6059,16 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8105313734531972663, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: protocol
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8105313734531972663, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: serializer
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8105313734531972663, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: rosBridgeServerUrl
-      value: ws://128.148.138.132:9090
+      value: ws://128.148.138.233:9090
       objectReference: {fileID: 0}
     - target: {fileID: 8551647604095721092, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Mass
@@ -8492,8 +8532,8 @@ MonoBehaviour:
   Topic: /spot_tf_compute
   TimeStep: 0
   EnsureThreadSafety: 0
-  target: spot/body
-  source: spot2/body
+  target: spot2/body
+  source: spot/body
   targetObject: {fileID: 1583796087}
 --- !u!114 &669083999
 MonoBehaviour:
@@ -8547,7 +8587,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 703ec150f7f22453e8a793889bbc02dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ThreadedSetGripper
-  topic: /spot2/set_gripper
+  topic: /spot2/set_gripper_angle
 --- !u!114 &669084030
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15380,7 +15420,7 @@ MonoBehaviour:
   SecondsTimeout: 10
   Serializer: 0
   protocol: 1
-  RosBridgeServerUrl: ws://128.148.138.132:9090
+  RosBridgeServerUrl: ws://128.148.138.233:9090
 --- !u!114 &1527530489
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16553,6 +16593,11 @@ SkinnedMeshRenderer:
     m_Center: {x: 0.03454852, y: 0.0005114786, z: 0.00007304177}
     m_Extent: {x: 0.0009967163, y: 0.0020704702, z: 0.004453361}
   m_DirtyAABB: 0
+--- !u!4 &1646444124 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1137478774038656494, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1646626574
 GameObject:
   m_ObjectHideFlags: 0
@@ -21140,7 +21185,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 703ec150f7f22453e8a793889bbc02dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ThreadedSetGripper
-  topic: /spot/set_gripper
+  topic: /spot/set_gripper_angle
 --- !u!114 &2123763436
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23965,7 +24010,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27898d13cab20f544a49f4954749b871, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Topic: /spot2/status/battery_percentage_states
+  Topic: /spot2/status/battery_states
   TimeStep: 0
   EnsureThreadSafety: 0
   spotIdentifier: Blue
@@ -26230,7 +26275,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27898d13cab20f544a49f4954749b871, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Topic: /spot/status/battery_percentage_states
+  Topic: /spot/status/battery_states
   TimeStep: 0
   EnsureThreadSafety: 0
   spotIdentifier: Red
