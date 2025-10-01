@@ -39,7 +39,7 @@ public class Arm6AxisMode : OneControllerMode
 
             if (OVRInput.GetDown(model.byButton))
             {
-                var uiManager = GameObject.FindObjectOfType<UIManager>();
+                var uiManager = GameObject.FindFirstObjectByType<UIManager>();
                 if (uiManager != null)
                 {
                     var armCameraView = uiManager.FindCameraMode<ArmCameraView>();
