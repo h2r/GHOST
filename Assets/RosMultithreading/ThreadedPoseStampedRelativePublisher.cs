@@ -33,7 +33,9 @@ public class ThreadedPoseStampedRelativePublisher : ThreadedUnityPublisher<Messa
         Vector3 offsetPosition = publishedTransform.localRotation * offset.localPosition;
         Vector3 newLocation = publishedTransform.localPosition + offsetPosition;
         message.pose.position = GetGeometryPoint(newLocation.Unity2Ros());
-        message.pose.orientation = GetGeometryQuaternion(publishedTransform.localRotation.Unity2Ros());
+        message.pose.orientation = GetGeometryQuaternion((publishedTransform.localRotation * offset.localRotation).Unity2Ros());
+
+        // Print intial orientation and updated orientation for debugging
 
         LoopPublish(message);
     }

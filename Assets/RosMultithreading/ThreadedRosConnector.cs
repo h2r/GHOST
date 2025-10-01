@@ -7,6 +7,8 @@ using UnityEngine.InputSystem.Interactions;
 
 public class ThreadedRosConnector : MonoBehaviour
 {
+    [HideInInspector]
+    public RosVersion selectedRosVersion = RosVersion.ROS2;
     public int secondsTimeout = 10;
 
     public RosSocket RosSocket { get; private set; }
