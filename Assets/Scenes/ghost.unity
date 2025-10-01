@@ -1596,76 +1596,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1397146816}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &147311265
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 147311266}
-  - component: {fileID: 147311268}
-  - component: {fileID: 147311267}
-  m_Layer: 0
-  m_Name: HandDepthSubscriber
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &147311266
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 147311265}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.673, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1534395948}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &147311267
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 147311265}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ff98778ae051cfd40a6e4effdf851ebd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  selectedRosVersion: 1
-  SecondsTimeout: 10
-  Serializer: 0
-  protocol: 1
-  RosBridgeServerUrl: ws://128.148.138.233:9090
---- !u!114 &147311268
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 147311265}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 18248b76219ab8540a928c049ec90ecd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Topic: /spot/stream_image2/hand_depth_in_hand_color_frame/image
-  TimeStep: 0
-  EnsureThreadSafety: 0
-  timestamp_synced: 0
-  printMessageReceiveRate: 0
-  printMessageProcRate: 0
-  compressed: 0
-  new_depth: 0
 --- !u!1 &148826878
 GameObject:
   m_ObjectHideFlags: 0
@@ -6126,12 +6056,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4430176667488560218, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 810747191}
-    - targetCorrespondingSourceObject: {fileID: 3310871052038647825, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 147311266}
-    - targetCorrespondingSourceObject: {fileID: 3310871052038647825, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1527530487}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 1137478773745686191, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       insertIndex: 4
@@ -11050,7 +10974,7 @@ MonoBehaviour:
   username: user
   password: bigbubbabigbubba
   rosConnector: {fileID: 2123763348}
-  useVisionPipeline: 1
+  useVisionPipeline: 0
   depthCompletionModelFile: Assets/onnx/promptda/promptda-vitl-rotated_optimized_batch2_fp16.onnx
   enableLogging: 0
   enableDebugDumps: 0
@@ -11392,7 +11316,7 @@ MonoBehaviour:
   username: user
   password: bigbubbabigbubba
   rosConnector: {fileID: 669083912}
-  useVisionPipeline: 1
+  useVisionPipeline: 0
   depthCompletionModelFile: Assets/onnx/promptda/promptda-vitl-rotated_optimized_batch2_fp16.onnx
   enableLogging: 0
   enableDebugDumps: 0
@@ -12924,11 +12848,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 503282580}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!23 &1297213128 stripped
-MeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 3310871051864228160, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
-  m_PrefabInstance: {fileID: 409472599}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1304602696
 GameObject:
   m_ObjectHideFlags: 0
@@ -15375,83 +15294,6 @@ Transform:
 --- !u!4 &1527382482 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1252929639408472541, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
-  m_PrefabInstance: {fileID: 409472599}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &1527530486
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1527530487}
-  - component: {fileID: 1527530489}
-  - component: {fileID: 1527530488}
-  m_Layer: 0
-  m_Name: HandColorSubscriber
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1527530487
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1527530486}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.673, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1534395948}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1527530488
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1527530486}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ff98778ae051cfd40a6e4effdf851ebd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  selectedRosVersion: 1
-  SecondsTimeout: 10
-  Serializer: 0
-  protocol: 1
-  RosBridgeServerUrl: ws://128.148.138.233:9090
---- !u!114 &1527530489
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1527530486}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1d126323b63a9db4db268b1bd7fd36b8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Topic: /spot/stream_image2/hand_color_image/image
-  TimeStep: 0
-  EnsureThreadSafety: 0
-  meshRenderer: {fileID: 1297213128}
-  texture2D: {fileID: 0}
-  associatedDepth: {fileID: 147311268}
-  printRate: 0
-  printSyncTime: 0
-  printClosestTime: 0
-  latest_time: 0
---- !u!4 &1534395948 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3310871052038647825, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
   m_PrefabInstance: {fileID: 409472599}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1534932280
@@ -21603,9 +21445,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 3450962385212174929}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 441fcddae936d184f8196aeed41a9f18, type: 3}
+  m_Script: {fileID: 11500000, guid: 1629fa27836f759449638b17051e27a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Topic: /spot2/camera/hand/image
+  TimeStep: 0
+  EnsureThreadSafety: 0
+  meshRenderer: {fileID: 7700864136377476653}
 --- !u!114 &370302357843924224
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22514,9 +22360,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 7471388685253160271}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 441fcddae936d184f8196aeed41a9f18, type: 3}
+  m_Script: {fileID: 11500000, guid: 1629fa27836f759449638b17051e27a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Topic: /spot/camera/hand/image
+  TimeStep: 0
+  EnsureThreadSafety: 0
+  meshRenderer: {fileID: 1142502447079962882}
 --- !u!65 &2003060975321691261
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -22678,7 +22528,7 @@ MonoBehaviour:
   SecondsTimeout: 10
   Serializer: 0
   protocol: 0
-  RosBridgeServerUrl: ws://128.148.140.230:9090
+  RosBridgeServerUrl: ws://128.148.138.233:9090
 --- !u!1 &2369611931696308318
 GameObject:
   m_ObjectHideFlags: 0
@@ -25441,7 +25291,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &7668606360824352629
 Transform:
   m_ObjectHideFlags: 0
@@ -25653,7 +25503,7 @@ MonoBehaviour:
   SecondsTimeout: 10
   Serializer: 0
   protocol: 0
-  RosBridgeServerUrl: ws://128.148.140.230:9090
+  RosBridgeServerUrl: ws://128.148.138.233:9090
 --- !u!114 &7899945183317588484
 MonoBehaviour:
   m_ObjectHideFlags: 0
