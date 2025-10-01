@@ -1653,7 +1653,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 147311265}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 18248b76219ab8540a928c049ec90ecd, type: 3}
   m_Name: 
@@ -4939,6 +4939,10 @@ PrefabInstance:
       value: /spot/arm_pose_commands
       objectReference: {fileID: 0}
     - target: {fileID: 1137478773745686199, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: Offset
+      value: 
+      objectReference: {fileID: 1646444124}
+    - target: {fileID: 1137478773745686199, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: FrameId
       value: body
       objectReference: {fileID: 0}
@@ -5726,6 +5730,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3854576936163257970, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: spot_prefix
+      value: /spot2
+      objectReference: {fileID: 0}
     - target: {fileID: 4193702342529178966, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -6112,9 +6120,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3310871052371914859, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       insertIndex: 0
       addedObject: {fileID: 1444031539}
-    - targetCorrespondingSourceObject: {fileID: 3222856328912086018, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 813682682}
     - targetCorrespondingSourceObject: {fileID: 1252929639408472541, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 259775553}
@@ -6327,11 +6332,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &421592124 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3222856328912086018, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
-  m_PrefabInstance: {fileID: 409472599}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &423304872
 GameObject:
   m_ObjectHideFlags: 0
@@ -10100,55 +10100,6 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.6778891, y: -3.017043, z: -1.9610169}
     m_Extent: {x: 3.368389, y: 4.314377, z: 5.282364}
   m_DirtyAABB: 0
---- !u!1 &813682681
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 813682682}
-  - component: {fileID: 813682683}
-  m_Layer: 0
-  m_Name: CVD
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &813682682
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 813682681}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0.6543689, y: 0.0006976705, z: 0.00087067345, w: 0.7561747}
-  m_LocalPosition: {x: 2.7529023, y: 68.64267, z: -4.3612957}
-  m_LocalScale: {x: 10, y: 10, z: 10}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 421592124}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &813682683
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 813682681}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d38c111f925931c44b6c2fe06434b60f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  pose_consistent_depth_shader: {fileID: 7200000, guid: 4e3ab96e5c44e114987c2994dd32981a, type: 3}
-  CX: 318
-  CY: 236
-  FX: 329.64
-  FY: 328.62
 --- !u!1 &819668449
 GameObject:
   m_ObjectHideFlags: 0
@@ -11095,9 +11046,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdc798fc4b250c04b91b6a0767d25d31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RobotIP: 128.148.138.21
+  SpotPrefix: /spot
   username: user
   password: bigbubbabigbubba
+  rosConnector: {fileID: 2123763348}
   useVisionPipeline: 1
   depthCompletionModelFile: Assets/onnx/promptda/promptda-vitl-rotated_optimized_batch2_fp16.onnx
   enableLogging: 0
@@ -11436,9 +11388,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdc798fc4b250c04b91b6a0767d25d31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RobotIP: 128.148.138.88
+  SpotPrefix: /spot2
   username: user
   password: bigbubbabigbubba
+  rosConnector: {fileID: 669083912}
   useVisionPipeline: 1
   depthCompletionModelFile: Assets/onnx/promptda/promptda-vitl-rotated_optimized_batch2_fp16.onnx
   enableLogging: 0
@@ -16646,6 +16599,11 @@ SkinnedMeshRenderer:
     m_Center: {x: 0.03454852, y: 0.0005114786, z: 0.00007304177}
     m_Extent: {x: 0.0009967163, y: 0.0020704702, z: 0.004453361}
   m_DirtyAABB: 0
+--- !u!4 &1646444124 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1137478774038656494, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1646626574
 GameObject:
   m_ObjectHideFlags: 0
@@ -21233,7 +21191,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 703ec150f7f22453e8a793889bbc02dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ThreadedSetGripper
-  serviceName: /set_gripper_angle
+  serviceName: /spot/set_gripper_angle
 --- !u!114 &2123763436
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21645,13 +21603,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 3450962385212174929}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1629fa27836f759449638b17051e27a6, type: 3}
+  m_Script: {fileID: 11500000, guid: 441fcddae936d184f8196aeed41a9f18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Topic: /spot2/camera/hand/image
-  TimeStep: 0
-  EnsureThreadSafety: 0
-  meshRenderer: {fileID: 7700864136377476653}
 --- !u!114 &370302357843924224
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22560,13 +22514,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 7471388685253160271}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1629fa27836f759449638b17051e27a6, type: 3}
+  m_Script: {fileID: 11500000, guid: 441fcddae936d184f8196aeed41a9f18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Topic: /spot/camera/hand/image
-  TimeStep: 0
-  EnsureThreadSafety: 0
-  meshRenderer: {fileID: 1142502447079962882}
 --- !u!65 &2003060975321691261
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -22726,9 +22676,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   selectedRosVersion: 1
   SecondsTimeout: 10
-  Serializer: 1
+  Serializer: 0
   protocol: 0
-  RosBridgeServerUrl: ws://128.148.140.233:9090
+  RosBridgeServerUrl: ws://128.148.140.230:9090
 --- !u!1 &2369611931696308318
 GameObject:
   m_ObjectHideFlags: 0

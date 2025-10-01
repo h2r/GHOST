@@ -29,6 +29,7 @@ public class ThreadedSetGripper : MonoBehaviour
         float clampedAngle = Mathf.Clamp(angle, 0f, 90f);
         var request = new Float32 { data = clampedAngle };
         Debug.Log($"Requested gripper angle: {request.data}");
+        Debug.Log("Service name: " + serviceName);
 
         // rosConnector.RosSocket.CallService<Float32, RosSharp.RosBridgeClient.MessageTypes.Std.SetBoolResponse>(
         //     serviceName,
@@ -36,9 +37,9 @@ public class ThreadedSetGripper : MonoBehaviour
         //     request
         // );
 
-        rosConnector.RosSocket.CallService<Float32, Tuple<bool, string>>( // reponse type bool success; string message
+        rosConnector.RosSocket.CallService<Float32, SetBoolResponse>( // reponse type bool success; string message
             serviceName,
-            response => Debug.Log($"Gripper Service response received: success={response.Item1}, message={response.Item2}"),
+            response => Debug.Log($"Gripper Service response received: success={response.success}, message={response.message}"),
             request
         );
 
