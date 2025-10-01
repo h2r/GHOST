@@ -1,6 +1,9 @@
-using RosSharp.RosBridgeClient.MessageTypes.Std;
+using RosSharp.RosBridgeClient;
+using RosSharp.RosBridgeClient.MessageTypes.RclInterfaces;
+using RosSharp.Urdf;
 using System;
 using System.Runtime.InteropServices;
+using System.Threading;
 using Unity.Collections;
 using Unity.InferenceEngine;
 
@@ -91,9 +94,12 @@ public class SpotObserverClient : MonoBehaviour
         Debug.Log("[SpotObserverLib] " + message);
     }
 
-    public string RobotIP;
+    public string SpotPrefix;
+    private string RobotIP = "";
     public string username;
     public string password;
+
+    public GameObject rosConnector;
 
     public bool useVisionPipeline = true;
     public string depthCompletionModelFile;
@@ -151,8 +157,29 @@ public class SpotObserverClient : MonoBehaviour
         isVisionPipelineRunning = false;
     }
 
+    private void UpdateHostName()
+    {
+        string service_topic = SpotPrefix + "/spot_ros2/get_parameters";
+        string[] names = new string[] { "hostname" };
+        GetParametersRequest request_params = new GetParametersRequest(names);
+        rosConnector.GetComponent<RosConnector>().RosSocket.CallService<GetParametersRequest, GetParametersResponse>(
+            service_topic,
+            response =>
+            {
+                RobotIP = response.values[0].string_value;
+                Debug.Log("Got " + SpotPrefix + " Hostname: " + RobotIP);
+            },
+            request_params
+        );
+    }
+
     void Start()
     {
+        UpdateHostName();
+        while (RobotIP == "")
+        {
+            Thread.Sleep(500);
+        }
         SOb_SetUnityLogCallback(PluginLogCallback);
 
         if (enableLogging)
