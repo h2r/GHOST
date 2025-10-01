@@ -2574,7 +2574,7 @@ MonoBehaviour:
   _rigidbody: {fileID: 2466760131163840647}
   DisplayInertiaGizmo: 0
   rigidbodyDataSource: 0
-  Mass: 1.9046991
+  Mass: 1.904699
   CenterOfMass: {x: 0, y: 0, z: 0}
   InertiaTensor: {x: 1, y: 1, z: 1}
   InertiaTensorRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -5875,6 +5875,7 @@ GameObject:
   - component: {fileID: 2466760132180640201}
   - component: {fileID: 2466760132180640202}
   - component: {fileID: 2466760132180640200}
+  - component: {fileID: 2381177860676207489}
   m_Layer: 0
   m_Name: RosConnector
   m_TagString: Untagged
@@ -6192,6 +6193,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Topic: /set_far_plane
+--- !u!114 &2381177860676207489
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2466760132180640248}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1629fa27836f759449638b17051e27a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: siemens.ros-sharp.Runtime::RosSharp.RosBridgeClient.RawImageSubscriber
+  Topic: /spot/camera/hand/image
+  TimeStep: 0
+  EnsureThreadSafety: 0
+  meshRenderer: {fileID: 2466760132539378976}
 --- !u!1 &2466760132209152099
 GameObject:
   m_ObjectHideFlags: 0
@@ -11817,7 +11834,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 93292939706064280, guid: 31c0dca9fef715e40819f09ced21ffb1, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 93292939706064282, guid: 31c0dca9fef715e40819f09ced21ffb1, type: 3}
       propertyPath: m_Enabled
