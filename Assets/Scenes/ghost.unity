@@ -11046,9 +11046,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdc798fc4b250c04b91b6a0767d25d31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RobotIP: 128.148.138.21
+  SpotPrefix: /spot
   username: user
   password: bigbubbabigbubba
+  rosConnector: {fileID: 2123763348}
   useVisionPipeline: 1
   depthCompletionModelFile: Assets/onnx/promptda/promptda-vitl-rotated_optimized_batch2_fp16.onnx
   enableLogging: 0
@@ -11387,9 +11388,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdc798fc4b250c04b91b6a0767d25d31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RobotIP: 128.148.138.88
+  SpotPrefix: /spot2
   username: user
   password: bigbubbabigbubba
+  rosConnector: {fileID: 669083912}
   useVisionPipeline: 1
   depthCompletionModelFile: Assets/onnx/promptda/promptda-vitl-rotated_optimized_batch2_fp16.onnx
   enableLogging: 0

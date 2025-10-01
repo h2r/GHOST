@@ -5859,7 +5859,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2466760132180640252}
-  - component: {fileID: 4230876378381910546}
   - component: {fileID: 2466760132180640224}
   - component: {fileID: 2466760132180640253}
   - component: {fileID: 9201690830328844887}
@@ -5899,20 +5898,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2466760132714044529}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4230876378381910546
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2466760132180640248}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 35f7cfc58d52d6e47b7f80ffc4d1fa80, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RosSharp.RosBridgeClient.SpotHostNameGetter
-  hostname: 127.0.0.1
-  spot_prefix: /spot
 --- !u!114 &2466760132180640224
 MonoBehaviour:
   m_ObjectHideFlags: 0
