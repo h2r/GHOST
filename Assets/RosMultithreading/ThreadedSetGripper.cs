@@ -30,11 +30,11 @@ namespace RosSharp.RosBridgeClient
         public void SetGripperAngle(float angle)
         {
             float clampedAngle = Mathf.Clamp(angle, 0f, 90f);
-            SetGripperRequest request = new SetGripperRequest(clampedAngle);
+            SetGripperAngleRequest request = new SetGripperAngleRequest(clampedAngle);
             Debug.Log($"Requested gripper angle: {clampedAngle}");
             Debug.Log("Service name: " + serviceName);
 
-            rosConnector.RosSocket.CallService<SetGripperRequest, SetGripperResponse>( // reponse type bool success; string message
+            rosConnector.RosSocket.CallService<SetGripperAngleRequest, SetGripperAngleResponse>( // reponse type bool success; string message
                 serviceName,
                 response => Debug.Log($"Gripper Service response received: success={response.success}, message={response.message}"),
                 request

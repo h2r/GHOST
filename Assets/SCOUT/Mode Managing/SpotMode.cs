@@ -27,6 +27,7 @@ public class SpotMode : NamedOption
             setGripper = rosConnector.GetComponent<ThreadedSetGripper>();
             stowArm = rosConnector.GetComponent<ThreadedStowArm>();
             armPose = rosConnector.GetComponent<PoseStampedRelativePublisher>();
+            setHeight = rosConnector.GetComponent<SetHeight>();
 
             moveSpot.Move(Vector2.zero, 0, curHeight);
             setGripper.CloseGripper();
@@ -58,15 +59,15 @@ public class SpotMode : NamedOption
         curHeight = height;
         print(modeName + " set height: " + curHeight);
         if (rosConnector != null)
+            Debug.Log("Height: rosconnector connected sending height to setheight.cs");
             setHeight.SetHeightPercentage(curHeight);
     }
 
     public virtual void AdjustHeight(float deltaHeight)
     {
         if (Time.time - lastHeightChangeTime < MIN_HEIGHT_CHANGE_INTERVAL) return;
-
         lastHeightChangeTime = Time.time;
-        setHeight.SetHeightPercentage(Mathf.Clamp(curHeight + deltaHeight, -0.15f, 0.15f));
+        SetHeight(Mathf.Clamp(curHeight + deltaHeight, -0.15f, 0.15f));
     }
 
     public virtual void SetGripperTf(Transform tf)
