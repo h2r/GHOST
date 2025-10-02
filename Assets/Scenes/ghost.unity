@@ -21513,7 +21513,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3450962385212174929}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1629fa27836f759449638b17051e27a6, type: 3}
   m_Name: 
@@ -22428,7 +22428,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7471388685253160271}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1629fa27836f759449638b17051e27a6, type: 3}
   m_Name: 
@@ -23180,6 +23180,7 @@ GameObject:
   - component: {fileID: 2932888525801933936}
   - component: {fileID: 7892326592595442516}
   - component: {fileID: 357160241114662341}
+  - component: {fileID: 7892326592595442517}
   m_Layer: 0
   m_Name: ArmCam2
   m_TagString: Untagged
@@ -23495,8 +23496,8 @@ MonoBehaviour:
   commonRotation: {x: 0, y: 0, z: 0}
   cam1RotationOffset: {x: 0, y: 0, z: 0}
   cam2RotationOffset: {x: 0, y: 0, z: 0}
-  wristCam1Rotation: 1
-  wristCam2Rotation: 1
+  wristCam1Rotation: 0
+  wristCam2Rotation: 0
   centerEyeAnchor: {fileID: 1747440747}
   armCam1: {fileID: 1553204203377822203}
   armCam2: {fileID: 4282992145198049810}
@@ -25251,6 +25252,7 @@ GameObject:
   - component: {fileID: 2561068329919422422}
   - component: {fileID: 2362112969850559671}
   - component: {fileID: 1947449201108850332}
+  - component: {fileID: 7471388685253160272}
   m_Layer: 0
   m_Name: ArmCam1
   m_TagString: Untagged
@@ -25258,6 +25260,22 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &7471388685253160272
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7471388685253160271}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f56071a01b7fb0b4cb8546a5ff4ec78d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RosSharp.RosBridgeClient.BGRRawImageSubscriber
+  Topic: /spot2/camera/hand/image
+  TimeStep: 0.5
+  EnsureThreadSafety: 0
+  meshRenderer: {fileID: 1142502447079962882}
 --- !u!65 &7495809872703337984
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -25575,6 +25593,22 @@ MonoBehaviour:
   Serializer: 0
   protocol: 1
   RosBridgeServerUrl: ws://128.148.138.233:9090
+--- !u!114 &7892326592595442517
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3450962385212174929}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f56071a01b7fb0b4cb8546a5ff4ec78d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RosSharp.RosBridgeClient.BGRRawImageSubscriber
+  Topic: /spot/camera/hand/image
+  TimeStep: 0.5
+  EnsureThreadSafety: 0
+  meshRenderer: {fileID: 7700864136377476653}
 --- !u!114 &7899945183317588484
 MonoBehaviour:
   m_ObjectHideFlags: 0
