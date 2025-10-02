@@ -4760,6 +4760,10 @@ PrefabInstance:
       propertyPath: Mass
       value: 1.904699
       objectReference: {fileID: 0}
+    - target: {fileID: 1137478773745686173, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: TimeStep
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1137478773745686184, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Topic
       value: /spot/joint_states
@@ -5207,6 +5211,10 @@ PrefabInstance:
     - target: {fileID: 3310871051634603366, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
       value: ws://128.148.138.132:9090
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871051788801748, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3310871051789667126, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Mass

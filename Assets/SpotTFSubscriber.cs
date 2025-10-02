@@ -67,17 +67,17 @@ namespace RosSharp.RosBridgeClient
         {
             if (message == null || targetObject == null)
                 return;
-            // Debug.Log("multi spot tf: " + message.header.frame_id + "  " + message.child_frame_id);
+            Debug.Log("multi spot tf: " + message.header.frame_id + "  " + message.child_frame_id);
             if (message.header.frame_id == source && message.child_frame_id == target)
             {
-                //Debug.Log("xyz: " + message.transform.translation.y.ToString());
+                Debug.Log("xyz: " + message.transform.translation.x.ToString() + message.transform.translation.y.ToString() + message.transform.translation.z.ToString());
                 UnityEngine.Vector3 position = GetPosition(message).Ros2Unity();
                 UnityEngine.Quaternion rotation = GetRotation(message).Ros2Unity();
-                Debug.Log("received");
+                Debug.Log("received spot tf");
 
                 targetObject.transform.SetLocalPositionAndRotation(position, rotation);
-
             }
+            isMessageReceived = false;
         }
     }
 }
