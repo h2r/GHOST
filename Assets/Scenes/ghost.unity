@@ -10998,7 +10998,7 @@ MonoBehaviour:
   username: user
   password: bigbubbabigbubba
   rosConnector: {fileID: 2123763348}
-  useVisionPipeline: 0
+  useVisionPipeline: 1
   depthCompletionModelFile: Assets/onnx/promptda/promptda-vitl-rotated_optimized_batch2_fp16.onnx
   enableLogging: 0
   enableDebugDumps: 0
@@ -11340,7 +11340,7 @@ MonoBehaviour:
   username: user
   password: bigbubbabigbubba
   rosConnector: {fileID: 669083912}
-  useVisionPipeline: 0
+  useVisionPipeline: 1
   depthCompletionModelFile: Assets/onnx/promptda/promptda-vitl-rotated_optimized_batch2_fp16.onnx
   enableLogging: 0
   enableDebugDumps: 0
@@ -13299,7 +13299,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1353487718}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
