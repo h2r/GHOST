@@ -21513,13 +21513,13 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3450962385212174929}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1629fa27836f759449638b17051e27a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   Topic: /spot2/camera/hand/image
-  TimeStep: 0
+  TimeStep: 0.5
   EnsureThreadSafety: 0
   meshRenderer: {fileID: 7700864136377476653}
 --- !u!114 &370302357843924224
@@ -22428,13 +22428,13 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7471388685253160271}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1629fa27836f759449638b17051e27a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Topic: /spot/camera/hand/image123
-  TimeStep: 0
+  Topic: /spot/camera/hand/image
+  TimeStep: 0.5
   EnsureThreadSafety: 0
   meshRenderer: {fileID: 1142502447079962882}
 --- !u!65 &2003060975321691261
@@ -22597,8 +22597,8 @@ MonoBehaviour:
   selectedRosVersion: 1
   SecondsTimeout: 10
   Serializer: 0
-  protocol: 0
-  RosBridgeServerUrl: ws://128.148.138.243:9090
+  protocol: 1
+  RosBridgeServerUrl: ws://128.148.138.233:9090
 --- !u!1 &2369611931696308318
 GameObject:
   m_ObjectHideFlags: 0
@@ -25573,8 +25573,8 @@ MonoBehaviour:
   selectedRosVersion: 1
   SecondsTimeout: 10
   Serializer: 0
-  protocol: 0
-  RosBridgeServerUrl: ws://128.148.138.243:9090
+  protocol: 1
+  RosBridgeServerUrl: ws://128.148.138.233:9090
 --- !u!114 &7899945183317588484
 MonoBehaviour:
   m_ObjectHideFlags: 0
