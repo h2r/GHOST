@@ -34,18 +34,19 @@ public class ThreadedMoveSpot : ThreadedUnityPublisher<MessageTypes.Geometry.Twi
         }
     }
 
-    public void SetHeight(float height)
-    {
-        float clampedHeight = Mathf.Clamp01(height);
-        SetStandHeightRequest request = new SetStandHeightRequest(clampedHeight);
-        connector.RosSocket.CallService<SetStandHeightRequest, SetStandHeightResponse>(
-            "/set_stand_height",
-            response =>
-            {
-            },
-            request
-        );
-    }
+    // public void SetHeight(float height)
+    // {
+    //     Debug.Log($"Setting height to... {height}");
+    //     float clampedHeight = Mathf.Clamp01(height);
+    //     SetStandHeightRequest request = new SetStandHeightRequest(clampedHeight);
+    //     connector.RosSocket.CallService<SetStandHeightRequest, SetStandHeightResponse>(
+    //         "/set_stand_height",
+    //         response =>
+    //         {
+    //         },
+    //         request
+    //     );
+    // }
 
     private MessageTypes.Geometry.Vector3 GetGeometryVector3(Vector3 vec)
     {

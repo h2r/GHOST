@@ -17,6 +17,7 @@ namespace RosSharp.RosBridgeClient
 
         public void SetHeightPercentage(float height)
         {
+            Debug.Log($"Setting height to... {height}");
             SetStandHeightRequest request = new SetStandHeightRequest(height);
             Debug.Log($"Requested height percentage: {height}");
             Debug.Log("Service name: " + serviceName);

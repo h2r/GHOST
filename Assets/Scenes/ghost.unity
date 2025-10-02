@@ -6091,6 +6091,9 @@ PrefabInstance:
       insertIndex: 6
       addedObject: {fileID: 2123763435}
     - targetCorrespondingSourceObject: {fileID: 1137478773745686191, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      insertIndex: 7
+      addedObject: {fileID: 2123763455}
+    - targetCorrespondingSourceObject: {fileID: 1137478773745686191, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2123763374}
     - targetCorrespondingSourceObject: {fileID: 1137478773745686191, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
@@ -6100,16 +6103,19 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 2123763434}
     - targetCorrespondingSourceObject: {fileID: 3310871052575190424, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
-      insertIndex: 6
-      addedObject: {fileID: 669084031}
+      insertIndex: 5
+      addedObject: {fileID: 669084045}
     - targetCorrespondingSourceObject: {fileID: 3310871052575190424, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       insertIndex: 7
-      addedObject: {fileID: 669084030}
+      addedObject: {fileID: 669084031}
     - targetCorrespondingSourceObject: {fileID: 3310871052575190424, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       insertIndex: 8
-      addedObject: {fileID: 669084026}
+      addedObject: {fileID: 669084030}
     - targetCorrespondingSourceObject: {fileID: 3310871052575190424, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       insertIndex: 9
+      addedObject: {fileID: 669084026}
+    - targetCorrespondingSourceObject: {fileID: 3310871052575190424, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      insertIndex: 10
       addedObject: {fileID: 669084029}
     - targetCorrespondingSourceObject: {fileID: 3310871052575190424, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       insertIndex: -1
@@ -6367,7 +6373,7 @@ MonoBehaviour:
   SecondsTimeout: 10
   Serializer: 0
   protocol: 0
-  RosBridgeServerUrl: ws://192.168.0.1:9090
+  RosBridgeServerUrl: ws://128.148.140.233:9090
 --- !u!114 &423304876
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8566,6 +8572,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ThreadedMoveSpot
   topic: /spot2/cmd_vel
+--- !u!114 &669084045
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 669083912}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbe589e95b960b046964a38009ae7c6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RosSharp.RosBridgeClient.SetHeight
+  serviceName: /spot2/set_stand_height
 --- !u!1 &671513986
 GameObject:
   m_ObjectHideFlags: 0
@@ -13642,7 +13661,7 @@ MonoBehaviour:
   SecondsTimeout: 10
   Serializer: 0
   protocol: 0
-  RosBridgeServerUrl: ws://138.16.160.231:9090
+  RosBridgeServerUrl: ws://128.148.140.233:9090
 --- !u!114 &1404339522
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21130,6 +21149,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RosSharp.RosBridgeClient.ThreadedStowArm
   serviceName: /spot/arm_stow
+--- !u!114 &2123763455
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2123763348}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbe589e95b960b046964a38009ae7c6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RosSharp.RosBridgeClient.SetHeight
+  serviceName: /spot/set_stand_height
 --- !u!1 &2127769091
 GameObject:
   m_ObjectHideFlags: 0
@@ -23693,7 +23725,7 @@ MonoBehaviour:
   SecondsTimeout: 10
   Serializer: 0
   protocol: 1
-  RosBridgeServerUrl: ws://128.148.140.230:9090
+  RosBridgeServerUrl: ws://128.148.138.233:9090
 --- !u!1 &4460779199687081897
 GameObject:
   m_ObjectHideFlags: 0
@@ -23943,7 +23975,6 @@ MonoBehaviour:
   EnsureThreadSafety: 0
   spotIdentifier: Blue
   batteryText: {fileID: 8976075098727268183}
-  batteryLevel: 0
 --- !u!114 &5012595544634239250
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24006,7 +24037,7 @@ MonoBehaviour:
   SecondsTimeout: 10
   Serializer: 0
   protocol: 1
-  RosBridgeServerUrl: ws://128.148.140.230:9090
+  RosBridgeServerUrl: ws://128.148.138.233:9090
 --- !u!4 &5105090148137265867
 Transform:
   m_ObjectHideFlags: 0
@@ -25236,6 +25267,7 @@ MonoBehaviour:
   isHorizontal: 1
   options:
   - {fileID: 822474737439515111}
+  - {fileID: 1885078170}
   titlePrefab: {fileID: 3278048788002158022, guid: bfe2b15985d2d437fb47203f0df723ee, type: 3}
   buttonPrefab: {fileID: 1520795838076098022, guid: 39fc7b698942e4ac18e866a2f1f87352, type: 3}
 --- !u!1 &7471388685253160271
@@ -25814,6 +25846,7 @@ MonoBehaviour:
   isHorizontal: 1
   options:
   - {fileID: 822474737439515111}
+  - {fileID: 1885078170}
   titlePrefab: {fileID: 3278048788002158022, guid: bfe2b15985d2d437fb47203f0df723ee, type: 3}
   buttonPrefab: {fileID: 1520795838076098022, guid: 39fc7b698942e4ac18e866a2f1f87352, type: 3}
 --- !u!114 &8418873799364700633
@@ -26241,7 +26274,6 @@ MonoBehaviour:
   EnsureThreadSafety: 0
   spotIdentifier: Red
   batteryText: {fileID: 8475420282403359433}
-  batteryLevel: 0
 --- !u!1 &9138406639211093368
 GameObject:
   m_ObjectHideFlags: 0
