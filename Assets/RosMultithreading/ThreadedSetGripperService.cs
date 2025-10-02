@@ -32,13 +32,13 @@ namespace RosSharp.RosBridgeClient
                 Debug.LogWarning($"Gripper angle {angle} is out of valid range [0.0, 90.0]");
                 return;
             }
-
-            SetGripperRequest request = new SetGripperRequest(angle);
-            rosConnector.RosSocket.CallService<SetGripperRequest, SetGripperResponse>(
-                topic,
-                ServiceResponseHandler,
-                request
-            );
+            // TODO it is unclear what this is used for. remove this class?
+            // SetGripperRequest request = new SetGripperRequest(angle);
+            // rosConnector.RosSocket.CallService<SetGripperRequest, SetGripperResponse>(
+            //     topic,
+            //     ServiceResponseHandler,
+            //     request
+            // );
         }
 
         private void ServiceResponseHandler(SetGripperResponse response)
