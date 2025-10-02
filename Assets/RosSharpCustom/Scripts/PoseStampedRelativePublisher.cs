@@ -31,6 +31,8 @@ namespace RosSharp.RosBridgeClient
         public string FrameId = "Unity";
 
         private MessageTypes.Geometry.PoseStamped message;
+        private Vector3 lastPublishedPosition = Vector3.zero;
+        private Quaternion lastPublishedRotation = Quaternion.identity;
 
         protected override void Start()
         {
@@ -38,7 +40,7 @@ namespace RosSharp.RosBridgeClient
             InitializeMessage();
 
             // Call update at 5 hz
-            InvokeRepeating("UpdateMessage", 0, 0.2f);        
+            InvokeRepeating("UpdateMessage", 0, 0.2f);
         }
 
         private void InitializeMessage()
@@ -62,6 +64,18 @@ namespace RosSharp.RosBridgeClient
                 // Go to the dummy finger's position, plus the approximate offset of the end effector
                 Vector3 offsetPosition = PublishedTransform.localRotation * Offset.localPosition;
                 Vector3 newLocation = PublishedTransform.localPosition + offsetPosition;
+
+                // if the motion is too small, don't publish it
+                if ((newLocation - lastPublishedPosition).magnitude < 0.005f &&
+                    Quaternion.Angle(PublishedTransform.localRotation, lastPublishedRotation) < 0.1f)
+                {
+                    Debug.Log("skipping small motion!");
+                    return;
+                }
+
+                // publish the new location if it's sufficiently different
+                lastPublishedPosition = newLocation;
+                lastPublishedRotation = PublishedTransform.localRotation;
                 GetGeometryPoint(newLocation.Unity2Ros(), message.pose.position);
                 GetGeometryQuaternion(PublishedTransform.localRotation.Unity2Ros(), message.pose.orientation);
 
