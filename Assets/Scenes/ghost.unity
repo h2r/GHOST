@@ -21518,7 +21518,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1629fa27836f759449638b17051e27a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Topic: /spot2/camera/hand/image
+  Topic: /spot/camera/hand/image
   TimeStep: 0.5
   EnsureThreadSafety: 0
   meshRenderer: {fileID: 7700864136377476653}
@@ -22433,7 +22433,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1629fa27836f759449638b17051e27a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Topic: /spot/camera/hand/image
+  Topic: /spot2/camera/hand/image
   TimeStep: 0.5
   EnsureThreadSafety: 0
   meshRenderer: {fileID: 1142502447079962882}
