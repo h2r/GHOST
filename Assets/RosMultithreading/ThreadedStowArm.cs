@@ -4,14 +4,16 @@ using RosSharp.RosBridgeClient;
 
 namespace RosSharp.RosBridgeClient
 {
-    public class ThreadedStowArm : ThreadedUnityPublisher<MessageTypes.Std.Bool>
+    public class ThreadedStowArm : MonoBehaviour
     {
-        private MessageTypes.Std.Bool message;
+        private RosConnector connector;
+        private bool ready = false;
+        public string serviceName = "/spot/arm_stow";
 
-        protected override void Start()
+        protected void Start()
         {
-            message = new MessageTypes.Std.Bool();
-            base.Start();
+            connector = GetComponent<RosConnector>();
+            ready = connector != null && connector.RosSocket != null;
         }
 
         // Call this function from other scripts to stow the arm
@@ -20,11 +22,18 @@ namespace RosSharp.RosBridgeClient
         // the arm won't stow because it's still trying to finish closing the gripper
         public void Stow()
         {
+            ready = connector != null && connector.RosSocket != null;
             if (ready)
             {
                 Debug.Log("Stowing arm (Threaded)");
-                message.data = true;
-                LoopPublish(message, 3);
+                connector.RosSocket.CallService<MessageTypes.Std.Empty, MessageTypes.Std.Bool>(
+                    serviceName,
+                    response =>
+                    {
+                        Debug.Log("Stow arm service response received: " + response.data);
+                    },
+                    new MessageTypes.Std.Empty()
+                );
             }
             else
             {

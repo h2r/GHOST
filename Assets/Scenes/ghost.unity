@@ -8513,7 +8513,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3390315db21de794795cf8730797de9c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RosSharp.RosBridgeClient.ThreadedStowArm
-  topic: /spot2/arm_stow
+  serviceName: /spot2/arm_stow
 --- !u!114 &669084028
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19200,7 +19200,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2891040bbf38b84ea6b4828e976d6e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spot: {fileID: 5598556563780689457}
+  spot: {fileID: 5676146346884262863}
   spot_name: Blue
 --- !u!1 &1885647412
 GameObject:
@@ -21129,7 +21129,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3390315db21de794795cf8730797de9c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RosSharp.RosBridgeClient.ThreadedStowArm
-  topic: /spot/arm_stow
+  serviceName: /spot/arm_stow
 --- !u!1 &2127769091
 GameObject:
   m_ObjectHideFlags: 0
@@ -21788,7 +21788,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2891040bbf38b84ea6b4828e976d6e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spot: {fileID: 5676146346884262863}
+  spot: {fileID: 5598556563780689457}
   spot_name: Red
 --- !u!4 &858927027469304842
 Transform:
