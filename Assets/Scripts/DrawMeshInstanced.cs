@@ -449,7 +449,7 @@ public class DrawMeshInstanced : MonoBehaviour
             return;
         }
 
-        Debug.Log("UPDATE CALLED");
+        // Debug.Log("UPDATE CALLED");
 
         UpdateTexture();
 
