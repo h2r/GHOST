@@ -94,10 +94,11 @@ public class SpotMode : NamedOption
 
     public virtual void SetGripperOpen(bool isGripperOpen)
     {
+        bool changed = this.isGripperOpen != isGripperOpen;
         this.isGripperOpen = isGripperOpen;
-        if (isGripperOpen)
+        if (isGripperOpen && changed)
             setGripper.OpenGripper();
-        else
+        else if (!isGripperOpen && changed)
             setGripper.CloseGripper();
     }
 
