@@ -13,6 +13,8 @@ public class SpotMode : NamedOption
     private ThreadedSetGripper setGripper;
     private PoseStampedRelativePublisher armPose;
 
+    private SetHeight setHeight;
+
     protected float curHeight = 0f;
     private bool isGripperOpen = false;
     private float lastHeightChangeTime = -Mathf.Infinity;
@@ -56,7 +58,7 @@ public class SpotMode : NamedOption
         curHeight = height;
         print(modeName + " set height: " + curHeight);
         if (rosConnector != null)
-            moveSpot.SetHeight(curHeight);
+            setHeight.SetHeightPercentage(curHeight);
     }
 
     public virtual void AdjustHeight(float deltaHeight)
@@ -64,7 +66,7 @@ public class SpotMode : NamedOption
         if (Time.time - lastHeightChangeTime < MIN_HEIGHT_CHANGE_INTERVAL) return;
 
         lastHeightChangeTime = Time.time;
-        SetHeight(Mathf.Clamp(curHeight + deltaHeight, -0.1f, 0.15f));
+        setHeight.SetHeightPercentage(Mathf.Clamp(curHeight + deltaHeight, -0.15f, 0.15f));
     }
 
     public virtual void SetGripperTf(Transform tf)

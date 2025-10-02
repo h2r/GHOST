@@ -36,9 +36,10 @@ public class ThreadedMoveSpot : ThreadedUnityPublisher<MessageTypes.Geometry.Twi
 
     public void SetHeight(float height)
     {
-        SetStandHeightRequest request = new SetStandHeightRequest(height);
+        float clampedHeight = Mathf.Clamp01(height);
+        SetStandHeightRequest request = new SetStandHeightRequest(clampedHeight);
         connector.RosSocket.CallService<SetStandHeightRequest, SetStandHeightResponse>(
-            "/spot/set_stand_height",
+            "/set_stand_height",
             response =>
             {
             },
