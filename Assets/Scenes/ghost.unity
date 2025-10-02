@@ -8539,7 +8539,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 703ec150f7f22453e8a793889bbc02dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ThreadedSetGripper
-  serviceName: /set_gripper_angle
+  serviceName: /spot2/set_gripper_angle
 --- !u!114 &669084030
 MonoBehaviour:
   m_ObjectHideFlags: 0
