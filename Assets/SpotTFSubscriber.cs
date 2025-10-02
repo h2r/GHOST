@@ -73,46 +73,9 @@ namespace RosSharp.RosBridgeClient
                 //Debug.Log("xyz: " + message.transform.translation.y.ToString());
                 UnityEngine.Vector3 position = GetPosition(message).Ros2Unity();
                 UnityEngine.Quaternion rotation = GetRotation(message).Ros2Unity();
-
-                /*UnityEngine.Vector3 position = new UnityEngine.Vector3(
-                    -(float)message.transform.translation.y,
-                    (float)message.transform.translation.z,
-                    -(float)message.transform.translation.x
-                );
-
-                UnityEngine.Quaternion rotation = new UnityEngine.Quaternion(
-                    -(float)message.transform.rotation.y,
-                    (float)message.transform.rotation.z,
-                    -(float)message.transform.rotation.x,
-                    (float)message.transform.rotation.w
-                );*/
-                /*                UnityEngine.Vector3 position = new UnityEngine.Vector3(
-                                    -(float)message.transform.translation.x,
-                                    (float)message.transform.translation.z,
-                                    -(float)message.transform.translation.y
-                                );
-
-                                UnityEngine.Quaternion rotation = new UnityEngine.Quaternion(
-                                    -(float)message.transform.rotation.x,
-                                    (float)message.transform.rotation.z,
-                                    -(float)message.transform.rotation.y,
-                                    (float)message.transform.rotation.w
-                                );*/
                 Debug.Log("received");
 
-                // Apply to the Unity object's transform
-
-
-                //position.x -= 1.2f;
-                //position.y = 0f;
                 targetObject.transform.SetLocalPositionAndRotation(position, rotation);
-                //UnityEngine.Vector3 curr_rotate = targetObject.transform.eulerAngles;
-                //curr_rotate.z = 0f;
-                //curr_rotate.x = 0f;
-                //targetObject.transform.eulerAngles = curr_rotate;
-
-
-
 
             }
         }

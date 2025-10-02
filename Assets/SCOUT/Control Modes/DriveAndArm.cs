@@ -101,10 +101,10 @@ public class DriveAndArm : OneControllerMode
                 spot.Drive(joystick * 0.5f);
 
             if (OVRInput.Get(model.byButton))
-                spot.AdjustHeight(0.005f);
+                spot.AdjustHeight(0.02f);
 
             if (OVRInput.Get(model.axButton))
-                spot.AdjustHeight(-0.005f);
+                spot.AdjustHeight(-0.02f);
 
             thumbstickLabel = "Drive Spot";
             triggerLabel = "Hold: Control Arm";

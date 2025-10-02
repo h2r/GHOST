@@ -1,6 +1,9 @@
 using UnityEngine;
 using RosSharp;
 using MessageTypes = RosSharp.RosBridgeClient.MessageTypes;
+using RosSharp.RosBridgeClient.MessageTypes.Spot;
+using UnityEditor.UI;
+using RosSharp.RosBridgeClient;
 
 public class ThreadedMoveSpot : ThreadedUnityPublisher<MessageTypes.Geometry.Twist>
 {
@@ -33,9 +36,14 @@ public class ThreadedMoveSpot : ThreadedUnityPublisher<MessageTypes.Geometry.Twi
 
     public void SetHeight(float height)
     {
-        message.linear = GetGeometryVector3(new Vector3(0, height, 0).Unity2Ros());
-        message.angular = GetGeometryVector3(new Vector3(0, 0, 0).Unity2Ros());
-        LoopPublish(message, 3);
+        SetStandHeightRequest request = new SetStandHeightRequest(height);
+        connector.RosSocket.CallService<SetStandHeightRequest, SetStandHeightResponse>(
+            "/spot/set_stand_height",
+            response =>
+            {
+            },
+            request
+        );
     }
 
     private MessageTypes.Geometry.Vector3 GetGeometryVector3(Vector3 vec)

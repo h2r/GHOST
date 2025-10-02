@@ -15,6 +15,8 @@ public class SpotMode : NamedOption
 
     protected float curHeight = 0f;
     private bool isGripperOpen = false;
+    private float lastHeightChangeTime = -Mathf.Infinity;
+    private const float MIN_HEIGHT_CHANGE_INTERVAL = 0.5f;
     public virtual void Start()
     {
         if (rosConnector != null)
@@ -59,6 +61,9 @@ public class SpotMode : NamedOption
 
     public virtual void AdjustHeight(float deltaHeight)
     {
+        if (Time.time - lastHeightChangeTime < MIN_HEIGHT_CHANGE_INTERVAL) return;
+
+        lastHeightChangeTime = Time.time;
         SetHeight(Mathf.Clamp(curHeight + deltaHeight, -0.1f, 0.15f));
     }
 
