@@ -4712,6 +4712,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 934838920937526486, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: Topic
+      value: /spot/camera/hand/image111
+      objectReference: {fileID: 0}
+    - target: {fileID: 934838920937526486, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1045489890785809793, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_LocalRotation.w
       value: 1
@@ -5655,6 +5663,14 @@ PrefabInstance:
     - target: {fileID: 3310871053709528298, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Mass
       value: 1.904699
+      objectReference: {fileID: 0}
+    - target: {fileID: 3369403143439151073, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: Topic
+      value: /spot2/camera/hand/image111
+      objectReference: {fileID: 0}
+    - target: {fileID: 3369403143439151073, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3699985937472072438, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_IsActive
@@ -21443,7 +21459,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3450962385212174929}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1629fa27836f759449638b17051e27a6, type: 3}
   m_Name: 
@@ -22358,12 +22374,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7471388685253160271}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1629fa27836f759449638b17051e27a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Topic: /spot/camera/hand/image
+  Topic: /spot/camera/hand/image123
   TimeStep: 0
   EnsureThreadSafety: 0
   meshRenderer: {fileID: 1142502447079962882}
@@ -22528,7 +22544,7 @@ MonoBehaviour:
   SecondsTimeout: 10
   Serializer: 0
   protocol: 0
-  RosBridgeServerUrl: ws://128.148.138.233:9090
+  RosBridgeServerUrl: ws://128.148.138.243:9090
 --- !u!1 &2369611931696308318
 GameObject:
   m_ObjectHideFlags: 0
@@ -25291,7 +25307,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7668606360824352629
 Transform:
   m_ObjectHideFlags: 0
@@ -25503,7 +25519,7 @@ MonoBehaviour:
   SecondsTimeout: 10
   Serializer: 0
   protocol: 0
-  RosBridgeServerUrl: ws://128.148.138.233:9090
+  RosBridgeServerUrl: ws://128.148.138.243:9090
 --- !u!114 &7899945183317588484
 MonoBehaviour:
   m_ObjectHideFlags: 0

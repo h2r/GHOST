@@ -9,7 +9,7 @@ public abstract class ThreadedUnityPublisher<T> : MonoBehaviour where T : Messag
     private string publicationId;
     protected bool ready = false;
 
-    private ThreadedRosConnector connector;
+    protected ThreadedRosConnector connector;
 
     protected virtual void Start()
     {
