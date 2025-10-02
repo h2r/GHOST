@@ -2,17 +2,17 @@ using UnityEngine;
 
 public class StowArmsButton : UIOption
 {
-    public SpotMode spotOne, spotTwo;
+    public SpotMode spot;
+    public string spot_name = "Spot 1";
 
     public override void DoAction(ScoutModeManager modeManager)
     {
-        spotOne.StowArm();
-        spotTwo.StowArm();
+        spot.StowArm();
     }
 
     public override string GetName()
     {
-        return "Stow Arms";
+        return $"Stow {spot_name} Arm";
     }
 
     public override Color GetSelectedColor()

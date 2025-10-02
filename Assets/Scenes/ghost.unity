@@ -19156,6 +19156,52 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!1 &1885078168
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1885078169}
+  - component: {fileID: 1885078170}
+  m_Layer: 0
+  m_Name: Stow Arms 2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1885078169
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1885078168}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.03619, y: -1.06968, z: 4.24542}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 9217194773734636244}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1885078170
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1885078168}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2891040bbf38b84ea6b4828e976d6e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spot: {fileID: 5598556563780689457}
+  spot_name: Blue
 --- !u!1 &1885647412
 GameObject:
   m_ObjectHideFlags: 0
@@ -21742,8 +21788,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2891040bbf38b84ea6b4828e976d6e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spotOne: {fileID: 5676146346884262863}
-  spotTwo: {fileID: 5598556563780689457}
+  spot: {fileID: 5676146346884262863}
+  spot_name: Red
 --- !u!4 &858927027469304842
 Transform:
   m_ObjectHideFlags: 0
@@ -22831,6 +22877,7 @@ MonoBehaviour:
   options:
   - {fileID: 3844397681547260360}
   - {fileID: 822474737439515111}
+  - {fileID: 1885078170}
   titlePrefab: {fileID: 3278048788002158022, guid: bfe2b15985d2d437fb47203f0df723ee, type: 3}
   buttonPrefab: {fileID: 1520795838076098022, guid: 39fc7b698942e4ac18e866a2f1f87352, type: 3}
 --- !u!1 &2736510880365631446
@@ -23113,7 +23160,7 @@ GameObject:
   - component: {fileID: 7668606360824352629}
   - component: {fileID: 822474737439515111}
   m_Layer: 0
-  m_Name: Stow Arms
+  m_Name: Stow Arms 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -26259,6 +26306,7 @@ Transform:
   - {fileID: 3346472788409188605}
   - {fileID: 1160909125962751798}
   - {fileID: 7668606360824352629}
+  - {fileID: 1885078169}
   - {fileID: 4819413781800261329}
   - {fileID: 2925042530075760595}
   m_Father: {fileID: 0}
