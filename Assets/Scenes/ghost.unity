@@ -11161,6 +11161,90 @@ Transform:
   - {fileID: 2138439062}
   m_Father: {fileID: 488798619}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &992404875
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 992404876}
+  - component: {fileID: 992404878}
+  - component: {fileID: 992404877}
+  m_Layer: 0
+  m_Name: (dual) Two Arm Mode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &992404876
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 992404875}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.67219, y: 0, z: -0.07181}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 9217194773734636244}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &992404877
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 992404875}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ffb56eef1224453ba8606267833166a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DualControllerArmMode
+  spot2: {fileID: 0}
+  armControlMode: 1
+  cameraRig: {fileID: 117133128}
+  rigPositioner: {fileID: 117133134}
+  headTransform: {fileID: 1747440747}
+  moveSpeed: 2
+  rotationSpeed: 120
+  useHeadRelativeMovement: 1
+  depthManager1: {fileID: 638278051}
+  depthManager2: {fileID: 1639569377}
+--- !u!114 &992404878
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 992404875}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 492ecec41fa2f4d8c9e37a23d337dbaa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DualArmMode
+  armControlMode: 1
+  cameraRig: {fileID: 117133128}
+  rigPositioner: {fileID: 117133134}
+  vignette: {fileID: 0}
+  headTransform: {fileID: 1747440747}
+  moveSpeed: 1.8
+  useHeadRelativeMovement: 1
+  rotationSpeed: 90
+  useSnapTurn: 0
+  snapAngle: 25
+  snapTurnDeadzone: 0.5
+  snapTurnCooldown: 0.4
+  useRotationalInertia: 0
+  turnAcceleration: 120
+  turnDamping: 5
+  depthManager1: {fileID: 0}
+  depthManager2: {fileID: 0}
 --- !u!4 &997689091 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3310871051621926054, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
@@ -12530,8 +12614,8 @@ MonoBehaviour:
   armControlMode: 1
   cameraRig: {fileID: 117133128}
   rigPositioner: {fileID: 117133134}
-  headTransform: {fileID: 1747440747}
   vignette: {fileID: 0}
+  headTransform: {fileID: 1747440747}
   moveSpeed: 1.8
   useHeadRelativeMovement: 1
   rotationSpeed: 90
@@ -12542,6 +12626,8 @@ MonoBehaviour:
   useRotationalInertia: 0
   turnAcceleration: 120
   turnDamping: 5
+  depthManager1: {fileID: 0}
+  depthManager2: {fileID: 0}
 --- !u!1 &1267530612
 GameObject:
   m_ObjectHideFlags: 0
@@ -23975,6 +24061,7 @@ MonoBehaviour:
   EnsureThreadSafety: 0
   spotIdentifier: Blue
   batteryText: {fileID: 8976075098727268183}
+  rosConnector: {fileID: 0}
 --- !u!114 &5012595544634239250
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -25131,6 +25218,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6395f00bfbb71d24285e208fbde8663d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cameraRig: {fileID: 0}
+  rigPositioner: {fileID: 0}
+  headTransform: {fileID: 0}
+  moveSpeed: 2
+  useHeadRelativeMovement: 1
+  rotationSpeed: 120
+  useSnapTurn: 0
+  snapAngle: 25
+  snapTurnDeadzone: 0.5
+  snapTurnCooldown: 0.4
 --- !u!1 &7031046739949735554
 GameObject:
   m_ObjectHideFlags: 0
@@ -26274,6 +26371,7 @@ MonoBehaviour:
   EnsureThreadSafety: 0
   spotIdentifier: Red
   batteryText: {fileID: 8475420282403359433}
+  rosConnector: {fileID: 0}
 --- !u!1 &9138406639211093368
 GameObject:
   m_ObjectHideFlags: 0
@@ -26366,6 +26464,7 @@ Transform:
   - {fileID: 2569328214210577947}
   - {fileID: 1675898212186617671}
   - {fileID: 5333316618079602382}
+  - {fileID: 992404876}
   - {fileID: 2067222109}
   - {fileID: 8807378269503192972}
   - {fileID: 3548776337621950389}

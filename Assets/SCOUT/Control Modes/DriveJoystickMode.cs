@@ -6,24 +6,14 @@ public class DriveJoystickMode : OneControllerMode
 
     public override void ControlUpdate(SpotMode spot, ControllerModel model)
     {
-        var doRotate = OVRInput.Get(model.gripButton);
-        var doHeight = OVRInput.Get(model.indexButton);
+        var doRotate = OVRInput.Get(model.indexButton);
         var joystick = OVRInput.Get(model.joystick);
-
-        if (OVRInput.GetDown(model.indexButton))
-            spot.SetHeight(0);
 
         if (doRotate)
         {
             model.joystickLabel = "Rotate";
             if (Mathf.Abs(joystick.x) > 0.1)
                 spot.Rotate(joystick.x * 0.5f);
-        }
-        else if (doHeight)
-        {
-            model.joystickLabel = "Adjust Height";
-            if (Mathf.Abs(joystick.y) > 0.1)
-                spot.AdjustHeight(joystick.y * 0.005f);
         }
         else
         {
@@ -32,13 +22,19 @@ public class DriveJoystickMode : OneControllerMode
                 spot.Drive(joystick * 0.5f);
         }
 
-        model.indexLabel = (!doRotate && !doHeight) ? "Hold: Adjust Height" : "";
-        model.gripLabel = (!doRotate && !doHeight) ? "Hold: Rotate" : "";
-
-        if (OVRInput.GetDown(model.axButton))
+        if (OVRInput.GetDown(model.gripButton))
             positionPresetController.CyclePresets();
 
-        model.axLabel = "Cycle Views";
+        if (OVRInput.Get(model.byButton))
+            spot.AdjustHeight(0.02f);
+
+        if (OVRInput.Get(model.axButton))
+            spot.AdjustHeight(-0.02f);
+
+        model.indexLabel = !doRotate ? "Hold: Rotate" : "";
+        model.gripLabel = "Cycle Views";
+        model.axLabel = "Lower Body";
+        model.byLabel = "Raise Body";
     }
 
     public override string GetName()
@@ -52,6 +48,9 @@ public class DriveJoystickMode : OneControllerMode
     public override void AssignDefaultLabels(ControllerModel exampleModel)
     {
         exampleModel.joystickLabel = "Drive";
-        exampleModel.indexLabel = "Rotate";
+        exampleModel.indexLabel = "Hold: Rotate";
+        exampleModel.gripLabel = "Cycle Views";
+        exampleModel.axLabel = "Lower Body";
+        exampleModel.byLabel = "Raise Body";
     }
 }
