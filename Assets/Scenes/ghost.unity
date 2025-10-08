@@ -6016,6 +6016,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7851549545679938377, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: target
+      value: spot2/body
+      objectReference: {fileID: 0}
     - target: {fileID: 8105313734531972663, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: protocol
       value: 1
@@ -8482,7 +8486,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 669083912}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 55cc87ab9a04de2419154e92816203b8, type: 3}
   m_Name: 
@@ -8490,8 +8494,8 @@ MonoBehaviour:
   Topic: /spot_tf_compute
   TimeStep: 0
   EnsureThreadSafety: 0
-  target: spot2/body
   source: spot/body
+  target: spot2/body
   targetObject: {fileID: 1583796087}
 --- !u!114 &669083999
 MonoBehaviour:
