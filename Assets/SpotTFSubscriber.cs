@@ -22,8 +22,9 @@ namespace RosSharp.RosBridgeClient
 {
     public class SpotTFSubscriber : UnitySubscriber<MessageTypes.Geometry.TransformStamped>
     {
-        public string target;
+        
         public string source;
+        public string target;
         public GameObject targetObject;
         private bool isMessageReceived;
         private TransformStamped message;
