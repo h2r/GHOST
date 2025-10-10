@@ -6221,7 +6221,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5050333314984075174, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
-      value: ws://138.16.160.231:9090
+      value: ws://128.148.138.233:9090
       objectReference: {fileID: 0}
     - target: {fileID: 5143370623281230793, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: objectsOfModeToEnable.Array.size
@@ -6338,6 +6338,10 @@ PrefabInstance:
     - target: {fileID: 7180826173763223380, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_LocalScale.z
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7218656818355299473, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: RosBridgeServerUrl
+      value: ws://128.148.138.233:9090
       objectReference: {fileID: 0}
     - target: {fileID: 7218656818355299475, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_LocalScale.x
@@ -6643,7 +6647,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &420483824
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6760,7 +6764,7 @@ MonoBehaviour:
   SecondsTimeout: 10
   Serializer: 0
   protocol: 0
-  RosBridgeServerUrl: ws://128.148.140.233:9090
+  RosBridgeServerUrl: ws://128.148.138.233:9090
 --- !u!114 &423304876
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11518,12 +11522,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SpotPrefix: /spot
+  RobotIP: 128.148.138.21
   username: user
   password: bigbubbabigbubba
   rosConnector: {fileID: 2123763348}
-  useVisionPipeline: 1
+  useVisionPipeline: 0100
   depthCompletionModelFile: Assets/onnx/promptda/promptda-vitl-rotated_optimized_batch2_fp16.onnx
-  enableLogging: 0
+  enableLogging: 1
   enableDebugDumps: 0
 --- !u!1 &973382266
 GameObject:
@@ -11944,12 +11949,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SpotPrefix: /spot2
+  RobotIP: 128.148.138.22
   username: user
   password: bigbubbabigbubba
   rosConnector: {fileID: 669083912}
-  useVisionPipeline: 1
+  useVisionPipeline: 0100
   depthCompletionModelFile: Assets/onnx/promptda/promptda-vitl-rotated_optimized_batch2_fp16.onnx
-  enableLogging: 0
+  enableLogging: 1
   enableDebugDumps: 0
 --- !u!4 &1028337601
 Transform:
@@ -14310,7 +14316,7 @@ MonoBehaviour:
   SecondsTimeout: 10
   Serializer: 0
   protocol: 0
-  RosBridgeServerUrl: ws://128.148.140.233:9090
+  RosBridgeServerUrl: ws://128.148.138.233:9090
 --- !u!114 &1404339522
 MonoBehaviour:
   m_ObjectHideFlags: 0

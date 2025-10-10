@@ -30,6 +30,7 @@ public class DrawMeshInstanced : MonoBehaviour
     public int camera_index;
 
     public SpotCamera SpotObserverCameraIndex;
+    public int SpotObserverStreamIdx;
 
     public Transform mainCameraRot;
 
@@ -415,7 +416,7 @@ public class DrawMeshInstanced : MonoBehaviour
             
 
             Debug.Log("SpotObserverCameraIndex: " + (int)SpotObserverCameraIndex);
-            (color_image, depth_tensor) = spotObserverClient.GetCameraFeeds(SpotObserverCameraIndex);
+            (color_image, depth_tensor) = spotObserverClient.GetCameraFeeds(SpotObserverStreamIdx, SpotObserverCameraIndex);
 
             Debug.Log("Color image: " + (color_image == null ? "null" : color_image.width + "x" + color_image.height));
             // HACK
@@ -430,7 +431,7 @@ public class DrawMeshInstanced : MonoBehaviour
         }
         else
         {
-            (color_image, depth_tensor) = spotObserverClient.GetCameraFeeds(SpotObserverCameraIndex);
+            (color_image, depth_tensor) = spotObserverClient.GetCameraFeeds(SpotObserverStreamIdx, SpotObserverCameraIndex);
          
             if (depth_image != null)
             {
