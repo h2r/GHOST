@@ -335,6 +335,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1499995371}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &51234521 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2892712994899796207, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &56630452
 GameObject:
   m_ObjectHideFlags: 0
@@ -2550,6 +2555,11 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 254585668}
   m_Mesh: {fileID: 1269102659088817981, guid: 3f1bce988d51f074592efa857c73ec35, type: 3}
+--- !u!1 &255070461 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 729383448138882008, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &255307006
 GameObject:
   m_ObjectHideFlags: 0
@@ -4712,6 +4722,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 37320559892528034, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: Topic
+      value: /spot2/arm_pose_body_follow_commands
+      objectReference: {fileID: 0}
     - target: {fileID: 934838920937526486, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Topic
       value: /spot/camera/hand/image111
@@ -4862,7 +4876,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1137478773745686185, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
-      value: ws://128.148.138.233:9090
+      value: ws://128.148.138.132:9090
       objectReference: {fileID: 0}
     - target: {fileID: 1137478773745686192, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_Enabled
@@ -4963,6 +4977,18 @@ PrefabInstance:
     - target: {fileID: 1137478774429119365, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
       value: ws://128.148.138.132:9090
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478774556839317, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478774556839317, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478774556839317, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1137478774581538817, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Mass
@@ -5278,7 +5304,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052575190430, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
-      value: ws://128.148.138.233:9090
+      value: ws://128.148.138.132:9090
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052575190431, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Topic
@@ -5414,7 +5440,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052690497871, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052690497871, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_LocalPosition.y
@@ -5542,22 +5568,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052953474555, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3310871052953474555, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3310871052953474555, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3310871052953474555, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3310871052953474555, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
-      propertyPath: m_LocalRotation.z
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052953474555, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
@@ -5884,6 +5894,10 @@ PrefabInstance:
       propertyPath: planePublisher2
       value: 
       objectReference: {fileID: 616808292}
+    - target: {fileID: 4923413185986885733, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: useWorldGripper
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5050333314984075171, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -5974,7 +5988,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5926854348849661184, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: rosBridgeServerUrl
-      value: ws://128.148.138.233:9090
+      value: ws://128.148.138.132:9090
       objectReference: {fileID: 0}
     - target: {fileID: 6095128873530598835, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Mass
@@ -6016,6 +6030,14 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7379371671885333330, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: useWorldGripper
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7665368069982872336, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: Topic
+      value: /spot2/arm_pose_body_commands
+      objectReference: {fileID: 0}
     - target: {fileID: 7851549545679938377, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: target
       value: spot2/body
@@ -6030,7 +6052,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8105313734531972663, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: rosBridgeServerUrl
-      value: ws://128.148.138.233:9090
+      value: ws://128.148.138.132:9090
       objectReference: {fileID: 0}
     - target: {fileID: 8551647604095721092, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Mass
@@ -22720,7 +22742,7 @@ MonoBehaviour:
   SecondsTimeout: 10
   Serializer: 0
   protocol: 1
-  RosBridgeServerUrl: ws://128.148.138.233:9090
+  RosBridgeServerUrl: ws://128.148.138.132:9090
 --- !u!1 &2369611931696308318
 GameObject:
   m_ObjectHideFlags: 0
@@ -24434,6 +24456,7 @@ MonoBehaviour:
   rosConnector: {fileID: 669083912}
   dummyGripper: {fileID: 1681050000}
   readyDummyGripper: {fileID: 423304872}
+  worldDummyGripper: {fileID: 255070461}
   armBase: {fileID: 1915841822}
   greenMaterial: {fileID: 2100000, guid: 16383d4a013de5c48a21373bba66acd4, type: 2}
   redMaterial: {fileID: 2100000, guid: 473de7e89bd5f52418e58ed83c841b9d, type: 2}
@@ -24531,6 +24554,7 @@ MonoBehaviour:
   rosConnector: {fileID: 2123763348}
   dummyGripper: {fileID: 244727969}
   readyDummyGripper: {fileID: 1404339517}
+  worldDummyGripper: {fileID: 51234521}
   armBase: {fileID: 2076913407}
   greenMaterial: {fileID: 2100000, guid: 16383d4a013de5c48a21373bba66acd4, type: 2}
   redMaterial: {fileID: 2100000, guid: 473de7e89bd5f52418e58ed83c841b9d, type: 2}
@@ -25725,7 +25749,7 @@ MonoBehaviour:
   SecondsTimeout: 10
   Serializer: 0
   protocol: 1
-  RosBridgeServerUrl: ws://128.148.138.233:9090
+  RosBridgeServerUrl: ws://128.148.138.132:9090
 --- !u!114 &7892326592595442517
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -26220,6 +26244,7 @@ MonoBehaviour:
   rosConnector: {fileID: 2123763348}
   dummyGripper: {fileID: 244727969}
   readyDummyGripper: {fileID: 0}
+  worldDummyGripper: {fileID: 0}
   armBase: {fileID: 0}
   greenMaterial: {fileID: 0}
   redMaterial: {fileID: 0}
