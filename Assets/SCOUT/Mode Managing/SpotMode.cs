@@ -1,17 +1,19 @@
+using System;
 using RosSharp.RosBridgeClient;
 using UnityEngine;
 
 public class SpotMode : NamedOption
 {
-    public GameObject rosConnector, dummyGripper, readyDummyGripper, armBase;
+    public GameObject rosConnector, dummyGripper, readyDummyGripper, worldDummyGripper, armBase;
     public Material greenMaterial, redMaterial;
     public string modeName;
     public Color color;
 
+    public bool useWorldDummyGripper = false;
+
     private ThreadedMoveSpot moveSpot;
     private ThreadedStowArm stowArm;
     private ThreadedSetGripper setGripper;
-    private PoseStampedRelativePublisher armPose;
 
     private SetHeight setHeight;
 
@@ -19,6 +21,9 @@ public class SpotMode : NamedOption
     private bool isGripperOpen = false;
     private float lastHeightChangeTime = -Mathf.Infinity;
     private const float MIN_HEIGHT_CHANGE_INTERVAL = 0.5f;
+    private WorldLocalGripperSync worldLocalGripperSync;
+    private PoseStampedRelativePublisher enableLocalGripperCmd;
+    private PoseStampedRelativeGlobalPublisher enableWorldGripperCmd;
     public virtual void Start()
     {
         if (rosConnector != null)
@@ -26,8 +31,10 @@ public class SpotMode : NamedOption
             moveSpot = rosConnector.GetComponent<ThreadedMoveSpot>();
             setGripper = rosConnector.GetComponent<ThreadedSetGripper>();
             stowArm = rosConnector.GetComponent<ThreadedStowArm>();
-            armPose = rosConnector.GetComponent<PoseStampedRelativePublisher>();
             setHeight = rosConnector.GetComponent<SetHeight>();
+            worldLocalGripperSync = rosConnector.GetComponent<WorldLocalGripperSync>();
+            enableLocalGripperCmd = rosConnector.GetComponent<PoseStampedRelativePublisher>();
+            enableWorldGripperCmd = rosConnector.GetComponent<PoseStampedRelativeGlobalPublisher>();
 
             moveSpot.Move(Vector2.zero, 0, curHeight);
             setGripper.CloseGripper();
@@ -37,7 +44,24 @@ public class SpotMode : NamedOption
     public virtual void SetArmPoseEnabled(bool armPoseEnabled)
     {
         print(modeName + " arm pose " + armPoseEnabled);
-        armPose.enabled = armPoseEnabled;
+
+        // disable publishing arm pose when arm pose is not enabled
+        if (!armPoseEnabled)
+        {
+            worldLocalGripperSync.useWorldGripper = false; // disable world gripper when arm pose is not enabled
+            enableWorldGripperCmd.enabled = false;
+            enableLocalGripperCmd.enabled = false;
+        }
+        else if (useWorldDummyGripper)
+        {
+            enableWorldGripperCmd.enabled = armPoseEnabled;
+            enableLocalGripperCmd.enabled = false;
+        }
+        else
+        {
+            enableLocalGripperCmd.enabled = armPoseEnabled;
+            enableWorldGripperCmd.enabled = false;
+        }
     }
 
     public virtual void Drive(Vector2 direction)
@@ -77,12 +101,18 @@ public class SpotMode : NamedOption
 
     public virtual void SetGripperWorldPose(Vector3 position, Quaternion rotation)
     {
-        dummyGripper.transform.SetPositionAndRotation(position, rotation);
+        worldLocalGripperSync.useWorldGripper = useWorldDummyGripper;
 
-        var armLength = (dummyGripper.transform.position - armBase.transform.position).magnitude;
-        var dummyMaterial = armLength > 0.73 ? redMaterial : greenMaterial;
-        foreach (var mr in dummyGripper.GetComponentsInChildren<MeshRenderer>())
-            mr.material = dummyMaterial;
+        GameObject GripperToUse = useWorldDummyGripper ? worldDummyGripper : dummyGripper;
+        GripperToUse.transform.SetPositionAndRotation(position, rotation);
+
+        if (!useWorldDummyGripper)
+        {
+            var armLength = (GripperToUse.transform.position - armBase.transform.position).magnitude;
+            var dummyMaterial = armLength > 0.73 ? redMaterial : greenMaterial;
+            foreach (var mr in GripperToUse.GetComponentsInChildren<MeshRenderer>())
+                mr.material = dummyMaterial;
+        }
     }
 
     public virtual Transform GetGripperPos()
@@ -109,6 +139,7 @@ public class SpotMode : NamedOption
     {
         if (stowArm != null)
         {
+            worldLocalGripperSync.useWorldGripper = false; // disable world gripper when stowing arm
             stowArm.Stow();
             dummyGripper.transform.position = readyDummyGripper.transform.position;
             dummyGripper.transform.rotation = readyDummyGripper.transform.rotation;

@@ -6171,6 +6171,7 @@ GameObject:
   - component: {fileID: 2466760132180640252}
   - component: {fileID: 7151553880240082729}
   - component: {fileID: 5447764411783566341}
+  - component: {fileID: 7325660386501611376}
   - component: {fileID: 2466760132180640224}
   - component: {fileID: 2466760132180640253}
   - component: {fileID: 9201690830328844887}
@@ -6243,8 +6244,8 @@ MonoBehaviour:
   dummyGripperInWorldFrame: {fileID: 420638560781678520}
   dummyGripperInLocalFrame: {fileID: 7774603608143939828}
   robotObject: {fileID: 2466760131528527144}
-  useWorldGripper: 0
---- !u!114 &2466760132180640224
+  useWorldGripper: 1
+--- !u!114 &7325660386501611376
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -6253,13 +6254,29 @@ MonoBehaviour:
   m_GameObject: {fileID: 2466760132180640248}
   m_Enabled: 1
   m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5e95da32705196478d2eaa2fa0c1baa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RosSharp.RosBridgeClient.PoseStampedRelativeGlobalPublisher
+  Topic: /spot/arm_pose_body_follow_commands
+  PublishedTransform: {fileID: 9028118014101766864}
+  BaseTransform: {fileID: 2466760131783522715}
+  FrameId: map
+--- !u!114 &2466760132180640224
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2466760132180640248}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 855289a27716ab944b30b581a3f6ab20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Topic: /spot/arm_pose_stamped
+  Topic: /spot/arm_pose_commands
   PublishedTransform: {fileID: 7774603608143939827}
   Offset: {fileID: 2466760131934642873}
-  FrameId: Unity
+  FrameId: body
 --- !u!114 &2466760132180640253
 MonoBehaviour:
   m_ObjectHideFlags: 0
