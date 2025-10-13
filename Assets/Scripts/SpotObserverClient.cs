@@ -112,7 +112,7 @@ public class SpotObserverClient : MonoBehaviour
 
     public GameObject rosConnector;
 
-    public bool[] useVisionPipeline = new bool[2] { false, false };
+    public bool[] useVisionPipeline = { false, false };
     public string depthCompletionModelFile;
 
     public bool enableLogging = false;
@@ -124,14 +124,13 @@ public class SpotObserverClient : MonoBehaviour
     private int robot_id = -1;
     private bool isConnected = false;
 
-    private int[] stream_ids = new int[2] { -1, -1 };
-    private bool[] isStreaming = new bool[2] { false, false };
-    private bool[] isVisionPipelineRunning = new bool[2] { false, false };
+    private int[] stream_ids = { -1, -1 };
+    private bool[] isStreaming = { false, false };
+    private bool[] isVisionPipelineRunning = { false, false };
     private IntPtr model;
 
     private Texture2D[][] rgb_textures;
 
-    //private Tensor<byte>[][] rgb_tensors;
     private Tensor<float>[][] depth_tensors;
 
     private IntPtr[][] rgb_resources;
@@ -495,6 +494,8 @@ public class SpotObserverClient : MonoBehaviour
             Debug.LogError("Invalid stream index: " + stream_idx);
             return (null, null);
         }
+
+        Debug.Log("GetCameraFeeds called. Robot ID: " + robot_id + ", isConnected: " + isConnected + ", stream_idx: " + stream_idx + ", camera: " + (int)id);
 
         if (!isConnected)
         {

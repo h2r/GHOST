@@ -11528,7 +11528,7 @@ MonoBehaviour:
   rosConnector: {fileID: 2123763348}
   useVisionPipeline: 0100
   depthCompletionModelFile: Assets/onnx/promptda/promptda-vitl-rotated_optimized_batch2_fp16.onnx
-  enableLogging: 1
+  enableLogging: 0
   enableDebugDumps: 0
 --- !u!1 &973382266
 GameObject:
@@ -11955,7 +11955,7 @@ MonoBehaviour:
   rosConnector: {fileID: 669083912}
   useVisionPipeline: 0100
   depthCompletionModelFile: Assets/onnx/promptda/promptda-vitl-rotated_optimized_batch2_fp16.onnx
-  enableLogging: 1
+  enableLogging: 0
   enableDebugDumps: 0
 --- !u!4 &1028337601
 Transform:
