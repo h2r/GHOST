@@ -5694,6 +5694,14 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3595094235055674210, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: material
+      value: 
+      objectReference: {fileID: 2100000, guid: e40efc9ae90197b4d9f7b1bd5b4d8817, type: 2}
+    - target: {fileID: 3595094235055674210, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: maxPointsToVisualize
+      value: 50000
+      objectReference: {fileID: 0}
     - target: {fileID: 3699985937472072438, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -6069,6 +6077,10 @@ PrefabInstance:
     - target: {fileID: 8551647604095721092, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Mass
       value: 1.904699
+      objectReference: {fileID: 0}
+    - target: {fileID: 8767919125754013655, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: RosBridgeServerUrl
+      value: ws://128.148.138.132:9090
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 5143370623281230838, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
