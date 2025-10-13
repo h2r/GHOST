@@ -5213,19 +5213,23 @@ PrefabInstance:
     - target: {fileID: 1731835587416712801, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 69608c040680c064cbc57c4aad92e21f, type: 2}
+      objectReference: {fileID: 2100000, guid: 8d651bf5d7e26084dbdf01c4cf0e5fde, type: 2}
     - target: {fileID: 1731835588652629312, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 69608c040680c064cbc57c4aad92e21f, type: 2}
+      objectReference: {fileID: 2100000, guid: 8d651bf5d7e26084dbdf01c4cf0e5fde, type: 2}
     - target: {fileID: 1731835588689833948, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 69608c040680c064cbc57c4aad92e21f, type: 2}
+      objectReference: {fileID: 2100000, guid: 8d651bf5d7e26084dbdf01c4cf0e5fde, type: 2}
     - target: {fileID: 1731835588872178676, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 69608c040680c064cbc57c4aad92e21f, type: 2}
+      objectReference: {fileID: 2100000, guid: 8d651bf5d7e26084dbdf01c4cf0e5fde, type: 2}
+    - target: {fileID: 1731835589123072397, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3310871051605526706, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
       value: ws://128.148.138.132:9090
@@ -5701,19 +5705,19 @@ PrefabInstance:
     - target: {fileID: 4193702342529178966, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 8d651bf5d7e26084dbdf01c4cf0e5fde, type: 2}
+      objectReference: {fileID: 2100000, guid: 69608c040680c064cbc57c4aad92e21f, type: 2}
     - target: {fileID: 4193702343269291243, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 8d651bf5d7e26084dbdf01c4cf0e5fde, type: 2}
+      objectReference: {fileID: 2100000, guid: 69608c040680c064cbc57c4aad92e21f, type: 2}
     - target: {fileID: 4193702343489728707, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 8d651bf5d7e26084dbdf01c4cf0e5fde, type: 2}
+      objectReference: {fileID: 2100000, guid: 69608c040680c064cbc57c4aad92e21f, type: 2}
     - target: {fileID: 4193702343775241847, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 8d651bf5d7e26084dbdf01c4cf0e5fde, type: 2}
+      objectReference: {fileID: 2100000, guid: 69608c040680c064cbc57c4aad92e21f, type: 2}
     - target: {fileID: 4598551965856578696, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: LAx
       value: 1
@@ -5900,7 +5904,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5050333314984075171, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5050333314984075172, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_LocalScale.x
@@ -5974,6 +5978,14 @@ PrefabInstance:
       propertyPath: 'depthSubscribers.Array.data[1]'
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 5897453565677584140, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5897453567102578359, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5926854348849661184, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: protocol
       value: 1
@@ -6028,7 +6040,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7218656818355299476, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7379371671885333330, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: useWorldGripper
@@ -13430,7 +13442,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1353487718}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -24458,10 +24470,11 @@ MonoBehaviour:
   readyDummyGripper: {fileID: 423304872}
   worldDummyGripper: {fileID: 255070461}
   armBase: {fileID: 1915841822}
-  greenMaterial: {fileID: 2100000, guid: 16383d4a013de5c48a21373bba66acd4, type: 2}
-  redMaterial: {fileID: 2100000, guid: 473de7e89bd5f52418e58ed83c841b9d, type: 2}
+  greenMaterial: {fileID: 2100000, guid: 111cc6f7903b08549a403a883034988d, type: 2}
+  redMaterial: {fileID: 2100000, guid: 86f944557dab0f94d8589ad8c224c4ed, type: 2}
   modeName: Blue Spot
   color: {r: 0, g: 0.046749115, b: 1, a: 0}
+  useWorldDummyGripper: 0
 --- !u!1 &5616449089262962814
 GameObject:
   m_ObjectHideFlags: 0
@@ -24556,10 +24569,11 @@ MonoBehaviour:
   readyDummyGripper: {fileID: 1404339517}
   worldDummyGripper: {fileID: 51234521}
   armBase: {fileID: 2076913407}
-  greenMaterial: {fileID: 2100000, guid: 16383d4a013de5c48a21373bba66acd4, type: 2}
-  redMaterial: {fileID: 2100000, guid: 473de7e89bd5f52418e58ed83c841b9d, type: 2}
+  greenMaterial: {fileID: 2100000, guid: 111cc6f7903b08549a403a883034988d, type: 2}
+  redMaterial: {fileID: 2100000, guid: 86f944557dab0f94d8589ad8c224c4ed, type: 2}
   modeName: Red Spot
   color: {r: 1, g: 0, b: 0, a: 0}
+  useWorldDummyGripper: 0
 --- !u!1 &5704221352867220266
 GameObject:
   m_ObjectHideFlags: 0
@@ -26250,6 +26264,7 @@ MonoBehaviour:
   redMaterial: {fileID: 0}
   modeName: Multi Spots
   color: {r: 0.5450981, g: 0, b: 0.5450981, a: 1}
+  useWorldDummyGripper: 0
   rosConnectorOne: {fileID: 2123763348}
   rosConnectorTwo: {fileID: 669083912}
 --- !u!4 &8807378269503192972

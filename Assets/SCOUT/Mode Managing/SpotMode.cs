@@ -117,7 +117,7 @@ public class SpotMode : NamedOption
 
     public virtual Transform GetGripperPos()
     {
-        return dummyGripper.transform;
+        return worldDummyGripper.transform;
     }
 
     public virtual bool GetGripperOpen()
