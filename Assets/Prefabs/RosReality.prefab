@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 5190933783266033770}
   - component: {fileID: 4121768593802350215}
   - component: {fileID: 3595094235055674210}
+  - component: {fileID: 8833655585135796845}
   m_Layer: 0
   m_Name: GlobalLidarPC
   m_TagString: Untagged
@@ -87,11 +88,27 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1065279683528968385}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c9f38dcb064da3145b2b11853689c2a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RosSharp.RosBridgeClient.PointCloud2VisualizerSpheres
+  pointSize: 0.01
+  range: 1000
+  pc_material: {fileID: 2100000, guid: ddcff68d85a5cc44fa19271a613a64f5, type: 2}
+  maxPointsToVisualize: 50000
+--- !u!114 &8833655585135796845
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1065279683528968385}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 192da0caef0dd574ab4f7e26399757ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RosSharp.RosBridgeClient.PointCloud2VisualizerQuad
   pointSize: 0.01
   range: 1000
   pc_material: {fileID: 2100000, guid: ddcff68d85a5cc44fa19271a613a64f5, type: 2}
