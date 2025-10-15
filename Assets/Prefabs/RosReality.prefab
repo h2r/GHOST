@@ -93,8 +93,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RosSharp.RosBridgeClient.PointCloud2VisualizerSpheres
   pointSize: 0.01
-  material: {fileID: 0}
-  maxPointsToVisualize: 10000
+  range: 1000
+  pc_material: {fileID: 2100000, guid: ddcff68d85a5cc44fa19271a613a64f5, type: 2}
+  maxPointsToVisualize: 50000
 --- !u!1 &1137478774083561815
 GameObject:
   m_ObjectHideFlags: 0
