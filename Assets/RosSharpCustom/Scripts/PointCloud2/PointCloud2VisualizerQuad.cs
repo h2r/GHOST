@@ -28,6 +28,7 @@ namespace RosSharp.RosBridgeClient
 
         private Mesh mesh;
         public int maxPointsToVisualize = 10000;
+        public Transform mainCameraRot;
         ComputeBuffer positionBuffer;
 
         private RenderParams renderParams;
@@ -55,6 +56,13 @@ namespace RosSharp.RosBridgeClient
 
             // Create command buffer
             commandBuffer = new GraphicsBuffer(GraphicsBuffer.Target.IndirectArguments, 1, GraphicsBuffer.IndirectDrawIndexedArgs.size);
+        }
+
+        protected Vector3 get_normal()
+        {
+            var relRot = Quaternion.Euler(0f, mainCameraRot.rotation.eulerAngles.y, 0f);
+            var res = relRot * new Vector3(0f, 0f, -1.0f);
+            return res.normalized;
         }
 
         void SetupCommandData(int instanceCount)
@@ -105,21 +113,24 @@ namespace RosSharp.RosBridgeClient
 
         protected override void Render()
         {
+            // Orient Quad facing the user
+            OrientQuad(mesh, get_normal());
+            // Draw
             Graphics.RenderMeshIndirect(renderParams, mesh, commandBuffer);
         }
 
         protected override void DestroyObjects()
         {
-            if (positionBuffer != null)
-            {
-                positionBuffer.Release();
-                positionBuffer = null;
-            }
+            positionBuffer?.Release();
+            positionBuffer = null;
 
-            if (commandBuffer != null)
+            commandBuffer?.Release();
+            commandBuffer = null;
+
+            if (mesh != null)
             {
-                commandBuffer.Release();
-                commandBuffer = null;
+                Destroy(mesh);
+                mesh = null;
             }
 
             IsCreated = false;
@@ -166,6 +177,39 @@ namespace RosSharp.RosBridgeClient
             mesh.uv = uv;
 
             return mesh;
+        }
+
+        private void OrientQuad(Mesh mesh, Vector3 vec_dir)
+        {
+            if (vec_dir.sqrMagnitude < 1e-6f) return;          // guard against zero
+            Quaternion rot = Quaternion.FromToRotation(-Vector3.forward, vec_dir.normalized);
+
+            float w = pointSize * .5f;
+            float h = pointSize * .5f;
+
+            Vector3[] v = new Vector3[4] {
+                new Vector3(-w, -h, 0),
+                new Vector3(w, -h, 0),
+                new Vector3(-w, h, 0),
+                new Vector3(w, h, 0)
+            };
+
+            Vector3[] n = new Vector3[4] {
+                -Vector3.forward,
+                -Vector3.forward,
+                -Vector3.forward,
+                -Vector3.forward,
+            };
+
+            for (int i = 0; i < v.Length; ++i)
+            {
+                v[i] = rot * v[i];      // rotate vertex positions
+                n[i] = rot * n[i];      // rotate normals
+            }
+
+            mesh.vertices = v;
+            mesh.normals = n;
+            //mesh.RecalculateBounds();
         }
     }
 }

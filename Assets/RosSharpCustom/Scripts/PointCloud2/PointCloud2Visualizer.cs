@@ -48,6 +48,11 @@ namespace RosSharp.RosBridgeClient
             DestroyObjects();
         }
 
+        protected void OnDestroy()
+        {
+            DestroyObjects();
+        }
+
         public void SetPointCloudData(Transform _base_transform, Vector3[] _points, Color[] _colors)
         {
             UnityEngine.Debug.Log("Received new point cloud!!");

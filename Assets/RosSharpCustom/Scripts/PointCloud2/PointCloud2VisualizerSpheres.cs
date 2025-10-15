@@ -116,6 +116,12 @@ namespace RosSharp.RosBridgeClient
             commandBuffer?.Release();
             commandBuffer = null;
 
+            if (mesh != null)
+            {
+                Destroy(mesh);
+                mesh = null;
+            }
+
             IsCreated = false;
         }
 
