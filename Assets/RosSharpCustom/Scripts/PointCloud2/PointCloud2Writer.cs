@@ -108,16 +108,20 @@ namespace RosSharp.RosBridgeClient
 
         private float ReadFloat(byte[] data, int offset, byte datatype, bool isBigEndian)
         {
-            if (offset + 4 > data.Length)
-                return 0f;
-
             // FLOAT32 = 7
             if (datatype == 7)
             {
+                if (offset + 4 > data.Length)
+                    return 0f;
+
                 byte[] bytes = new byte[4];
                 Array.Copy(data, offset, bytes, 0, 4);
 
-                if (isBigEndian != BitConverter.IsLittleEndian)
+                // Reverse bytes only when endianness differs between data and system
+                bool dataIsLittleEndian = !isBigEndian;
+                bool systemIsLittleEndian = BitConverter.IsLittleEndian;
+
+                if (dataIsLittleEndian != systemIsLittleEndian)
                     Array.Reverse(bytes);
 
                 return BitConverter.ToSingle(bytes, 0);
@@ -125,10 +129,17 @@ namespace RosSharp.RosBridgeClient
             // FLOAT64 = 8
             else if (datatype == 8)
             {
+                if (offset + 8 > data.Length)
+                    return 0f;
+
                 byte[] bytes = new byte[8];
                 Array.Copy(data, offset, bytes, 0, 8);
 
-                if (isBigEndian != BitConverter.IsLittleEndian)
+                // Reverse bytes only when endianness differs between data and system
+                bool dataIsLittleEndian = !isBigEndian;
+                bool systemIsLittleEndian = BitConverter.IsLittleEndian;
+
+                if (dataIsLittleEndian != systemIsLittleEndian)
                     Array.Reverse(bytes);
 
                 return (float)BitConverter.ToDouble(bytes, 0);
@@ -146,7 +157,11 @@ namespace RosSharp.RosBridgeClient
             byte[] bytes = new byte[4];
             Array.Copy(data, offset, bytes, 0, 4);
 
-            if (isBigEndian != BitConverter.IsLittleEndian)
+            // Reverse bytes only when endianness differs between data and system
+            bool dataIsLittleEndian = !isBigEndian;
+            bool systemIsLittleEndian = BitConverter.IsLittleEndian;
+
+            if (dataIsLittleEndian != systemIsLittleEndian)
                 Array.Reverse(bytes);
 
             return BitConverter.ToUInt32(bytes, 0);

@@ -15,6 +15,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+using System.Diagnostics;
 using UnityEngine;
 
 namespace RosSharp.RosBridgeClient
@@ -28,16 +29,18 @@ namespace RosSharp.RosBridgeClient
         protected bool IsNewDataReceived;
         protected bool IsVisualized = false;
 
+        abstract protected void Render();
         abstract protected void Visualize();
         abstract protected void DestroyObjects();
 
         protected void Update()
         {
-            if (!IsNewDataReceived)
-                return;
-
-            IsNewDataReceived = false;
-            Visualize();
+            if (IsNewDataReceived)
+            {
+                Visualize();
+                IsNewDataReceived = false;
+            }
+            Render();
         }
 
         protected void OnDisable()
@@ -47,6 +50,7 @@ namespace RosSharp.RosBridgeClient
 
         public void SetPointCloudData(Transform _base_transform, Vector3[] _points, Color[] _colors)
         {
+            UnityEngine.Debug.Log("Received new point cloud!!");
             base_transform = _base_transform;
             points = _points;
             colors = _colors;

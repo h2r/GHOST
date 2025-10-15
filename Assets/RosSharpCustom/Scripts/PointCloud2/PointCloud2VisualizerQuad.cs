@@ -18,7 +18,7 @@ using UnityEngine;
 
 namespace RosSharp.RosBridgeClient
 {
-    public class PointCloud2VisualizerSphere : PointCloud2Visualizer
+    public class PointCloud2VisualizerQuad : PointCloud2Visualizer
     {
         [Range(0.001f, 200.1f)]
         public float pointSize = 0.01f;
@@ -41,7 +41,7 @@ namespace RosSharp.RosBridgeClient
 
         private void Create(Vector3[] positions)
         {
-            this.mesh = CreateSphere(pointSize);
+            this.mesh = CreateQuad(pointSize, pointSize);
 
             // Create and populate position buffer
             positionBuffer = new ComputeBuffer(positions.Length, sizeof(float) * 3);
@@ -110,11 +110,17 @@ namespace RosSharp.RosBridgeClient
 
         protected override void DestroyObjects()
         {
-            positionBuffer?.Release();
-            positionBuffer = null;
+            if (positionBuffer != null)
+            {
+                positionBuffer.Release();
+                positionBuffer = null;
+            }
 
-            commandBuffer?.Release();
-            commandBuffer = null;
+            if (commandBuffer != null)
+            {
+                commandBuffer.Release();
+                commandBuffer = null;
+            }
 
             IsCreated = false;
         }
@@ -160,25 +166,6 @@ namespace RosSharp.RosBridgeClient
             mesh.uv = uv;
 
             return mesh;
-        }
-
-        private Mesh CreateSphere(float radius, int segments = 8)
-        {
-            // Create a sphere mesh using Unity's primitive
-            GameObject tempSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            Mesh sphereMesh = Object.Instantiate(tempSphere.GetComponent<MeshFilter>().sharedMesh);
-            Object.Destroy(tempSphere);
-
-            // Scale the mesh vertices by the radius
-            Vector3[] vertices = sphereMesh.vertices;
-            for (int i = 0; i < vertices.Length; i++)
-            {
-                vertices[i] *= radius;
-            }
-            sphereMesh.vertices = vertices;
-            sphereMesh.RecalculateBounds();
-
-            return sphereMesh;
         }
     }
 }
