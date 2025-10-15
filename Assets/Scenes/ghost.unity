@@ -5041,7 +5041,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1045489891105447721, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1137478773629964864, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Mass
@@ -5272,12 +5272,40 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1137478774599216621, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: CVD
+      value: 
+      objectReference: {fileID: 1512296146}
+    - target: {fileID: 1137478774599216621, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: target
+      value: 
+      objectReference: {fileID: 1747440747}
+    - target: {fileID: 1137478774599216621, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: depthManager
+      value: 
+      objectReference: {fileID: 638278051}
+    - target: {fileID: 1137478774599216621, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: mainCameraRot
+      value: 
+      objectReference: {fileID: 1747440747}
+    - target: {fileID: 1137478774599216621, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: colorSubscriber
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 1137478774599216621, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: depthSubscriber
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478774599216621, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: spotObserverClient
+      value: 
+      objectReference: {fileID: 971801071}
+    - target: {fileID: 1137478774599216621, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: SpotObserverStreamIdx
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478774599216621, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: SpotObserverCameraIndex
+      value: 32
       objectReference: {fileID: 0}
     - target: {fileID: 1137478774821249048, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
@@ -5386,6 +5414,46 @@ PrefabInstance:
     - target: {fileID: 1137478775393663287, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
       value: ws://128.148.138.132:9090
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478775482946477, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478775482946479, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: CVD
+      value: 
+      objectReference: {fileID: 1512296146}
+    - target: {fileID: 1137478775482946479, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: target
+      value: 
+      objectReference: {fileID: 1747440747}
+    - target: {fileID: 1137478775482946479, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: material
+      value: 
+      objectReference: {fileID: 2100000, guid: 2ed8634ad505ab74a8ba24b04a0993f7, type: 2}
+    - target: {fileID: 1137478775482946479, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: color_image
+      value: 
+      objectReference: {fileID: 2800000, guid: c42e37b95e20fb04f872bdd0b7807356, type: 3}
+    - target: {fileID: 1137478775482946479, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: depthManager
+      value: 
+      objectReference: {fileID: 638278051}
+    - target: {fileID: 1137478775482946479, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: mainCameraRot
+      value: 
+      objectReference: {fileID: 1747440747}
+    - target: {fileID: 1137478775482946479, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: spotObserverClient
+      value: 
+      objectReference: {fileID: 971801071}
+    - target: {fileID: 1137478775482946479, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: SpotObserverStreamIdx
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478775482946479, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: SpotObserverCameraIndex
+      value: 32
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775509555832, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_LocalPosition.x
@@ -6446,6 +6514,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1137478774082161500, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       insertIndex: 1
       addedObject: {fileID: 312514186}
+    - targetCorrespondingSourceObject: {fileID: 1137478774177714629, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1512296145}
     - targetCorrespondingSourceObject: {fileID: 3699985937472072426, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 796725191}
@@ -11522,13 +11593,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SpotPrefix: /spot
-  RobotIP: 128.148.138.21
+  RobotIP: 128.148.138.22
   username: user
   password: bigbubbabigbubba
   rosConnector: {fileID: 2123763348}
   useVisionPipeline: 0100
   depthCompletionModelFile: Assets/onnx/promptda/promptda-vitl-rotated_optimized_batch2_fp16.onnx
-  enableLogging: 0
+  enableLogging: 1
   enableDebugDumps: 0
 --- !u!1 &973382266
 GameObject:
@@ -11949,13 +12020,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SpotPrefix: /spot2
-  RobotIP: 128.148.138.22
+  RobotIP: 128.148.138.21
   username: user
   password: bigbubbabigbubba
   rosConnector: {fileID: 669083912}
   useVisionPipeline: 0100
   depthCompletionModelFile: Assets/onnx/promptda/promptda-vitl-rotated_optimized_batch2_fp16.onnx
-  enableLogging: 0
+  enableLogging: 1
   enableDebugDumps: 0
 --- !u!4 &1028337601
 Transform:
@@ -12314,6 +12385,11 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!4 &1105617976 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1137478774177714629, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1106006225
 GameObject:
   m_ObjectHideFlags: 0
@@ -15648,6 +15724,55 @@ Transform:
   m_Children: []
   m_Father: {fileID: 599089802}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1512296144
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1512296145}
+  - component: {fileID: 1512296146}
+  m_Layer: 0
+  m_Name: CVD
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1512296145
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1512296144}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.27901864, y: 1.4242731, z: 6.189516}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1105617976}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1512296146
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1512296144}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d38c111f925931c44b6c2fe06434b60f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pose_consistent_depth_shader: {fileID: 7200000, guid: 4e3ab96e5c44e114987c2994dd32981a, type: 3}
+  CX: 320
+  CY: 240
+  FX: 552.03
+  FY: 552.03
 --- !u!1 &1515728289
 GameObject:
   m_ObjectHideFlags: 0
@@ -16970,7 +17095,7 @@ MonoBehaviour:
   meanThreshold: 0.1
   activate_CVD: 0
   cvd_weight: 3
-  show_spot: 1
+  show_spot: 0
   another_manager: {fileID: 638278051}
   activate_depth_estimation: 0
   activate_ICP: 0
