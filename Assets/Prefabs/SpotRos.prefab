@@ -6261,6 +6261,7 @@ MonoBehaviour:
   PublishedTransform: {fileID: 9028118014101766864}
   BaseTransform: {fileID: 2466760131783522715}
   FrameId: map
+  RotationOffsetEulerZXY: {x: -90, y: 0, z: 0}
 --- !u!114 &2466760132180640224
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6338,7 +6339,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Topic: /joint_states
-  TimeStep: 0
+  TimeStep: 0.2
   EnsureThreadSafety: 0
   JointNames:
   - front_left_hip_x
