@@ -1,9 +1,11 @@
 using UnityEngine;
+using SCOUT;
 
 public class PositionPresetController : MonoBehaviour
 {
     public RigPositioner rigPositioner;
     public GameObject spotOne, spotTwo, spotOneArm, spotTwoArm;
+    public MessageBadge messageManager;
 
 
     public enum RigAnchorPoints
@@ -93,29 +95,34 @@ public class PositionPresetController : MonoBehaviour
                 anchorTransform = spotOne.transform;
                 cameraPosition = anchorTransform.position + anchorTransform.TransformDirection(new Vector3(0, 0, -2.65f));
                 currentAnchorPoint = RigAnchorPoints.SpotOne;
+                if (messageManager) messageManager.Show("Camera Anchor: Lock To Spot One");
                 break;
 
             case Preset.BehindSpotTwo:
                 anchorTransform = spotTwo.transform;
                 cameraPosition = anchorTransform.position + anchorTransform.TransformDirection(new Vector3(0, 0, -2.65f));
                 currentAnchorPoint = RigAnchorPoints.SpotTwo;
+                if (messageManager) messageManager.Show("Camera Anchor: Lock To Spot Two");
                 break;
 
             case Preset.BetweenSpots:
                 cameraPosition = (spotOne.transform.position + spotTwo.transform.position) / 2 - new Vector3(0, 0, .5f);
                 currentAnchorPoint = RigAnchorPoints.World;
+                if (messageManager) messageManager.Show("Camera Anchor: World");
                 break;
 
             case Preset.ArmSpotOne:
                 anchorTransform = spotOne.transform;
                 cameraPosition = spotOneArm.transform.position + anchorTransform.TransformDirection(new Vector3(0, 0, -1.45f));
                 currentAnchorPoint = RigAnchorPoints.SpotOne;
+                if (messageManager) messageManager.Show("Camera Anchor: Lock To Spot One");
                 break;
 
             case Preset.ArmSpotTwo:
                 anchorTransform = spotTwo.transform;
                 cameraPosition = spotTwoArm.transform.position + anchorTransform.TransformDirection(new Vector3(0, 0, -1.45f));
                 currentAnchorPoint = RigAnchorPoints.SpotTwo;
+                if (messageManager) messageManager.Show("Camera Anchor: Lock To Spot Two");
                 break;
         }
 
@@ -126,7 +133,8 @@ public class PositionPresetController : MonoBehaviour
 
         rigPositioner.x = cameraPosition.x;
         rigPositioner.z = cameraPosition.z;
-        rigPositioner.rotation = cameraRotation;
+        if (currentAnchorPoint != RigAnchorPoints.World) 
+            rigPositioner.rotation = cameraRotation;
 
         // Update relative offset, rotation, and last anchor state
         if (anchorTransform != null)
