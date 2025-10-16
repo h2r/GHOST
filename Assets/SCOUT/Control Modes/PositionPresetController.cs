@@ -26,9 +26,9 @@ public class PositionPresetController : MonoBehaviour
     }
 
     private readonly Preset[] presetOrder = {
+        Preset.BetweenSpots,
         Preset.BehindSpotOne,
         Preset.BehindSpotTwo,
-        Preset.BetweenSpots,
         // Preset.ArmSpotOne,
         // Preset.ArmSpotTwo
     };
@@ -50,7 +50,8 @@ public class PositionPresetController : MonoBehaviour
             return;
 
         // Check if anchor has moved or rotated
-        if (anchorTransform.position != lastAnchorPosition || anchorTransform.rotation != lastAnchorRotation)
+        if (Vector3.Distance(anchorTransform.position, lastAnchorPosition) > 0.1f ||
+            Quaternion.Angle(anchorTransform.rotation, lastAnchorRotation) > Mathf.Epsilon)
         {
             // Calculate world position by applying relative offset to anchor
             Vector3 worldOffset = anchorTransform.TransformDirection(relativeOffset);
@@ -126,15 +127,17 @@ public class PositionPresetController : MonoBehaviour
                 break;
         }
 
-        // update the rotation of the camera, only keeping yaw rotation.
-        // unity uses body ZXY order for euler angles, so to extract yaw only, we only need to zero out X and Z
-        // if in the future we want to keep pitch and roll, we will need to do a more complex calculation.
-        cameraRotation = Quaternion.Euler(0, anchorTransform.eulerAngles.y, 0);
 
         rigPositioner.x = cameraPosition.x;
         rigPositioner.z = cameraPosition.z;
-        if (currentAnchorPoint != RigAnchorPoints.World) 
+        if (currentAnchorPoint != RigAnchorPoints.World)
+        {
+            // update the rotation of the camera, only keeping yaw rotation.
+            // unity uses body ZXY order for euler angles, so to extract yaw only, we only need to zero out X and Z
+            // if in the future we want to keep pitch and roll, we will need to do a more complex calculation.
+            cameraRotation = Quaternion.Euler(0, anchorTransform.eulerAngles.y, 0);
             rigPositioner.rotation = cameraRotation;
+        }
 
         // Update relative offset, rotation, and last anchor state
         if (anchorTransform != null)

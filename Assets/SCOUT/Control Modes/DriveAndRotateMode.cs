@@ -96,6 +96,7 @@ public class DriveAndRotateMode : TwoControllerMode
                     cameraRig.transform.RotateAround(rotationCenter, rotationAxis, angle);
                 }
                 rigPositioner.pos = cameraRig.transform.position;
+                rigPositioner.rotation = cameraRig.transform.rotation;
             }
             prevJoyX = rotateJoystick.x;
         }
