@@ -16,6 +16,15 @@ namespace RosSharp.RosBridgeClient
         private int messageCount = 0;
         private const int checkThreshold = 10;
 
+        public enum Flip
+        {
+            None,
+            FlipVertical,
+            FlipHorizontal
+        }
+
+        public Flip flipMode = Flip.None;
+
         protected override void Start()
         {
             base.Start();
@@ -42,12 +51,48 @@ namespace RosSharp.RosBridgeClient
         {
             // Convert BGR to RGB by swapping the first and third bytes for each pixel
             byte[] processedData = new byte[imageData.Length];
-            for (int i = 0; i < imageData.Length; i += 3)
+            width = Mathf.Max(1, width);
+            height = Mathf.Max(1, height);
+
+            if (flipMode == Flip.FlipVertical)
             {
-                processedData[i] = imageData[i + 2];     // B -> R position
-                processedData[i + 1] = imageData[i + 1]; // G stays same
-                processedData[i + 2] = imageData[i];     // R -> B position
+                int rowSize = width * 3;
+                for (int y = 0; y < height; y++)
+                {
+                    int srcRow = (height - 1 - y) * rowSize;
+                    int destRow = y * rowSize;
+                    for (int x = 0; x < rowSize; x += 3)
+                    {
+                        processedData[destRow + x] = imageData[srcRow + x + 2];     // B -> R position
+                        processedData[destRow + x + 1] = imageData[srcRow + x + 1]; // G stays same
+                        processedData[destRow + x + 2] = imageData[srcRow + x];     // R -> B position
+                    }
+                }
             }
+            else if (flipMode == Flip.FlipHorizontal)
+            {
+                int rowSize = width * 3;
+                for (int y = 0; y < height; y++)
+                {
+                    int srcRow = y * rowSize;
+                    int destRow = y * rowSize;
+                    for (int x = 0; x < width; x++)
+                    {
+                        int srcIndex = srcRow + (width - 1 - x) * 3;
+                        int destIndex = destRow + x * 3;
+                        processedData[destIndex] = imageData[srcIndex + 2];     // B -> R position
+                        processedData[destIndex + 1] = imageData[srcIndex + 1]; // G stays same
+                        processedData[destIndex + 2] = imageData[srcIndex];     // R -> B position
+                    }
+                }
+            }
+            else // No flip
+                for (int i = 0; i < imageData.Length; i += 3)
+                {
+                    processedData[i] = imageData[i + 2];     // B -> R position
+                    processedData[i + 1] = imageData[i + 1]; // G stays same
+                    processedData[i + 2] = imageData[i];     // R -> B position
+                }
 
             if (texture2D.width != width || texture2D.height != height)
             {

@@ -25,7 +25,7 @@ public class ArmCameraPositioner : MonoBehaviour
     public enum WristRotation
     {
         None,
-        Flip,
+        FlipVertical,
         TurnLeft,
         TurnRight
     }
@@ -190,7 +190,7 @@ public class ArmCameraPositioner : MonoBehaviour
         Quaternion additionalRotation = Quaternion.identity;
         switch (rotationToggle)
         {
-            case WristRotation.Flip:
+            case WristRotation.FlipVertical:
                 additionalRotation = Quaternion.Euler(0, 0, 180);
                 break;
             case WristRotation.TurnLeft:
