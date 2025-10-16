@@ -5986,6 +5986,10 @@ PrefabInstance:
       propertyPath: 'depthSubscribers.Array.data[1]'
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 5678476125799929982, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: Topic
+      value: /spot/localization_pose_adjusted
+      objectReference: {fileID: 0}
     - target: {fileID: 5897453565677584140, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_Enabled
       value: 0
@@ -6057,6 +6061,10 @@ PrefabInstance:
     - target: {fileID: 7665368069982872336, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Topic
       value: /spot2/arm_pose_body_commands
+      objectReference: {fileID: 0}
+    - target: {fileID: 7851549545679938377, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: Topic
+      value: /spot2/localization_pose_adjusted
       objectReference: {fileID: 0}
     - target: {fileID: 7851549545679938377, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: target
@@ -25467,6 +25475,7 @@ MonoBehaviour:
   TimeStep: 0.5
   EnsureThreadSafety: 0
   meshRenderer: {fileID: 1142502447079962882}
+  flipMode: 2
 --- !u!65 &7495809872703337984
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -25571,7 +25580,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &7668606360824352629
 Transform:
   m_ObjectHideFlags: 0
@@ -25800,6 +25809,7 @@ MonoBehaviour:
   TimeStep: 0.5
   EnsureThreadSafety: 0
   meshRenderer: {fileID: 7700864136377476653}
+  flipMode: 2
 --- !u!114 &7899945183317588484
 MonoBehaviour:
   m_ObjectHideFlags: 0
