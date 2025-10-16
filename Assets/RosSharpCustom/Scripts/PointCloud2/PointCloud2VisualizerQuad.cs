@@ -113,6 +113,10 @@ namespace RosSharp.RosBridgeClient
 
         protected override void Render()
         {
+            if (mesh == null)
+            {
+                return;
+            }
             // Orient Quad facing the user
             OrientQuad(mesh, get_normal());
             // Draw
