@@ -150,6 +150,7 @@ public class LocomotionJoystickMode : OneControllerMode
             // }
 
             rigPositioner.pos = cameraRig.transform.position;
+            rigPositioner.rotation = cameraRig.transform.rotation;
         }
         else if (trigger)
         {
