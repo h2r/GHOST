@@ -6,6 +6,9 @@ public class RigPositioner : MonoBehaviour
     [NonSerialized]
     public float x = 0, y = 100, z = 0;
 
+    [NonSerialized]
+    public Quaternion rotation = Quaternion.identity;
+
     public Vector3 pos
     {
         get => new(x, y, z);
@@ -20,5 +23,6 @@ public class RigPositioner : MonoBehaviour
     void Update()
     {
         transform.position = new(x, y, z);
+        transform.rotation = rotation;
     }
 }
