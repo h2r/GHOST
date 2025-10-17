@@ -27,7 +27,7 @@ public class ScoutModeManager : MonoBehaviour
 
     public ControllerModel leftModel, rightModel, leftExampleModel, rightExampleModel;
     public SpotMode spotOne, spotTwo;
-    public PositionPresetController positionPresetController;
+    public PositionPresetCycler positionPresetCycler;
 
     [NonSerialized]
     public SuperMode uiSuperMode = SuperMode.Camera;
@@ -69,7 +69,7 @@ public class ScoutModeManager : MonoBehaviour
 
         if (!isMenuOpen && !hasMenuClosed)
         {
-            positionPresetController.SetInitialPreset();
+            positionPresetCycler.SetInitialPreset();
             hasMenuClosed = true;
         }
 
