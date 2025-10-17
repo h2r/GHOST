@@ -6527,6 +6527,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d20d9c0adc2961428107103f52df143, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  viewOptionsConfigurer: {fileID: 8916049519973978855}
   armControlMode: 2
 --- !u!4 &410575833
 Transform:
@@ -18156,6 +18157,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f733726ed7a754ab1bfcc55ed94f0399, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  viewOptionsConfigurer: {fileID: 8916049519973978855}
   armControlMode: 1
   cameraRig: {fileID: 117133128}
   rigPositioner: {fileID: 117133134}
@@ -22098,8 +22100,6 @@ MonoBehaviour:
   turnAcceleration: 120
   turnDamping: 5
   vignetteEnabled: 0
-  depthManager1: {fileID: 638278051}
-  depthManager2: {fileID: 1639569377}
 --- !u!33 &158934217379710121
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -23215,6 +23215,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f733726ed7a754ab1bfcc55ed94f0399, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  viewOptionsConfigurer: {fileID: 8916049519973978855}
   armControlMode: 1
   cameraRig: {fileID: 117133128}
   rigPositioner: {fileID: 117133134}
@@ -24198,6 +24199,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d20d9c0adc2961428107103f52df143, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  viewOptionsConfigurer: {fileID: 8916049519973978855}
   armControlMode: 2
 --- !u!1 &4092536144721219793
 GameObject:
