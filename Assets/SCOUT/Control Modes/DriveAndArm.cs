@@ -3,6 +3,11 @@ using UnityEngine;
 
 public class DriveAndArm : OneControllerMode
 {
+    [Header("View Settings")]
+    public GameObject viewOptionsConfigurer;
+    private PointCloudCycler pointCloudCycler;
+    private PositionPresetCycler positionPresetCycler;
+
     public enum ArmControlMode
     {
         AbsolutePos,
@@ -19,11 +24,37 @@ public class DriveAndArm : OneControllerMode
     private Quaternion initialGripperRotation;
     private bool isRelativeModeActive = false;
 
+    private void Awake()
+    {
+        pointCloudCycler = viewOptionsConfigurer.GetComponent<PointCloudCycler>();
+        positionPresetCycler = viewOptionsConfigurer.GetComponent<PositionPresetCycler>();
+    }
+
+    private void ToggleArmCamera()
+    {
+        var uiManager = GameObject.FindFirstObjectByType<UIManager>();
+        if (uiManager != null)
+        {
+            var armCameraView = uiManager.FindCameraMode<ArmCameraView>();
+            var allOffView = uiManager.FindCameraMode<AllOffView>();
+            if (ScoutModeManager.Instance.cameraView.activeCameraMode == armCameraView)
+            {
+                ScoutModeManager.Instance.cameraView.SetActiveCameraMode(allOffView);
+            }
+            else
+            {
+                ScoutModeManager.Instance.cameraView.SetActiveCameraMode(armCameraView);
+            }
+        }
+    }
+
     public override void ControlUpdate(SpotMode spot, ControllerModel model)
     {
         bool isIndexHeld = OVRInput.Get(model.indexButton);
+        bool isArmMode = isIndexHeld;
         bool indexPressed = OVRInput.GetDown(model.indexButton);
         bool isGripHeld = OVRInput.Get(model.gripButton);
+        bool isJoystickPressed = OVRInput.GetDown(model.joystickButton);
         bool gripPressed = OVRInput.GetDown(model.gripButton);
         Vector2 joystick = OVRInput.Get(model.joystick);
 
@@ -33,21 +64,14 @@ public class DriveAndArm : OneControllerMode
         string triggerLabel = "";
         string gripLabel = "";
 
-        if (isGripHeld && !isIndexHeld)
-        {
-            // === Rotate Mode ===
-            isRelativeModeActive = false;
+        if (OVRInput.GetDown(model.axButton))
+            pointCloudCycler.CyclePointClouds();
 
-            if (Mathf.Abs(joystick.x) > 0.1f)
-                spot.Rotate(joystick.x * 0.5f);
-
-            thumbstickLabel = "Rotate";
-            gripLabel = "Rotating";
-            triggerLabel = ""; // Trigger disabled while rotating
-        }
-        else if (isIndexHeld)
+        if (isArmMode) // behave as Arm Mode
         {
             // === Arm Control Mode ===
+            if (OVRInput.GetDown(model.byButton))
+                ToggleArmCamera();
             switch (armControlMode)
             {
                 case ArmControlMode.AbsolutePos:
@@ -92,30 +116,64 @@ public class DriveAndArm : OneControllerMode
             triggerLabel = "";
             gripLabel = isGripperOpen ? "Close Gripper" : " Open Gripper";
         }
-        else
+        else // behave as Drive Mode
         {
             // === Drive Mode ===
             isRelativeModeActive = false;
 
-            if (joystick.magnitude > 0.1f)
-                spot.Drive(joystick * 0.5f);
+            if (OVRInput.GetDown(model.byButton))
+                positionPresetCycler.CyclePresets();
 
-            if (OVRInput.Get(model.byButton))
-                spot.AdjustHeight(0.02f);
+            if (isGripHeld)
+            {
+                // === Side Trigger Pressed ==
+                // === Body Up/Down Mode ===
+                isRelativeModeActive = false;
 
-            if (OVRInput.Get(model.axButton))
-                spot.AdjustHeight(-0.02f);
+                if (Mathf.Abs(joystick.y) > 0.1)
+                    spot.AdjustHeight(joystick.y * 0.02f);
 
-            thumbstickLabel = "Drive Spot";
-            triggerLabel = "Hold: Control Arm";
-            gripLabel = "Hold: Rotate";
-            model.axLabel = "Lower Body";
-            model.byLabel = "Raise Body";
+                thumbstickLabel = "Body Up/Down";
+                gripLabel = "";
+                triggerLabel = ""; // Trigger disabled while body up/down
+            }
+            else if (isJoystickPressed)
+            {
+                // === Joystick Pressed ==
+                // === Rotate Mode ===
+                isRelativeModeActive = false;
+
+                if (Mathf.Abs(joystick.x) > 0.1)
+                    spot.Rotate(joystick.x * 0.5f);
+
+                thumbstickLabel = "Rotate Spot";
+                gripLabel = "";
+                triggerLabel = "";
+            }
+            else
+            {
+                // === Normal Drive Mode ===
+
+                if (joystick.magnitude > 0.1f)
+                    spot.Drive(joystick * 0.5f);
+
+                if (OVRInput.Get(model.byButton))
+                    spot.AdjustHeight(0.02f);
+
+                if (OVRInput.Get(model.axButton))
+                    spot.AdjustHeight(-0.02f);
+
+                thumbstickLabel = "Drive Spot";
+                triggerLabel = "Hold: Control Arm";
+                gripLabel = "Hold: Rotate";
+            }
         }
 
         model.joystickLabel = thumbstickLabel;
         model.indexLabel = triggerLabel;
         model.gripLabel = gripLabel;
+        model.axLabel = "Cycle PointClouds";
+        model.byLabel = isArmMode ? "Toggle Arm Camera" : "Cycle Views";
     }
 
     public override string GetName() => "Dynamic Control";
