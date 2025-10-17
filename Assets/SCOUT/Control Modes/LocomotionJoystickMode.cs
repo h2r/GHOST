@@ -3,6 +3,11 @@ using UnityEngine;
 
 public class LocomotionJoystickMode : OneControllerMode
 {
+    [Header("View Settings")]
+    public GameObject viewOptionsConfigurer;
+    private PointCloudCycler pointCloudCycler;
+    private PositionPresetCycler positionPresetCycler;
+
     [Header("References")]
     public GameObject cameraRig;
     public RigPositioner rigPositioner;
@@ -60,6 +65,9 @@ public class LocomotionJoystickMode : OneControllerMode
     {
         LastMoveDelta = Vector3.zero;
         IsJoystickInUse = false;
+
+        pointCloudCycler = viewOptionsConfigurer.GetComponent<PointCloudCycler>();
+        positionPresetCycler = viewOptionsConfigurer.GetComponent<PositionPresetCycler>();
     }
 
     public override void ControlUpdate(SpotMode spot, ControllerModel model)
@@ -74,20 +82,26 @@ public class LocomotionJoystickMode : OneControllerMode
         Vector2 joystick = OVRInput.Get(model.joystick);
         IsJoystickInUse = joystick.magnitude > 0.1f; // Set the public property
 
-        bool trigger = OVRInput.Get(model.indexButton);
-        bool grip = OVRInput.Get(model.gripButton);
+        bool triggerPressed = OVRInput.Get(model.indexButton);
+        bool gripPressed = OVRInput.Get(model.gripButton);
 
-        if (grip && !isGripHeld)
+        if (gripPressed && !isGripHeld)
         {
             initialY = rigPositioner.y;
             hasInitialY = true;
         }
-        isGripHeld = grip;
+        isGripHeld = gripPressed;
 
         Vector3 rotationAxis = transform.up;
         Vector3 rotationCenter = headTransform != null ? headTransform.position : rigPositioner.pos;
 
-        if (grip)
+        // cycle point cloud / views
+        if (OVRInput.GetDown(model.axButton))
+            pointCloudCycler.CyclePointClouds();
+        if (OVRInput.GetDown(model.byButton))
+            positionPresetCycler.CyclePresets();
+
+        if (triggerPressed)
         {
             if (Mathf.Abs(joystick.x) > 0.1)
             {
@@ -152,7 +166,7 @@ public class LocomotionJoystickMode : OneControllerMode
             rigPositioner.pos = cameraRig.transform.position;
             rigPositioner.rotation = cameraRig.transform.rotation;
         }
-        else if (trigger)
+        else if (gripPressed)
         {
             if (Mathf.Abs(joystick.y) > 0.1)
             {
@@ -210,17 +224,15 @@ public class LocomotionJoystickMode : OneControllerMode
         // Reset Y label
         model.axLabel = model.isLeft ? (hasInitialY ? "Reset Y (X)" : "") : (hasInitialY ? "Reset Y (A)" : "");
 
-        if (grip)
+        if (triggerPressed)
             model.joystickLabel = "Rotate";
-        else if (trigger)
+        else if (gripPressed)
             model.joystickLabel = "Up/Down";
         else
             model.joystickLabel = "Fly";
 
-        model.indexLabel = trigger ? "" : "Hold: Up/Down";
-        model.gripLabel = grip ? "" : "Hold: Rotate";
-
-        HandleShowSpotToggle(model);
+        model.indexLabel = triggerPressed ? "" : "Hold: Rotate";
+        model.gripLabel = gripPressed ? "" : "Hold: Up/Down";
 
         // Calculate the final delta
         LastMoveDelta = cameraRig.transform.position - positionBeforeUpdate;
@@ -231,53 +243,15 @@ public class LocomotionJoystickMode : OneControllerMode
         return "Fly";
     }
 
-    public DepthManager depthManager1;
-    public DepthManager depthManager2;
-    private int showSpotState = 0;
-
     public override int ModeIndex => 3;
     public override bool ControlsSpot => false;
 
     public override void AssignDefaultLabels(ControllerModel controller_model)
     {
-        controller_model.axLabel = "Reset Y";
-        controller_model.byLabel = "Show Spot";
+        controller_model.axLabel = "Cycle PointClouds";
+        controller_model.byLabel = "Cycle ViewPoints";
         controller_model.joystickLabel = "Fly";
-        controller_model.indexLabel = "Hold: Up/Down";
-        controller_model.gripLabel = "Hold: Rotate";
+        controller_model.indexLabel = "Hold: Rotate";
+        controller_model.gripLabel = "Hold: Up/Down";
     }
-
-    private void HandleShowSpotToggle(ControllerModel model)
-    {
-        if (OVRInput.GetDown(model.byButton))
-        {
-            showSpotState = (showSpotState + 1) % 3;
-            if (depthManager1 != null)
-            {
-                depthManager1.show_spot = (showSpotState == 0 || showSpotState == 1);
-            }
-            if (depthManager2 != null)
-            {
-                depthManager2.show_spot = (showSpotState == 0 || showSpotState == 2);
-            }
-        }
-
-        string byLabel = "Toggle pointcloud"; // can add "Show spot: " to show "Show spot: Both/1/2"
-        // dynamic label for show spot button        
-        switch (showSpotState)
-        {
-            case 0:
-                byLabel += "";
-                break;
-            case 1:
-                byLabel += "";
-                break;
-            case 2:
-                byLabel += "";
-                break;
-        }
-        model.byLabel = byLabel;
-    }
-
-    
 }

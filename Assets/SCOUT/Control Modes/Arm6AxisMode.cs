@@ -3,6 +3,11 @@ using UnityEngine;
 
 public class Arm6AxisMode : OneControllerMode
 {
+    [Header("View Settings")]
+    public GameObject viewOptionsConfigurer;
+    private PointCloudCycler pointCloudCycler;
+    private PositionPresetCycler positionPresetCycler;
+
     public enum ArmControlMode
     {
         Absolute,
@@ -29,6 +34,12 @@ public class Arm6AxisMode : OneControllerMode
 
     public bool armCamera = true;
 
+    private void Awake()
+    {
+        pointCloudCycler = viewOptionsConfigurer.GetComponent<PointCloudCycler>();
+        positionPresetCycler = viewOptionsConfigurer.GetComponent<PositionPresetCycler>();
+    }
+
     public override void ControlUpdate(SpotMode spot, ControllerModel model)
     {
         try
@@ -37,6 +48,10 @@ public class Arm6AxisMode : OneControllerMode
             bool handDown = OVRInput.GetDown(model.gripButton);
             bool triggerHeld = OVRInput.Get(model.indexButton);
 
+            // ax button: cycle point clouds
+            if (OVRInput.GetDown(model.axButton))
+                pointCloudCycler.CyclePointClouds();
+            // by button: toggle arm camera
             if (OVRInput.GetDown(model.byButton))
             {
                 var uiManager = GameObject.FindFirstObjectByType<UIManager>();
@@ -191,6 +206,7 @@ public class Arm6AxisMode : OneControllerMode
         exampleModel.joystickLabel = "Move";
         exampleModel.indexLabel = "Hold: Control Arm";
         exampleModel.gripLabel = "Toggle Gripper";
+        exampleModel.axLabel = "Toggle PointClouds";
         exampleModel.byLabel = "Toggle Arm Cam";
     }
 }

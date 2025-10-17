@@ -22080,6 +22080,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bcc933faff3a17b439d6356bc9fdf1c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  viewOptionsConfigurer: {fileID: 8916049519973978855}
   cameraRig: {fileID: 117133128}
   rigPositioner: {fileID: 117133134}
   vignette: {fileID: 0}
@@ -23806,7 +23807,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d6ea5190b4f444579608263f78a355b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  positionPresetController: {fileID: 3361971512141547424}
+  ViewOptionConfigurer: {fileID: 8916049519973978855}
 --- !u!1 &3386891633003726090
 GameObject:
   m_ObjectHideFlags: 0
@@ -24294,7 +24295,7 @@ MonoBehaviour:
   rightExampleModel: {fileID: 0}
   spotOne: {fileID: 5676146346884262863}
   spotTwo: {fileID: 5598556563780689457}
-  positionPresetController: {fileID: 3361971512141547424}
+  positionPresetCycler: {fileID: 3361971512141547424}
 --- !u!222 &4294993465357682274
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -26804,13 +26805,30 @@ GameObject:
   m_Component:
   - component: {fileID: 2925042530075760595}
   - component: {fileID: 3361971512141547424}
+  - component: {fileID: 8916049519973978856}
   m_Layer: 0
-  m_Name: Position Preset Controller
+  m_Name: ViewOptionConfigurer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &8916049519973978856
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8916049519973978855}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec3e9c0797ef79b4d8d7b98845768d64, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PointCloudCycler
+  depthManagers:
+  - {fileID: 638278051}
+  - {fileID: 1639569377}
+  messageManager: {fileID: 1335493519}
 --- !u!114 &8976075098727268183
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -2,11 +2,12 @@ using UnityEngine;
 
 public class DriveJoystickMode : OneControllerMode
 {
-    public PositionPresetController positionPresetController;
+    public GameObject ViewOptionConfigurer;
 
     public override void ControlUpdate(SpotMode spot, ControllerModel model)
     {
         var doRotate = OVRInput.Get(model.indexButton);
+        var doBodyHeightAdjust = OVRInput.Get(model.gripButton);
         var joystick = OVRInput.Get(model.joystick);
 
         if (doRotate)
@@ -15,6 +16,12 @@ public class DriveJoystickMode : OneControllerMode
             if (Mathf.Abs(joystick.x) > 0.1)
                 spot.Rotate(joystick.x * 0.5f);
         }
+        else if (doBodyHeightAdjust)
+        {
+            model.joystickLabel = "Adjust Body Height";
+            if (Mathf.Abs(joystick.y) > 0.1)
+                spot.AdjustHeight(joystick.y * 0.02f);
+        }
         else
         {
             model.joystickLabel = "Drive";
@@ -22,19 +29,21 @@ public class DriveJoystickMode : OneControllerMode
                 spot.Drive(joystick * 0.5f);
         }
 
-        if (OVRInput.GetDown(model.gripButton))
-            positionPresetController.CyclePresets();
+        if (OVRInput.GetDown(model.axButton))
+            ViewOptionConfigurer.GetComponent<PointCloudCycler>().CyclePointClouds();
+        if (OVRInput.GetDown(model.byButton))
+            ViewOptionConfigurer.GetComponent<PositionPresetCycler>().CyclePresets();
 
-        if (OVRInput.Get(model.byButton))
-            spot.AdjustHeight(0.02f);
+        // if (OVRInput.Get(model.byButton))
+        //     spot.AdjustHeight(0.02f);
 
-        if (OVRInput.Get(model.axButton))
-            spot.AdjustHeight(-0.02f);
+        // if (OVRInput.Get(model.axButton))
+        //     spot.AdjustHeight(-0.02f);
 
         model.indexLabel = !doRotate ? "Hold: Rotate" : "";
-        model.gripLabel = "Cycle Views";
-        model.axLabel = "Lower Body";
-        model.byLabel = "Raise Body";
+        model.gripLabel = !doBodyHeightAdjust ? "Hold: Adjust Body Height" : "";
+        model.axLabel = "Cycle PointClouds";
+        model.byLabel = "Cycle Views";
     }
 
     public override string GetName()

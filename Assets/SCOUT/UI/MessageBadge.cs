@@ -51,7 +51,7 @@ namespace SCOUT
                 if (rig != null)
                     cameraRig = rig.transform;
             }
-            Show("Started!!");
+            ShowMessage("Started!!");
         }
 
         private void LateUpdate()
@@ -83,7 +83,7 @@ namespace SCOUT
             }
         }
 
-        public void Show(string text, float? duration = null)
+        public void ShowMessage(string text, float? duration = null)
         {
             if (activeDisplayCoroutine != null)
                 StopCoroutine(activeDisplayCoroutine);
