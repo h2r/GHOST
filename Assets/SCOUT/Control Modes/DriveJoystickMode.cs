@@ -6,9 +6,10 @@ public class DriveJoystickMode : OneControllerMode
 
     public override void ControlUpdate(SpotMode spot, ControllerModel model)
     {
-        var doRotate = OVRInput.Get(model.indexButton);
-        var doBodyHeightAdjust = OVRInput.Get(model.gripButton);
+        var doRotate = OVRInput.Get(model.gripButton);
+        var doBodyHeightAdjust = OVRInput.Get(model.indexButton);
         var joystick = OVRInput.Get(model.joystick);
+        Debug.Log($"Joystick Input: {joystick}, Rotate: {doRotate}, BodyHeightAdjust: {doBodyHeightAdjust}");
 
         if (doRotate)
         {
@@ -24,7 +25,7 @@ public class DriveJoystickMode : OneControllerMode
         }
         else
         {
-            model.joystickLabel = "Drive";
+            model.joystickLabel = "Drive / Hold: Body Height";
             if (joystick.magnitude > 0.1)
                 spot.Drive(joystick * 0.5f);
         }
@@ -40,8 +41,8 @@ public class DriveJoystickMode : OneControllerMode
         // if (OVRInput.Get(model.axButton))
         //     spot.AdjustHeight(-0.02f);
 
-        model.indexLabel = !doRotate ? "Hold: Rotate" : "";
-        model.gripLabel = !doBodyHeightAdjust ? "Hold: Adjust Body Height" : "";
+        model.gripLabel = !doRotate ? "Hold: Rotate" : "";
+        model.indexLabel = !doBodyHeightAdjust ? "Hold: Adjust Body Height" : "";
         model.axLabel = "Cycle PointClouds";
         model.byLabel = "Cycle Views";
     }
@@ -57,9 +58,9 @@ public class DriveJoystickMode : OneControllerMode
     public override void AssignDefaultLabels(ControllerModel exampleModel)
     {
         exampleModel.joystickLabel = "Drive";
-        exampleModel.indexLabel = "Hold: Rotate";
+        exampleModel.indexLabel = "";
         exampleModel.gripLabel = "Cycle Views";
-        exampleModel.axLabel = "Lower Body";
-        exampleModel.byLabel = "Raise Body";
+        exampleModel.axLabel = "Cycle PointClouds";
+        exampleModel.byLabel = "Cycle Views";
     }
 }

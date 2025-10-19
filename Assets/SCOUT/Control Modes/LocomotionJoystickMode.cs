@@ -56,7 +56,7 @@ public class LocomotionJoystickMode : OneControllerMode
     // Internal state
     private float initialY;
     private bool hasInitialY = false;
-    private bool isGripHeld = false;
+    private bool isAdjustingHeight = false;
     private float prevJoyX = 0f;
     private float lastSnapTime = 0f;
     private float currentTurnVelocity = 0f;
@@ -82,15 +82,15 @@ public class LocomotionJoystickMode : OneControllerMode
         Vector2 joystick = OVRInput.Get(model.joystick);
         IsJoystickInUse = joystick.magnitude > 0.1f; // Set the public property
 
-        bool triggerPressed = OVRInput.Get(model.indexButton);
-        bool gripPressed = OVRInput.Get(model.gripButton);
+        bool doRotate = OVRInput.Get(model.gripButton);
+        bool doHeightAdjust = OVRInput.Get(model.indexButton);
 
-        if (gripPressed && !isGripHeld)
+        if (doHeightAdjust && !isAdjustingHeight)
         {
             initialY = rigPositioner.y;
             hasInitialY = true;
         }
-        isGripHeld = gripPressed;
+        isAdjustingHeight = doHeightAdjust;
 
         Vector3 rotationAxis = transform.up;
         Vector3 rotationCenter = headTransform != null ? headTransform.position : rigPositioner.pos;
@@ -101,7 +101,7 @@ public class LocomotionJoystickMode : OneControllerMode
         if (OVRInput.GetDown(model.byButton))
             positionPresetCycler.CyclePresets();
 
-        if (triggerPressed)
+        if (doRotate)
         {
             if (Mathf.Abs(joystick.x) > 0.1)
             {
@@ -166,7 +166,7 @@ public class LocomotionJoystickMode : OneControllerMode
             rigPositioner.pos = cameraRig.transform.position;
             rigPositioner.rotation = cameraRig.transform.rotation;
         }
-        else if (gripPressed)
+        else if (doHeightAdjust)
         {
             if (Mathf.Abs(joystick.y) > 0.1)
             {
@@ -224,15 +224,15 @@ public class LocomotionJoystickMode : OneControllerMode
         // Reset Y label
         model.axLabel = model.isLeft ? (hasInitialY ? "Reset Y (X)" : "") : (hasInitialY ? "Reset Y (A)" : "");
 
-        if (triggerPressed)
+        if (doRotate)
             model.joystickLabel = "Rotate";
-        else if (gripPressed)
+        else if (doHeightAdjust)
             model.joystickLabel = "Up/Down";
         else
             model.joystickLabel = "Fly";
 
-        model.indexLabel = triggerPressed ? "" : "Hold: Rotate";
-        model.gripLabel = gripPressed ? "" : "Hold: Up/Down";
+        model.gripLabel = doRotate ? "" : "Hold: Rotate";
+        model.indexLabel = doHeightAdjust ? "" : "Hold: Up/Down";
 
         // Calculate the final delta
         LastMoveDelta = cameraRig.transform.position - positionBeforeUpdate;
