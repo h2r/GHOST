@@ -124,7 +124,7 @@ public class DriveAndArm : OneControllerMode
             if (OVRInput.GetDown(model.byButton))
                 positionPresetCycler.CyclePresets();
 
-            if (isGripHeld)
+            if (isJoystickPressed)
             {
                 // === Side Trigger Pressed ==
                 // === Body Up/Down Mode ===
@@ -137,7 +137,7 @@ public class DriveAndArm : OneControllerMode
                 gripLabel = "";
                 triggerLabel = ""; // Trigger disabled while body up/down
             }
-            else if (isJoystickPressed)
+            else if (isGripHeld)
             {
                 // === Joystick Pressed ==
                 // === Rotate Mode ===

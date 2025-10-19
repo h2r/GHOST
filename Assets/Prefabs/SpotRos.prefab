@@ -6224,7 +6224,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RosSharp.RosBridgeClient.SpotTFSubscriber
   Topic: /spot_tf_compute
-  TimeStep: 0
+  TimeStep: 0.1
   EnsureThreadSafety: 1
   source: map
   target: spot/body
@@ -6339,7 +6339,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Topic: /joint_states
-  TimeStep: 0.2
+  TimeStep: 0.1
   EnsureThreadSafety: 0
   JointNames:
   - front_left_hip_x
