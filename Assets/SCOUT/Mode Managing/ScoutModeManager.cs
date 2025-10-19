@@ -33,6 +33,7 @@ public class ScoutModeManager : MonoBehaviour
     public SuperMode uiSuperMode = SuperMode.Camera;
     [NonSerialized]
     public SuperMode activeSuperMode = SuperMode.SingleDrive;
+    private SuperMode _previousActiveSuperMode = SuperMode.SingleDrive;
 
     public SingleDriveSuperMode singleDrive = new();
     public DualDriveSuperMode dualDrive = new();
@@ -71,6 +72,24 @@ public class ScoutModeManager : MonoBehaviour
         {
             positionPresetCycler.SetInitialPreset();
             hasMenuClosed = true;
+        }
+
+        // Check if SuperMode has changed and call OnModeExit on previous modes
+        if (_previousActiveSuperMode != activeSuperMode)
+        {
+            // Call OnModeExit on all active control modes from the previous SuperMode
+            switch (_previousActiveSuperMode)
+            {
+                case SuperMode.SingleDrive:
+                    singleDrive.leftControl?.OnModeExit();
+                    singleDrive.rightControl?.OnModeExit();
+                    break;
+
+                case SuperMode.DualDrive:
+                    dualDrive.control?.OnModeExit();
+                    break;
+            }
+            _previousActiveSuperMode = activeSuperMode;
         }
 
         // Update colors while menu is open
@@ -137,9 +156,24 @@ public class SingleDriveSuperMode
 {
     public SpotMode leftSpot, rightSpot;
     public OneControllerMode leftControl, rightControl;
+    private OneControllerMode _previousLeftControl, _previousRightControl;
 
     public void Update(ControllerModel leftModel, ControllerModel rightModel)
     {
+        // Check if left control mode changed
+        if (_previousLeftControl != leftControl)
+        {
+            _previousLeftControl?.OnModeExit();
+            _previousLeftControl = leftControl;
+        }
+
+        // Check if right control mode changed
+        if (_previousRightControl != rightControl)
+        {
+            _previousRightControl?.OnModeExit();
+            _previousRightControl = rightControl;
+        }
+
         if (leftSpot != null && leftControl != null)
         {
             leftControl.ControlUpdate(leftSpot, leftModel);
@@ -193,9 +227,17 @@ public class DualDriveSuperMode
 {
     public SpotMode spot;
     public TwoControllerMode control;
+    private TwoControllerMode _previousControl;
 
     public void Update(ControllerModel leftModel, ControllerModel rightModel)
     {
+        // Check if control mode changed
+        if (_previousControl != control)
+        {
+            _previousControl?.OnModeExit();
+            _previousControl = control;
+        }
+
         if (spot != null && control != null)
         {
             control.ControlUpdate(spot, leftModel, rightModel);

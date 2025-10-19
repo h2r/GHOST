@@ -4252,6 +4252,11 @@ Transform:
   - {fileID: 1999835444}
   m_Father: {fileID: 494073854}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &352788442 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4802946624895036991, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &360447431
 GameObject:
   m_ObjectHideFlags: 0
@@ -5498,6 +5503,14 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2901775122262056809, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: Serializer
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2901775122262056809, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: RosBridgeServerUrl
+      value: ws://128.148.138.132:9090
+      objectReference: {fileID: 0}
     - target: {fileID: 3310871051605526706, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
       value: ws://128.148.138.132:9090
@@ -6178,6 +6191,10 @@ PrefabInstance:
       propertyPath: useWorldGripper
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4965097520198785087, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 3db1428f4ce274f4cbcd5f7d92f81f8f, type: 2}
     - target: {fileID: 5050333314984075171, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -6286,6 +6303,22 @@ PrefabInstance:
       propertyPath: Mass
       value: 1.904699
       objectReference: {fileID: 0}
+    - target: {fileID: 6153377983673611449, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6540973475187024020, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: mainCameraRot
+      value: 
+      objectReference: {fileID: 1747440747}
+    - target: {fileID: 6636980974090124150, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: RosBridgeServerUrl
+      value: ws://128.148.138.132:9090
+      objectReference: {fileID: 0}
+    - target: {fileID: 6723291484276446311, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: m_Camera
+      value: 
+      objectReference: {fileID: 1747440748}
     - target: {fileID: 7180826173763223380, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_LocalScale.x
       value: 1
@@ -6460,6 +6493,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3310871052575190424, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 669084028}
+    - targetCorrespondingSourceObject: {fileID: 961297911300114274, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1705981428}
   m_SourcePrefab: {fileID: 100100000, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
 --- !u!4 &409472600 stripped
 Transform:
@@ -17592,6 +17628,24 @@ Transform:
   m_Children: []
   m_Father: {fileID: 207396246}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1705981423 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 961297911300114274, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1705981428
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1705981423}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0be7301858fab814cad6e12b0de615d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TextFaceCamera
+  mainCamera: {fileID: 1747440746}
 --- !u!1 &1708770774
 GameObject:
   m_ObjectHideFlags: 0
@@ -25765,6 +25819,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6395f00bfbb71d24285e208fbde8663d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pivotVisualizer: {fileID: 352788442}
   cameraRig: {fileID: 0}
   rigPositioner: {fileID: 0}
   headTransform: {fileID: 0}
