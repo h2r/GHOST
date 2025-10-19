@@ -4,6 +4,9 @@ using UnityEngine;
 // Two controller mode
 public class DriveAndRotateMode : TwoControllerMode
 {
+    public GameObject pivotVisualizer;
+    private bool isMultiSpot = false;
+
     [Header("Locomotion")]
     public GameObject cameraRig;
     public RigPositioner rigPositioner;
@@ -23,6 +26,14 @@ public class DriveAndRotateMode : TwoControllerMode
 
     public override void ControlUpdate(SpotMode spot, ControllerModel leftModel, ControllerModel rightModel)
     {
+        // if in multi-spot mode, show the pivot visualizer to help with move orientation for the whole robot group
+        if (spot is MultiSpotMode)
+            isMultiSpot = true;
+        else
+            isMultiSpot = false;
+        if (pivotVisualizer != null)
+            pivotVisualizer.SetActive(isMultiSpot);
+
         bool isLocomotion = OVRInput.Get(leftModel.gripButton);
 
         if (isLocomotion)
@@ -135,6 +146,12 @@ public class DriveAndRotateMode : TwoControllerMode
     public override string GetName()
     {
         return "Drive & Rotate";
+    }
+
+    public override void OnModeExit()
+    {
+        if (pivotVisualizer != null)
+            pivotVisualizer.SetActive(false);
     }
 
     public override int ModeIndex => 4;
