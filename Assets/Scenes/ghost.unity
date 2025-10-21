@@ -2857,10 +2857,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pose_consistent_depth_shader: {fileID: 7200000, guid: 4e3ab96e5c44e114987c2994dd32981a, type: 3}
-  CX: 318
-  CY: 236
-  FX: 329.64
-  FY: 328.62
+  CX: 318.1893
+  CY: 248.8
+  FX: 329.64273
+  FY: 328.62427
 --- !u!1 &259812768
 GameObject:
   m_ObjectHideFlags: 0
@@ -10262,10 +10262,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pose_consistent_depth_shader: {fileID: 7200000, guid: 4e3ab96e5c44e114987c2994dd32981a, type: 3}
-  CX: 318
-  CY: 236
-  FX: 329.64
-  FY: 328.62
+  CX: 315.9047
+  CY: 244.67686
+  FX: 328.18594
+  FY: 327.14758
 --- !u!1 &796748787
 GameObject:
   m_ObjectHideFlags: 0
@@ -10358,10 +10358,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pose_consistent_depth_shader: {fileID: 7200000, guid: 4e3ab96e5c44e114987c2994dd32981a, type: 3}
-  CX: 309
-  CY: 236
-  FX: 330.699
-  FY: 329.77
+  CX: 321.9
+  CY: 225.9
+  FX: 330.69952
+  FY: 329.77106
 --- !u!4 &810747191
 Transform:
   m_ObjectHideFlags: 0
@@ -18178,10 +18178,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pose_consistent_depth_shader: {fileID: 7200000, guid: 4e3ab96e5c44e114987c2994dd32981a, type: 3}
-  CX: 309
-  CY: 236
-  FX: 330.699
-  FY: 329.77
+  CX: 316.46454
+  CY: 236.39565
+  FX: 330.7203
+  FY: 329.75784
 --- !u!1 &1751756648
 GameObject:
   m_ObjectHideFlags: 0
