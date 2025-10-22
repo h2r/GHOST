@@ -136,7 +136,7 @@ public class DualControllerArmMode : TwoControllerMode
                 case ArmControlMode.Relative:
                     if (!isRelativeModeActive)
                     {
-                        if(spot.GetGripperPos() != null)
+                        if (spot.GetGripperPos() != null)
                         {
                             initialControllerPosition = model.anchor.transform.position;
                             initialControllerRotation = model.anchor.transform.rotation;
@@ -145,8 +145,8 @@ public class DualControllerArmMode : TwoControllerMode
                             isRelativeModeActive = true;
                         }
                     }
-                    
-                    if(isRelativeModeActive)
+
+                    if (isRelativeModeActive)
                     {
                         Vector3 deltaPos = model.anchor.transform.position - initialControllerPosition;
                         Quaternion deltaRot = model.anchor.transform.rotation * Quaternion.Inverse(initialControllerRotation);
@@ -154,6 +154,7 @@ public class DualControllerArmMode : TwoControllerMode
                     }
                     break;
             }
+            spot.ChangeGripperColorBasedOnDistance();
         }
         else
         {

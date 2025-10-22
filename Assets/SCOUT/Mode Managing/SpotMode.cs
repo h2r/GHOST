@@ -5,6 +5,7 @@ using UnityEngine;
 public class SpotMode : NamedOption
 {
     public GameObject rosConnector, dummyGripper, readyDummyGripper, worldDummyGripper, armBase;
+    public GameObject actualGripper;
     public Material greenMaterial, redMaterial;
     public string modeName;
     public Color color;
@@ -105,14 +106,31 @@ public class SpotMode : NamedOption
 
         GameObject GripperToUse = useWorldDummyGripper ? worldDummyGripper : dummyGripper;
         GripperToUse.transform.SetPositionAndRotation(position, rotation);
+    }
 
-        if (!useWorldDummyGripper)
+    public void ChangeGripperColorBasedOnDistance()
+    {
+        GameObject gripperToUse = dummyGripper; // in world gripper mode, dummy gripper will still follow the world gripper
+        // if the actual gripper location deviates too far from the arm base, change its color to red, meaning it's not ready.
+        // get distance from arm base to dummy gripper + rotation offset
+
+        // Compute position difference in meters
+        Vector3 positionDifference = dummyGripper.transform.position - actualGripper.transform.position;
+        float distanceMeters = positionDifference.magnitude;
+
+        // Compute orientation difference in angles (degrees)
+        float angleDegrees = Quaternion.Angle(actualGripper.transform.rotation, dummyGripper.transform.rotation);
+
+        Debug.Log($"Position difference: {distanceMeters:F3} meters, Orientation difference: {angleDegrees:F1} degrees");
+
+        Material targetMaterial = distanceMeters > 0.01f || angleDegrees > 5f ? redMaterial : greenMaterial;
+
+        foreach (var mr in gripperToUse.GetComponentsInChildren<MeshRenderer>())
         {
-            var armLength = (GripperToUse.transform.position - armBase.transform.position).magnitude;
-            var dummyMaterial = armLength > 0.73 ? redMaterial : greenMaterial;
-            foreach (var mr in GripperToUse.GetComponentsInChildren<MeshRenderer>())
-                mr.material = dummyMaterial;
+            if (mr.sharedMaterial != targetMaterial)
+                mr.material = targetMaterial;
         }
+            
     }
 
     public virtual Transform GetGripperPos()
