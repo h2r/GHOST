@@ -216,6 +216,8 @@ public class DualArmMode : TwoControllerMode
             model.indexLabel = isLeftJoystickInUse ? "Release Left Stick" : "Hold: Control Arm";
         }
 
+        spot.ChangeGripperColorBasedOnDistance();
+
         // Set Right Labels
         model.joystickLabel = ""; // Right joystick is unused for arm control
         model.gripLabel = spot.GetGripperOpen() ? "Close Gripper" : "Open Gripper";

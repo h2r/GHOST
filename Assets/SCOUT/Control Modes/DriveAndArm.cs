@@ -174,6 +174,8 @@ public class DriveAndArm : OneControllerMode
         model.gripLabel = gripLabel;
         model.axLabel = "Cycle PointClouds";
         model.byLabel = isArmMode ? "Toggle Arm Camera" : "Cycle Views";
+
+        spot.ChangeGripperColorBasedOnDistance();
     }
 
     public override string GetName() => "Dynamic Control";
