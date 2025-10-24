@@ -27,9 +27,8 @@ public class DrawMeshInstanced : MonoBehaviour
     private Matrix4x4 icp_trans;
 
     public DepthManager depthManager;
-    public int camera_index;
-
     public SpotCamera SpotObserverCameraIndex;
+    public int SpotObserverStreamIdx;
 
     public Transform mainCameraRot;
 
@@ -154,32 +153,6 @@ public class DrawMeshInstanced : MonoBehaviour
                     }
                 }
             }
-
-            //if (imageScriptIndex == 0)
-            //{
-            //    for (int y = 10; y < 10 + 300; y++)
-            //    {
-            //        for (int x = 10; x < 10 + (int)width - 20; x++)
-            //        {
-            //            int index = y * (int)width + x;
-            //            depth_ar[index] = -0.0f;
-            //        }
-            //    }
-            //}
-
-            //if (camera_index == 1)
-            //{
-            //    for (int y = (int)height - 300; y < (int)height; y++)
-            //    {
-            //        for (int x = 10; x < 10 + (int)width - 20; x++)
-            //        {
-            //            int index = y * (int)width + x;
-            //            depth_ar[index] = -0.0f;
-            //        }
-            //    }
-            //}
-
-
 
             byte[] bytes;
             using (var stream = File.Open("Assets/PointClouds/Color_" + imageScriptIndex + ".png", FileMode.Open))
@@ -415,7 +388,7 @@ public class DrawMeshInstanced : MonoBehaviour
             
 
             Debug.Log("SpotObserverCameraIndex: " + (int)SpotObserverCameraIndex);
-            (color_image, depth_tensor) = spotObserverClient.GetCameraFeeds(SpotObserverCameraIndex);
+            (color_image, depth_tensor) = spotObserverClient.GetCameraFeeds(SpotObserverStreamIdx, SpotObserverCameraIndex);
 
             Debug.Log("Color image: " + (color_image == null ? "null" : color_image.width + "x" + color_image.height));
             // HACK
@@ -430,7 +403,7 @@ public class DrawMeshInstanced : MonoBehaviour
         }
         else
         {
-            (color_image, depth_tensor) = spotObserverClient.GetCameraFeeds(SpotObserverCameraIndex);
+            (color_image, depth_tensor) = spotObserverClient.GetCameraFeeds(SpotObserverStreamIdx, SpotObserverCameraIndex);
          
             if (depth_image != null)
             {
