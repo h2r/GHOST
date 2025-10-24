@@ -22833,7 +22833,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
+  m_RayTracingMode: 0
   m_RayTraceProcedural: 0
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
@@ -23074,7 +23074,7 @@ Transform:
   m_LocalRotation: {x: -0, y: 1, z: -0, w: 0}
   m_LocalPosition: {x: 158, y: 0, z: 800}
   m_LocalScale: {x: 200, y: 200, z: 2}
-  m_ConstrainProportionsScale: 1
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7548481229296391317}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
@@ -26162,10 +26162,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f56071a01b7fb0b4cb8546a5ff4ec78d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RosSharp.RosBridgeClient.BGRRawImageSubscriber
-  Topic: /spot2/camera/hand/image
-  TimeStep: 0.5
-  EnsureThreadSafety: 0
   meshRenderer: {fileID: 1142502447079962882}
+  spotObserverClient: {fileID: 971801071}
+  SpotObserverCameraIndex: 32
+  SpotObserverStreamIdx: 1
   flipMode: 2
 --- !u!65 &7495809872703337984
 BoxCollider:
@@ -26302,7 +26302,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
+  m_RayTracingMode: 0
   m_RayTraceProcedural: 0
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
@@ -26496,10 +26496,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f56071a01b7fb0b4cb8546a5ff4ec78d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RosSharp.RosBridgeClient.BGRRawImageSubscriber
-  Topic: /spot/camera/hand/image
-  TimeStep: 0.5
-  EnsureThreadSafety: 0
   meshRenderer: {fileID: 7700864136377476653}
+  spotObserverClient: {fileID: 1028337600}
+  SpotObserverCameraIndex: 32
+  SpotObserverStreamIdx: 1
   flipMode: 2
 --- !u!114 &7899945183317588484
 MonoBehaviour:
