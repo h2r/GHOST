@@ -1,20 +1,15 @@
 using UnityEngine;
 using RosSharp.RosBridgeClient;
-using RosSharp.RosBridgeClient.MessageTypes.Spot;
 using RosSharp.RosBridgeClient.MessageTypes.Std;
-using System;
 
 namespace RosSharp.RosBridgeClient
 {
 
-    public class ThreadedSetGripper : MonoBehaviour
+    public class ThreadedSetGripper : UnityPublisher<MessageTypes.Std.Float32>
     {
-        private RosConnector rosConnector;
-        public string serviceName = "/set_gripper_angle";
-
-        void Start()
+        protected override void Start()
         {
-            rosConnector = GetComponent<RosConnector>();
+            base.Start();
         }
 
         public void OpenGripper()
@@ -30,17 +25,13 @@ namespace RosSharp.RosBridgeClient
         public void SetGripperAngle(float angle)
         {
             float clampedAngle = Mathf.Clamp(angle, 0f, 90f);
-            SetGripperAngleRequest request = new SetGripperAngleRequest(clampedAngle);
-            Debug.Log($"Requested gripper angle: {clampedAngle}");
-            Debug.Log("Service name: " + serviceName);
 
-            rosConnector.RosSocket.CallService<SetGripperAngleRequest, SetGripperAngleResponse>( // reponse type bool success; string message
-                serviceName,
-                response => Debug.Log($"Gripper Service response received: success={response.success}, message={response.message}"),
-                request
-            );
+            MessageTypes.Std.Float32 message = new MessageTypes.Std.Float32();
+            message.data = clampedAngle;
 
-            Debug.Log($"Requested to set gripper angle to {clampedAngle} degrees");
+            Publish(message);
+
+            Debug.Log($"Published gripper angle: {clampedAngle}");
         }
     }
 }
