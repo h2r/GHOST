@@ -5417,7 +5417,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775482946477, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775482946479, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: CVD
@@ -9012,7 +9012,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 703ec150f7f22453e8a793889bbc02dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ThreadedSetGripper
-  serviceName: /spot2/set_gripper_angle
+  Topic: /spot2/gripper_angle_cmd
 --- !u!114 &669084030
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21959,7 +21959,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 703ec150f7f22453e8a793889bbc02dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ThreadedSetGripper
-  serviceName: /spot/set_gripper_angle
+  Topic: /spot/gripper_angle_cmd
 --- !u!114 &2123763436
 MonoBehaviour:
   m_ObjectHideFlags: 0
