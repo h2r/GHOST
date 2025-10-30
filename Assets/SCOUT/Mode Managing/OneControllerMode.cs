@@ -2,7 +2,7 @@ using UnityEngine;
 
 public abstract class OneControllerMode : NamedOption
 {
-    public abstract void ControlUpdate(SpotMode spot, ControllerModel model);
+    public abstract void ControlUpdate(SpotController spot, ControllerModel model);
 
     public abstract void AssignDefaultLabels(ControllerModel exampleModel);
 

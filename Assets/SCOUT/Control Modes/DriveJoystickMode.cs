@@ -4,7 +4,7 @@ public class DriveJoystickMode : OneControllerMode
 {
     public GameObject ViewOptionConfigurer;
 
-    public override void ControlUpdate(SpotMode spot, ControllerModel model)
+    public override void ControlUpdate(SpotController spot, ControllerModel model)
     {
         var doRotate = OVRInput.Get(model.gripButton);
         var doBodyHeightAdjust = OVRInput.Get(model.indexButton);

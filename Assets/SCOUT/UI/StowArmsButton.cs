@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class StowArmsButton : UIOption
 {
-    public SpotMode spot;
+    public SpotController spot;
     public string spot_name = "Spot 1";
 
     public override void DoAction(ScoutModeManager modeManager)

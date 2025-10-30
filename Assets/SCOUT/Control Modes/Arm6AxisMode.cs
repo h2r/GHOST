@@ -40,7 +40,7 @@ public class Arm6AxisMode : OneControllerMode
         positionPresetCycler = viewOptionsConfigurer.GetComponent<PositionPresetCycler>();
     }
 
-    public override void ControlUpdate(SpotMode spot, ControllerModel model)
+    public override void ControlUpdate(SpotController spot, ControllerModel model)
     {
         try
         {

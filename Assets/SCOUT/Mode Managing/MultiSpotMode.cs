@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class MultiSpotMode : SpotMode
+public class MultiSpotController : SpotController
 {
     public GameObject rosConnectorOne, rosConnectorTwo;
 
@@ -28,7 +28,7 @@ public class MultiSpotMode : SpotMode
 
     public override void Drive(Vector2 direction)
     {
-        print(modeName + " drive: " + direction);
+        print(displayName + " drive: " + direction);
         if (rosConnectorOne != null)
             moveSpotOne.Move(direction, 0, curHeight);
         if (rosConnectorTwo != null)
@@ -37,7 +37,7 @@ public class MultiSpotMode : SpotMode
 
     public override void Rotate(float direction)
     {
-        // print(modeName + " rotate: " + direction);
+        // print(displayName + " rotate: " + direction);
         if (rosConnectorOne != null)
             moveSpotOne.Move(Vector2.zero, direction, curHeight);
         if (rosConnectorTwo != null)
@@ -47,7 +47,7 @@ public class MultiSpotMode : SpotMode
     public override void SetHeight(float height)
     {
         curHeight = height;
-        print(modeName + " set height: " + curHeight);
+        print(displayName + " set height: " + curHeight);
         if (rosConnectorOne != null)
             moveSpotOne.SetHeight(curHeight);
         if (rosConnectorTwo != null)
@@ -93,7 +93,7 @@ public class MultiSpotMode : SpotMode
 
     public override string GetName()
     {
-        return modeName;
+        return displayName;
     }
     
     public override Color GetSelectedColor()

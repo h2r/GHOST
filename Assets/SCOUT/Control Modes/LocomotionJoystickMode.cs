@@ -70,7 +70,7 @@ public class LocomotionJoystickMode : OneControllerMode
         positionPresetCycler = viewOptionsConfigurer.GetComponent<PositionPresetCycler>();
     }
 
-    public override void ControlUpdate(SpotMode spot, ControllerModel model)
+    public override void ControlUpdate(SpotController spot, ControllerModel model)
     {
         if (cameraRig == null) return;
 

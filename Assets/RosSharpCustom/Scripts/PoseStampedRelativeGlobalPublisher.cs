@@ -55,38 +55,43 @@ namespace RosSharp.RosBridgeClient
             };
         }
 
+        public void SendUpdate()
+        {
+            message.header.Update();
+
+            // get the PublishedTransform's position relative to the BaseTransform
+            Matrix4x4 publishedMatrix = Matrix4x4.TRS(PublishedTransform.position, PublishedTransform.rotation, Vector3.one);
+            Matrix4x4 baseMatrix = Matrix4x4.TRS(BaseTransform.position, BaseTransform.rotation, Vector3.one);
+            Matrix4x4 publishedMatrixWithOffset = baseMatrix.inverse * publishedMatrix;
+            // hack -- rotate -90 degrees around X to account for the fact that the end effector in the URDF in Unity is upright ?!!!
+            publishedMatrixWithOffset = publishedMatrixWithOffset * Matrix4x4.Rotate(Quaternion.Euler(RotationOffsetEulerZXY));
+
+            Vector3 newLocation = publishedMatrixWithOffset.GetPosition();
+            Quaternion newRotation = publishedMatrixWithOffset.rotation; 
+            // if the motion is too small, don't publish it
+            if ((newLocation - lastPublishedPosition).magnitude < 0.005f &&
+                Quaternion.Angle(newRotation, lastPublishedRotation) < 0.1f)
+            {
+                Debug.Log("skipping small motion!");
+                return;
+            }
+
+            // publish the new location if it's sufficiently different
+            lastPublishedPosition = newLocation;
+            lastPublishedRotation = newRotation;
+            GetGeometryPoint(newLocation.Unity2Ros(), message.pose.position);
+            GetGeometryQuaternion(newRotation.Unity2Ros(), message.pose.orientation);
+
+            Publish(message);
+        }
+
         private void UpdateMessage()
         {
             Debug.Log("PoseStampedRelativePublisher: UpdateMessage called. enabled? " + enabled);
             // Only set location if enabled -- controlled by MoveArm script
             if (enabled)
             {
-                message.header.Update();
-
-                // get the PublishedTransform's position relative to the BaseTransform
-                Matrix4x4 publishedMatrix = Matrix4x4.TRS(PublishedTransform.position, PublishedTransform.rotation, Vector3.one);
-                Matrix4x4 baseMatrix = Matrix4x4.TRS(BaseTransform.position, BaseTransform.rotation, Vector3.one);
-                Matrix4x4 publishedMatrixWithOffset = baseMatrix.inverse * publishedMatrix;
-                // hack -- rotate -90 degrees around X to account for the fact that the end effector in the URDF in Unity is upright ?!!!
-                publishedMatrixWithOffset = publishedMatrixWithOffset * Matrix4x4.Rotate(Quaternion.Euler(RotationOffsetEulerZXY));
-
-                Vector3 newLocation = publishedMatrixWithOffset.GetPosition();
-                Quaternion newRotation = publishedMatrixWithOffset.rotation; 
-                // if the motion is too small, don't publish it
-                if ((newLocation - lastPublishedPosition).magnitude < 0.005f &&
-                    Quaternion.Angle(newRotation, lastPublishedRotation) < 0.1f)
-                {
-                    Debug.Log("skipping small motion!");
-                    return;
-                }
-
-                // publish the new location if it's sufficiently different
-                lastPublishedPosition = newLocation;
-                lastPublishedRotation = newRotation;
-                GetGeometryPoint(newLocation.Unity2Ros(), message.pose.position);
-                GetGeometryQuaternion(newRotation.Unity2Ros(), message.pose.orientation);
-
-                Publish(message);
+                SendUpdate();
             }
         }
 

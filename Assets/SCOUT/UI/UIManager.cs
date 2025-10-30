@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Meta.WitAi.Events.Editor;
 using UnityEngine;
@@ -109,7 +110,7 @@ public class UIManager : MonoBehaviour
         var superModeSetters = new Dictionary<SuperMode, Action<NamedOption>[]>()
         {
             { SuperMode.SingleDrive, new Action<NamedOption>[] {
-                m => modeManager.singleDrive.leftSpot = (SpotMode)m,
+                m => modeManager.singleDrive.leftSpot = (SpotController)m,
                 m => {
                     if (modeManager.singleDrive.leftControl != null) {
                         modeManager.leftModel.ClearLabels();
@@ -134,11 +135,11 @@ public class UIManager : MonoBehaviour
                         }
                     }
                 },
-                m => modeManager.singleDrive.rightSpot = (SpotMode)m,
+                m => modeManager.singleDrive.rightSpot = (SpotController)m,
                 m => ((UIOption)m).DoAction(modeManager)
             } },
             { SuperMode.DualDrive, new Action<NamedOption>[] {
-                m => modeManager.dualDrive.spot = (SpotMode)m,
+                m => modeManager.dualDrive.spot = (SpotController)m,
                 m => modeManager.dualDrive.control = (TwoControllerMode)m,
                 m => ((UIOption)m).DoAction(modeManager)
             } },
@@ -171,7 +172,9 @@ public class UIManager : MonoBehaviour
         {
             modeManager.cameraView.SetActiveCameraMode((CameraMode)cameraLists[0].options[0]);
         }
-        SetDefaultControls();
+
+        // Wait one frame to ensure all ButtonList.Start() methods have completed
+        StartCoroutine(SetDefaultControlsAfterFrame());
     }
 
     void Update()
@@ -245,10 +248,17 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    private IEnumerator SetDefaultControlsAfterFrame()
+    {
+        // Wait one frame to ensure all ButtonList.Start() methods have completed
+        yield return null;
+        SetDefaultControls();
+    }
+
     private void SetDefaultControls()
     {
-        var activeLists = superModeLists[modeManager.uiSuperMode];
-        switch (modeManager.uiSuperMode)
+        var activeLists = superModeLists[modeManager.activeSuperMode];
+        switch (modeManager.activeSuperMode)
         {
 
             case SuperMode.SingleDrive:
@@ -266,7 +276,7 @@ public class UIManager : MonoBehaviour
                 if (activeLists.Length > 0 && activeLists[0].options.Length > 0)
                 {
                     // Set default spot and control
-                    modeManager.dualDrive.spot = (SpotMode)activeLists[0].options[(int) SpotColor.RED];
+                    modeManager.dualDrive.spot = (SpotController)activeLists[0].options[(int) SpotColor.RED];
                     modeManager.dualDrive.control = (TwoControllerMode)activeLists[1].options[(int) DualControl.FLY];
                 }
                 break;

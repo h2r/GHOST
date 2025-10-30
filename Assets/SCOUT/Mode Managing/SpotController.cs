@@ -2,15 +2,22 @@ using System;
 using RosSharp.RosBridgeClient;
 using UnityEngine;
 
-public class SpotMode : NamedOption
+public class SpotController : NamedOption
 {
     public GameObject rosConnector, dummyGripper, readyDummyGripper, worldDummyGripper, armBase;
     public GameObject actualGripper;
     public Material greenMaterial, redMaterial;
-    public string modeName;
+    public string displayName;
+    public string robotName;
     public Color color;
 
-    public bool useWorldDummyGripper = false;
+    public enum GripperOperateMode
+    {
+        LOCAL,
+        BODY_ASSIST,
+        BODY_FOLLOW
+    }
+    public GripperOperateMode gripperOperateMode = GripperOperateMode.LOCAL;
 
     private ThreadedMoveSpot moveSpot;
     private ThreadedStowArm stowArm;
@@ -23,8 +30,20 @@ public class SpotMode : NamedOption
     private float lastHeightChangeTime = -Mathf.Infinity;
     private const float MIN_HEIGHT_CHANGE_INTERVAL = 0.5f;
     private WorldLocalGripperSync worldLocalGripperSync;
-    private PoseStampedRelativePublisher enableLocalGripperCmd;
-    private PoseStampedRelativeGlobalPublisher enableWorldGripperCmd;
+    private PoseStampedRelativePublisher localGripperCmd;
+    private PoseStampedRelativeGlobalPublisher worldGripperCmd;
+
+    // Keeps track of current actual gripper reference.
+    // When using world gripper, the manipulation gripper reference is WORLD. 
+    // It might be desirable to switch it back to BODY when switching back to navigation mode.
+    enum GripperReference
+    {
+        BODY,
+        WORLD
+    }
+    private GripperReference currentGripperReference = GripperReference.BODY;
+    private bool lastArmPosePublisherEnabled = false;
+
     public virtual void Start()
     {
         if (rosConnector != null)
@@ -34,55 +53,104 @@ public class SpotMode : NamedOption
             stowArm = rosConnector.GetComponent<ThreadedStowArm>();
             setHeight = rosConnector.GetComponent<SetHeight>();
             worldLocalGripperSync = rosConnector.GetComponent<WorldLocalGripperSync>();
-            enableLocalGripperCmd = rosConnector.GetComponent<PoseStampedRelativePublisher>();
-            enableWorldGripperCmd = rosConnector.GetComponent<PoseStampedRelativeGlobalPublisher>();
+            localGripperCmd = rosConnector.GetComponent<PoseStampedRelativePublisher>();
+            worldGripperCmd = rosConnector.GetComponent<PoseStampedRelativeGlobalPublisher>();
 
             moveSpot.Move(Vector2.zero, 0, curHeight);
             setGripper.CloseGripper();
+
+            // update the global gripper topic
+            if (worldGripperCmd != null && gripperOperateMode == GripperOperateMode.BODY_ASSIST)
+                worldGripperCmd.Topic = $"/{robotName}/arm_pose_body_assist_commands";
+            else if (localGripperCmd != null && gripperOperateMode == GripperOperateMode.BODY_FOLLOW)
+                localGripperCmd.Topic = $"/{robotName}/arm_pose_body_follow_commands";
         }
     }
 
     public virtual void SetArmPoseEnabled(bool armPoseEnabled)
     {
-        print(modeName + " arm pose " + armPoseEnabled);
+        // enable the arm pose publisher only when one of the control modes requires it
+        print(displayName + " arm pose " + armPoseEnabled);
+        if (lastArmPosePublisherEnabled == armPoseEnabled)
+            return;
 
         // disable publishing arm pose when arm pose is not enabled
-        if (!armPoseEnabled)
+        if (gripperOperateMode == GripperOperateMode.LOCAL)
         {
-            worldLocalGripperSync.useWorldGripper = false; // disable world gripper when arm pose is not enabled
-            enableWorldGripperCmd.enabled = false;
-            enableLocalGripperCmd.enabled = false;
+            UpdateGripperReference(GripperReference.BODY);
+            worldGripperCmd.enabled = false;
+            localGripperCmd.enabled = armPoseEnabled;
         }
-        else if (useWorldDummyGripper)
+        else if (gripperOperateMode == GripperOperateMode.BODY_ASSIST)
         {
-            enableWorldGripperCmd.enabled = armPoseEnabled;
-            enableLocalGripperCmd.enabled = false;
+            UpdateGripperReference(armPoseEnabled ? GripperReference.WORLD : GripperReference.BODY);
+            worldGripperCmd.enabled = armPoseEnabled;
+            localGripperCmd.enabled = false;
         }
         else
         {
-            enableLocalGripperCmd.enabled = armPoseEnabled;
-            enableWorldGripperCmd.enabled = false;
+            UpdateGripperReference(armPoseEnabled ? GripperReference.WORLD : GripperReference.BODY);
+            localGripperCmd.enabled = armPoseEnabled;
+            worldGripperCmd.enabled = false;
         }
+        lastArmPosePublisherEnabled = armPoseEnabled;
+    }
+
+    private void UpdateGripperReference(GripperReference newReference)
+    {
+        // change the gripper reference when the body becomes moving or manipulation starts
+        if (currentGripperReference != newReference)
+        {
+            if (newReference == GripperReference.WORLD)
+            {
+                worldGripperCmd.enabled = true;
+                worldGripperCmd.SendUpdate();
+                localGripperCmd.enabled = false;
+                worldLocalGripperSync.worldGripperFollowBody = false;
+            }
+            else
+            {
+                localGripperCmd.enabled = true;
+                localGripperCmd.SendUpdate();
+                worldGripperCmd.enabled = false;
+                worldLocalGripperSync.worldGripperFollowBody = true;
+            }
+            currentGripperReference = newReference;
+            Debug.Log("Gripper reference changed to: " + newReference.ToString());
+        }
+    }
+
+    private void OnMoveUpdateGripperReference()
+    {
+        UpdateGripperReference(GripperReference.BODY);
+    }
+
+    private void OnManipulateUpdateGripperReference()
+    {
+        if (gripperOperateMode != GripperOperateMode.LOCAL)
+            UpdateGripperReference(GripperReference.WORLD);
+        else
+            UpdateGripperReference(GripperReference.BODY);
     }
 
     public virtual void Drive(Vector2 direction)
     {
-        print(modeName + " drive: " + direction);
+        OnMoveUpdateGripperReference();
         if (rosConnector != null)
             moveSpot.Move(direction, 0, curHeight);
     }
 
     public virtual void Rotate(float direction)
     {
-        // print(modeName + " rotate: " + direction);
+        OnMoveUpdateGripperReference();
         if (rosConnector != null)
             moveSpot.Move(Vector2.zero, direction, curHeight);
     }
 
     public virtual void SetHeight(float height)
     {
+        OnMoveUpdateGripperReference();
         curHeight = height;
-        print(modeName + " set height: " + curHeight);
         if (rosConnector != null)
             Debug.Log("Height: rosconnector connected sending height to setheight.cs");
             setHeight.SetHeightPercentage(curHeight);
@@ -102,6 +170,8 @@ public class SpotMode : NamedOption
 
     public virtual void SetGripperWorldPose(Vector3 position, Quaternion rotation)
     {
+        OnManipulateUpdateGripperReference();
+        bool useWorldDummyGripper = gripperOperateMode != GripperOperateMode.LOCAL;
         worldLocalGripperSync.useWorldGripper = useWorldDummyGripper;
 
         GameObject GripperToUse = useWorldDummyGripper ? worldDummyGripper : dummyGripper;
@@ -155,9 +225,10 @@ public class SpotMode : NamedOption
 
     public virtual void StowArm()
     {
+        OnMoveUpdateGripperReference(); // stow is considered a move action because it disengages the arm from manipulation
         if (stowArm != null)
         {
-            worldLocalGripperSync.useWorldGripper = false; // disable world gripper when stowing arm
+            worldLocalGripperSync.worldGripperFollowBody = true; // disable world gripper when stowing arm
             stowArm.Stow();
             dummyGripper.transform.position = readyDummyGripper.transform.position;
             dummyGripper.transform.rotation = readyDummyGripper.transform.rotation;
@@ -166,11 +237,13 @@ public class SpotMode : NamedOption
         {
             Debug.LogWarning("ThreadedStowArm not found on rosConnector!");
         }
+
+        // change the last control type to navigation to avoid relocking the gripper to body (it's already locked to body)
     }
 
     public override string GetName()
     {
-        return modeName;
+        return displayName;
     }
     
     public override Color GetSelectedColor()

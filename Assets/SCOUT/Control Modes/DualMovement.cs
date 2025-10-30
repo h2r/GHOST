@@ -43,7 +43,7 @@ public class DualMovement : TwoControllerMode
     private float turnDamping = 5f;
     private float turnAcceleration = 120f;
 
-    public override void ControlUpdate(SpotMode spot, ControllerModel leftModel, ControllerModel rightModel)
+    public override void ControlUpdate(SpotController spot, ControllerModel leftModel, ControllerModel rightModel)
     {
         leftModel.color = Color.white;
         rightModel.color = Color.white;

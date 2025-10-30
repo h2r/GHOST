@@ -45,7 +45,7 @@ public class DualArmMode : TwoControllerMode
     private int showSpotState = 0;
 
 
-    public override void ControlUpdate(SpotMode spot, ControllerModel leftModel, ControllerModel rightModel)
+    public override void ControlUpdate(SpotController spot, ControllerModel leftModel, ControllerModel rightModel)
     {
         // --- LEFT CONTROLLER: LOCOMOTION (from LocomotionJoystickMode) ---
         HandleLocomotion(leftModel);
@@ -162,7 +162,7 @@ public class DualArmMode : TwoControllerMode
         // byLabel is set in HandleShowSpotToggle
     }
 
-    private void HandleArm(SpotMode spot, ControllerModel model)
+    private void HandleArm(SpotController spot, ControllerModel model)
     {
         bool triggerHeld = OVRInput.Get(model.indexButton);
         bool gripDown = OVRInput.GetDown(model.gripButton);

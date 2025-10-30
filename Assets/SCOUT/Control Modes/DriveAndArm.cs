@@ -48,7 +48,7 @@ public class DriveAndArm : OneControllerMode
         }
     }
 
-    public override void ControlUpdate(SpotMode spot, ControllerModel model)
+    public override void ControlUpdate(SpotController spot, ControllerModel model)
     {
         bool isIndexHeld = OVRInput.Get(model.indexButton);
         bool isArmMode = isIndexHeld;

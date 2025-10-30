@@ -6,7 +6,7 @@ public class DualControllerArmMode : TwoControllerMode
     public enum ArmControlMode { Absolute, Relative }
 
     [Header("Robot References")]
-    public SpotMode spot2; // The primary spot (spot1) is passed into ControlUpdate
+    public SpotController spot2; // The primary spot (spot1) is passed into ControlUpdate
 
     [Header("Arm Control")]
     public ArmControlMode armControlMode = ArmControlMode.Relative;
@@ -32,7 +32,7 @@ public class DualControllerArmMode : TwoControllerMode
     private bool isRelativeModeActiveRight = false;
     private int showSpotState = 0;
 
-    public override void ControlUpdate(SpotMode spot1, ControllerModel leftModel, ControllerModel rightModel)
+    public override void ControlUpdate(SpotController spot1, ControllerModel leftModel, ControllerModel rightModel)
     {
         // --- Get Inputs ---
         bool leftTriggerHeld = OVRInput.Get(leftModel.indexButton);
@@ -114,7 +114,7 @@ public class DualControllerArmMode : TwoControllerMode
         }
     }
 
-    private void HandleArmAndHeight(SpotMode spot, ControllerModel model, bool triggerHeld, bool gripDown, bool isJoyInUse,
+    private void HandleArmAndHeight(SpotController spot, ControllerModel model, bool triggerHeld, bool gripDown, bool isJoyInUse,
                                     ref bool isRelativeModeActive, ref Vector3 initialControllerPosition,
                                     ref Quaternion initialControllerRotation, ref Vector3 initialGripperPosition,
                                     ref Quaternion initialGripperRotation)

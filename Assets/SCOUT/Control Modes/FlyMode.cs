@@ -4,7 +4,7 @@ public class FlyMode : TwoControllerMode
 {
     public LocomotionJoystickMode locomotionJoystickMode;
 
-    public override void ControlUpdate(SpotMode spot, ControllerModel leftModel, ControllerModel rightModel)
+    public override void ControlUpdate(SpotController spot, ControllerModel leftModel, ControllerModel rightModel)
     {
         locomotionJoystickMode.ControlUpdate(spot, leftModel);
         locomotionJoystickMode.ControlUpdate(spot, rightModel);

@@ -4,7 +4,7 @@ using UnityEngine;
 // Two controller mode
 public class ArmJoystickMode : TwoControllerMode
 {
-    public override void ControlUpdate(SpotMode spot, ControllerModel leftModel, ControllerModel rightModel)
+    public override void ControlUpdate(SpotController spot, ControllerModel leftModel, ControllerModel rightModel)
     {
         var joystick = OVRInput.Get(leftModel.joystick);
         if (joystick.magnitude > 0.1)

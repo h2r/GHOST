@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 public enum SuperMode
@@ -26,7 +27,7 @@ public class ScoutModeManager : MonoBehaviour
     }
 
     public ControllerModel leftModel, rightModel, leftExampleModel, rightExampleModel;
-    public SpotMode spotOne, spotTwo;
+    public SpotController spotOne, spotTwo;
     public PositionPresetCycler positionPresetCycler;
 
     [NonSerialized]
@@ -43,6 +44,7 @@ public class ScoutModeManager : MonoBehaviour
     public bool isMenuOpen = false;
     private bool _previousIsMenuOpen; // To track changes in isMenuOpen
     private bool hasMenuClosed = false;
+    private bool _armPoseCoroutineStarted = false;
 
     void Update()
     {
@@ -127,18 +129,11 @@ public class ScoutModeManager : MonoBehaviour
                 break;
         }
 
-        if (!isMenuOpen)
+        // Start coroutine to enable arm pose after 10 frames
+        if (!_armPoseCoroutineStarted)
         {
-            bool spotOneArm = (activeSuperMode == SuperMode.SingleDrive && singleDrive.leftSpot == spotOne && singleDrive.leftControl != null && singleDrive.leftControl.RequiresArmCamera) ||
-                              (activeSuperMode == SuperMode.SingleDrive && singleDrive.rightSpot == spotOne && singleDrive.rightControl != null && singleDrive.rightControl.RequiresArmCamera) ||
-                              (activeSuperMode == SuperMode.DualDrive && dualDrive.spot == spotOne && dualDrive.control != null && dualDrive.control.RequiresArmCamera);
-
-            bool spotTwoArm = (activeSuperMode == SuperMode.SingleDrive && singleDrive.leftSpot == spotTwo && singleDrive.leftControl != null && singleDrive.leftControl.RequiresArmCamera) ||
-                              (activeSuperMode == SuperMode.SingleDrive && singleDrive.rightSpot == spotTwo && singleDrive.rightControl != null && singleDrive.rightControl.RequiresArmCamera) ||
-                              (activeSuperMode == SuperMode.DualDrive && dualDrive.spot == spotTwo && dualDrive.control != null && dualDrive.control.RequiresArmCamera);
-
-            if (spotOne != null) spotOne.SetArmPoseEnabled(spotOneArm);
-            if (spotTwo != null) spotTwo.SetArmPoseEnabled(spotTwoArm);
+            StartCoroutine(EnableArmPoseAfterDelay());
+            _armPoseCoroutineStarted = true;
         }
     }
 
@@ -147,14 +142,43 @@ public class ScoutModeManager : MonoBehaviour
         uiSuperMode = mode;
         if (mode == SuperMode.SingleDrive || mode == SuperMode.DualDrive)
         {
-            activeSuperMode = mode; 
+            activeSuperMode = mode;
+        }
+    }
+
+    private IEnumerator EnableArmPoseAfterDelay()
+    {
+        // Wait for 10 frames
+        for (int i = 0; i < 10; i++)
+        {
+            yield return null;
+        }
+
+        // After 10 frames, continuously update arm pose state
+        while (true)
+        {
+            if (!isMenuOpen)
+            {
+                bool spotOneArm = (activeSuperMode == SuperMode.SingleDrive && singleDrive.leftSpot == spotOne && singleDrive.leftControl != null && singleDrive.leftControl.RequiresArmCamera) ||
+                                  (activeSuperMode == SuperMode.SingleDrive && singleDrive.rightSpot == spotOne && singleDrive.rightControl != null && singleDrive.rightControl.RequiresArmCamera) ||
+                                  (activeSuperMode == SuperMode.DualDrive && dualDrive.spot == spotOne && dualDrive.control != null && dualDrive.control.RequiresArmCamera);
+
+                bool spotTwoArm = (activeSuperMode == SuperMode.SingleDrive && singleDrive.leftSpot == spotTwo && singleDrive.leftControl != null && singleDrive.leftControl.RequiresArmCamera) ||
+                                  (activeSuperMode == SuperMode.SingleDrive && singleDrive.rightSpot == spotTwo && singleDrive.rightControl != null && singleDrive.rightControl.RequiresArmCamera) ||
+                                  (activeSuperMode == SuperMode.DualDrive && dualDrive.spot == spotTwo && dualDrive.control != null && dualDrive.control.RequiresArmCamera);
+
+                spotOne?.SetArmPoseEnabled(spotOneArm);
+                spotTwo?.SetArmPoseEnabled(spotTwoArm);
+            }
+
+            yield return null;
         }
     }
 }
 
 public class SingleDriveSuperMode
 {
-    public SpotMode leftSpot, rightSpot;
+    public SpotController leftSpot, rightSpot;
     public OneControllerMode leftControl, rightControl;
     private OneControllerMode _previousLeftControl, _previousRightControl;
 
@@ -225,7 +249,7 @@ public class SingleDriveSuperMode
 
 public class DualDriveSuperMode
 {
-    public SpotMode spot;
+    public SpotController spot;
     public TwoControllerMode control;
     private TwoControllerMode _previousControl;
 

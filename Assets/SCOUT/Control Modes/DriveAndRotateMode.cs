@@ -24,10 +24,10 @@ public class DriveAndRotateMode : TwoControllerMode
     private float prevJoyX = 0f;
     private float lastSnapTime = 0f;
 
-    public override void ControlUpdate(SpotMode spot, ControllerModel leftModel, ControllerModel rightModel)
+    public override void ControlUpdate(SpotController spot, ControllerModel leftModel, ControllerModel rightModel)
     {
         // if in multi-spot mode, show the pivot visualizer to help with move orientation for the whole robot group
-        if (spot is MultiSpotMode)
+        if (spot is MultiSpotController)
             isMultiSpot = true;
         else
             isMultiSpot = false;

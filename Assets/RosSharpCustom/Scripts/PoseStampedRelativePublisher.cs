@@ -54,32 +54,38 @@ namespace RosSharp.RosBridgeClient
             };
         }
 
+        public void SendUpdate()
+        {
+            if (message == null || message.header == null) InitializeMessage();
+            message.header.Update();
+
+            // Go to the dummy finger's position, plus the approximate offset of the end effector
+            Vector3 offsetPosition = PublishedTransform.localRotation * Offset.localPosition;
+            Vector3 newLocation = PublishedTransform.localPosition + offsetPosition;
+
+            // if the motion is too small, don't publish it
+            if ((newLocation - lastPublishedPosition).magnitude < 0.005f &&
+                Quaternion.Angle(PublishedTransform.localRotation, lastPublishedRotation) < 0.1f)
+            {
+                Debug.Log("skipping small motion!");
+                return;
+            }
+
+            // publish the new location if it's sufficiently different
+            lastPublishedPosition = newLocation;
+            lastPublishedRotation = PublishedTransform.localRotation;
+            GetGeometryPoint(newLocation.Unity2Ros(), message.pose.position);
+            GetGeometryQuaternion(PublishedTransform.localRotation.Unity2Ros(), message.pose.orientation);
+
+            Publish(message);
+        }
+
         private void UpdateMessage()
         {
             // Only set location if enabled -- controlled by MoveArm script
             if (enabled)
             {
-                message.header.Update();
-
-                // Go to the dummy finger's position, plus the approximate offset of the end effector
-                Vector3 offsetPosition = PublishedTransform.localRotation * Offset.localPosition;
-                Vector3 newLocation = PublishedTransform.localPosition + offsetPosition;
-
-                // if the motion is too small, don't publish it
-                if ((newLocation - lastPublishedPosition).magnitude < 0.005f &&
-                    Quaternion.Angle(PublishedTransform.localRotation, lastPublishedRotation) < 0.1f)
-                {
-                    Debug.Log("skipping small motion!");
-                    return;
-                }
-
-                // publish the new location if it's sufficiently different
-                lastPublishedPosition = newLocation;
-                lastPublishedRotation = PublishedTransform.localRotation;
-                GetGeometryPoint(newLocation.Unity2Ros(), message.pose.position);
-                GetGeometryQuaternion(PublishedTransform.localRotation.Unity2Ros(), message.pose.orientation);
-
-                Publish(message);
+                SendUpdate();
             }
         }
 

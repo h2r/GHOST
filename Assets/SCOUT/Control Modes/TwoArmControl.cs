@@ -17,7 +17,7 @@ public class TwoArmControl : TwoControllerMode
 
     // --- Private State ---
     private ScoutModeManager modeManager;
-    private SpotMode redSpot, blueSpot;
+    private SpotController redSpot, blueSpot;
     private bool isSwapped = false;
 
     // Relative mode state variables for both arms
@@ -35,7 +35,7 @@ public class TwoArmControl : TwoControllerMode
         modeManager = ScoutModeManager.Instance;
     }
 
-    public override void ControlUpdate(SpotMode spot, ControllerModel leftModel, ControllerModel rightModel)
+    public override void ControlUpdate(SpotController spot, ControllerModel leftModel, ControllerModel rightModel)
     {
         // This mode requires direct access to both spots, so we get them from the manager
         if (redSpot == null || blueSpot == null)
@@ -66,8 +66,8 @@ public class TwoArmControl : TwoControllerMode
             isSwapped = !isSwapped;
         }
 
-        SpotMode leftTargetSpot = isSwapped ? redSpot : blueSpot;
-        SpotMode rightTargetSpot = isSwapped ? blueSpot : redSpot;
+        SpotController leftTargetSpot = isSwapped ? redSpot : blueSpot;
+        SpotController rightTargetSpot = isSwapped ? blueSpot : redSpot;
 
         // --- Locomotion (Left Joystick) ---
         if (leftJoy.magnitude > 0.1f)
@@ -154,7 +154,7 @@ public class TwoArmControl : TwoControllerMode
         UpdateLabels(leftModel, rightModel, leftTargetSpot, rightTargetSpot, leftTrigger, rightTrigger);
     }
 
-    private void UpdateLabels(ControllerModel left, ControllerModel right, SpotMode leftTarget, SpotMode rightTarget, bool leftTrigger, bool rightTrigger)
+    private void UpdateLabels(ControllerModel left, ControllerModel right, SpotController leftTarget, SpotController rightTarget, bool leftTrigger, bool rightTrigger)
     {
         left.joystickLabel = "Fly";
         right.joystickLabel = "Rotate";

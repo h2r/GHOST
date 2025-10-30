@@ -2,7 +2,7 @@ using UnityEngine;
 
 public abstract class TwoControllerMode : NamedOption
 {
-    public abstract void ControlUpdate(SpotMode spot, ControllerModel leftModel, ControllerModel rightModel);
+    public abstract void ControlUpdate(SpotController spot, ControllerModel leftModel, ControllerModel rightModel);
 
     public abstract void AssignDefaultLabels(ControllerModel leftExampleModel, ControllerModel rightExampleModel);
 
