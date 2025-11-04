@@ -154,10 +154,10 @@ public class ArmCameraPositioner : MonoBehaviour
                 break;
             case WristLayoutMode.BothOnRight:
                 PositionCameraOnWrist(armCam1, rightController, commonWristOffset + wristCam1Offset, wristCam1Rotation);
-                PositionCameraOnWrist(armCam2, rightController, commonWristOffset + wristCam2Offset, wristCam2Rotation);
+                PositionCameraOnWrist(armCam2, rightController, 1.5f * commonWristOffset + wristCam2Offset, wristCam2Rotation);
                 break;
             case WristLayoutMode.BothOnLeft:
-                PositionCameraOnWrist(armCam1, leftController, commonWristOffset + wristCam1Offset, wristCam1Rotation);
+                PositionCameraOnWrist(armCam1, leftController, 1.5f * commonWristOffset + wristCam1Offset, wristCam1Rotation);
                 PositionCameraOnWrist(armCam2, leftController, commonWristOffset + wristCam2Offset, wristCam2Rotation);
                 break;
         }
@@ -168,7 +168,7 @@ public class ArmCameraPositioner : MonoBehaviour
         if (camera == null || controller == null) return;
 
         // Position the camera above the controller, regardless of controller rotation
-        camera.position = controller.position + (controller.rotation * commonWristOffset) + offset;
+        camera.position = controller.position;
         camera.localScale = new Vector3(wristFeedWidth, wristFeedHeight, 0.001f);
 
         // Base rotation
@@ -201,5 +201,7 @@ public class ArmCameraPositioner : MonoBehaviour
                 break;
         }
         camera.rotation *= additionalRotation;
+
+        camera.position += camera.rotation * offset;                
     }
 }
