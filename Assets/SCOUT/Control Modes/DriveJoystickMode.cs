@@ -25,7 +25,7 @@ public class DriveJoystickMode : OneControllerMode
         }
         else
         {
-            model.joystickLabel = "Drive / Hold: Body Height";
+            model.joystickLabel = "Drive";
             if (joystick.magnitude > 0.1)
                 spot.Drive(joystick * 0.5f);
         }

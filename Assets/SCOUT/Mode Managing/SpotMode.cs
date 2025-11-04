@@ -39,6 +39,7 @@ public class SpotMode : NamedOption
 
             moveSpot.Move(Vector2.zero, 0, curHeight);
             setGripper.CloseGripper();
+            stowArm.Stow();
         }
     }
 

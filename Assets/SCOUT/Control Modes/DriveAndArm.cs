@@ -64,14 +64,15 @@ public class DriveAndArm : OneControllerMode
         string triggerLabel = "";
         string gripLabel = "";
 
-        if (OVRInput.GetDown(model.axButton))
-            pointCloudCycler.CyclePointClouds();
 
         if (isArmMode) // behave as Arm Mode
         {
             // === Arm Control Mode ===
             if (OVRInput.GetDown(model.byButton))
-                ToggleArmCamera();
+                positionPresetCycler.CyclePresets();
+            if (OVRInput.GetDown(model.axButton))
+                pointCloudCycler.CyclePointClouds();
+
             switch (armControlMode)
             {
                 case ArmControlMode.AbsolutePos:
@@ -115,18 +116,16 @@ public class DriveAndArm : OneControllerMode
             thumbstickLabel = "Arm Mode";
             triggerLabel = "";
             gripLabel = isGripperOpen ? "Close Gripper" : " Open Gripper";
+            model.axLabel = "Cycle PointClouds";
+            model.byLabel = "Cycle Views";
         }
         else // behave as Drive Mode
         {
             // === Drive Mode ===
             isRelativeModeActive = false;
 
-            if (OVRInput.GetDown(model.byButton))
-                positionPresetCycler.CyclePresets();
-
             if (isJoystickPressed)
             {
-                // === Side Trigger Pressed ==
                 // === Body Up/Down Mode ===
                 isRelativeModeActive = false;
 
@@ -139,7 +138,6 @@ public class DriveAndArm : OneControllerMode
             }
             else if (isGripHeld)
             {
-                // === Joystick Pressed ==
                 // === Rotate Mode ===
                 isRelativeModeActive = false;
 
@@ -153,27 +151,27 @@ public class DriveAndArm : OneControllerMode
             else
             {
                 // === Normal Drive Mode ===
-
                 if (joystick.magnitude > 0.1f)
                     spot.Drive(joystick * 0.5f);
 
                 if (OVRInput.Get(model.byButton))
-                    spot.AdjustHeight(0.02f);
+                    spot.AdjustHeight(0.03f);
 
                 if (OVRInput.Get(model.axButton))
-                    spot.AdjustHeight(-0.02f);
+                    spot.AdjustHeight(-0.03f);
 
                 thumbstickLabel = "Drive Spot";
                 triggerLabel = "Hold: Control Arm";
                 gripLabel = "Hold: Rotate";
+                model.axLabel = "Lower Body";
+                model.byLabel = "Raise Body";
             }
         }
 
         model.joystickLabel = thumbstickLabel;
         model.indexLabel = triggerLabel;
         model.gripLabel = gripLabel;
-        model.axLabel = "Cycle PointClouds";
-        model.byLabel = isArmMode ? "Toggle Arm Camera" : "Cycle Views";
+
 
         spot.ChangeGripperColorBasedOnDistance();
     }

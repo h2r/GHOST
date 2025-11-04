@@ -6255,10 +6255,6 @@ PrefabInstance:
       propertyPath: planePublisher2
       value: 
       objectReference: {fileID: 616808292}
-    - target: {fileID: 4923413185986885733, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
-      propertyPath: useWorldGripper
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 4965097520198785087, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -6338,6 +6334,10 @@ PrefabInstance:
     - target: {fileID: 5143370623281230805, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: 'depthSubscribers.Array.data[1]'
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5213878506643380263, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: Topic
+      value: /spot/arm_pose_body_assist_commands
       objectReference: {fileID: 0}
     - target: {fileID: 5545538398101369345, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_Enabled
@@ -6436,12 +6436,12 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7379371671885333330, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
-      propertyPath: useWorldGripper
-      value: 0
+      propertyPath: worldGripperFollowNav
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7665368069982872336, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Topic
-      value: /spot2/arm_pose_body_commands
+      value: /spot2/arm_pose_body_assist_commands
       objectReference: {fileID: 0}
     - target: {fileID: 7851549545679938377, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Topic
@@ -9012,7 +9012,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 703ec150f7f22453e8a793889bbc02dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ThreadedSetGripper
-  Topic: /spot2/gripper_angle_cmd
+  Topic: /spot2/gripper_angle_command
 --- !u!114 &669084030
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11599,7 +11599,7 @@ MonoBehaviour:
   rosConnector: {fileID: 2123763348}
   useVisionPipeline: 0100
   depthCompletionModelFile: Assets/onnx/promptda/promptda-vitl-rotated_optimized_batch2_fp16.onnx
-  enableLogging: 1
+  enableLogging: 0
   enableDebugDumps: 0
 --- !u!1 &973382266
 GameObject:
@@ -12026,7 +12026,7 @@ MonoBehaviour:
   rosConnector: {fileID: 669083912}
   useVisionPipeline: 0100
   depthCompletionModelFile: Assets/onnx/promptda/promptda-vitl-rotated_optimized_batch2_fp16.onnx
-  enableLogging: 1
+  enableLogging: 0
   enableDebugDumps: 0
 --- !u!4 &1028337601
 Transform:
@@ -21959,7 +21959,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 703ec150f7f22453e8a793889bbc02dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ThreadedSetGripper
-  Topic: /spot/gripper_angle_cmd
+  Topic: /spot/gripper_angle_command
 --- !u!114 &2123763436
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22600,18 +22600,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &763351856160939148
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5636627159127194993}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 441fcddae936d184f8196aeed41a9f18, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!224 &767961125950139057
 RectTransform:
   m_ObjectHideFlags: 0
@@ -22750,7 +22738,6 @@ GameObject:
   - component: {fileID: 9175174633188972618}
   - component: {fileID: 2003060975321691261}
   - component: {fileID: 4221212366934204391}
-  - component: {fileID: 6270565872195120014}
   m_Layer: 0
   m_Name: Front Left
   m_TagString: Untagged
@@ -22810,7 +22797,6 @@ GameObject:
   - component: {fileID: 869404359873389375}
   - component: {fileID: 350279308690105079}
   - component: {fileID: 2669327967859836830}
-  - component: {fileID: 5493443060126004878}
   m_Layer: 0
   m_Name: Left
   m_TagString: Untagged
@@ -22992,7 +22978,7 @@ GameObject:
   - component: {fileID: 858927027469304842}
   - component: {fileID: 5598556563780689457}
   m_Layer: 0
-  m_Name: Spot Two Mode
+  m_Name: Spot Two Controller
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -23498,7 +23484,6 @@ GameObject:
   - component: {fileID: 5738171343639689341}
   - component: {fileID: 6167638808531924265}
   - component: {fileID: 642032692383070298}
-  - component: {fileID: 2506206452847482766}
   m_Layer: 0
   m_Name: Right
   m_TagString: Untagged
@@ -23526,18 +23511,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &2506206452847482766
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2437206500368246103}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 441fcddae936d184f8196aeed41a9f18, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!65 &2561068329919422422
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -23687,7 +23660,6 @@ GameObject:
   - component: {fileID: 3558281327371168571}
   - component: {fileID: 171560185396162473}
   - component: {fileID: 1390515425993312375}
-  - component: {fileID: 7038257820313368630}
   m_Layer: 0
   m_Name: Back
   m_TagString: Untagged
@@ -24380,7 +24352,7 @@ MonoBehaviour:
   frontCam2Offset: {x: -0.25, y: 0.5, z: 1}
   wristFeedWidth: 0.2
   wristFeedHeight: 0.15
-  commonWristOffset: {x: 0, y: 0.05, z: 0.025}
+  commonWristOffset: {x: 0, y: 0.08, z: 0.06}
   wristCam1Offset: {x: 0.05, y: 0, z: 0}
   wristCam2Offset: {x: -0.05, y: 0, z: 0}
 --- !u!4 &4021286285207285070
@@ -25067,18 +25039,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &5493443060126004878
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1047904054035699187}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 441fcddae936d184f8196aeed41a9f18, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &5544920777372107914
 Transform:
   m_ObjectHideFlags: 0
@@ -25237,7 +25197,6 @@ GameObject:
   - component: {fileID: 1215300558235714511}
   - component: {fileID: 6415276861809288106}
   - component: {fileID: 5036696365381784415}
-  - component: {fileID: 763351856160939148}
   m_Layer: 0
   m_Name: Front Right
   m_TagString: Untagged
@@ -25482,7 +25441,7 @@ GameObject:
   - component: {fileID: 1433287230236820279}
   - component: {fileID: 5676146346884262863}
   m_Layer: 0
-  m_Name: Spot One Mode
+  m_Name: Spot One Controller
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -25523,18 +25482,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Camera Settings
   superMode: 2
---- !u!114 &6270565872195120014
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 888198325269495503}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 441fcddae936d184f8196aeed41a9f18, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &6305392753868467143
 GameObject:
   m_ObjectHideFlags: 0
@@ -26007,18 +25954,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &7038257820313368630
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2724527777991545595}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 441fcddae936d184f8196aeed41a9f18, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!224 &7107862713069122006
 RectTransform:
   m_ObjectHideFlags: 0
@@ -26984,7 +26919,7 @@ MonoBehaviour:
   actualGripper: {fileID: 0}
   greenMaterial: {fileID: 0}
   redMaterial: {fileID: 0}
-  modeName: Multi Spots
+  modeName: 
   color: {r: 0.5450981, g: 0, b: 0.5450981, a: 1}
   useWorldDummyGripper: 0
   rosConnectorOne: {fileID: 2123763348}
