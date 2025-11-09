@@ -233,6 +233,8 @@ public class LocomotionJoystickMode : OneControllerMode
 
         model.gripLabel = doRotate ? "" : "Hold: Rotate";
         model.indexLabel = doHeightAdjust ? "" : "Hold: Up/Down";
+        model.axLabel = "Cycle PointClouds";
+        model.byLabel = "Cycle ViewPoints";
 
         // Calculate the final delta
         LastMoveDelta = cameraRig.transform.position - positionBeforeUpdate;

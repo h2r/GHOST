@@ -6255,6 +6255,10 @@ PrefabInstance:
       propertyPath: planePublisher2
       value: 
       objectReference: {fileID: 616808292}
+    - target: {fileID: 4923413185986885733, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: useWorldGripper
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4965097520198785087, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -6442,6 +6446,10 @@ PrefabInstance:
     - target: {fileID: 7665368069982872336, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Topic
       value: /spot2/arm_pose_body_assist_commands
+      objectReference: {fileID: 0}
+    - target: {fileID: 7665368069982872336, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7851549545679938377, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Topic
@@ -23329,6 +23337,7 @@ MonoBehaviour:
   options:
   - {fileID: 5676146346884262863}
   - {fileID: 5598556563780689457}
+  - {fileID: 8702690609621383077}
   titlePrefab: {fileID: 3278048788002158022, guid: bfe2b15985d2d437fb47203f0df723ee, type: 3}
   buttonPrefab: {fileID: 1520795838076098022, guid: 39fc7b698942e4ac18e866a2f1f87352, type: 3}
 --- !u!1 &2114352159407822646
@@ -24478,8 +24487,10 @@ MonoBehaviour:
   rightModel: {fileID: 7532563128813087666}
   leftExampleModel: {fileID: 0}
   rightExampleModel: {fileID: 0}
-  spotOne: {fileID: 5676146346884262863}
-  spotTwo: {fileID: 5598556563780689457}
+  spots:
+  - {fileID: 5676146346884262863}
+  - {fileID: 5598556563780689457}
+  - {fileID: 8702690609621383077}
   positionPresetCycler: {fileID: 3361971512141547424}
 --- !u!222 &4294993465357682274
 CanvasRenderer:
@@ -24644,6 +24655,7 @@ MonoBehaviour:
   options:
   - {fileID: 5676146346884262863}
   - {fileID: 5598556563780689457}
+  - {fileID: 8702690609621383077}
   titlePrefab: {fileID: 3278048788002158022, guid: bfe2b15985d2d437fb47203f0df723ee, type: 3}
   buttonPrefab: {fileID: 1520795838076098022, guid: 39fc7b698942e4ac18e866a2f1f87352, type: 3}
 --- !u!23 &4800988145067236181
@@ -25148,7 +25160,7 @@ MonoBehaviour:
   armBase: {fileID: 1915841822}
   actualGripper: {fileID: 1358233130}
   greenMaterial: {fileID: 2100000, guid: 111cc6f7903b08549a403a883034988d, type: 2}
-  redMaterial: {fileID: 2100000, guid: 86f944557dab0f94d8589ad8c224c4ed, type: 2}
+  redMaterial: {fileID: 2100000, guid: ff48f137179e21246b8d76ab5023f4b2, type: 2}
   modeName: Blue Spot
   color: {r: 0, g: 0.046749115, b: 1, a: 0}
   useWorldDummyGripper: 0
@@ -25247,7 +25259,7 @@ MonoBehaviour:
   armBase: {fileID: 2076913407}
   actualGripper: {fileID: 448829935}
   greenMaterial: {fileID: 2100000, guid: 111cc6f7903b08549a403a883034988d, type: 2}
-  redMaterial: {fileID: 2100000, guid: 86f944557dab0f94d8589ad8c224c4ed, type: 2}
+  redMaterial: {fileID: 2100000, guid: ff48f137179e21246b8d76ab5023f4b2, type: 2}
   modeName: Red Spot
   color: {r: 1, g: 0, b: 0, a: 0}
   useWorldDummyGripper: 0
@@ -26919,7 +26931,7 @@ MonoBehaviour:
   actualGripper: {fileID: 0}
   greenMaterial: {fileID: 0}
   redMaterial: {fileID: 0}
-  modeName: 
+  modeName: Multi Spot
   color: {r: 0.5450981, g: 0, b: 0.5450981, a: 1}
   useWorldDummyGripper: 0
   rosConnectorOne: {fileID: 2123763348}
