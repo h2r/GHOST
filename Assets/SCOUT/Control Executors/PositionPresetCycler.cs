@@ -84,6 +84,7 @@ public class PositionPresetCycler : MonoBehaviour
 
     public void CyclePresets()
     {
+        return; // disable preset
         curPresetIndex = (curPresetIndex + 1) % presetOrder.Length;
 
         Vector3 cameraPosition = Vector3.zero;
