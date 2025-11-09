@@ -25160,7 +25160,8 @@ MonoBehaviour:
   armBase: {fileID: 1915841822}
   actualGripper: {fileID: 1358233130}
   greenMaterial: {fileID: 2100000, guid: 111cc6f7903b08549a403a883034988d, type: 2}
-  redMaterial: {fileID: 2100000, guid: ff48f137179e21246b8d76ab5023f4b2, type: 2}
+  grayMaterial: {fileID: 2100000, guid: ff48f137179e21246b8d76ab5023f4b2, type: 2}
+  redMaterial: {fileID: 2100000, guid: 86f944557dab0f94d8589ad8c224c4ed, type: 2}
   modeName: Blue Spot
   color: {r: 0, g: 0.046749115, b: 1, a: 0}
   useWorldDummyGripper: 0
@@ -25259,7 +25260,8 @@ MonoBehaviour:
   armBase: {fileID: 2076913407}
   actualGripper: {fileID: 448829935}
   greenMaterial: {fileID: 2100000, guid: 111cc6f7903b08549a403a883034988d, type: 2}
-  redMaterial: {fileID: 2100000, guid: ff48f137179e21246b8d76ab5023f4b2, type: 2}
+  grayMaterial: {fileID: 2100000, guid: ff48f137179e21246b8d76ab5023f4b2, type: 2}
+  redMaterial: {fileID: 2100000, guid: 86f944557dab0f94d8589ad8c224c4ed, type: 2}
   modeName: Red Spot
   color: {r: 1, g: 0, b: 0, a: 0}
   useWorldDummyGripper: 0
@@ -26930,6 +26932,7 @@ MonoBehaviour:
   armBase: {fileID: 0}
   actualGripper: {fileID: 0}
   greenMaterial: {fileID: 0}
+  grayMaterial: {fileID: 0}
   redMaterial: {fileID: 0}
   modeName: Multi Spot
   color: {r: 0.5450981, g: 0, b: 0.5450981, a: 1}

@@ -6,7 +6,7 @@ public class SpotMode : NamedOption
 {
     public GameObject rosConnector, dummyGripper, readyDummyGripper, worldDummyGripper, armBase;
     public GameObject actualGripper;
-    public Material greenMaterial, redMaterial;
+    public Material greenMaterial, grayMaterial, redMaterial;
     public string modeName;
     public Color color;
 
@@ -22,6 +22,8 @@ public class SpotMode : NamedOption
     private bool isGripperOpen = false;
     private float lastHeightChangeTime = -Mathf.Infinity;
     private const float MIN_HEIGHT_CHANGE_INTERVAL = 0.5f;
+    
+    private float maxArmLength = .73f;
     private WorldLocalGripperSync worldLocalGripperSync;
     private PoseStampedRelativePublisher enableLocalGripperCmd;
     private PoseStampedRelativeGlobalPublisher enableWorldGripperCmd;
@@ -117,14 +119,26 @@ public class SpotMode : NamedOption
 
         // Compute position difference in meters
         Vector3 positionDifference = dummyGripper.transform.position - actualGripper.transform.position;
-        float distanceMeters = positionDifference.magnitude;
+        float dummyTrueGripperDist = positionDifference.magnitude;
+
+        // compute arm base to dummy gripper distance
+        float armBaseToDummyGripperDist = Vector3.Distance(armBase.transform.position, dummyGripper.transform.position);
 
         // Compute orientation difference in angles (degrees)
         float angleDegrees = Quaternion.Angle(actualGripper.transform.rotation, dummyGripper.transform.rotation);
 
-        Debug.Log($"Position difference: {distanceMeters:F3} meters, Orientation difference: {angleDegrees:F1} degrees");
+        Debug.Log($"Position difference: {dummyTrueGripperDist:F3} meters, Orientation difference: {angleDegrees:F1} degrees");
 
-        Material targetMaterial = distanceMeters > 0.01f || angleDegrees > 5f ? redMaterial : greenMaterial;
+        // gripper color change logic
+        // logic 1: if the actual arm matches the dummy gripper within 1 cm and 5 degrees, green
+        Material targetMaterial = dummyTrueGripperDist > 0.01f || angleDegrees > 5f ? grayMaterial : greenMaterial;
+
+        // Logic 2: if the arm base to dummy gripper distance exceeds maxArmLength and the actual gripper is not matching the dummy gripper, red
+        // otherwise, gray.
+        if (targetMaterial != greenMaterial && armBaseToDummyGripperDist > maxArmLength)
+        {
+            targetMaterial = redMaterial;
+        }
 
         foreach (var mr in gripperToUse.GetComponentsInChildren<MeshRenderer>())
         {
