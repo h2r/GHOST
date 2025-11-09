@@ -1207,8 +1207,8 @@ MonoBehaviour:
   averager: {fileID: 0}
   icp_launcher: {fileID: 0}
   depthManager: {fileID: 0}
-  camera_index: 0
   SpotObserverCameraIndex: 0
+  SpotObserverStreamIdx: 0
   mainCameraRot: {fileID: 0}
   range: 1e+13
   color_image: {fileID: 2800000, guid: c42e37b95e20fb04f872bdd0b7807356, type: 3}
@@ -2278,8 +2278,8 @@ MonoBehaviour:
   averager: {fileID: 0}
   icp_launcher: {fileID: 0}
   depthManager: {fileID: 0}
-  camera_index: 0
   SpotObserverCameraIndex: 0
+  SpotObserverStreamIdx: 0
   mainCameraRot: {fileID: 0}
   range: 1e+13
   color_image: {fileID: 2800000, guid: 789577b837423da42a16b064727159f3, type: 3}
@@ -3180,8 +3180,8 @@ MonoBehaviour:
   averager: {fileID: 0}
   icp_launcher: {fileID: 0}
   depthManager: {fileID: 0}
-  camera_index: 0
   SpotObserverCameraIndex: 0
+  SpotObserverStreamIdx: 0
   mainCameraRot: {fileID: 0}
   range: 1e+13
   color_image: {fileID: 2800000, guid: dfea5aa704a473b44a7084371cd065fb, type: 3}
@@ -3944,8 +3944,8 @@ MonoBehaviour:
   averager: {fileID: 0}
   icp_launcher: {fileID: 0}
   depthManager: {fileID: 0}
-  camera_index: 0
   SpotObserverCameraIndex: 0
+  SpotObserverStreamIdx: 0
   mainCameraRot: {fileID: 0}
   range: 1e+13
   color_image: {fileID: 2800000, guid: 253e55a43371139418b8b85ea7658166, type: 3}
@@ -4500,8 +4500,8 @@ MonoBehaviour:
   averager: {fileID: 0}
   icp_launcher: {fileID: 0}
   depthManager: {fileID: 0}
-  camera_index: 0
   SpotObserverCameraIndex: 0
+  SpotObserverStreamIdx: 0
   mainCameraRot: {fileID: 0}
   range: 1e+13
   color_image: {fileID: 2800000, guid: b894a62b0d72ca0479753bc424b7fe2b, type: 3}
@@ -5820,8 +5820,8 @@ MonoBehaviour:
   averager: {fileID: 0}
   icp_launcher: {fileID: 0}
   depthManager: {fileID: 0}
-  camera_index: 0
   SpotObserverCameraIndex: 0
+  SpotObserverStreamIdx: 0
   mainCameraRot: {fileID: 0}
   range: 1e+13
   color_image: {fileID: 2800000, guid: 3c04cbdd3edffc0448f55c44039436fa, type: 3}
@@ -6898,7 +6898,7 @@ MonoBehaviour:
   _rigidbody: {fileID: 2466760132267647474}
   DisplayInertiaGizmo: 0
   rigidbodyDataSource: 0
-  Mass: 1.9046991
+  Mass: 1.904699
   CenterOfMass: {x: 0, y: 0, z: 0}
   InertiaTensor: {x: 1, y: 1, z: 1}
   InertiaTensorRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -8007,8 +8007,8 @@ MonoBehaviour:
   averager: {fileID: 0}
   icp_launcher: {fileID: 0}
   depthManager: {fileID: 0}
-  camera_index: 0
   SpotObserverCameraIndex: 0
+  SpotObserverStreamIdx: 0
   mainCameraRot: {fileID: 0}
   range: 1e+13
   color_image: {fileID: 2800000, guid: 253e55a43371139418b8b85ea7658166, type: 3}
@@ -9465,8 +9465,8 @@ MonoBehaviour:
   averager: {fileID: 0}
   icp_launcher: {fileID: 0}
   depthManager: {fileID: 0}
-  camera_index: 0
   SpotObserverCameraIndex: 0
+  SpotObserverStreamIdx: 0
   mainCameraRot: {fileID: 0}
   range: 1e+13
   color_image: {fileID: 2800000, guid: 500926c50d135d14f88f797ffc7a96f3, type: 3}

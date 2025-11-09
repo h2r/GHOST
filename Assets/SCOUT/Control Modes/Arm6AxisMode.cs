@@ -188,6 +188,7 @@ public class Arm6AxisMode : OneControllerMode
             }
             model.gripLabel = gripperOpen ? "Close Gripper" : "Open Gripper";
             model.byLabel = armCamera ? "Arm Cam: On" : "Arm Cam: Off";
+            model.axLabel = "Cycle Pointclouds";
 
             spot.ChangeGripperColorBasedOnDistance();
         }

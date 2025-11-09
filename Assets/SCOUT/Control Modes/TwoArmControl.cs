@@ -40,15 +40,15 @@ public class TwoArmControl : TwoControllerMode
         // This mode requires direct access to both spots, so we get them from the manager
         if (redSpot == null || blueSpot == null)
         {
-            if (modeManager.spotOne.color == Color.red)
+            if (modeManager.spots[0].color == Color.red)
             {
-                redSpot = modeManager.spotOne;
-                blueSpot = modeManager.spotTwo;
+                redSpot = modeManager.spots[0];
+                blueSpot = modeManager.spots[1];
             }
             else
             {
-                redSpot = modeManager.spotTwo;
-                blueSpot = modeManager.spotOne;
+                redSpot = modeManager.spots[1];
+                blueSpot = modeManager.spots[0];
             }
         }
 
