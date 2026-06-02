@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
@@ -22,8 +21,7 @@ public class ModeMenu : MonoBehaviour
     public Image RightGripperIcon;
     public Image RightJoystickIcon;
 
-    private bool ArmMode = false;
-    private bool DriveMode = false;
+    private bool driveMode = false;
     private bool textHidden = false;
 
     void Start()
@@ -67,17 +65,15 @@ public class ModeMenu : MonoBehaviour
     void SwitchText()
     {
 
-        if (!DriveMode) //we start in drive mode
+        if (!driveMode) //we start in drive mode
         {
-            DriveMode = true;
-            ArmMode = false;
+            driveMode = true;
             DisplayIcons();
             DriveText();
         }
         else // else we are in arm mode
         {
-            ArmMode = true;
-            DriveMode = false;
+            driveMode = false;
             DisplayIcons();
             ArmText();
         }
@@ -151,7 +147,7 @@ public class ModeMenu : MonoBehaviour
         }
         else
         {
-            if (DriveMode)
+            if (driveMode)
             {
                 LeftTriggerIcon.enabled = false;
                 RightTriggerIcon.enabled = false;

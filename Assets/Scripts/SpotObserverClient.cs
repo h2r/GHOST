@@ -180,6 +180,7 @@ public class SpotObserverClient : MonoBehaviour
     private const int DefaultCameraWidth = 640;
     private const int DefaultCameraHeight = 480;
     private const int ColorRegistrationBytesPerPixel = 4;
+    // Don't trip: RGB24 is 4 bytes per pixel despite what you'd think
     private const int DepthBytesPerPixel = 4;
 
     private bool RequiresVisionPipeline()
@@ -418,7 +419,6 @@ public class SpotObserverClient : MonoBehaviour
                 depth_resources[stream][i] = depth_buffers[stream][i].GetNativeBufferPtr();
 
                 // Register textures with the Spot observer
-                // Don't trip: RGB24 still needs 4 bytes per pixel for this native readback path.
                 int colorBytes = DefaultCameraWidth * DefaultCameraHeight * ColorRegistrationBytesPerPixel;
                 int depthBytes = DefaultCameraWidth * DefaultCameraHeight * DepthBytesPerPixel;
                 if (!SOb_RegisterUnityReadbackBuffers(robot_id, stream_id, cams[i], rgb_resources[stream][i], depth_resources[stream][i], colorBytes, depthBytes))
@@ -428,28 +428,21 @@ public class SpotObserverClient : MonoBehaviour
 
             }
 
-            Debug.Log("Successfully started streaming camera feeds from Spot robot.");
-
             if (!isConnected)
             {
                 SOb_DisconnectFromSpot(robot_id);
                 robot_id = -1;
                 return;
             }
+            
+            Debug.Log("Successfully started streaming camera feeds from Spot robot " + RobotIP + " for stream index " + stream + ".");
 
             bool shouldUseVisionPipeline = useVisionPipeline != null && stream < useVisionPipeline.Length && useVisionPipeline[stream];
             if (shouldUseVisionPipeline)
             {
                 launch_vision_pipeline(stream);
-            }
-
-            //if (!SOb_PushNextImageSetToUnityBuffers(robot_id))
-            //{
-            //    //Debug.LogError("Failed to read back image set to Unity buffers.");
-            //    return;
-            //}
-            Debug.Log("Successfully registered and read camera feeds from Spot robot.");
-
+                Debug.Log("Started the vision pipeline for robot " + RobotIP + " for stream index " + stream + ".");
+            }            
         }
     }
 
@@ -514,11 +507,11 @@ public class SpotObserverClient : MonoBehaviour
         robot_id = -1;
         isConnected = false;
 
-        if (model != IntPtr.Zero)
-        {
-            SOb_UnloadModel(model);
-            model = IntPtr.Zero;
-        }
+        // if (model != IntPtr.Zero)
+        // {
+        //     SOb_UnloadModel(model);
+        //     model = IntPtr.Zero;
+        // }
 
         if (SpotCamToIdx != null)
         {

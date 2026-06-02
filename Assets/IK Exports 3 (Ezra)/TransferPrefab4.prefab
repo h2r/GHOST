@@ -10128,7 +10128,6 @@ MonoBehaviour:
   compute: {fileID: 7200000, guid: 7c75016ce147e8a4aadb1b0132241f05, type: 3}
   target: {fileID: 0}
   auxTarget: {fileID: 0}
-  noise_range: 0
   downsample: 1
   height: 240
   width: 424
@@ -10136,7 +10135,6 @@ MonoBehaviour:
   CY: 0
   FX: 0
   FY: 0
-  facedAngle: 0
   t: 0
   size_scale: 0.01
   use_saved_meshes: 0
@@ -10504,7 +10502,6 @@ MonoBehaviour:
   compute: {fileID: 7200000, guid: 7c75016ce147e8a4aadb1b0132241f05, type: 3}
   target: {fileID: 0}
   auxTarget: {fileID: 0}
-  noise_range: 0
   downsample: 1
   height: 240
   width: 424
@@ -10512,7 +10509,6 @@ MonoBehaviour:
   CY: 0
   FX: 0
   FY: 0
-  facedAngle: 0
   t: 0
   size_scale: 0.01
   use_saved_meshes: 0
@@ -11291,7 +11287,6 @@ MonoBehaviour:
   compute: {fileID: 7200000, guid: 7c75016ce147e8a4aadb1b0132241f05, type: 3}
   target: {fileID: 0}
   auxTarget: {fileID: 0}
-  noise_range: 0
   downsample: 1
   height: 480
   width: 640
@@ -11299,7 +11294,6 @@ MonoBehaviour:
   CY: 0
   FX: 0
   FY: 0
-  facedAngle: 0
   t: 0
   size_scale: 0.01
   use_saved_meshes: 0

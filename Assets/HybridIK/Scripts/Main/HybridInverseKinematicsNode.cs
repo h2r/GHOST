@@ -40,7 +40,6 @@ public class HybridInverseKinematicsNode : MonoBehaviour
 
     [HideInInspector]
     public List<HybridIKJoint> nodes;
-    private bool isInitialized = false;
 
     [Header("Joint Limits")]
     public bool enableJointLimits = true;
@@ -316,8 +315,6 @@ public class HybridInverseKinematicsNode : MonoBehaviour
             }
         }
 
-
-        isInitialized = true;
     }
 
     public void ResetToZeroPose()
@@ -879,7 +876,6 @@ public class HybridInverseKinematicsNode : MonoBehaviour
     }
 
     List<Vector3> IKHullVerts = null;
-    List<Vector3> IKHullNormals = null;
     List<int> IKHullTris = null;
     bool constraintsIKHullGenerated = false;
 

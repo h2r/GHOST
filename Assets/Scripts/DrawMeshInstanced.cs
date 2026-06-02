@@ -1,30 +1,14 @@
-using JetBrains.Annotations;
-using RosSharp.RosBridgeClient;
-using RosSharp.RosBridgeClient.MessageTypes.Nav;
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
-using Unity.InferenceEngine;
-using Unity.Mathematics;
-using Unity.VisualScripting;
 using UnityEngine;
-using static RosSharp.Urdf.Link.Visual.Material;
 using static SpotObserverClient;
 using Debug = UnityEngine.Debug;
-//using System;
 
 
 public class DrawMeshInstanced : MonoBehaviour
 {
-    public DepthAveraging averager;
-
-    public ICPLauncher icp_launcher;
-    float3[] current_icp_res;
-    private Matrix4x4 icp_trans;
-
     public DepthManager depthManager;
     public SpotCamera SpotObserverCameraIndex;
     public int SpotObserverStreamIdx;
@@ -34,8 +18,6 @@ public class DrawMeshInstanced : MonoBehaviour
     public float range;
 
     public Texture2D color_image;
-    public Texture2D depth_image;
-    public Tensor depth_tensor;
 
     public int imageScriptIndex;
 
@@ -44,21 +26,15 @@ public class DrawMeshInstanced : MonoBehaviour
     public SpotObserverClient spotObserverClient;
     public PoseConsistentVideoDepth CVD;
 
-    public bool savePointCloud;                 // allow user to save point cloud
-
     public ComputeShader compute;
 
     // Renderer-owned float3 point/depth output consumed by the point cloud compute shader.
     private ComputeBuffer depth_ar_buffer;
-    // Raw scalar depth input. Borrowed from SpotObserverClient in the live path;
-    // points at renderer-owned depthBuffer when rendering saved meshes.
-    private ComputeBuffer currentRawDepthBuffer;
     private ComputeBuffer meshPropertiesBuffer;
     private ComputeBuffer argsBuffer;
     private ComputeBuffer depthBuffer;
     private ComputeBuffer sparseBuffer;
     private ComputeBuffer edge_buffer;
-    private ComputeBuffer icp_res_buffer;
 
     private ComputeBuffer optical_flow_buffer;
 
@@ -68,36 +44,26 @@ public class DrawMeshInstanced : MonoBehaviour
     private Mesh mesh;
     private Bounds bounds;
 
-    public float noise_range;
-
-    private uint total_population;
     private uint population;
     public uint downsample;
     public uint height;
     public uint width;
-    public float facedAngle;
     public float t;
-    public float pS;    // point scalar
-    //public uint counter;
-    //private uint numUpdates;
-    public float size_scale; //hack to current pointcloud viewing
+    public float size_scale;
 
-    public bool use_saved_meshes = false; // boolean that determines whether to use saved meshes or read in new scene data from ROS
+    public bool use_saved_meshes = false;
     private float[] depth_ar_saved;
 
     private bool freezeCloud = false; // boolean that freezes this point cloud
     private float[] depth_ar;
 
-    private MeshProperties[] globalProps;
+    // Arm motion temporarily pauses completion so old frames are not fused into a moving cloud.
+    private bool start_completion = true;
+    private bool ready_to_freeze = true;
+    private bool freeze_lock = false;
 
-    bool start_completion = true;
-    bool ready_to_freeze = true;
-    bool freeze_lock = false;
-
-    //private MeshProperties[] generalUseProps;
-
-    int kernel;
-    int edge_kernel;
+    private int kernel;
+    private int edge_kernel;
     private int frameWidth;
     private int frameHeight;
     private int frameSize;
@@ -109,15 +75,7 @@ public class DrawMeshInstanced : MonoBehaviour
 
     public bool enableDebugLogging = false;
 
-    // Downstream GPU consumers may bind this buffer, but must not release it.
-    public ComputeBuffer CurrentDepthBuffer => currentRawDepthBuffer;
-    // Renderer-owned float3 output for consumers that need point-space depth.
-    public ComputeBuffer CurrentPointDepthBuffer => depth_ar_buffer;
-    public bool HasCurrentDepthBuffer => currentRawDepthBuffer != null && hasFrameData;
-    
-
-    // Mesh Properties struct to be read from the GPU.
-    // Size() is a convenience function which returns the stride of the struct.
+    // Keep this layout in sync with MeshProperties in PointcloudComputeShader.compute.
     private struct MeshProperties
     {
         public Vector4 pos;
@@ -157,17 +115,9 @@ public class DrawMeshInstanced : MonoBehaviour
 
     private void Setup()
     {
-        pS = 1.0f;
         kernel = compute.FindKernel("CSMain");
         edge_kernel = compute.FindKernel("EdgeDetector");
 
-        //size_scale = 0.002f;
-        //width = 640;
-        //height = 480;
-        //width = 424;
-        //height = 240;
-        //counter = 0;
-        //numUpdates = 0;
         if (width == 0)
             width = 640;
         if (height == 0)
@@ -181,14 +131,13 @@ public class DrawMeshInstanced : MonoBehaviour
         frameWidth = (int)width;
         frameHeight = (int)height;
         frameSize = frameWidth * frameHeight;
-        total_population = height * width;
-        population = total_population / downsample;
+        uint totalPopulation = height * width;
+        population = totalPopulation / downsample;
         if (population == 0)
             population = 1;
         lastFrameSequence = ulong.MaxValue;
         hasFrameData = false;
         savedMeshUploaded = false;
-        currentRawDepthBuffer = null;
 
         if (CVD != null)
         {
@@ -196,12 +145,8 @@ public class DrawMeshInstanced : MonoBehaviour
             CVD.Height = frameHeight;
         }
 
-        Mesh mesh = CreateQuad(size_scale, size_scale);
-        this.mesh = mesh;
+        mesh = CreateQuad(size_scale, size_scale);
 
-        //generalUseProps = new MeshProperties[population];
-
-        // Use saved meshes
         if (use_saved_meshes)
         {
             using (var stream = File.Open("Assets/PointClouds/mesh_array_" + imageScriptIndex, FileMode.Open))
@@ -217,9 +162,6 @@ public class DrawMeshInstanced : MonoBehaviour
                 }
             }
 
-            depth_ar = new float[frameSize];
-            Array.Copy(depth_ar_saved, depth_ar, Mathf.Min(depth_ar_saved.Length, depth_ar.Length));
-
             byte[] bytes;
             using (var stream = File.Open("Assets/PointClouds/Color_" + imageScriptIndex + ".png", FileMode.Open))
             {
@@ -231,40 +173,20 @@ public class DrawMeshInstanced : MonoBehaviour
             color_image = new Texture2D(1, 1);
             color_image.LoadImage(bytes);
             ownsColorImage = true;
-
-            depth_image = new Texture2D((int)width, (int)height, TextureFormat.RFloat, false, false);
-            depth_image.SetPixelData(depth_ar, 0);
-        }
-        else
-        {
-            Destroy(depth_image);
-            depth_ar = new float[frameSize];
-            depth_image = new Texture2D((int)width, (int)height, TextureFormat.RFloat, false, false);
-            ownsColorImage = false;
         }
 
-        globalProps = GetProperties();
+        depth_ar = new float[frameSize];
+        ownsColorImage = use_saved_meshes;
 
-        icp_trans = Matrix4x4.identity;
-
-        //inp_stm.Close();
-
-        // Boundary surrounding the meshes we will be drawing.  Used for occlusion.
+        // Bounds only need to cover the cloud; the indirect draw is culled against this box.
         bounds = new Bounds(transform.position, Vector3.one * (range + 1));
 
-        // Pass 1 / width and 1 / height to material shader
-        // [2023-10-30][JHT] Why do we need to do this? That data is (almost) all in 'screenData' that gets passed in later.
         material.SetFloat("width", 1.0f / width);
         material.SetFloat("height", 1.0f / height);
-        material.SetInt("w", (int)width);
-        //material.SetFloat("a",target.rotation.y * 0);
-        //Debug.Log(auxTarget.eulerAngles);
-        material.SetFloat("a", get_target_rota());
-        material.SetFloat("pS", pS);
+        material.SetFloat("a", GetTargetRotationScalar());
 
         Vector4 intr = GetIntrinsicsVector();
         compute.SetVector("intrinsics", intr);
-        material.SetVector("intrinsics", intr);
 
         Vector4 screenData = GetScreenDataVector();
         compute.SetVector("screenData", screenData);
@@ -276,17 +198,12 @@ public class DrawMeshInstanced : MonoBehaviour
 
         InitializeBuffers();
 
-        meshPropertiesBuffer.SetData(globalProps);
-
-        // Hack: Initialize sparsebuffer to 0
-        for (int i = 0; i < frameSize; i++)
-        {
-            depth_ar[i] = 0.0f;
-        }
+        // Sparse fallback is currently a zero-depth mask for rejected pixels.
+        Array.Clear(depth_ar, 0, depth_ar.Length);
         sparseBuffer.SetData(depth_ar);
     }
 
-    private bool process_depth(ComputeBuffer in_depth)
+    private bool ProcessDepth(ComputeBuffer in_depth)
     {
         if (in_depth == null || CVD == null || depth_ar_buffer == null)
             return false;
@@ -301,23 +218,21 @@ public class DrawMeshInstanced : MonoBehaviour
         return CVD.WriteConsistentDepth(in_depth, depth_ar_buffer, tform, optical_flow_buffer, activateCVD, edgethreshold, activateDepthCompletion, cvdWeight);
     }
 
-    private float get_target_rota()
+    private float GetTargetRotationScalar()
     {
-        //Debug.Log(convert_angle(target.eulerAngles.y).ToString() + "     " + convert_angle(auxTarget.eulerAngles.y).ToString());
         if (target == null)
         {
             return 0.0f;
         }
-        if (auxTarget == null) { return convert_angle(target.eulerAngles.y) * 2; }
+        if (auxTarget == null) { return ConvertAngle(target.eulerAngles.y) * 2; }
         else
         {
-            return convert_angle(target.eulerAngles.y) + convert_angle(auxTarget.eulerAngles.y);
+            return ConvertAngle(target.eulerAngles.y) + ConvertAngle(auxTarget.eulerAngles.y);
         }
     }
 
-    private float convert_angle(float a) // Unity is giving me the sin of an angle when I just want the angle
+    private float ConvertAngle(float a)
     {
-        //a = (a + 180) % 360 - 180;
         return a * (float)0.00872;
     }
 
@@ -325,18 +240,11 @@ public class DrawMeshInstanced : MonoBehaviour
     {
         MeshProperties[] properties = new MeshProperties[population];
 
-        if (width == 0 || height == 0 || depth_ar == null || depth_ar.Length == 0)
-        {
-            return properties;
-        }
-
         Vector4 initialValue = new Vector4( 0, 0, 0, 1 );
 
         for (uint pop_i = 0; pop_i < population; pop_i++)
         {
-            // TODO: Handle downsampling correctly
             properties[pop_i].pos = initialValue;
-
         }
 
         return properties;
@@ -344,14 +252,9 @@ public class DrawMeshInstanced : MonoBehaviour
 
     private void InitializeBuffers()
     {
-
         depth_ar_buffer = new ComputeBuffer(frameSize, sizeof(float) * 3);
-        icp_res_buffer = new ComputeBuffer(160 * 120, sizeof(float) * 3);
 
-        // Argument buffer used by DrawMeshInstancedIndirect.
         uint[] args = new uint[5] { 0, 0, 0, 0, 0 };
-        // Arguments for drawing mesh.
-        // 0 == number of triangle indices, 1 == population, others are only relevant if drawing submeshes.
         args[0] = mesh.GetIndexCount(0);
         args[1] = population;
         args[2] = mesh.GetIndexStart(0);
@@ -386,16 +289,14 @@ public class DrawMeshInstanced : MonoBehaviour
     private void SetGOPosition()
     {
         Matrix4x4 pose = Matrix4x4.TRS(transform.position, transform.rotation, Vector3.one);
-        compute.SetMatrix("_GOPose", pose);
-        compute.SetMatrix("_ICPTrans", icp_trans);
         material.SetMatrix("_GOPose", pose);
         bounds.center = transform.position;
         SetBillboardBasis();
-        // compute.SetMatrix("_GOPose", Matrix4x4.TRS(Vector3.zero, transform.rotation, new Vector3(1, 1, 1)));
     }
 
     private void SetBillboardBasis()
     {
+        // Quad orientation is applied in the material shader, so CPU mesh data stays static.
         Vector3 localNormal = transform.InverseTransformDirection(get_normal()).normalized;
         if (localNormal.sqrMagnitude < 1e-6f)
             localNormal = -Vector3.forward;
@@ -416,9 +317,6 @@ public class DrawMeshInstanced : MonoBehaviour
 
     private void SetProperties()
     {
-        //material.SetFloat("a", get_target_rota());
-        //material.SetFloat("pS", pS);
-        //depthBuffer.SetData(depth_ar);
         material.SetBuffer("_Properties", meshPropertiesBuffer);
         compute.SetBuffer(kernel, "_Properties", meshPropertiesBuffer);
 
@@ -427,28 +325,13 @@ public class DrawMeshInstanced : MonoBehaviour
         compute.SetBuffer(edge_kernel, "_Edge", edge_buffer);
         compute.SetBuffer(kernel, "_Edge", edge_buffer);
 
-        bool showSampling = depthManager != null && depthManager.show_sampling_res;
-        compute.SetBool("show_sampling_res", showSampling);
-        if (showSampling && icp_launcher != null)
-        {
-            current_icp_res = icp_launcher.get_current_float3(imageScriptIndex);
-            if (current_icp_res != null)
-            {
-                if (enableDebugLogging)
-                    Debug.Log(current_icp_res.Length);
-                icp_res_buffer.SetData(current_icp_res);
-            }
-        }
-        compute.SetBuffer(kernel, "_ICP_Res", icp_res_buffer);
-
         compute.SetBuffer(kernel, "_Sparse", sparseBuffer);
-
 
         if (color_image != null)
             material.SetTexture("_colorMap", color_image);
     }
 
-    private Texture2D copy_texture(Texture2D input_texture)
+    private Texture2D CopyTexture(Texture2D input_texture)
     {
         if (input_texture == null)
             return null;
@@ -457,11 +340,6 @@ public class DrawMeshInstanced : MonoBehaviour
         Graphics.CopyTexture(input_texture, copy);
 
         return copy;
-    }
-
-    public float[] get_depth()
-    {
-        return depth_ar;
     }
 
     private bool UpdateFrameData()
@@ -473,7 +351,6 @@ public class DrawMeshInstanced : MonoBehaviour
 
         Vector4 intr = GetIntrinsicsVector();
         compute.SetVector("intrinsics", intr);
-        material.SetVector("intrinsics", intr);
 
         Vector4 screenData = GetScreenDataVector();
 
@@ -504,8 +381,7 @@ public class DrawMeshInstanced : MonoBehaviour
                 depthBuffer.SetData(depth_ar);
             }
 
-            currentRawDepthBuffer = depthBuffer;
-            if (!process_depth(currentRawDepthBuffer))
+            if (!ProcessDepth(depthBuffer))
                 return false;
             savedMeshUploaded = true;
             hasFrameData = true;
@@ -522,13 +398,11 @@ public class DrawMeshInstanced : MonoBehaviour
             return false;
         }
 
-        // Borrow texture/tensor/buffer from SpotObserverClient. Do not destroy or release them here.
+        // Borrow texture and depth buffer from SpotObserverClient. Do not destroy or release them here.
         color_image = frame.ColorTexture;
-        depth_tensor = frame.DepthTensor;
-        currentRawDepthBuffer = frame.DepthBuffer;
         lastFrameSequence = frame.Sequence;
 
-        if (!process_depth(currentRawDepthBuffer))
+        if (!ProcessDepth(frame.DepthBuffer))
             return false;
         hasFrameData = true;
         return true;
@@ -555,7 +429,6 @@ public class DrawMeshInstanced : MonoBehaviour
 
             compute.SetFloat("edgeThreshold", depthManager != null ? depthManager.edgeThreshold : 0.0f);
             compute.SetFloat("meanThreshold", depthManager != null ? depthManager.meanThreshold : 0.0f);
-            compute.SetInt("maxNeighbourNum", depthManager != null ? depthManager.maxNeighbourNum : 0);
             compute.SetBool("activate_edge_detection", depthManager != null && depthManager.activate_edge_detection);
 
             compute.Dispatch(edge_kernel, Mathf.CeilToInt(frameWidth / 16f), Mathf.CeilToInt(frameHeight / 16f), 1);
@@ -565,41 +438,9 @@ public class DrawMeshInstanced : MonoBehaviour
         Graphics.DrawMeshInstancedIndirect(mesh, 0, material, bounds, argsBuffer);
     }
 
-    private Vector4 pixel_to_vision_frame(uint i, uint j, float depth)
-    {
-        //int CX = 320;
-        //int CY = 240;
-
-        //float FX = (float)552.029101;
-        //float FY = (float)552.029101;
-
-        Vector4 intrinsics = GetIntrinsicsVector();
-        float x = (j - intrinsics.x) * depth / intrinsics.z;
-        float y = (i - intrinsics.y) * depth / intrinsics.w;
-
-        Vector4 ret = new Vector4(x, y, depth, 1f);
-        return (ret);
-
-    }
-
     public Matrix4x4 get_current_pose()
     {
         return Matrix4x4.TRS(transform.position, transform.rotation, new Vector3(1, 1, 1));
-    }
-
-    public Vector4 get_screenData()
-    {
-        return GetScreenDataVector();
-    }
-
-    public Vector4 get_intrinsics()
-    {
-        return GetIntrinsicsVector();
-    }
-
-    public bool get_ready_to_freeze()
-    {
-        return start_completion;
     }
 
     private IEnumerator ToggleReadyToFreezeAfterDelay(float waitTime)
@@ -611,7 +452,6 @@ public class DrawMeshInstanced : MonoBehaviour
         start_completion = true;
         if (enableDebugLogging)
             Debug.LogWarning("DEPTH IS READY AGAIN");
-        averager?.ClearBuffer();
         freeze_lock = false;
     }
 
@@ -628,7 +468,7 @@ public class DrawMeshInstanced : MonoBehaviour
         start_completion = false;
         if (enableDebugLogging)
             Debug.LogWarning("SET TO FALSE");
-        if (ready_to_freeze & !freeze_lock)
+        if (ready_to_freeze && !freeze_lock)
         {
             StartCoroutine(ToggleReadyToFreezeAfterDelay(4.0f));
             StartCoroutine(ToggleReadyToDepthAfterDelay(4.0f));
@@ -644,85 +484,11 @@ public class DrawMeshInstanced : MonoBehaviour
 
         var relRot = Quaternion.Euler(0f, mainCameraRot.rotation.eulerAngles.y, 0f);
         var res = relRot * new Vector3(0f, 0f, -1.0f);
-        //Debug.LogWarning(res.ToString());
         return res.normalized;
     }
 
-    //private Mesh CreateQuad(float width = 1f, float height = 1f, float depth = 1f)
-    //{
-    //    // Create a quad mesh.
-    //    var mesh = new Mesh();
-
-    //    float w = width * .5f;
-    //    float h = height * .5f;
-    //    float d = depth * .5f;
-
-    //    var vertices = new Vector3[8] {
-    //        new Vector3(-w, -h, -d),
-    //        new Vector3(w, -h, -d),
-    //        new Vector3(w, h, -d),
-    //        new Vector3(-w, h, -d),
-    //        new Vector3(-w, -h, d),
-    //        new Vector3(w, -h, d),
-    //        new Vector3(w, h, d),
-    //        new Vector3(-w, h, d)
-    //    };
-
-    //    var tris = new int[3 * 2 * 6] {
-    //        0, 3, 1,
-    //        3, 2, 1,
-
-    //        0,4,5,
-    //        0,5,1,
-
-    //        1,5,2,
-    //        2,5,6,
-
-    //        7,3,6,
-    //        3,6,2,
-
-    //        0,4,3,
-    //        4,7,3,
-
-    //        4,7,5,
-    //        7,5,6
-    //    };
-
-    //    var normals = new Vector3[8] {
-    //        -Vector3.forward,
-    //        -Vector3.forward,
-    //        -Vector3.forward,
-    //        -Vector3.forward,
-    //        -Vector3.forward,
-    //        -Vector3.forward,
-    //        -Vector3.forward,
-    //        -Vector3.forward,
-
-    //    };
-
-    //    var uv = new Vector2[8] {
-    //        new Vector2(0, 0),
-    //        new Vector2(1, 0),
-    //        new Vector2(1, 1),
-    //        new Vector2(0, 1),
-    //        new Vector2(0, 0),
-    //        new Vector2(1, 0),
-    //        new Vector2(1, 1),
-    //        new Vector2(0, 1),
-    //    };
-
-    //    mesh.vertices = vertices;
-    //    mesh.triangles = tris;
-    //    mesh.normals = normals;
-    //    mesh.uv = uv;
-
-    //    return mesh;
-    //}
-
-    // Actually a cube, not a quad
     private Mesh CreateQuad(float width = 1f, float height = 1f)
     {
-        // Create a quad mesh.
         var mesh = new Mesh();
 
         float w = width * .5f;
@@ -735,9 +501,7 @@ public class DrawMeshInstanced : MonoBehaviour
         };
 
         var tris = new int[6] {
-            // lower left tri.
             0, 2, 1,
-            // lower right tri
             2, 3, 1
         };
 
@@ -773,7 +537,8 @@ public class DrawMeshInstanced : MonoBehaviour
         if (freezeCloud && color_image != null)
         {
             DestroyFrozenColorImage();
-            frozenColorImage = copy_texture(color_image);
+            // Live frame textures are owned by SpotObserverClient; frozen clouds need their own snapshot.
+            frozenColorImage = CopyTexture(color_image);
             if (frozenColorImage != null)
             {
                 color_image = frozenColorImage;
@@ -804,15 +569,18 @@ public class DrawMeshInstanced : MonoBehaviour
         }
     }
 
-    private void Start()
+    private static void ReleaseBuffer(ref ComputeBuffer buffer)
     {
-        // See OnEnable
+        if (buffer == null)
+            return;
+
+        buffer.Release();
+        buffer = null;
     }
 
-
+    TESTMEPLEASE!
     private void OnDisable()
     {
-        // Release gracefully.
         DestroyFrozenColorImage();
 
         if (mesh != null)
@@ -821,67 +589,21 @@ public class DrawMeshInstanced : MonoBehaviour
             mesh = null;
         }
 
-        if (depth_image != null)
-        {
-            Destroy(depth_image);
-            depth_image = null;
-        }
-
         if (ownsColorImage && color_image != null)
         {
             Destroy(color_image);
         }
         color_image = null;
         ownsColorImage = false;
-        currentRawDepthBuffer = null;
         hasFrameData = false;
 
-        if (meshPropertiesBuffer != null)
-        {
-            meshPropertiesBuffer.Release();
-        }
-        meshPropertiesBuffer = null;
-
-        if (argsBuffer != null)
-        {
-            argsBuffer.Release();
-        }
-        argsBuffer = null;
-
-        if (depth_ar_buffer != null)
-            depth_ar_buffer.Release();
-
-        depth_ar_buffer = null;
-
-        if (depthBuffer != null)
-        {
-            depthBuffer.Release();
-        }
-        depthBuffer = null;
-
-        if (sparseBuffer != null)
-        {
-            sparseBuffer.Release();
-        }
-        sparseBuffer = null;
-
-        if (edge_buffer != null)
-        {
-            edge_buffer.Release();
-        }
-        edge_buffer = null;
-
-        if (icp_res_buffer != null)
-        {
-            icp_res_buffer.Release();
-        }
-        icp_res_buffer = null;
-
-        if (optical_flow_buffer != null)
-        {
-            optical_flow_buffer.Release();
-        }
-        optical_flow_buffer = null;
+        ReleaseBuffer(ref meshPropertiesBuffer);
+        ReleaseBuffer(ref argsBuffer);
+        ReleaseBuffer(ref depth_ar_buffer);
+        ReleaseBuffer(ref depthBuffer);
+        ReleaseBuffer(ref sparseBuffer);
+        ReleaseBuffer(ref edge_buffer);
+        ReleaseBuffer(ref optical_flow_buffer);
     }
 
     private void OnEnable()
