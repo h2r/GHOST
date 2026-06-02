@@ -10,6 +10,7 @@ public class BGRRawImageSubscriber : MonoBehaviour
     public int SpotObserverStreamIdx;
 
     private Texture2D texture2D;
+    private Material runtimeMaterial;
 
     public enum Flip
     {
@@ -22,18 +23,30 @@ public class BGRRawImageSubscriber : MonoBehaviour
 
     private void Start()
     {
-        meshRenderer.material = new Material(Shader.Find("Standard"));
+        runtimeMaterial = new Material(Shader.Find("Standard"));
+        meshRenderer.sharedMaterial = runtimeMaterial;
         if (flipMode == Flip.FlipVertical)
-            meshRenderer.material.mainTextureScale = new Vector2(1, -1); // Flip vertically
+            runtimeMaterial.mainTextureScale = new Vector2(1, -1); // Flip vertically
         else if (flipMode == Flip.FlipHorizontal) {
-            meshRenderer.material.mainTextureScale = new Vector2(-1, 1); // Flip horizontally
+            runtimeMaterial.mainTextureScale = new Vector2(-1, 1); // Flip horizontally
         }
     }
 
     private void Update()
     {
-        (texture2D, _) = spotObserverClient.GetCameraFeeds(SpotObserverStreamIdx, SpotObserverCameraIndex);
-        meshRenderer.material.mainTexture = texture2D;
+        if (spotObserverClient != null && spotObserverClient.TryGetCameraFrame(SpotObserverStreamIdx, SpotObserverCameraIndex, out SpotObserverClient.CameraDepthFrame frame))
+        {
+            texture2D = frame.ColorTexture;
+            runtimeMaterial.mainTexture = texture2D;
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (runtimeMaterial != null)
+        {
+            Destroy(runtimeMaterial);
+            runtimeMaterial = null;
+        }
     }
 }
-

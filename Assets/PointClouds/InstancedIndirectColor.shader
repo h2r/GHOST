@@ -33,6 +33,10 @@ Shader "Custom/InstancedIndirectColor" {
             float a;                   // angle
 
             float4 _colorMap_ST;
+            float4x4 _GOPose;
+            // Local billboard basis is set by DrawMeshInstanced; this avoids rebuilding mesh vertices every frame.
+            float3 _BillboardRight;
+            float3 _BillboardUp;
 
             float4 intrinsics;         // [2023-10-30][JHT] Contains (CX, CY, FX, FY) - center point x, center point y, focal length x, focal length y
             float4 screenData;         // [2023-10-30][JHT] Contains (width, height, 1/width, FY) - screen/image coordinate data
@@ -58,7 +62,8 @@ Shader "Custom/InstancedIndirectColor" {
 							        0.0, 0.0, pS,  0.0,
 							        0.0, 0.0, 0.0, 1.0 };
 
-                float4 vpos = mul(matS, i.vertex);
+                float3 billboardVertex = _BillboardRight * i.vertex.x + _BillboardUp * i.vertex.y;
+                float4 vpos = mul(matS, float4(billboardVertex, 1.0));
 
                 // [2023-10-30][JHT] What is this matrix? 
                 // We have scaling, rotation around X axis, and translation components
@@ -76,9 +81,9 @@ Shader "Custom/InstancedIndirectColor" {
 							      0.0,0.0,1.0,_Properties[instanceID].pos.z,
 							      0.0,0.0,0.0,1.0 }; */
 
-                float4 pos = mul(mat, vpos);
+                float4 pos = mul(_GOPose, mul(mat, vpos));
                 //float4 pos = mul(mat, i.vertex);
-                o.vertex = UnityObjectToClipPos(pos);
+                o.vertex = mul(UNITY_MATRIX_VP, pos);
 
                 // o.vertex = _Properties[instanceID].pos;
 

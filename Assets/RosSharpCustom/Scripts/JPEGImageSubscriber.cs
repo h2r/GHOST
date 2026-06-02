@@ -25,6 +25,7 @@ namespace RosSharp.RosBridgeClient
         public MeshRenderer meshRenderer;
 
         public Texture2D texture2D;
+        private Material runtimeMaterial;
         public SyncedRawImageSubscriber associatedDepth;
         private MessageTypes.Sensor.Image[] imgBuffer;
         private uint bufferInd;
@@ -44,7 +45,8 @@ namespace RosSharp.RosBridgeClient
         {
             base.Start();
             texture2D = new Texture2D(1, 1);
-            meshRenderer.material = new Material(Shader.Find("Standard"));
+            runtimeMaterial = new Material(Shader.Find("Standard"));
+            meshRenderer.sharedMaterial = runtimeMaterial;
             freezeColor = false;
             lastMessageRetrieved = DateTime.Now;
 
@@ -104,7 +106,7 @@ namespace RosSharp.RosBridgeClient
                 closestInd = getClosestTime();
                 texture2D.LoadImage(imgBuffer[closestInd].data);
                 texture2D.Apply();
-                meshRenderer.material.SetTexture("_MainTex", texture2D);
+                runtimeMaterial.SetTexture("_MainTex", texture2D);
             }
 
             if (printSyncTime)
@@ -170,6 +172,21 @@ namespace RosSharp.RosBridgeClient
             bool ret = frameUpdated;
             frameUpdated = false;
             return ret;
+        }
+
+        private void OnDestroy()
+        {
+            if (texture2D != null)
+            {
+                Destroy(texture2D);
+                texture2D = null;
+            }
+
+            if (runtimeMaterial != null)
+            {
+                Destroy(runtimeMaterial);
+                runtimeMaterial = null;
+            }
         }
 
     }

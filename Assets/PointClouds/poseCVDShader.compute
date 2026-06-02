@@ -2,8 +2,11 @@
 #pragma kernel Transformation
 #pragma kernel CVD
 
-#define WIDTH 640
-#define HEIGHT 480
+// Kept in sync with PoseConsistentVideoDepth.Width/Height.
+int frameWidth;
+int frameHeight;
+#define WIDTH frameWidth
+#define HEIGHT frameHeight
 
 // Number of frames
 int num_frames;
@@ -95,7 +98,7 @@ void CVD(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupThreadID)
 
     int aimindex = aimxIndex + aimyIndex * WIDTH;
 
-    if (aimxIndex > 0 && aimxIndex < WIDTH - 1 && aimyIndex > 0 && aimyIndex < HEIGHT - 1 && depth_buffer[aimindex].z > 0.01f)
+    if (aimxIndex > 0 && aimxIndex < WIDTH - 1 && aimyIndex > 0 && aimyIndex < HEIGHT - 1 && depth_buffer[buffer_pos * HEIGHT * WIDTH + aimindex].z > 0.01f)
     {
         float3 aimPoint = depth_buffer[buffer_pos * HEIGHT * WIDTH + aimindex];
         float z = aimPoint.z;

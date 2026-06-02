@@ -15,7 +15,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-using System.Diagnostics;
+using System;
 using UnityEngine;
 
 namespace RosSharp.RosBridgeClient
@@ -25,6 +25,7 @@ namespace RosSharp.RosBridgeClient
         protected Transform base_transform;
         protected Vector3[] points;
         protected Color[] colors;
+        protected int pointCount;
 
         protected bool IsNewDataReceived;
         protected bool IsVisualized = false;
@@ -55,10 +56,49 @@ namespace RosSharp.RosBridgeClient
 
         public void SetPointCloudData(Transform _base_transform, Vector3[] _points, Color[] _colors)
         {
-            UnityEngine.Debug.Log("Received new point cloud!!");
+            SetPointCloudData(_base_transform, _points, _colors, _points == null ? 0 : _points.Length);
+        }
+
+        public void SetPointCloudData(Transform _base_transform, Vector3[] _points, Color[] _colors, int _pointCount)
+        {
             base_transform = _base_transform;
-            points = _points;
-            colors = _colors;
+            if (_points == null)
+            {
+                points = null;
+                colors = null;
+                pointCount = 0;
+                IsNewDataReceived = true;
+                return;
+            }
+
+            pointCount = Mathf.Min(Mathf.Max(0, _pointCount), _points.Length);
+            if (pointCount == 0)
+            {
+                points = null;
+                colors = null;
+                IsNewDataReceived = true;
+                return;
+            }
+
+            // Keep a visualizer-owned copy so callback buffers can be reused safely.
+            if (points == null || points.Length < pointCount)
+                points = new Vector3[pointCount];
+            Array.Copy(_points, points, pointCount);
+
+            if (_colors != null)
+            {
+                int colorCount = Mathf.Min(pointCount, _colors.Length);
+                if (colors == null || colors.Length < pointCount)
+                    colors = new Color[pointCount];
+                Array.Copy(_colors, colors, colorCount);
+                for (int i = colorCount; i < pointCount; i++)
+                    colors[i] = Color.white;
+            }
+            else
+            {
+                colors = null;
+            }
+
             IsNewDataReceived = true;
         }
     }

@@ -6,8 +6,11 @@ struct MeshProperties
     float4 pos;
 };
 
-#define WIDTH 640
-#define HEIGHT 480
+// Frame dimensions are supplied by DrawMeshInstanced so dispatch bounds and indexing match C# buffers.
+int frameWidth;
+int frameHeight;
+#define WIDTH frameWidth
+#define HEIGHT frameHeight
 
 RWStructuredBuffer<MeshProperties> _Properties;
 RWStructuredBuffer<float3> _Depth;
@@ -18,6 +21,9 @@ float4x4 _GOPose;
 float4x4 _ICPTrans;
 float4 intrinsics;
 float4 screenData;
+int pixelCount;
+// Number of point instances may be smaller than pixelCount when downsampling.
+int pointCount;
 float samplingSize;
 float t;
 float y_max;
@@ -291,13 +297,17 @@ void EdgeDetector(uint3 id : SV_DispatchThreadID, uint3 groupThreadID : SV_Group
 [numthreads(256, 1, 1)]
 void CSMain(uint3 id : SV_DispatchThreadID)
 {
-    if (id.x < 480 * 640)
+    if (id.x < pointCount)
     {
         
+        uint sampleIndex = (uint)floor((float)id.x * samplingSize);
+        if (sampleIndex >= (uint)pixelCount)
+            return;
+
         float3 pos = _Depth[id.x];
 
         //float i = samplingSize * id.x;
-        float i = id.x * samplingSize;
+        float i = sampleIndex;
 
         float col_y = floor(i * screenData.z);
         float col_x = floor(i - col_y * screenData.x);
@@ -310,7 +320,7 @@ void CSMain(uint3 id : SV_DispatchThreadID)
         pos.x = (col_y - intrinsics.y) * pos.z / intrinsics.z;
         pos.y = (col_x - intrinsics.x) * pos.z / intrinsics.w;
         
-        float4 final_pos = mul(_GOPose, float4(pos, 1.0f));
+        float4 final_pos = float4(pos, 1.0f);
 
         float flg = 0.0f;
 
@@ -363,7 +373,7 @@ void CSMain(uint3 id : SV_DispatchThreadID)
         else
         {
             pos.z = _Sparse[depth_idx] * t + (1 - t);
-            float4 final_pos_sparse = mul(_GOPose, float4(pos, 1.0f));
+            float4 final_pos_sparse = float4(pos, 1.0f);
             _Properties[id.x].pos = final_pos_sparse;
             _Properties[id.x].pos.w = _Sparse[depth_idx] * t + (1 - t);
         }

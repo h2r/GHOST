@@ -32,6 +32,7 @@ namespace RosSharp.RosBridgeClient
     public class SyncedRawImageSubscriber : UnitySubscriber<MessageTypes.Sensor.Image>
     {
         private byte[] data;
+        private readonly object dataLock = new object();
         private bool isMessageReceived;
         private float[] globalData;            // final depth array returned
         private MessageTypes.BuiltinInterfaces.Time
@@ -104,20 +105,20 @@ namespace RosSharp.RosBridgeClient
                 lastMessageRetrieved = DateTime.Now;
             }
 
-            data = image.data;
-            timestamp_proc = image.header.stamp;
-
-            // HACK -- width is actually the far plane
-            farPlane = image.width;
-            //farPlane = 4000f;
-
             // Thread the expensive processing of depth data
             if (messageThread == null || !messageThread.IsAlive)
             {
+                data = image.data;
+                timestamp_proc = image.header.stamp;
+
+                // HACK -- width is actually the far plane
+                farPlane = image.width;
+                //farPlane = 4000f;
+
                 threadStart = DateTime.Now;
                 messageThread = new Thread(processMessageThreaded);
+                messageThread.IsBackground = true;
                 messageThread.Start();
-                depthUpdated = true;
             }
         }
 
@@ -159,9 +160,9 @@ namespace RosSharp.RosBridgeClient
             //    clearCbuf = false;
             //}
 
-            byte[] bytes = new byte[2];
             int j = 0;
-            for (int i = 0; i < data.Length; i += incrate)
+            int dataLimit = compressed ? data.Length : data.Length - 1;
+            for (int i = 0; i < dataLimit; i += incrate)
             {
                 if (compressed)
                 {
@@ -172,9 +173,8 @@ namespace RosSharp.RosBridgeClient
                 }
                 else
                 {
-                    bytes[0] = data[i];
-                    bytes[1] = data[i + 1];
-                    depthVal = (BitConverter.ToUInt16(bytes)) / 1000.0f;
+                    ushort millimeters = (ushort)(data[i] | (data[i + 1] << 8));
+                    depthVal = millimeters / 1000.0f;
                 }
 
                 image_data[j] = depthVal;
@@ -223,13 +223,19 @@ namespace RosSharp.RosBridgeClient
             //image_data_cbuffer_pos = (image_data_cbuffer_pos + 1) % image_data_cbuffer_length;
 
             // Copy into the final return array and timestamp
-            globalData = new float[image_data.Length];
-            Array.Copy(image_data, globalData, image_data.Length);
+            lock (dataLock)
+            {
+                if (globalData == null || globalData.Length != image_data.Length)
+                {
+                    globalData = new float[image_data.Length];
+                }
+                Array.Copy(image_data, globalData, image_data.Length);
 
-            new_depth = true;
-
-            // Set timestamps
-            timestamp_synced = timestamp_proc.sec + timestamp_proc.nanosec * 0.000000001;
+                // Set timestamps before publishing the updated flag.
+                timestamp_synced = timestamp_proc.sec + timestamp_proc.nanosec * 0.000000001;
+                new_depth = true;
+                depthUpdated = true;
+            }
 
             // Debugging info
             if (printMessageProcRate)
@@ -255,18 +261,23 @@ namespace RosSharp.RosBridgeClient
 
         public bool newDepthAvailable()
         {
-            bool ret;
-            ret = depthUpdated;
-            depthUpdated = false;
-            return ret;
+            lock (dataLock)
+            {
+                bool ret = depthUpdated;
+                depthUpdated = false;
+                return ret;
+            }
         }
 
         // Get the most recently calculated depth array
         public float[] getDepthArr()
         {
-            float[] copyOfData = new float[globalData.Length];
-            Array.Copy(globalData, copyOfData, globalData.Length);
-            return copyOfData;
+            lock (dataLock)
+            {
+                float[] copyOfData = new float[globalData.Length];
+                Array.Copy(globalData, copyOfData, globalData.Length);
+                return copyOfData;
+            }
         }
 
         // Turn off depth history for specified time
@@ -294,7 +305,7 @@ namespace RosSharp.RosBridgeClient
         {
             if (messageThread != null && messageThread.IsAlive)
             {
-                messageThread.Abort();
+                messageThread.Join(100);
             }
         }
 

@@ -4,8 +4,11 @@
 #pragma kernel update_depth_buffer
 
 // Size of the buffers
-#define WIDTH 640
-#define HEIGHT 480
+// Kept in sync with DepthAveraging.Width/Height.
+int frameWidth;
+int frameHeight;
+#define WIDTH frameWidth
+#define HEIGHT frameHeight
 
 // Number of frames
 int num_frames;
@@ -51,11 +54,11 @@ void MeanAveraging(uint3 groupId : SV_GroupID, uint3 threadId : SV_GroupThreadID
     int xIndex = groupId.x * 16 + threadId.x;
     int yIndex = groupId.y * 16 + threadId.y;
 
-    int index = xIndex + yIndex * WIDTH;
-    depth_buffer[buffer_pos * WIDTH * HEIGHT + index] = depth_ar[index];
-
     if (xIndex < WIDTH && yIndex < HEIGHT && activate)
     {
+        int index = xIndex + yIndex * WIDTH;
+        depth_buffer[buffer_pos * WIDTH * HEIGHT + index] = depth_ar[index];
+
         float weighted_sum = 0.0;
         float total_weight = 0.0;
  
