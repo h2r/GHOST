@@ -1,6 +1,6 @@
 ﻿using System;  // for Math.Tan, Math.Sign, etc.
+using RosSharp.RosBridgeClient;
 using UnityEngine;
-using RosSharp.RosBridgeClient; // if needed for ROS functionality
 
 public class JoyStickArm : MonoBehaviour
 {
@@ -45,10 +45,8 @@ public class JoyStickArm : MonoBehaviour
 
     void Update()
     {
-        Vector3 locationChange;
         Quaternion rotationChange = new Quaternion(0f, 0f, 0f, 0f);
 
-        // Get joystick input from OVRInput
         Vector2 laxMove = OVRInput.Get(LAx); // left joystick
         Vector2 raxMove = OVRInput.Get(RAx); // right joystick
 
@@ -100,32 +98,6 @@ public class JoyStickArm : MonoBehaviour
                 );
             }
         }
-
-        // If you want to control the gripper open/close using LT1 + left joystick Y:
-        /*
-        if (OVRInput.Get(LT1))
-        {
-            Vector2 leftMove = OVRInput.Get(LAx);
-            if (leftMove.y < 0)
-            {
-                if (generalControls.gripperPercentage > 0)
-                {
-                    generalControls.gripperPercentage -= 0.25f;
-                    gripper.setGripperPercentage(generalControls.gripperPercentage);
-                    generalControls.gripperOpen = false;
-                }
-            }
-            if (leftMove.y > 0)
-            {
-                if (generalControls.gripperPercentage < 100.0f)
-                {
-                    generalControls.gripperPercentage += 0.25f;
-                    gripper.setGripperPercentage(generalControls.gripperPercentage);
-                    generalControls.gripperOpen = true;
-                }
-            }
-        }
-        */
     }
 
     /// <summary>

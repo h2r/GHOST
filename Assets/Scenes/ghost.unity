@@ -5288,14 +5288,6 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1747440747}
     - target: {fileID: 1137478774599216621, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
-      propertyPath: colorSubscriber
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 1137478774599216621, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
-      propertyPath: depthSubscriber
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 1137478774599216621, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: spotObserverClient
       value: 
       objectReference: {fileID: 971801071}
@@ -5352,10 +5344,6 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 7200000, guid: 7c75016ce147e8a4aadb1b0132241f05, type: 3}
     - target: {fileID: 1137478775010377568, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
-      propertyPath: averager
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 1137478775010377568, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: size_scale
       value: 0.004
       objectReference: {fileID: 0}
@@ -5364,25 +5352,9 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 638278051}
     - target: {fileID: 1137478775010377568, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
-      propertyPath: icp_launcher
-      value: 
-      objectReference: {fileID: 638278053}
-    - target: {fileID: 1137478775010377568, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: mainCameraRot
       value: 
       objectReference: {fileID: 1747440747}
-    - target: {fileID: 1137478775010377568, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
-      propertyPath: savePointCloud
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1137478775010377568, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
-      propertyPath: colorSubscriber
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 1137478775010377568, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
-      propertyPath: depthSubscriber
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 1137478775010377568, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: use_saved_meshes
       value: 0
@@ -5492,10 +5464,6 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 7200000, guid: 7c75016ce147e8a4aadb1b0132241f05, type: 3}
     - target: {fileID: 1137478775515482002, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
-      propertyPath: averager
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 1137478775515482002, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: size_scale
       value: 0.004
       objectReference: {fileID: 0}
@@ -5508,25 +5476,9 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 638278051}
     - target: {fileID: 1137478775515482002, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
-      propertyPath: icp_launcher
-      value: 
-      objectReference: {fileID: 638278053}
-    - target: {fileID: 1137478775515482002, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: mainCameraRot
       value: 
       objectReference: {fileID: 1747440747}
-    - target: {fileID: 1137478775515482002, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
-      propertyPath: savePointCloud
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1137478775515482002, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
-      propertyPath: colorSubscriber
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 1137478775515482002, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
-      propertyPath: depthSubscriber
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 1137478775515482002, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: imageScriptIndex
       value: 1
@@ -5864,10 +5816,6 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 7200000, guid: 7c75016ce147e8a4aadb1b0132241f05, type: 3}
     - target: {fileID: 3310871052733856933, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
-      propertyPath: averager
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 3310871052733856933, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: material
       value: 
       objectReference: {fileID: 2100000, guid: 69e79fe9793df704ba76e0155c83285d, type: 2}
@@ -5884,17 +5832,9 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1639569377}
     - target: {fileID: 3310871052733856933, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
-      propertyPath: icp_launcher
-      value: 
-      objectReference: {fileID: 638278053}
-    - target: {fileID: 3310871052733856933, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: mainCameraRot
       value: 
       objectReference: {fileID: 1747440747}
-    - target: {fileID: 3310871052733856933, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
-      propertyPath: savePointCloud
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 3310871052733856933, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: imageScriptIndex
       value: 3
@@ -5976,10 +5916,6 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 7200000, guid: 7c75016ce147e8a4aadb1b0132241f05, type: 3}
     - target: {fileID: 3310871053306987607, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
-      propertyPath: averager
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 3310871053306987607, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: material
       value: 
       objectReference: {fileID: 2100000, guid: bff9913c7b35a5b41ad8d916573e25a9, type: 2}
@@ -5996,17 +5932,9 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1639569377}
     - target: {fileID: 3310871053306987607, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
-      propertyPath: icp_launcher
-      value: 
-      objectReference: {fileID: 638278053}
-    - target: {fileID: 3310871053306987607, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: mainCameraRot
       value: 
       objectReference: {fileID: 1747440747}
-    - target: {fileID: 3310871053306987607, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
-      propertyPath: savePointCloud
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 3310871053306987607, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: imageScriptIndex
       value: 2
@@ -8529,7 +8457,6 @@ GameObject:
   - component: {fileID: 638278052}
   - component: {fileID: 638278051}
   - component: {fileID: 638278050}
-  - component: {fileID: 638278053}
   - component: {fileID: 638278055}
   - component: {fileID: 638278054}
   m_Layer: 0
@@ -8566,25 +8493,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f91acdd68ae8fb440bb7ce87f9b6a346, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  avg_before_completion: 1
-  varianceThreshold: 0.01
   meanThreshold: 0.1
   activate_CVD: 0
   cvd_weight: 3
   show_spot: 1
-  another_manager: {fileID: 1639569377}
   activate_depth_estimation: 0
-  activate_ICP: 0
   activate_edge_detection: 1
   edgeThreshold: 21
-  maxNeighbourNum: 10
-  AveragerLeft: {fileID: 0}
-  AveragerRight: {fileID: 0}
-  Left_Depth_Renderer_1: {fileID: 326679877}
-  Right_Depth_Renderer_1: {fileID: 107554149}
   y_max: -0.25
   z_max: 0.5
-  show_sampling_res: 0
 --- !u!4 &638278052
 Transform:
   m_ObjectHideFlags: 0
@@ -8600,27 +8517,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &638278053
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 638278049}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d2df5584cadb0564ba70a8849a70df5e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  iteration_per_threshold: 5
-  frames_per_icp: 20
-  icp_threshold: 0.1
-  use_manual_threshold: 1
-  icp_shader: {fileID: 7200000, guid: 554d4ca3d1bda7a42ac84c03b623f26c, type: 3}
-  renderer0: {fileID: 326679877}
-  renderer1: {fileID: 107554149}
-  renderer2: {fileID: 409472603}
-  renderer3: {fileID: 409472602}
 --- !u!114 &638278054
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17061,7 +16957,6 @@ GameObject:
   - component: {fileID: 1639569378}
   - component: {fileID: 1639569377}
   - component: {fileID: 1639569376}
-  - component: {fileID: 1639569379}
   - component: {fileID: 1639569381}
   - component: {fileID: 1639569380}
   m_Layer: 0
@@ -17098,25 +16993,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f91acdd68ae8fb440bb7ce87f9b6a346, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  avg_before_completion: 1
-  varianceThreshold: 0.01
   meanThreshold: 0.1
   activate_CVD: 0
   cvd_weight: 3
   show_spot: 0
-  another_manager: {fileID: 638278051}
   activate_depth_estimation: 0
-  activate_ICP: 0
   activate_edge_detection: 1
   edgeThreshold: 21
-  maxNeighbourNum: 10
-  AveragerLeft: {fileID: 0}
-  AveragerRight: {fileID: 0}
-  Left_Depth_Renderer_1: {fileID: 409472603}
-  Right_Depth_Renderer_1: {fileID: 409472602}
   y_max: -0.25
   z_max: 0.5
-  show_sampling_res: 0
 --- !u!4 &1639569378
 Transform:
   m_ObjectHideFlags: 0
@@ -17132,27 +17017,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1639569379
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1639569374}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d2df5584cadb0564ba70a8849a70df5e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  iteration_per_threshold: 0
-  frames_per_icp: 10
-  icp_threshold: 0
-  use_manual_threshold: 0
-  icp_shader: {fileID: 7200000, guid: 554d4ca3d1bda7a42ac84c03b623f26c, type: 3}
-  renderer0: {fileID: 326679877}
-  renderer1: {fileID: 107554149}
-  renderer2: {fileID: 409472603}
-  renderer3: {fileID: 409472602}
 --- !u!114 &1639569380
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23100,7 +22964,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7db896cb2568f244ea1db473bf2415d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  name: Dual Drive
+  displayName: Dual Drive
   superMode: 1
 --- !u!4 &1674669929037806924
 Transform:
@@ -23265,7 +23129,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7db896cb2568f244ea1db473bf2415d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  name: Single Drive
+  displayName: Single Drive
   superMode: 0
 --- !u!1 &1915910643843192288
 GameObject:
@@ -25494,7 +25358,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7db896cb2568f244ea1db473bf2415d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  name: Camera Settings
+  displayName: Camera Settings
   superMode: 2
 --- !u!1 &6305392753868467143
 GameObject:

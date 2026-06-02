@@ -7,6 +7,8 @@ public class PositionPresetCycler : MonoBehaviour
     public GameObject spotOne, spotTwo, spotOneArm, spotTwoArm;
     public MessageBadge messageManager;
 
+    // Current control flow leaves preset cycling disabled, but keeping it reachable avoids dead code.
+    public bool enablePresetCycling;
 
     public enum RigAnchorPoints
     {
@@ -84,7 +86,9 @@ public class PositionPresetCycler : MonoBehaviour
 
     public void CyclePresets()
     {
-        return; // disable preset
+        if (!enablePresetCycling)
+            return;
+
         curPresetIndex = (curPresetIndex + 1) % presetOrder.Length;
 
         Vector3 cameraPosition = Vector3.zero;

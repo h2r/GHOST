@@ -157,7 +157,6 @@ MonoBehaviour:
   compute: {fileID: 7200000, guid: 7c75016ce147e8a4aadb1b0132241f05, type: 3}
   target: {fileID: 0}
   auxTarget: {fileID: 0}
-  noise_range: 0
   downsample: 1
   height: 480
   width: 640
@@ -165,7 +164,6 @@ MonoBehaviour:
   CY: 235
   FX: 256.4678
   FY: 256.1428
-  facedAngle: 0
   size_scale: 0.01
   use_saved_meshes: 0
 --- !u!1 &4364515187611384172

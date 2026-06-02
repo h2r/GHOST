@@ -1,13 +1,15 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class UITabOption : UIOption
 {
-    public string name;
+    [FormerlySerializedAs("name")]
+    public string displayName;
     public SuperMode superMode;
         
     public override string GetName()
     {
-        return name;
+        return displayName;
     }
 
     public override Color GetSelectedColor()
