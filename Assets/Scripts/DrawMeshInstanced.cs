@@ -21,7 +21,6 @@ public class DrawMeshInstanced : MonoBehaviour
 {
     public DepthAveraging averager;
 
-    bool new_depth_to_render = false;
     public ICPLauncher icp_launcher;
     float3[] current_icp_res;
     private Matrix4x4 icp_trans;
@@ -49,7 +48,11 @@ public class DrawMeshInstanced : MonoBehaviour
 
     public ComputeShader compute;
 
+    // Renderer-owned float3 point/depth output consumed by the point cloud compute shader.
     private ComputeBuffer depth_ar_buffer;
+    // Raw scalar depth input. Borrowed from SpotObserverClient in the live path;
+    // points at renderer-owned depthBuffer when rendering saved meshes.
+    private ComputeBuffer currentRawDepthBuffer;
     private ComputeBuffer meshPropertiesBuffer;
     private ComputeBuffer argsBuffer;
     private ComputeBuffer depthBuffer;
@@ -77,8 +80,6 @@ public class DrawMeshInstanced : MonoBehaviour
     public float pS;    // point scalar
     //public uint counter;
     //private uint numUpdates;
-    private bool calculate_icp = true;
-
     public float size_scale; //hack to current pointcloud viewing
 
     public bool use_saved_meshes = false; // boolean that determines whether to use saved meshes or read in new scene data from ROS
@@ -86,7 +87,6 @@ public class DrawMeshInstanced : MonoBehaviour
 
     private bool freezeCloud = false; // boolean that freezes this point cloud
     private float[] depth_ar;
-    private float[] avged_sparse = new float[640 * 480]; // averaged depth array
 
     private MeshProperties[] globalProps;
 
@@ -94,17 +94,30 @@ public class DrawMeshInstanced : MonoBehaviour
     bool ready_to_freeze = true;
     bool freeze_lock = false;
 
-    float[,] depth_avg_buffer = new float[30, 640 * 480];
-    float[] res_depth = new float[640 * 480];
-
     //private MeshProperties[] generalUseProps;
 
     int kernel;
     int edge_kernel;
+    private int frameWidth;
+    private int frameHeight;
+    private int frameSize;
+    private ulong lastFrameSequence;
+    private bool hasFrameData;
+    private bool savedMeshUploaded;
+    private bool ownsColorImage;
+    private Texture2D frozenColorImage;
+
+    public bool enableDebugLogging = false;
+
+    // Downstream GPU consumers may bind this buffer, but must not release it.
+    public ComputeBuffer CurrentDepthBuffer => currentRawDepthBuffer;
+    // Renderer-owned float3 output for consumers that need point-space depth.
+    public ComputeBuffer CurrentPointDepthBuffer => depth_ar_buffer;
+    public bool HasCurrentDepthBuffer => currentRawDepthBuffer != null && hasFrameData;
     
 
     // Mesh Properties struct to be read from the GPU.
-    // Size() is a convenience funciton which returns the stride of the struct.
+    // Size() is a convenience function which returns the stride of the struct.
     private struct MeshProperties
     {
         public Vector4 pos;
@@ -114,6 +127,32 @@ public class DrawMeshInstanced : MonoBehaviour
             return
                 sizeof(float) * 4; // position;
         }
+    }
+
+    private Vector4 GetIntrinsicsVector()
+    {
+        if (CVD != null)
+            return new Vector4(CVD.CX, CVD.CY, CVD.FX, CVD.FY);
+
+        float cx = frameWidth * 0.5f;
+        float cy = frameHeight * 0.5f;
+        float fallbackFocalLength = Mathf.Max(frameWidth, frameHeight);
+        return new Vector4(cx, cy, fallbackFocalLength, fallbackFocalLength);
+    }
+
+    private Vector4 GetScreenDataVector()
+    {
+        float focalY = CVD != null ? CVD.FY : Mathf.Max(frameWidth, frameHeight);
+        return new Vector4((float)frameWidth, (float)frameHeight, 1.0f / frameWidth, focalY);
+    }
+
+    private void ApplyFrameShaderConstants()
+    {
+        // Keep C# dispatch sizes and shader-side indexing in one place.
+        compute.SetInt("frameWidth", frameWidth);
+        compute.SetInt("frameHeight", frameHeight);
+        compute.SetInt("pixelCount", frameSize);
+        compute.SetInt("pointCount", (int)population);
     }
 
     private void Setup()
@@ -129,8 +168,33 @@ public class DrawMeshInstanced : MonoBehaviour
         //height = 240;
         //counter = 0;
         //numUpdates = 0;
+        if (width == 0)
+            width = 640;
+        if (height == 0)
+            height = 480;
+        if (downsample == 0)
+        {
+            Debug.LogWarning(name + " had downsample set to 0. Using 1 instead.");
+            downsample = 1;
+        }
+
+        frameWidth = (int)width;
+        frameHeight = (int)height;
+        frameSize = frameWidth * frameHeight;
         total_population = height * width;
-        population = (uint)(total_population / downsample);
+        population = total_population / downsample;
+        if (population == 0)
+            population = 1;
+        lastFrameSequence = ulong.MaxValue;
+        hasFrameData = false;
+        savedMeshUploaded = false;
+        currentRawDepthBuffer = null;
+
+        if (CVD != null)
+        {
+            CVD.Width = frameWidth;
+            CVD.Height = frameHeight;
+        }
 
         Mesh mesh = CreateQuad(size_scale, size_scale);
         this.mesh = mesh;
@@ -145,7 +209,6 @@ public class DrawMeshInstanced : MonoBehaviour
                 using (var reader = new BinaryReader(stream, Encoding.UTF8, false))
                 {
                     int length = reader.ReadInt32();
-                    depth_ar = new float[length];
                     depth_ar_saved = new float[length];
                     for (int i = 0; i < length; i++)
                     {
@@ -153,6 +216,9 @@ public class DrawMeshInstanced : MonoBehaviour
                     }
                 }
             }
+
+            depth_ar = new float[frameSize];
+            Array.Copy(depth_ar_saved, depth_ar, Mathf.Min(depth_ar_saved.Length, depth_ar.Length));
 
             byte[] bytes;
             using (var stream = File.Open("Assets/PointClouds/Color_" + imageScriptIndex + ".png", FileMode.Open))
@@ -164,6 +230,7 @@ public class DrawMeshInstanced : MonoBehaviour
             }
             color_image = new Texture2D(1, 1);
             color_image.LoadImage(bytes);
+            ownsColorImage = true;
 
             depth_image = new Texture2D((int)width, (int)height, TextureFormat.RFloat, false, false);
             depth_image.SetPixelData(depth_ar, 0);
@@ -171,8 +238,9 @@ public class DrawMeshInstanced : MonoBehaviour
         else
         {
             Destroy(depth_image);
-            depth_ar = new float[height * width];
+            depth_ar = new float[frameSize];
             depth_image = new Texture2D((int)width, (int)height, TextureFormat.RFloat, false, false);
+            ownsColorImage = false;
         }
 
         globalProps = GetProperties();
@@ -182,8 +250,7 @@ public class DrawMeshInstanced : MonoBehaviour
         //inp_stm.Close();
 
         // Boundary surrounding the meshes we will be drawing.  Used for occlusion.
-        // bounds = new Bounds(transform.position, Vector3.one * (range + 1));
-        bounds = new Bounds(Vector3.zero, Vector3.one * (range + 1));
+        bounds = new Bounds(transform.position, Vector3.one * (range + 1));
 
         // Pass 1 / width and 1 / height to material shader
         // [2023-10-30][JHT] Why do we need to do this? That data is (almost) all in 'screenData' that gets passed in later.
@@ -195,13 +262,14 @@ public class DrawMeshInstanced : MonoBehaviour
         material.SetFloat("a", get_target_rota());
         material.SetFloat("pS", pS);
 
-        Vector4 intr = new Vector4(CVD.CX, CVD.CY, CVD.FX, CVD.FY);
+        Vector4 intr = GetIntrinsicsVector();
         compute.SetVector("intrinsics", intr);
         material.SetVector("intrinsics", intr);
 
-        Vector4 screenData = new Vector4((float)width, (float)height, 1 / (float)width, CVD.FY);
+        Vector4 screenData = GetScreenDataVector();
         compute.SetVector("screenData", screenData);
         material.SetVector("screenData", screenData);
+        ApplyFrameShaderConstants();
 
         compute.SetFloat("samplingSize", downsample);
         material.SetFloat("samplingSize", downsample);
@@ -211,31 +279,36 @@ public class DrawMeshInstanced : MonoBehaviour
         meshPropertiesBuffer.SetData(globalProps);
 
         // Hack: Initialize sparsebuffer to 0
-        for (int i = 0; i < 480 * 640; i++)
+        for (int i = 0; i < frameSize; i++)
         {
             depth_ar[i] = 0.0f;
         }
         sparseBuffer.SetData(depth_ar);
     }
 
-    private ComputeBuffer process_depth(ComputeBuffer in_depth)
+    private bool process_depth(ComputeBuffer in_depth)
     {
-        float edgethreshold = 0.0f;
+        if (in_depth == null || CVD == null || depth_ar_buffer == null)
+            return false;
 
-        ComputeBuffer posed_depth;
-
+        float edgethreshold = depthManager != null ? depthManager.edgeThreshold : 0.0f;
         Matrix4x4 tform = get_current_pose();
+        bool activateCVD = depthManager != null && depthManager.activate_CVD && start_completion;
+        bool activateDepthCompletion = depthManager != null && depthManager.activate_depth_estimation;
+        float cvdWeight = depthManager != null ? depthManager.cvd_weight : 0.0f;
 
-        // NOTE: Optical flow is not currently being used.
-        posed_depth = CVD.consistent_depth(in_depth, tform, optical_flow_buffer, false, edgethreshold, false, 0);
-
-        return posed_depth;
+        // CVD writes into our owned output buffer; the input depth buffer remains borrowed.
+        return CVD.WriteConsistentDepth(in_depth, depth_ar_buffer, tform, optical_flow_buffer, activateCVD, edgethreshold, activateDepthCompletion, cvdWeight);
     }
 
     private float get_target_rota()
     {
         //Debug.Log(convert_angle(target.eulerAngles.y).ToString() + "     " + convert_angle(auxTarget.eulerAngles.y).ToString());
-        if (auxTarget == null || true) { return convert_angle(target.eulerAngles.y) * 2; }
+        if (target == null)
+        {
+            return 0.0f;
+        }
+        if (auxTarget == null) { return convert_angle(target.eulerAngles.y) * 2; }
         else
         {
             return convert_angle(target.eulerAngles.y) + convert_angle(auxTarget.eulerAngles.y);
@@ -252,19 +325,16 @@ public class DrawMeshInstanced : MonoBehaviour
     {
         MeshProperties[] properties = new MeshProperties[population];
 
-        if (width == 0 || height == 0 || depth_ar == null || depth_ar.Length == 0 || true)
+        if (width == 0 || height == 0 || depth_ar == null || depth_ar.Length == 0)
         {
             return properties;
         }
-
-        uint i;
 
         Vector4 initialValue = new Vector4( 0, 0, 0, 1 );
 
         for (uint pop_i = 0; pop_i < population; pop_i++)
         {
             // TODO: Handle downsampling correctly
-            i = pop_i * downsample;
             properties[pop_i].pos = initialValue;
 
         }
@@ -275,7 +345,7 @@ public class DrawMeshInstanced : MonoBehaviour
     private void InitializeBuffers()
     {
 
-        depth_ar_buffer = new ComputeBuffer(480 * 640, sizeof(float) * 3);
+        depth_ar_buffer = new ComputeBuffer(frameSize, sizeof(float) * 3);
         icp_res_buffer = new ComputeBuffer(160 * 120, sizeof(float) * 3);
 
         // Argument buffer used by DrawMeshInstancedIndirect.
@@ -290,23 +360,24 @@ public class DrawMeshInstanced : MonoBehaviour
         argsBuffer.SetData(args);
 
         // Initialize buffer with the given population.
-        MeshProperties[] properties = new MeshProperties[population];
-
         meshPropertiesBuffer = new ComputeBuffer((int)population, MeshProperties.Size());
         meshPropertiesBuffer.SetData(GetProperties());
 
-        Debug.Log("mesh.getIndexCount(0): " + mesh.GetIndexCount(0));
-        Debug.Log("population: " + population);
-        Debug.Log("mesh.GetIndexStart(0): " + mesh.GetIndexStart(0));
-        Debug.Log("mesh.GetBaseVertex(0): " + mesh.GetBaseVertex(0));
-        Debug.Log("meshPropertiesBuffer.count: " + meshPropertiesBuffer.count);
+        if (enableDebugLogging)
+        {
+            Debug.Log("mesh.getIndexCount(0): " + mesh.GetIndexCount(0));
+            Debug.Log("population: " + population);
+            Debug.Log("mesh.GetIndexStart(0): " + mesh.GetIndexStart(0));
+            Debug.Log("mesh.GetBaseVertex(0): " + mesh.GetBaseVertex(0));
+            Debug.Log("meshPropertiesBuffer.count: " + meshPropertiesBuffer.count);
+        }
 
-        depthBuffer = new ComputeBuffer((int)depth_ar.Length, sizeof(float));
-        sparseBuffer = new ComputeBuffer((int)(480 * 640), sizeof(float));
-        edge_buffer = new ComputeBuffer((int)(480 * 640), sizeof(float));
+        depthBuffer = new ComputeBuffer(frameSize, sizeof(float));
+        sparseBuffer = new ComputeBuffer(frameSize, sizeof(float));
+        edge_buffer = new ComputeBuffer(frameSize, sizeof(float));
         depthBuffer.SetData(depth_ar);
 
-        optical_flow_buffer = new ComputeBuffer(480 * 640 * 2, sizeof(float));
+        optical_flow_buffer = new ComputeBuffer(frameSize * 2, sizeof(float));
 
         SetProperties();
         SetGOPosition();
@@ -314,9 +385,33 @@ public class DrawMeshInstanced : MonoBehaviour
 
     private void SetGOPosition()
     {
-        compute.SetMatrix("_GOPose", Matrix4x4.TRS(transform.position, transform.rotation, new Vector3(1, 1, 1)));
+        Matrix4x4 pose = Matrix4x4.TRS(transform.position, transform.rotation, Vector3.one);
+        compute.SetMatrix("_GOPose", pose);
         compute.SetMatrix("_ICPTrans", icp_trans);
+        material.SetMatrix("_GOPose", pose);
+        bounds.center = transform.position;
+        SetBillboardBasis();
         // compute.SetMatrix("_GOPose", Matrix4x4.TRS(Vector3.zero, transform.rotation, new Vector3(1, 1, 1)));
+    }
+
+    private void SetBillboardBasis()
+    {
+        Vector3 localNormal = transform.InverseTransformDirection(get_normal()).normalized;
+        if (localNormal.sqrMagnitude < 1e-6f)
+            localNormal = -Vector3.forward;
+
+        Vector3 localRight = Vector3.Cross(localNormal, Vector3.up);
+        if (localRight.sqrMagnitude < 1e-6f)
+            localRight = Vector3.right;
+        localRight.Normalize();
+
+        Vector3 localUp = Vector3.Cross(localRight, localNormal);
+        if (localUp.sqrMagnitude < 1e-6f)
+            localUp = Vector3.up;
+        localUp.Normalize();
+
+        material.SetVector("_BillboardRight", localRight);
+        material.SetVector("_BillboardUp", localUp);
     }
 
     private void SetProperties()
@@ -332,19 +427,25 @@ public class DrawMeshInstanced : MonoBehaviour
         compute.SetBuffer(edge_kernel, "_Edge", edge_buffer);
         compute.SetBuffer(kernel, "_Edge", edge_buffer);
 
-        compute.SetBool("show_sampling_res", depthManager.show_sampling_res);
-        if (depthManager.show_sampling_res)
+        bool showSampling = depthManager != null && depthManager.show_sampling_res;
+        compute.SetBool("show_sampling_res", showSampling);
+        if (showSampling && icp_launcher != null)
         {
             current_icp_res = icp_launcher.get_current_float3(imageScriptIndex);
-            Debug.Log(current_icp_res.Length);
-            icp_res_buffer.SetData(current_icp_res);
+            if (current_icp_res != null)
+            {
+                if (enableDebugLogging)
+                    Debug.Log(current_icp_res.Length);
+                icp_res_buffer.SetData(current_icp_res);
+            }
         }
         compute.SetBuffer(kernel, "_ICP_Res", icp_res_buffer);
 
         compute.SetBuffer(kernel, "_Sparse", sparseBuffer);
 
 
-        material.SetTexture("_colorMap", color_image);
+        if (color_image != null)
+            material.SetTexture("_colorMap", color_image);
     }
 
     private Texture2D copy_texture(Texture2D input_texture)
@@ -363,106 +464,105 @@ public class DrawMeshInstanced : MonoBehaviour
         return depth_ar;
     }
 
-    private void UpdateTexture()
+    private bool UpdateFrameData()
     {
+        if (freezeCloud && hasFrameData)
+            return false;
+
         compute.SetFloat("t", t);
 
-        Vector4 intr = new Vector4(CVD.CX, CVD.CY, CVD.FX, CVD.FY);
+        Vector4 intr = GetIntrinsicsVector();
         compute.SetVector("intrinsics", intr);
         material.SetVector("intrinsics", intr);
 
-        Vector4 screenData = new Vector4((float)width, (float)height, 1 / (float)width, CVD.FY);
+        Vector4 screenData = GetScreenDataVector();
 
         compute.SetVector("screenData", screenData);
         material.SetVector("screenData", screenData);
+        ApplyFrameShaderConstants();
 
         if (use_saved_meshes)
         {
-            Debug.Log("Using saved mesh");
-            for (int i = 0; i < 480 * 640; i++)
-            {
-                //depth_ar[i] = depth_ar_saved[i];
-                depth_ar[i] = 0.0f;
-            }
+            if (savedMeshUploaded)
+                return false;
+
+            if (depth_ar_saved == null || depth_ar_saved.Length == 0)
+                return false;
+
+            Array.Clear(depth_ar, 0, depth_ar.Length);
             sparseBuffer.SetData(depth_ar);
-            
 
-            Debug.Log("SpotObserverCameraIndex: " + (int)SpotObserverCameraIndex);
-            (color_image, depth_tensor) = spotObserverClient.GetCameraFeeds(SpotObserverStreamIdx, SpotObserverCameraIndex);
-
-            Debug.Log("Color image: " + (color_image == null ? "null" : color_image.width + "x" + color_image.height));
-            // HACK
-            if (depth_tensor != null)
+            int copyCount = Mathf.Min(depth_ar_saved.Length, frameSize);
+            if (copyCount == frameSize)
             {
-                //ComputeTensorData.Pin(depth_tensor).buffer.GetData(depth_ar);
-                depth_ar_buffer.SetData(depth_ar);
-                depth_ar_buffer = ComputeTensorData.Pin(depth_tensor).buffer;
+                depthBuffer.SetData(depth_ar_saved);
+            }
+            else
+            {
+                Array.Clear(depth_ar, 0, depth_ar.Length);
+                Array.Copy(depth_ar_saved, depth_ar, copyCount);
+                depthBuffer.SetData(depth_ar);
             }
 
-            depth_ar_buffer = process_depth(depth_ar_buffer);
+            currentRawDepthBuffer = depthBuffer;
+            if (!process_depth(currentRawDepthBuffer))
+                return false;
+            savedMeshUploaded = true;
+            hasFrameData = true;
+            return true;
         }
-        else
+
+        if (spotObserverClient == null || !spotObserverClient.TryGetCameraFrame(SpotObserverStreamIdx, SpotObserverCameraIndex, out SpotObserverClient.CameraDepthFrame frame))
         {
-            (color_image, depth_tensor) = spotObserverClient.GetCameraFeeds(SpotObserverStreamIdx, SpotObserverCameraIndex);
-         
-            if (depth_image != null)
-            {
-                depth_ar_buffer.SetData(depth_ar);
-                depth_ar_buffer = ComputeTensorData.Pin(depth_tensor).buffer;
-            }
-
-            depth_ar_buffer = process_depth(depth_ar_buffer);
+            return false;
         }
+
+        if (hasFrameData && frame.Sequence == lastFrameSequence)
+        {
+            return false;
+        }
+
+        // Borrow texture/tensor/buffer from SpotObserverClient. Do not destroy or release them here.
+        color_image = frame.ColorTexture;
+        depth_tensor = frame.DepthTensor;
+        currentRawDepthBuffer = frame.DepthBuffer;
+        lastFrameSequence = frame.Sequence;
+
+        if (!process_depth(currentRawDepthBuffer))
+            return false;
+        hasFrameData = true;
+        return true;
     }
 
     private void Update()
     {
-        if (!depthManager.show_spot)
+        if (depthManager != null && !depthManager.show_spot)
         {
             return;
         }
 
-        // Debug.Log("UPDATE CALLED");
-
-        UpdateTexture();
-
-        //Debug.Log("UPDATE");
-
-        //SetProperties enables point cloud to move when game object moves, but is laggier due to redrawing. Just comment it out for performance improvement;
-        //transform.LookAt(target);
-        SetProperties();
+        bool frameUpdated = UpdateFrameData();
         SetGOPosition();
 
+        if (!hasFrameData)
+            return;
 
-        compute.SetFloat("y_max", depthManager.y_max);
-        compute.SetFloat("z_max", depthManager.z_max);
+        if (frameUpdated)
+        {
+            SetProperties();
+            compute.SetFloat("y_max", depthManager != null ? depthManager.y_max : float.NegativeInfinity);
+            compute.SetFloat("z_max", depthManager != null ? depthManager.z_max : float.NegativeInfinity);
 
-        compute.SetFloat("edgeThreshold", depthManager.edgeThreshold);
-        compute.SetFloat("meanThreshold", depthManager.meanThreshold);
-        compute.SetInt("maxNeighbourNum", depthManager.maxNeighbourNum);
-        compute.SetBool("activate_edge_detection", depthManager.activate_edge_detection);
+            compute.SetFloat("edgeThreshold", depthManager != null ? depthManager.edgeThreshold : 0.0f);
+            compute.SetFloat("meanThreshold", depthManager != null ? depthManager.meanThreshold : 0.0f);
+            compute.SetInt("maxNeighbourNum", depthManager != null ? depthManager.maxNeighbourNum : 0);
+            compute.SetBool("activate_edge_detection", depthManager != null && depthManager.activate_edge_detection);
 
-        //update the color image
-        //counter += 1;
+            compute.Dispatch(edge_kernel, Mathf.CeilToInt(frameWidth / 16f), Mathf.CeilToInt(frameHeight / 16f), 1);
+            compute.Dispatch(kernel, Mathf.CeilToInt(population / 256f), 1, 1);
+        }
 
-        //Debug.Log("UPDATE");
-        //DateTime localTime = DateTime.Now;
-        //float deltaTime = Time.deltaTime;
-        //long microseconds = localTime.Ticks / (TimeSpan.TicksPerMillisecond / 1000);
-        //Debug.Log("updates per second: " + (counter/Time.realtimeSinceStartup).ToString() + " updates: " + counter.ToString() + " deltaTime: " + Time.realtimeSinceStartup.ToString());
-
-        // We used to just be able to use `population` here, but it looks like a Unity update imposed a thread limit (65535) on my device.
-        // This is probably for the best, but we have to do some more calculation.  Divide population by numthreads.x (declared in compute shader).
-        compute.Dispatch(edge_kernel, Mathf.CeilToInt(640f / 16f), Mathf.CeilToInt(480f / 16f), 1);
-        compute.Dispatch(kernel, Mathf.CeilToInt(population / 256f), 1, 1);
-        // Question:
-        //          - where is the point cloud? -> stored at where
-        //          - what is the format of the point cloud after calling the compute shader
-        //          - How to access the 2 point cloud from 2 spots?
-        //          
-        OrientQuad(mesh, get_normal());
         Graphics.DrawMeshInstancedIndirect(mesh, 0, material, bounds, argsBuffer);
-        //numUpdates += 1;
     }
 
     private Vector4 pixel_to_vision_frame(uint i, uint j, float depth)
@@ -473,8 +573,9 @@ public class DrawMeshInstanced : MonoBehaviour
         //float FX = (float)552.029101;
         //float FY = (float)552.029101;
 
-        float x = (j - CVD.CX) * depth / CVD.FX;
-        float y = (i - CVD.CY) * depth / CVD.FY;
+        Vector4 intrinsics = GetIntrinsicsVector();
+        float x = (j - intrinsics.x) * depth / intrinsics.z;
+        float y = (i - intrinsics.y) * depth / intrinsics.w;
 
         Vector4 ret = new Vector4(x, y, depth, 1f);
         return (ret);
@@ -488,12 +589,12 @@ public class DrawMeshInstanced : MonoBehaviour
 
     public Vector4 get_screenData()
     {
-        return new Vector4((float)width, (float)height, 1 / (float)width, CVD.FY);
+        return GetScreenDataVector();
     }
 
     public Vector4 get_intrinsics()
     {
-        return new Vector4(CVD.CX, CVD.CY, CVD.FX, CVD.FY);
+        return GetIntrinsicsVector();
     }
 
     public bool get_ready_to_freeze()
@@ -508,22 +609,25 @@ public class DrawMeshInstanced : MonoBehaviour
         yield return new WaitForSecondsRealtime(waitTime);
         ready_to_freeze = true;
         start_completion = true;
-        Debug.LogWarning("DEPTH IS READY AGAIN");
-        averager.ClearBuffer();
+        if (enableDebugLogging)
+            Debug.LogWarning("DEPTH IS READY AGAIN");
+        averager?.ClearBuffer();
         freeze_lock = false;
     }
 
     private IEnumerator ToggleReadyToDepthAfterDelay(float waitTime)
     {
         yield return new WaitForSecondsRealtime(waitTime);
-        Debug.LogWarning("DEPTH IS READY");
+        if (enableDebugLogging)
+            Debug.LogWarning("DEPTH IS READY");
         start_completion = true;
     }
 
     public void continue_update()
     {
         start_completion = false;
-        Debug.LogWarning("SET TO FALSE");
+        if (enableDebugLogging)
+            Debug.LogWarning("SET TO FALSE");
         if (ready_to_freeze & !freeze_lock)
         {
             StartCoroutine(ToggleReadyToFreezeAfterDelay(4.0f));
@@ -535,6 +639,9 @@ public class DrawMeshInstanced : MonoBehaviour
 
     public Vector3 get_normal()
     {
+        if (mainCameraRot == null)
+            return -Vector3.forward;
+
         var relRot = Quaternion.Euler(0f, mainCameraRot.rotation.eulerAngles.y, 0f);
         var res = relRot * new Vector3(0f, 0f, -1.0f);
         //Debug.LogWarning(res.ToString());
@@ -656,102 +763,45 @@ public class DrawMeshInstanced : MonoBehaviour
         return mesh;
     }
 
-    void OrientQuad(Mesh mesh, Vector3 vec_dir)
-    {
-        if (vec_dir.sqrMagnitude < 1e-6f) return;          // guard against zero
-        Quaternion rot = Quaternion.FromToRotation(-Vector3.forward, vec_dir.normalized);
-
-        float w = size_scale * .5f;
-        float h = size_scale * .5f;
-
-        Vector3[] v = new Vector3[4] {
-            new Vector3(-w, -h, 0),
-            new Vector3(w, -h, 0),
-            new Vector3(-w, h, 0),
-            new Vector3(w, h, 0)
-        };
-
-        Vector3[] n = new Vector3[4] {
-            -Vector3.forward,
-            -Vector3.forward,
-            -Vector3.forward,
-            -Vector3.forward,
-        };
-
-        for (int i = 0; i < v.Length; ++i)
-        {
-            v[i] = rot * v[i];      // rotate vertex positions
-            n[i] = rot * n[i];      // rotate normals
-        }
-
-        mesh.vertices = v;
-        mesh.normals = n;
-        //mesh.RecalculateBounds();
-    }
-
-    private Mesh CreateTri(float width = 1f, float height = 1f)
-    {
-        // Create a quad mesh.
-        var mesh = new Mesh();
-
-        float w = width * .5f;
-        float h = height * .5f;
-        var vertices = new Vector3[3] {
-            new Vector3(-w, -h, 0),
-            new Vector3(w, -h, 0),
-            new Vector3(-w, h, 0)
-        };
-
-        var tris = new int[3] {
-            // lower left tri.
-            0, 2, 1
-        };
-
-        var normals = new Vector3[3] {
-            -Vector3.forward,
-            -Vector3.forward,
-            -Vector3.forward,
-        };
-
-        var uv = new Vector2[3] {
-            new Vector2(0, 0),
-            new Vector2(1, 0),
-            new Vector2(0, 1),
-        };
-
-        mesh.vertices = vertices;
-        mesh.triangles = tris;
-        mesh.normals = normals;
-        mesh.uv = uv;
-
-        return mesh;
-    }
-
     public void toggleFreezeCloud()
     {
-        float[] temp_depth;
-        Texture2D temp_texture;
-
-
         freezeCloud = !freezeCloud;
 
-        // if turning on freeze, deep copy arrays
-        if (freezeCloud)
-        {
-            temp_depth = new float[depth_ar.Length];
-            Array.Copy(depth_ar, temp_depth, depth_ar.Length);
-            depth_ar = temp_depth;
+        if (use_saved_meshes)
+            return;
 
-            temp_texture = new Texture2D(color_image.width, color_image.height);
-            temp_texture.SetPixels(color_image.GetPixels());
-            temp_texture.Apply();
-            color_image = temp_texture;
+        if (freezeCloud && color_image != null)
+        {
+            DestroyFrozenColorImage();
+            frozenColorImage = copy_texture(color_image);
+            if (frozenColorImage != null)
+            {
+                color_image = frozenColorImage;
+                material.SetTexture("_colorMap", color_image);
+            }
+        }
+        else if (!freezeCloud)
+        {
+            DestroyFrozenColorImage();
+            lastFrameSequence = ulong.MaxValue;
         }
     }
 
     public void setCloudFreeze(bool freeze)
     {
-        freezeCloud = freeze;
+        if (freezeCloud == freeze)
+            return;
+
+        toggleFreezeCloud();
+    }
+
+    private void DestroyFrozenColorImage()
+    {
+        if (frozenColorImage != null)
+        {
+            Destroy(frozenColorImage);
+            frozenColorImage = null;
+        }
     }
 
     private void Start()
@@ -763,6 +813,29 @@ public class DrawMeshInstanced : MonoBehaviour
     private void OnDisable()
     {
         // Release gracefully.
+        DestroyFrozenColorImage();
+
+        if (mesh != null)
+        {
+            Destroy(mesh);
+            mesh = null;
+        }
+
+        if (depth_image != null)
+        {
+            Destroy(depth_image);
+            depth_image = null;
+        }
+
+        if (ownsColorImage && color_image != null)
+        {
+            Destroy(color_image);
+        }
+        color_image = null;
+        ownsColorImage = false;
+        currentRawDepthBuffer = null;
+        hasFrameData = false;
+
         if (meshPropertiesBuffer != null)
         {
             meshPropertiesBuffer.Release();

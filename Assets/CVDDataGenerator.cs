@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class CVDDataGenerator : MonoBehaviour
 {
+    public bool enableDebugLogging = false;
     private bool first_run = true;
 
     Unity.InferenceEngine.Tensor<float> previous_rgbL;
@@ -25,8 +26,15 @@ public class CVDDataGenerator : MonoBehaviour
     private OpticalFlowEstimator optical_flow_estimation;
 
     ComputeBuffer buffer_depthL, buffer_depthR, buffer_opticalL, buffer_opticalR;
+    // Only fallback optical buffers are owned here. Depth tensors and estimator output are borrowed.
+    private bool ownsOpticalBuffers;
 
     Matrix4x4 mat_l, mat_r;
+
+    private int GetOpticalBufferCount(Unity.InferenceEngine.Tensor<float> depthTensor)
+    {
+        return depthTensor != null ? Mathf.Max(1, depthTensor.count * 2) : 640 * 480 * 2;
+    }
 
     void Start()
     {
@@ -54,18 +62,21 @@ public class CVDDataGenerator : MonoBehaviour
         previous_rgbL?.Dispose();
         previous_rgbR?.Dispose();
         
-        buffer_depthL?.Dispose();
-        buffer_depthR?.Dispose();
-        buffer_opticalL?.Dispose();
-        buffer_opticalR?.Dispose();
-        Debug.Log("CVDDataGenerator destroyed and buffers released.");
+        if (ownsOpticalBuffers)
+        {
+            buffer_opticalL?.Release();
+            buffer_opticalR?.Release();
+        }
+        if (enableDebugLogging)
+            Debug.Log("CVDDataGenerator destroyed and buffers released.");
     }
 
     IEnumerator SetFirstRunFalseAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
         //first_run = false;
-        Debug.Log("first_run set to false");
+        if (enableDebugLogging)
+            Debug.Log("first_run set to false");
     }
 
     //public (ComputeBuffer, ComputeBuffer, ComputeBuffer, ComputeBuffer) generateData(Tensor<float> depthL, Tensor<float> rgbL, Tensor<float> depthR, Tensor<float> rgbR, bool activate_depth_completion, bool activate_optical_flow)
@@ -147,8 +158,9 @@ public class CVDDataGenerator : MonoBehaviour
 
             buffer_depthL = Unity.InferenceEngine.ComputeTensorData.Pin(depthL).buffer;
             buffer_depthR = Unity.InferenceEngine.ComputeTensorData.Pin(depthR).buffer;
-            buffer_opticalL = new ComputeBuffer(480 * 640 * 2, sizeof(float));
-            buffer_opticalR = new ComputeBuffer(480 * 640 * 2, sizeof(float));
+            buffer_opticalL = new ComputeBuffer(GetOpticalBufferCount(depthL), sizeof(float));
+            buffer_opticalR = new ComputeBuffer(GetOpticalBufferCount(depthR), sizeof(float));
+            ownsOpticalBuffers = true;
 
             first_run = false;
             //Debug.Log("first run return");
@@ -178,8 +190,12 @@ public class CVDDataGenerator : MonoBehaviour
                 mat_l = render_left.get_current_pose();
                 mat_r = render_right.get_current_pose();
                 //Debug.Log("optical flow?");
-                //buffer_opticalL?.Release();
-                //buffer_opticalR?.Release();
+                if (ownsOpticalBuffers)
+                {
+                    buffer_opticalL?.Release();
+                    buffer_opticalR?.Release();
+                    ownsOpticalBuffers = false;
+                }
                 (buffer_opticalL, buffer_opticalR) = optical_flow_estimation.estimate_all(previous_rgbL, rgbL, previous_rgbR, rgbR);
 
                 //previous_rgbL = ops.copy(rgbL);

@@ -1,18 +1,39 @@
 using RosSharp.RosBridgeClient;
 using RosSharp.RosBridgeClient.MessageTypes.RclInterfaces;
-using RosSharp.Urdf;
 using System;
 using System.Runtime.InteropServices;
-using System.Threading;
 using Unity.Collections;
 using Unity.InferenceEngine;
 
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 
 public class SpotObserverClient : MonoBehaviour
 {
+    // Borrowed view of the latest camera frame. Consumers may read these resources
+    // during the frame, but ownership stays with SpotObserverClient/the native plugin.
+    public struct CameraDepthFrame
+    {
+        public readonly Texture2D ColorTexture;
+        public readonly Tensor<float> DepthTensor;
+        public readonly ComputeBuffer DepthBuffer;
+        public readonly int Width;
+        public readonly int Height;
+        // Monotonic per camera while streaming; consumers use this to skip duplicate frames.
+        public readonly ulong Sequence;
+
+        public bool IsValid => ColorTexture != null && DepthTensor != null && DepthBuffer != null && Width > 0 && Height > 0;
+
+        public CameraDepthFrame(Texture2D colorTexture, Tensor<float> depthTensor, ComputeBuffer depthBuffer, int width, int height, ulong sequence)
+        {
+            ColorTexture = colorTexture;
+            DepthTensor = depthTensor;
+            DepthBuffer = depthBuffer;
+            Width = width;
+            Height = height;
+            Sequence = sequence;
+        }
+    }
 
     [DllImport("SpotObserverLib", CharSet = CharSet.Ansi)]
     private static extern int SOb_ConnectToSpot(
@@ -98,6 +119,8 @@ public class SpotObserverClient : MonoBehaviour
     };
 
     private delegate void LogCallback(string message);
+    // Keep the delegate rooted while native code may call back into Unity.
+    private static readonly LogCallback UnityLogCallback = PluginLogCallback;
 
     private static void PluginLogCallback(string message)
     {
@@ -118,6 +141,7 @@ public class SpotObserverClient : MonoBehaviour
     public bool enableLogging = false;
     private bool lastLoggingState = false;
     public bool enableDebugDumps = false;
+    public bool enableFrameDebugLogging = false;
 
     // Private
 
@@ -127,11 +151,16 @@ public class SpotObserverClient : MonoBehaviour
     private int[] stream_ids = { -1, -1 };
     private bool[] isStreaming = { false, false };
     private bool[] isVisionPipelineRunning = { false, false };
-    private IntPtr model;
+    private IntPtr model = IntPtr.Zero;
 
     private Texture2D[][] rgb_textures;
 
+    // Depth tensors own the pinned GPU buffers; renderers borrow depth_buffers via CameraDepthFrame.
     private Tensor<float>[][] depth_tensors;
+    private ComputeBuffer[][] depth_buffers;
+    // Sequence increments only after a successful native push, letting consumers skip duplicate frames.
+    private ulong[][] frame_sequences;
+    private bool[][] frame_valid;
 
     private IntPtr[][] rgb_resources;
     private IntPtr[][] depth_resources;
@@ -148,9 +177,93 @@ public class SpotObserverClient : MonoBehaviour
         }
     };
 
+    private const int DefaultCameraWidth = 640;
+    private const int DefaultCameraHeight = 480;
+    private const int ColorRegistrationBytesPerPixel = 4;
+    private const int DepthBytesPerPixel = 4;
+
+    private bool RequiresVisionPipeline()
+    {
+        if (useVisionPipeline == null)
+            return false;
+
+        for (int i = 0; i < useVisionPipeline.Length; i++)
+        {
+            if (useVisionPipeline[i])
+                return true;
+        }
+
+        return false;
+    }
+
+    private bool EnsureVisionModelLoaded()
+    {
+        if (model != IntPtr.Zero)
+            return true;
+
+        string modelPath = depthCompletionModelFile == null ? string.Empty : depthCompletionModelFile.Trim();
+        if (string.IsNullOrEmpty(modelPath))
+        {
+            Debug.LogError("No model path configured for the Spot vision pipeline.");
+            return false;
+        }
+
+        model = SOb_LoadModel(modelPath, "cuda");
+        if (model == IntPtr.Zero)
+        {
+            Debug.LogError("Failed to load vision pipeline model from: " + modelPath);
+            return false;
+        }
+
+        return true;
+    }
+
+    private void MarkStreamFramePushed(int stream)
+    {
+        if (frame_sequences == null || frame_valid == null ||
+            stream < 0 || stream >= frame_sequences.Length || stream >= frame_valid.Length ||
+            frame_sequences[stream] == null || frame_valid[stream] == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < frame_sequences[stream].Length; i++)
+        {
+            frame_sequences[stream][i]++;
+            frame_valid[stream][i] = true;
+        }
+    }
+
+    private bool TryPushStreamFrame(int stream, bool usePipeline)
+    {
+        bool pushed;
+        if (usePipeline)
+        {
+            pushed = SOb_PushNextVisionPipelineImageSetToUnityBuffers(robot_id, stream_ids[stream]);
+        }
+        else
+        {
+            pushed = SOb_PushNextImageSetToUnityBuffers(robot_id, stream_ids[stream]);
+        }
+
+        if (pushed)
+        {
+            MarkStreamFramePushed(stream);
+        }
+        else if (enableFrameDebugLogging)
+        {
+            Debug.LogWarning("No camera frame pushed for robot " + robot_id + ", stream " + stream + ".");
+        }
+
+        return pushed;
+    }
+
 
     private void launch_vision_pipeline(int stream_idx)
     {
+        if (!EnsureVisionModelLoaded())
+            return;
+
         if (model == IntPtr.Zero)
         {
             Debug.LogError("No model loaded for vision pipeline.");
@@ -208,7 +321,7 @@ public class SpotObserverClient : MonoBehaviour
     {
         start_called = true;
 
-        SOb_SetUnityLogCallback(PluginLogCallback);
+        SOb_SetUnityLogCallback(UnityLogCallback);
 
         if (enableLogging)
         {
@@ -235,11 +348,8 @@ public class SpotObserverClient : MonoBehaviour
         Debug.Log("Connected to Spot robot at " + RobotIP);
         isConnected = true;
 
-        // Load the vision pipeline model        
-        model = SOb_LoadModel(depthCompletionModelFile, "cuda");
-        if (model == IntPtr.Zero)
+        if (RequiresVisionPipeline() && !EnsureVisionModelLoaded())
         {
-            Debug.LogError("Failed to load vision pipeline model.");
             return;
         }
 
@@ -256,6 +366,9 @@ public class SpotObserverClient : MonoBehaviour
         rgb_resources = new IntPtr[num_streams][];
         depth_resources = new IntPtr[num_streams][];
         depth_tensors = new Tensor<float>[num_streams][];
+        depth_buffers = new ComputeBuffer[num_streams][];
+        frame_sequences = new ulong[num_streams][];
+        frame_valid = new bool[num_streams][];
 
         // Create camera streams
         SpotCamToIdx = new NativeHashMap<int, int>[num_streams];
@@ -269,6 +382,9 @@ public class SpotObserverClient : MonoBehaviour
             rgb_resources[stream] = new IntPtr[num_cams];
             depth_resources[stream] = new IntPtr[num_cams];
             depth_tensors[stream] = new Tensor<float>[num_cams];
+            depth_buffers[stream] = new ComputeBuffer[num_cams];
+            frame_sequences[stream] = new ulong[num_cams];
+            frame_valid[stream] = new bool[num_cams];
 
             SpotCamToIdx[stream] = new NativeHashMap<int, int>(cams.Length, Allocator.Persistent);
 
@@ -285,6 +401,8 @@ public class SpotObserverClient : MonoBehaviour
             if (stream_id < 0)
             {
                 Debug.LogError("Failed to read camera feeds from Spot robot.");
+                isStreaming[stream] = false;
+                continue;
             }
             Debug.Log("Created camera stream with ID " + stream_id + " for cameras mask " + all_cams);
 
@@ -292,15 +410,18 @@ public class SpotObserverClient : MonoBehaviour
 
             for (var i = 0; i < num_cams; i++)
             {
-                rgb_textures[stream][i] = new Texture2D(640, 480, TextureFormat.RGB24, false);
+                rgb_textures[stream][i] = new Texture2D(DefaultCameraWidth, DefaultCameraHeight, TextureFormat.RGB24, false);
                 rgb_resources[stream][i] = rgb_textures[stream][i].GetNativeTexturePtr();
 
                 depth_tensors[stream][i] = new Tensor<float>(depth_shape);
-                depth_resources[stream][i] = ComputeTensorData.Pin(depth_tensors[stream][i]).buffer.GetNativeBufferPtr();
+                depth_buffers[stream][i] = ComputeTensorData.Pin(depth_tensors[stream][i]).buffer;
+                depth_resources[stream][i] = depth_buffers[stream][i].GetNativeBufferPtr();
 
                 // Register textures with the Spot observer
-                // Don't trip: RGB24 is 4 bytes per pixel despite what you'd think
-                if (!SOb_RegisterUnityReadbackBuffers(robot_id, stream_id, cams[i], rgb_resources[stream][i], depth_resources[stream][i], 640 * 480 * 4, 640 * 480 * 4))
+                // Don't trip: RGB24 still needs 4 bytes per pixel for this native readback path.
+                int colorBytes = DefaultCameraWidth * DefaultCameraHeight * ColorRegistrationBytesPerPixel;
+                int depthBytes = DefaultCameraWidth * DefaultCameraHeight * DepthBytesPerPixel;
+                if (!SOb_RegisterUnityReadbackBuffers(robot_id, stream_id, cams[i], rgb_resources[stream][i], depth_resources[stream][i], colorBytes, depthBytes))
                 {
                     Debug.LogError("Failed to register textures for camera " + cams[i]);
                 }
@@ -316,7 +437,8 @@ public class SpotObserverClient : MonoBehaviour
                 return;
             }
 
-            if (useVisionPipeline[stream])
+            bool shouldUseVisionPipeline = useVisionPipeline != null && stream < useVisionPipeline.Length && useVisionPipeline[stream];
+            if (shouldUseVisionPipeline)
             {
                 launch_vision_pipeline(stream);
             }
@@ -392,22 +514,44 @@ public class SpotObserverClient : MonoBehaviour
         robot_id = -1;
         isConnected = false;
 
-        // TODO: Destroy the model
-        for (int stream = 0; stream < SpotCamToIdx.Length; stream++)
+        if (model != IntPtr.Zero)
         {
-            if (SpotCamToIdx[stream].IsCreated)
+            SOb_UnloadModel(model);
+            model = IntPtr.Zero;
+        }
+
+        if (SpotCamToIdx != null)
+        {
+            for (int stream = 0; stream < SpotCamToIdx.Length; stream++)
             {
-                SpotCamToIdx[stream].Dispose();
-            }
-            if (depth_tensors[stream] != null)
-            {
-                foreach (var tensor in depth_tensors[stream])
+                if (SpotCamToIdx[stream].IsCreated)
                 {
-                    tensor.Dispose();
+                    SpotCamToIdx[stream].Dispose();
                 }
             }
-            if (rgb_textures[stream] != null)
+        }
+
+        if (depth_tensors != null)
+        {
+            for (int stream = 0; stream < depth_tensors.Length; stream++)
             {
+                if (depth_tensors[stream] == null)
+                    continue;
+
+                foreach (var tensor in depth_tensors[stream])
+                {
+                    tensor?.Dispose();
+                }
+            }
+        }
+
+        if (rgb_textures != null)
+        {
+            for (int stream = 0; stream < rgb_textures.Length; stream++)
+            {
+                if (rgb_textures[stream] == null)
+                    continue;
+
                 foreach (var texture in rgb_textures[stream])
                 {
                     if (texture != null)
@@ -418,13 +562,18 @@ public class SpotObserverClient : MonoBehaviour
             }
         }
 
-    
+        rgb_textures = null;
+        depth_tensors = null;
+        depth_buffers = null;
+        rgb_resources = null;
+        depth_resources = null;
+        frame_sequences = null;
+        frame_valid = null;
         start_called = false;
     }
 
     void Update()
     {
-        Debug.Log("SpotObserverClient Update() called. Robot ID: " + robot_id + ", start_called: " + start_called + ", RobotIP: " + RobotIP);
         if (!start_called)
         {
             if (RobotIP != "")
@@ -459,7 +608,8 @@ public class SpotObserverClient : MonoBehaviour
                 continue;
             }
 
-            if (useVisionPipeline[stream])
+            bool shouldUseVisionPipeline = useVisionPipeline != null && stream < useVisionPipeline.Length && useVisionPipeline[stream];
+            if (shouldUseVisionPipeline)
             {
                 if (!isVisionPipelineRunning[stream])
                 {
@@ -467,13 +617,13 @@ public class SpotObserverClient : MonoBehaviour
                     if (!isVisionPipelineRunning[stream])
                     {
                         // Failed to launch vision pipeline
-                        SOb_PushNextImageSetToUnityBuffers(robot_id, stream_ids[stream]);
+                        TryPushStreamFrame(stream, false);
                         continue;
                     }
                 }
                 else
                 {
-                    SOb_PushNextVisionPipelineImageSetToUnityBuffers(robot_id, stream_ids[stream]);
+                    TryPushStreamFrame(stream, true);
                 }
             }
             else
@@ -482,37 +632,73 @@ public class SpotObserverClient : MonoBehaviour
                 {
                     stop_vision_pipeline(stream);
                 }
-                SOb_PushNextImageSetToUnityBuffers(robot_id, stream_ids[stream]);
+                TryPushStreamFrame(stream, false);
             }
         }
     }
 
-    public (Texture2D, Tensor) GetCameraFeeds(int stream_idx, SpotCamera id)
+    // Returns a borrowed frame for the requested camera. False means no fresh native frame
+    // has been pushed yet, the stream is unavailable, or startup/teardown is incomplete.
+    public bool TryGetCameraFrame(int stream_idx, SpotCamera id, out CameraDepthFrame frame)
     {
+        frame = default;
+
         if (stream_idx < 0 || stream_idx >= stream_ids.Length)
         {
             Debug.LogError("Invalid stream index: " + stream_idx);
-            return (null, null);
+            return false;
         }
-
-        Debug.Log("GetCameraFeeds called. Robot ID: " + robot_id + ", isConnected: " + isConnected + ", stream_idx: " + stream_idx + ", camera: " + (int)id);
 
         if (!isConnected)
         {
-            Debug.LogError("Not connected to Spot robot. Cannot get camera feeds. (Robot ID " + robot_id + ", stream " + stream_idx + ", camera " + (int)id + ")");
-            return (null, null);
+            if (enableFrameDebugLogging)
+                Debug.LogWarning("Not connected to Spot robot. Cannot get camera feeds. (Robot ID " + robot_id + ", stream " + stream_idx + ", camera " + (int)id + ")");
+            return false;
         }
         if (!isStreaming[stream_idx]) {
-            Debug.LogError("Not streaming camera feeds for robot " + robot_id + ", stream " + stream_idx + ". Cannot get camera feeds.");
-            return (null, null);
+            if (enableFrameDebugLogging)
+                Debug.LogWarning("Not streaming camera feeds for robot " + robot_id + ", stream " + stream_idx + ". Cannot get camera feeds.");
+            return false;
         }
 
-        if (!SpotCamToIdx[stream_idx].TryGetValue((int)id, out int idx))
+        if (SpotCamToIdx == null || stream_idx >= SpotCamToIdx.Length || !SpotCamToIdx[stream_idx].IsCreated || !SpotCamToIdx[stream_idx].TryGetValue((int)id, out int idx))
         {
             Debug.LogError("Invalid camera ID: " + (int)id);
-            return (null, null);
+            return false;
         }
 
-        return (rgb_textures[stream_idx][idx], depth_tensors[stream_idx][idx]);
+        if (rgb_textures == null || depth_tensors == null || depth_buffers == null || frame_sequences == null || frame_valid == null ||
+            stream_idx >= rgb_textures.Length || stream_idx >= depth_tensors.Length || stream_idx >= depth_buffers.Length ||
+            stream_idx >= frame_sequences.Length || stream_idx >= frame_valid.Length ||
+            rgb_textures[stream_idx] == null || depth_tensors[stream_idx] == null || depth_buffers[stream_idx] == null ||
+            frame_sequences[stream_idx] == null || frame_valid[stream_idx] == null ||
+            idx < 0 || idx >= rgb_textures[stream_idx].Length || idx >= depth_tensors[stream_idx].Length ||
+            idx >= depth_buffers[stream_idx].Length || idx >= frame_sequences[stream_idx].Length || idx >= frame_valid[stream_idx].Length)
+        {
+            return false;
+        }
+
+        if (!frame_valid[stream_idx][idx])
+        {
+            return false;
+        }
+
+        frame = new CameraDepthFrame(
+            rgb_textures[stream_idx][idx],
+            depth_tensors[stream_idx][idx],
+            depth_buffers[stream_idx][idx],
+            DefaultCameraWidth,
+            DefaultCameraHeight,
+            frame_sequences[stream_idx][idx]);
+
+        return frame.IsValid;
+    }
+
+    public (Texture2D, Tensor) GetCameraFeeds(int stream_idx, SpotCamera id)
+    {
+        if (TryGetCameraFrame(stream_idx, id, out CameraDepthFrame frame))
+            return (frame.ColorTexture, frame.DepthTensor);
+
+        return (null, null);
     }
 }

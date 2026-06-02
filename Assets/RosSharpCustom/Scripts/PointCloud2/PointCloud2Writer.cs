@@ -16,32 +16,75 @@ limitations under the License.
 
 using UnityEngine;
 using System;
+using System.Runtime.InteropServices;
 
 namespace RosSharp.RosBridgeClient
 {
     public class PointCloud2Writer : MonoBehaviour
     {
         private bool isReceived = false;
-        private Vector3[] points;
-        private Color[] colors;
+        private readonly object dataLock = new object();
+        // ROS callbacks fill write* buffers; Update publishes ready* while holding the lock
+        // so visualizers can copy before the writer reuses either array.
+        private Vector3[] writePoints;
+        private Color[] writeColors;
+        private Vector3[] readyPoints;
+        private Color[] readyColors;
+        private int readyPointCount;
         private PointCloud2Visualizer[] pointCloud2Visualizers;
+
+        // Reinterprets endian-correct integer bits without allocating byte arrays per field.
+        [StructLayout(LayoutKind.Explicit)]
+        private struct UIntFloat
+        {
+            [FieldOffset(0)] public uint UInt;
+            [FieldOffset(0)] public float Float;
+        }
+
+        [StructLayout(LayoutKind.Explicit)]
+        private struct ULongDouble
+        {
+            [FieldOffset(0)] public ulong ULong;
+            [FieldOffset(0)] public double Double;
+        }
+
+        private void Awake()
+        {
+            pointCloud2Visualizers = GetComponents<PointCloud2Visualizer>();
+        }
 
         private void Update()
         {
-            pointCloud2Visualizers = GetComponents<PointCloud2Visualizer>();
-            if (isReceived)
-                if (pointCloud2Visualizers != null)
-                    foreach (PointCloud2Visualizer pointCloud2Visualizer in pointCloud2Visualizers)
-                        pointCloud2Visualizer.SetPointCloudData(gameObject.transform, points, colors);
+            if (pointCloud2Visualizers == null)
+                pointCloud2Visualizers = GetComponents<PointCloud2Visualizer>();
 
-            isReceived = false;
+            if (pointCloud2Visualizers == null)
+                return;
+
+            lock (dataLock)
+            {
+                if (!isReceived)
+                    return;
+
+                foreach (PointCloud2Visualizer pointCloud2Visualizer in pointCloud2Visualizers)
+                {
+                    if (pointCloud2Visualizer != null)
+                        pointCloud2Visualizer.SetPointCloudData(gameObject.transform, readyPoints, readyColors, readyPointCount);
+                }
+                isReceived = false;
+            }
         }
 
         public void Write(MessageTypes.Sensor.PointCloud2 pointCloud2)
         {
-            int numPoints = (int)(pointCloud2.width * pointCloud2.height);
-            points = new Vector3[numPoints];
-            colors = new Color[numPoints];
+            if (pointCloud2 == null || pointCloud2.data == null || pointCloud2.fields == null)
+                return;
+
+            long numPointsLong = (long)pointCloud2.width * (long)pointCloud2.height;
+            if (numPointsLong <= 0 || numPointsLong > int.MaxValue || pointCloud2.point_step == 0)
+                return;
+
+            int numPoints = (int)numPointsLong;
 
             // Find field offsets for x, y, z, and rgb/rgba
             int x_offset = -1, y_offset = -1, z_offset = -1, rgb_offset = -1;
@@ -75,35 +118,53 @@ namespace RosSharp.RosBridgeClient
             int point_step = (int)pointCloud2.point_step;
             byte[] data = pointCloud2.data;
 
-            for (int i = 0; i < numPoints; i++)
+            lock (dataLock)
             {
-                int index = i * point_step;
+                EnsureWriteCapacity(numPoints);
 
-                // Extract x, y, z coordinates
-                float x = 0, y = 0, z = 0;
-                if (x_offset >= 0)
-                    x = ReadFloat(data, index + x_offset, x_datatype, pointCloud2.is_bigendian);
-                if (y_offset >= 0)
-                    y = ReadFloat(data, index + y_offset, y_datatype, pointCloud2.is_bigendian);
-                if (z_offset >= 0)
-                    z = ReadFloat(data, index + z_offset, z_datatype, pointCloud2.is_bigendian);
-
-                // Convert from ROS (right-handed, z-up) to Unity (left-handed, y-up)
-                points[i] = new Vector3(x, y, z).Ros2Unity();
-
-                // Extract color if available
-                if (rgb_offset >= 0)
+                for (int i = 0; i < numPoints; i++)
                 {
-                    uint rgb = ReadUInt(data, index + rgb_offset, rgb_datatype, pointCloud2.is_bigendian);
-                    colors[i] = UnpackRGB(rgb);
+                    int index = i * point_step;
+
+                    float x = 0, y = 0, z = 0;
+                    if (x_offset >= 0)
+                        x = ReadFloat(data, index + x_offset, x_datatype, pointCloud2.is_bigendian);
+                    if (y_offset >= 0)
+                        y = ReadFloat(data, index + y_offset, y_datatype, pointCloud2.is_bigendian);
+                    if (z_offset >= 0)
+                        z = ReadFloat(data, index + z_offset, z_datatype, pointCloud2.is_bigendian);
+
+                    writePoints[i] = new Vector3(x, y, z).Ros2Unity();
+
+                    if (rgb_offset >= 0)
+                    {
+                        uint rgb = ReadUInt(data, index + rgb_offset, rgb_datatype, pointCloud2.is_bigendian);
+                        writeColors[i] = UnpackRGB(rgb);
+                    }
+                    else
+                    {
+                        writeColors[i] = Color.white;
+                    }
                 }
-                else
-                {
-                    colors[i] = Color.white;
-                }
+
+                // Swap buffers instead of allocating per message.
+                Vector3[] oldReadyPoints = readyPoints;
+                Color[] oldReadyColors = readyColors;
+                readyPoints = writePoints;
+                readyColors = writeColors;
+                readyPointCount = numPoints;
+                writePoints = oldReadyPoints;
+                writeColors = oldReadyColors;
+                isReceived = true;
             }
+        }
 
-            isReceived = true;
+        private void EnsureWriteCapacity(int pointCount)
+        {
+            if (writePoints == null || writePoints.Length < pointCount)
+                writePoints = new Vector3[pointCount];
+            if (writeColors == null || writeColors.Length < pointCount)
+                writeColors = new Color[pointCount];
         }
 
         private float ReadFloat(byte[] data, int offset, byte datatype, bool isBigEndian)
@@ -114,17 +175,8 @@ namespace RosSharp.RosBridgeClient
                 if (offset + 4 > data.Length)
                     return 0f;
 
-                byte[] bytes = new byte[4];
-                Array.Copy(data, offset, bytes, 0, 4);
-
-                // Reverse bytes only when endianness differs between data and system
-                bool dataIsLittleEndian = !isBigEndian;
-                bool systemIsLittleEndian = BitConverter.IsLittleEndian;
-
-                if (dataIsLittleEndian != systemIsLittleEndian)
-                    Array.Reverse(bytes);
-
-                return BitConverter.ToSingle(bytes, 0);
+                UIntFloat value = new UIntFloat { UInt = ReadUInt32(data, offset, isBigEndian) };
+                return value.Float;
             }
             // FLOAT64 = 8
             else if (datatype == 8)
@@ -132,17 +184,8 @@ namespace RosSharp.RosBridgeClient
                 if (offset + 8 > data.Length)
                     return 0f;
 
-                byte[] bytes = new byte[8];
-                Array.Copy(data, offset, bytes, 0, 8);
-
-                // Reverse bytes only when endianness differs between data and system
-                bool dataIsLittleEndian = !isBigEndian;
-                bool systemIsLittleEndian = BitConverter.IsLittleEndian;
-
-                if (dataIsLittleEndian != systemIsLittleEndian)
-                    Array.Reverse(bytes);
-
-                return (float)BitConverter.ToDouble(bytes, 0);
+                ULongDouble value = new ULongDouble { ULong = ReadUInt64(data, offset, isBigEndian) };
+                return (float)value.Double;
             }
 
             return 0f;
@@ -150,21 +193,57 @@ namespace RosSharp.RosBridgeClient
 
         private uint ReadUInt(byte[] data, int offset, byte datatype, bool isBigEndian)
         {
+            // UINT32 = 6, FLOAT32 = 7 (for RGB packed as float)
+            if (datatype == 6 || datatype == 7)
+                return ReadUInt32(data, offset, isBigEndian);
+
+            return 0;
+        }
+
+        private uint ReadUInt32(byte[] data, int offset, bool isBigEndian)
+        {
             if (offset + 4 > data.Length)
                 return 0;
 
-            // UINT32 = 6, FLOAT32 = 7 (for RGB packed as float)
-            byte[] bytes = new byte[4];
-            Array.Copy(data, offset, bytes, 0, 4);
+            if (isBigEndian)
+            {
+                return ((uint)data[offset] << 24) |
+                       ((uint)data[offset + 1] << 16) |
+                       ((uint)data[offset + 2] << 8) |
+                       (uint)data[offset + 3];
+            }
 
-            // Reverse bytes only when endianness differs between data and system
-            bool dataIsLittleEndian = !isBigEndian;
-            bool systemIsLittleEndian = BitConverter.IsLittleEndian;
+            return (uint)data[offset] |
+                   ((uint)data[offset + 1] << 8) |
+                   ((uint)data[offset + 2] << 16) |
+                   ((uint)data[offset + 3] << 24);
+        }
 
-            if (dataIsLittleEndian != systemIsLittleEndian)
-                Array.Reverse(bytes);
+        private ulong ReadUInt64(byte[] data, int offset, bool isBigEndian)
+        {
+            if (offset + 8 > data.Length)
+                return 0;
 
-            return BitConverter.ToUInt32(bytes, 0);
+            if (isBigEndian)
+            {
+                return ((ulong)data[offset] << 56) |
+                       ((ulong)data[offset + 1] << 48) |
+                       ((ulong)data[offset + 2] << 40) |
+                       ((ulong)data[offset + 3] << 32) |
+                       ((ulong)data[offset + 4] << 24) |
+                       ((ulong)data[offset + 5] << 16) |
+                       ((ulong)data[offset + 6] << 8) |
+                       (ulong)data[offset + 7];
+            }
+
+            return (ulong)data[offset] |
+                   ((ulong)data[offset + 1] << 8) |
+                   ((ulong)data[offset + 2] << 16) |
+                   ((ulong)data[offset + 3] << 24) |
+                   ((ulong)data[offset + 4] << 32) |
+                   ((ulong)data[offset + 5] << 40) |
+                   ((ulong)data[offset + 6] << 48) |
+                   ((ulong)data[offset + 7] << 56);
         }
 
         private Color UnpackRGB(uint rgb)

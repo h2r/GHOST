@@ -48,11 +48,6 @@ public class ICPLauncher : MonoBehaviour
     private int frame_count;
     
 
-    private ComputeBuffer buffer0;
-    private ComputeBuffer buffer1;
-    private ComputeBuffer buffer2;
-    private ComputeBuffer buffer3;
-
     float3x3 R_all;
     float3 t_all;
 
@@ -120,10 +115,8 @@ public class ICPLauncher : MonoBehaviour
         depth3d_return = new float3[W * H];
 
         depth_shape = new Unity.InferenceEngine.TensorShape(1, 1, 480, 640);
-        buffer0 = new ComputeBuffer(480 * 640, sizeof(float));
-        buffer1 = new ComputeBuffer(480 * 640, sizeof(float));
-        buffer2 = new ComputeBuffer(480 * 640, sizeof(float));
-        buffer3 = new ComputeBuffer(480 * 640, sizeof(float));
+        if (frames_per_icp <= 0)
+            frames_per_icp = 1;
 
         R_all = float3x3.identity;
         t_all = new float3(0.0f, 0.0f, 0.0f);
@@ -164,12 +157,6 @@ public class ICPLauncher : MonoBehaviour
         depth3d_downsampled0 = new float3[W * H * 2];
         depth3d_downsampled1 = new float3[W * H * 2];
         correspondence = new int[W * H * 2];
-
-        icp_shader.SetBuffer(downsample_kernel, "depth0", buffer0);
-        icp_shader.SetBuffer(downsample_kernel, "depth1", buffer1);
-        icp_shader.SetBuffer(downsample_kernel, "depth2", buffer2);
-        icp_shader.SetBuffer(downsample_kernel, "depth3", buffer3);
-
     }
 
     void OnDestroy()
@@ -192,26 +179,25 @@ public class ICPLauncher : MonoBehaviour
             correspondenceBuffer = null;
         }
 
-        if (buffer0 != null)
+    }
+
+    private bool TryBindRendererDepthBuffers()
+    {
+        if (renderer0 == null || renderer1 == null || renderer2 == null || renderer3 == null)
+            return false;
+
+        if (!renderer0.HasCurrentDepthBuffer || !renderer1.HasCurrentDepthBuffer ||
+            !renderer2.HasCurrentDepthBuffer || !renderer3.HasCurrentDepthBuffer)
         {
-            buffer0.Release();
-            buffer0 = null;
+            return false;
         }
-        if (buffer1 != null)
-        {
-            buffer1.Release();
-            buffer1 = null;
-        }
-        if (buffer2 != null)
-        {
-            buffer2.Release();
-            buffer2 = null;
-        }
-        if (buffer3 != null)
-        {
-            buffer3.Release();
-            buffer3 = null;
-        }
+
+        // Bind borrowed renderer depth buffers directly; ICP never owns or releases them.
+        icp_shader.SetBuffer(downsample_kernel, "depth0", renderer0.CurrentDepthBuffer);
+        icp_shader.SetBuffer(downsample_kernel, "depth1", renderer1.CurrentDepthBuffer);
+        icp_shader.SetBuffer(downsample_kernel, "depth2", renderer2.CurrentDepthBuffer);
+        icp_shader.SetBuffer(downsample_kernel, "depth3", renderer3.CurrentDepthBuffer);
+        return true;
     }
 
     public Matrix4x4 run_ICP()
@@ -219,17 +205,11 @@ public class ICPLauncher : MonoBehaviour
         frame_count++;
         if (frame_count % frames_per_icp != 0)
         {
-            Debug.Log("ICP");
             return res_trans;
         }
 
-
-        //depth
-        buffer0.SetData(renderer0.get_depth());
-        buffer1.SetData(renderer1.get_depth());
-        buffer2.SetData(renderer2.get_depth());
-        buffer3.SetData(renderer3.get_depth());
-
+        if (!TryBindRendererDepthBuffers())
+            return res_trans;
 
         R_all = float3x3.identity;
         t_all = new float3(0.0f, 0.0f, 0.0f);
@@ -355,6 +335,10 @@ public class ICPLauncher : MonoBehaviour
                 mu1 += depth3d_downsampled1[min_index];
                 count++;
             }
+        }
+        if (count == 0)
+        {
+            return (current_trans, float.MaxValue);
         }
         mu0 = mu0 / (float)count;
         mu1 = mu1 / (float)count;

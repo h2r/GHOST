@@ -33,20 +33,16 @@ namespace RosSharp.RosBridgeClient
 
         private RenderParams renderParams;
         private GraphicsBuffer commandBuffer;
+        private readonly Vector3[] billboardVertices = new Vector3[4];
+        private readonly Vector3[] billboardNormals = new Vector3[4];
 
-        private GameObject pointCloudContainer;
-        private GameObject[] pointSpheres;
         private bool IsCreated = false;
 
-        private bool BufferPopulated = false;
-
-        private void Create(Vector3[] positions)
+        private void Create(int capacity)
         {
             this.mesh = CreateQuad(pointSize, pointSize);
 
-            // Create and populate position buffer
-            positionBuffer = new ComputeBuffer(positions.Length, sizeof(float) * 3);
-            positionBuffer.SetData(positions);
+            positionBuffer = new ComputeBuffer(capacity, sizeof(float) * 3);
 
             // Setup render params
             renderParams = new RenderParams(pc_material);
@@ -60,6 +56,9 @@ namespace RosSharp.RosBridgeClient
 
         protected Vector3 get_normal()
         {
+            if (mainCameraRot == null)
+                return -Vector3.forward;
+
             var relRot = Quaternion.Euler(0f, mainCameraRot.rotation.eulerAngles.y, 0f);
             var res = relRot * new Vector3(0f, 0f, -1.0f);
             return res.normalized;
@@ -78,42 +77,36 @@ namespace RosSharp.RosBridgeClient
         }
         protected override void Visualize()
         {
-            if (points == null || points.Length == 0)
+            if (points == null || pointCount == 0)
+            {
+                DestroyObjects();
                 return;
+            }
 
-            // Limit points if necessary
-            int numPoints = Mathf.Min(points.Length, maxPointsToVisualize);
-            Vector3[] positions = new Vector3[numPoints];
-            System.Array.Copy(points, positions, numPoints);
+            int numPoints = Mathf.Min(pointCount, maxPointsToVisualize);
+            if (numPoints <= 0)
+                return;
 
             if (!IsCreated)
             {
-                Create(positions);
+                Create(numPoints);
                 IsCreated = true;
             }
-            else
+            else if (positionBuffer == null || positionBuffer.count < numPoints)
             {
-                // Update positions if already created
-                if (positionBuffer != null && positionBuffer.count == numPoints)
-                {
-                    positionBuffer.SetData(positions);
-                    renderParams.matProps.SetBuffer("_Positions", positionBuffer);
-                }
-                else
-                {
-                    // Recreate if point count changed
-                    DestroyObjects();
-                    Create(positions);
-                    IsCreated = true;
-                }
+                DestroyObjects();
+                Create(numPoints);
+                IsCreated = true;
             }
 
+            positionBuffer.SetData(points, 0, 0, numPoints);
+            renderParams.matProps.SetBuffer("_Positions", positionBuffer);
             SetupCommandData(numPoints);
         }
 
         protected override void Render()
         {
-            if (mesh == null)
+            if (mesh == null || commandBuffer == null)
             {
                 return;
             }
@@ -191,28 +184,24 @@ namespace RosSharp.RosBridgeClient
             float w = pointSize * .5f;
             float h = pointSize * .5f;
 
-            Vector3[] v = new Vector3[4] {
-                new Vector3(-w, -h, 0),
-                new Vector3(w, -h, 0),
-                new Vector3(-w, h, 0),
-                new Vector3(w, h, 0)
-            };
+            billboardVertices[0] = new Vector3(-w, -h, 0);
+            billboardVertices[1] = new Vector3(w, -h, 0);
+            billboardVertices[2] = new Vector3(-w, h, 0);
+            billboardVertices[3] = new Vector3(w, h, 0);
 
-            Vector3[] n = new Vector3[4] {
-                -Vector3.forward,
-                -Vector3.forward,
-                -Vector3.forward,
-                -Vector3.forward,
-            };
+            billboardNormals[0] = -Vector3.forward;
+            billboardNormals[1] = -Vector3.forward;
+            billboardNormals[2] = -Vector3.forward;
+            billboardNormals[3] = -Vector3.forward;
 
-            for (int i = 0; i < v.Length; ++i)
+            for (int i = 0; i < billboardVertices.Length; ++i)
             {
-                v[i] = rot * v[i];      // rotate vertex positions
-                n[i] = rot * n[i];      // rotate normals
+                billboardVertices[i] = rot * billboardVertices[i];
+                billboardNormals[i] = rot * billboardNormals[i];
             }
 
-            mesh.vertices = v;
-            mesh.normals = n;
+            mesh.vertices = billboardVertices;
+            mesh.normals = billboardNormals;
             //mesh.RecalculateBounds();
         }
     }

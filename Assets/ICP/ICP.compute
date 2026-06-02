@@ -51,14 +51,14 @@ void MergeDownsample(uint3 id : SV_DispatchThreadID)
 
         //uint temp_i = rowFull * 640 + colFull;
         
-        float4 res1;
-        float4 res2;
+        float4 res1 = float4(0.0f, 0.0f, 0.0f, 1.0f);
+        float4 res2 = float4(0.0f, 0.0f, 0.0f, 1.0f);
         float flg1 = 1.0f;
         float flg2 = 1.0f;
         
-        int sampleRows = 120;
         int sampleCols = 160;
-        int imageWidth = 640;
+        int imageWidth0 = (int)screenData0.x;
+        int imageWidth2 = (int)screenData2.x;
         
         int blockRow = id.x / sampleCols;
         int blockCol = id.x % sampleCols;
@@ -66,41 +66,55 @@ void MergeDownsample(uint3 id : SV_DispatchThreadID)
         int sampleRow = blockRow * 4 + 1;
         int sampleCol = blockCol * 4 + 1;
 
-        float i = sampleRow * imageWidth + sampleCol;
-        float col_y = floor(i * screenData0.z);
-        float col_x = i - floor(i * screenData0.z) * screenData0.x;
-        uint depth_idx = (screenData0.x * (screenData0.y - col_y - 1)) + (screenData0.x - col_x - 1);      
-        res1.z = depth0[depth_idx] * t + (1 - t);
-        res1.x = (col_y - intrinsics0.y) * res1.z / intrinsics0.z;
-        res1.y = (col_x - intrinsics0.x) * res1.z / intrinsics0.w;
-        res1.w = 1;
-        //if (res1.y > 0.6f)
-        //{
-        //    flg1 = 0.0f;
-        //}
-        
-        float4 final_pos10 = mul(_GOPose0, res1);
-        float4 final_pos1 = mul(_RESTrans, final_pos10);
-        
-        float col_y1 = floor(i * screenData2.z);
-        float col_x1 = i - floor(i * screenData2.z) * screenData2.x;
-        uint depth_idx1 = (screenData2.x * (screenData2.y - col_y1 - 1)) + (screenData2.x - col_x1 - 1);
-        res2.z = depth2[depth_idx1] * t + (1 - t);
-        res2.x = (col_y1 - intrinsics2.y) * res2.z / intrinsics2.z;
-        res2.y = (col_x1 - intrinsics2.x) * res2.z / intrinsics2.w;
-        res2.w = 1;
-        //if (res2.y > 0.6f)
-        //{
-        //    flg2 = 0.0f;
-        //}
-        
-        float4 final_pos2 = mul(_GOPose2, res2);
-        
-        if (depth0[depth_idx] < 0.3f || flg1 < 0.5f)
+        // Out-of-frame samples use the existing -1000 z sentinel consumed by correspondence search.
+        bool valid0 = sampleCol < imageWidth0 && sampleRow < (int)screenData0.y;
+        float depthSample0 = 0.0f;
+        float4 final_pos1 = float4(0.0f, 0.0f, -1000.0f, 1.0f);
+        if (valid0)
+        {
+            float i = sampleRow * imageWidth0 + sampleCol;
+            float col_y = floor(i * screenData0.z);
+            float col_x = i - floor(i * screenData0.z) * screenData0.x;
+            uint depth_idx = (screenData0.x * (screenData0.y - col_y - 1)) + (screenData0.x - col_x - 1);
+            depthSample0 = depth0[depth_idx];
+            res1.z = depthSample0 * t + (1 - t);
+            res1.x = (col_y - intrinsics0.y) * res1.z / intrinsics0.z;
+            res1.y = (col_x - intrinsics0.x) * res1.z / intrinsics0.w;
+            //if (res1.y > 0.6f)
+            //{
+            //    flg1 = 0.0f;
+            //}
+
+            float4 final_pos10 = mul(_GOPose0, res1);
+            final_pos1 = mul(_RESTrans, final_pos10);
+        }
+
+        bool valid2 = sampleCol < imageWidth2 && sampleRow < (int)screenData2.y;
+        float depthSample2 = 0.0f;
+        float4 final_pos2 = float4(0.0f, 0.0f, -1000.0f, 1.0f);
+        if (valid2)
+        {
+            float i1 = sampleRow * imageWidth2 + sampleCol;
+            float col_y1 = floor(i1 * screenData2.z);
+            float col_x1 = i1 - floor(i1 * screenData2.z) * screenData2.x;
+            uint depth_idx1 = (screenData2.x * (screenData2.y - col_y1 - 1)) + (screenData2.x - col_x1 - 1);
+            depthSample2 = depth2[depth_idx1];
+            res2.z = depthSample2 * t + (1 - t);
+            res2.x = (col_y1 - intrinsics2.y) * res2.z / intrinsics2.z;
+            res2.y = (col_x1 - intrinsics2.x) * res2.z / intrinsics2.w;
+            //if (res2.y > 0.6f)
+            //{
+            //    flg2 = 0.0f;
+            //}
+
+            final_pos2 = mul(_GOPose2, res2);
+        }
+
+        if (!valid0 || depthSample0 < 0.3f || flg1 < 0.5f)
         {
             final_pos1.z = -1000.0f;
         }
-        if (depth2[depth_idx1] < 0.3f || flg2 < 0.5f)
+        if (!valid2 || depthSample2 < 0.3f || flg2 < 0.5f)
         {
             final_pos2.z = -1000.0f;
         }
@@ -120,14 +134,14 @@ void MergeDownsample(uint3 id : SV_DispatchThreadID)
 
         //uint temp_i = rowFull * 640 + colFull;
         
-        float4 res1;
-        float4 res2;
+        float4 res1 = float4(0.0f, 0.0f, 0.0f, 1.0f);
+        float4 res2 = float4(0.0f, 0.0f, 0.0f, 1.0f);
         float flg3 = 1.0f;
         float flg4 = 1.0f;
         
-        int sampleRows = 120;
         int sampleCols = 160;
-        int imageWidth = 640;
+        int imageWidth1 = (int)screenData1.x;
+        int imageWidth3 = (int)screenData3.x;
         
         int blockRow = (id.x - W * H) / sampleCols;
         int blockCol = (id.x - W * H) % sampleCols;
@@ -135,41 +149,55 @@ void MergeDownsample(uint3 id : SV_DispatchThreadID)
         int sampleRow = blockRow * 4 + 1;
         int sampleCol = blockCol * 4 + 1;
         
-        float i = sampleRow * imageWidth + sampleCol;
-        float col_y = floor(i * screenData1.z);
-        float col_x = i - floor(i * screenData1.z) * screenData1.x;
-        uint depth_idx = (screenData1.x * (screenData1.y - col_y - 1)) + (screenData1.x - col_x - 1);
-        res1.z = depth1[depth_idx] * t + (1 - t);
-        res1.x = (col_y - intrinsics1.y) * res1.z / intrinsics1.z;
-        res1.y = (col_x - intrinsics1.x) * res1.z / intrinsics1.w;
-        res1.w = 1;
-        //if (res1.y > 0.6f)
-        //{
-        //    flg3 = 0.0f;
-        //}
-        
-        float4 final_pos10 = mul(_GOPose1, res1);
-        float4 final_pos1 = mul(_RESTrans, final_pos10);
-        
-        float col_y1 = floor(i * screenData3.z);
-        float col_x1 = i - floor(i * screenData3.z) * screenData3.x;
-        uint depth_idx1 = (screenData3.x * (screenData3.y - col_y1 - 1)) + (screenData3.x - col_x1 - 1);
-        res2.z = depth3[depth_idx1] * t + (1 - t);
-        res2.x = (col_y1 - intrinsics3.y) * res2.z / intrinsics3.z;
-        res2.y = (col_x1 - intrinsics3.x) * res2.z / intrinsics3.w;
-        res2.w = 1;
-        //if (res2.y > 0.6f)
-        //{
-        //    flg4 = 0.0f;
-        //}
-        
-        float4 final_pos2 = mul(_GOPose3, res2);
-        
-        if (depth1[depth_idx] < 0.3f || flg3 < 0.5f)
+        // Out-of-frame samples use the existing -1000 z sentinel consumed by correspondence search.
+        bool valid1 = sampleCol < imageWidth1 && sampleRow < (int)screenData1.y;
+        float depthSample1 = 0.0f;
+        float4 final_pos1 = float4(0.0f, 0.0f, -1000.0f, 1.0f);
+        if (valid1)
+        {
+            float i = sampleRow * imageWidth1 + sampleCol;
+            float col_y = floor(i * screenData1.z);
+            float col_x = i - floor(i * screenData1.z) * screenData1.x;
+            uint depth_idx = (screenData1.x * (screenData1.y - col_y - 1)) + (screenData1.x - col_x - 1);
+            depthSample1 = depth1[depth_idx];
+            res1.z = depthSample1 * t + (1 - t);
+            res1.x = (col_y - intrinsics1.y) * res1.z / intrinsics1.z;
+            res1.y = (col_x - intrinsics1.x) * res1.z / intrinsics1.w;
+            //if (res1.y > 0.6f)
+            //{
+            //    flg3 = 0.0f;
+            //}
+
+            float4 final_pos10 = mul(_GOPose1, res1);
+            final_pos1 = mul(_RESTrans, final_pos10);
+        }
+
+        bool valid3 = sampleCol < imageWidth3 && sampleRow < (int)screenData3.y;
+        float depthSample3 = 0.0f;
+        float4 final_pos2 = float4(0.0f, 0.0f, -1000.0f, 1.0f);
+        if (valid3)
+        {
+            float i1 = sampleRow * imageWidth3 + sampleCol;
+            float col_y1 = floor(i1 * screenData3.z);
+            float col_x1 = i1 - floor(i1 * screenData3.z) * screenData3.x;
+            uint depth_idx1 = (screenData3.x * (screenData3.y - col_y1 - 1)) + (screenData3.x - col_x1 - 1);
+            depthSample3 = depth3[depth_idx1];
+            res2.z = depthSample3 * t + (1 - t);
+            res2.x = (col_y1 - intrinsics3.y) * res2.z / intrinsics3.z;
+            res2.y = (col_x1 - intrinsics3.x) * res2.z / intrinsics3.w;
+            //if (res2.y > 0.6f)
+            //{
+            //    flg4 = 0.0f;
+            //}
+
+            final_pos2 = mul(_GOPose3, res2);
+        }
+
+        if (!valid1 || depthSample1 < 0.3f || flg3 < 0.5f)
         {
             final_pos1.z = -1000.0f;
         }
-        if (depth3[depth_idx1] < 0.3f || flg4 < 0.5f)
+        if (!valid3 || depthSample3 < 0.3f || flg4 < 0.5f)
         {
             final_pos2.z = -1000.0f;
         }
@@ -213,4 +241,3 @@ void FindCorrespondence(uint3 id : SV_DispatchThreadID)
         correspondence[index] = minIndex;
     }
 }
-

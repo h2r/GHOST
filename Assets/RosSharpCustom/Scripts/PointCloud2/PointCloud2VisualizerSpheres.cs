@@ -18,7 +18,7 @@ using UnityEngine;
 
 namespace RosSharp.RosBridgeClient
 {
-    public class PointCloud2VisualizerSphere : PointCloud2Visualizer
+    public class PointCloud2VisualizerSpheres : PointCloud2Visualizer
     {
         [Range(0.001f, 200.1f)]
         public float pointSize = 0.01f;
@@ -33,19 +33,13 @@ namespace RosSharp.RosBridgeClient
         private RenderParams renderParams;
         private GraphicsBuffer commandBuffer;
 
-        private GameObject pointCloudContainer;
-        private GameObject[] pointSpheres;
         private bool IsCreated = false;
 
-        private bool BufferPopulated = false;
-
-        private void Create(Vector3[] positions)
+        private void Create(int capacity)
         {
             this.mesh = CreateSphere(pointSize);
 
-            // Create and populate position buffer
-            positionBuffer = new ComputeBuffer(positions.Length, sizeof(float) * 3);
-            positionBuffer.SetData(positions);
+            positionBuffer = new ComputeBuffer(capacity, sizeof(float) * 3);
 
             // Setup render params
             renderParams = new RenderParams(pc_material);
@@ -70,41 +64,38 @@ namespace RosSharp.RosBridgeClient
         }
         protected override void Visualize()
         {
-            if (points == null || points.Length == 0)
+            if (points == null || pointCount == 0)
+            {
+                DestroyObjects();
                 return;
+            }
 
-            // Limit points if necessary
-            int numPoints = Mathf.Min(points.Length, maxPointsToVisualize);
-            Vector3[] positions = new Vector3[numPoints];
-            System.Array.Copy(points, positions, numPoints);
+            int numPoints = Mathf.Min(pointCount, maxPointsToVisualize);
+            if (numPoints <= 0)
+                return;
 
             if (!IsCreated)
             {
-                Create(positions);
+                Create(numPoints);
                 IsCreated = true;
             }
-            else
+            else if (positionBuffer == null || positionBuffer.count < numPoints)
             {
-                // Update positions if already created
-                if (positionBuffer != null && positionBuffer.count == numPoints)
-                {
-                    positionBuffer.SetData(positions);
-                    renderParams.matProps.SetBuffer("_Positions", positionBuffer);
-                }
-                else
-                {
-                    // Recreate if point count changed
-                    DestroyObjects();
-                    Create(positions);
-                    IsCreated = true;
-                }
+                DestroyObjects();
+                Create(numPoints);
+                IsCreated = true;
             }
 
+            positionBuffer.SetData(points, 0, 0, numPoints);
+            renderParams.matProps.SetBuffer("_Positions", positionBuffer);
             SetupCommandData(numPoints);
         }
 
         protected override void Render()
         {
+            if (mesh == null || commandBuffer == null)
+                return;
+
             Graphics.RenderMeshIndirect(renderParams, mesh, commandBuffer);
         }
 
