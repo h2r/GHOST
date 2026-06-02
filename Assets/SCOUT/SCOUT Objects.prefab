@@ -3755,7 +3755,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7db896cb2568f244ea1db473bf2415d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  name: Camera Settings
+  displayName: Camera Settings
   superMode: 2
 --- !u!1 &4868753325643002188
 GameObject:
@@ -3998,7 +3998,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7db896cb2568f244ea1db473bf2415d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  name: Dual Drive
+  displayName: Dual Drive
   superMode: 1
 --- !u!1 &5441626880325097534
 GameObject:
@@ -4044,7 +4044,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7db896cb2568f244ea1db473bf2415d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  name: Single Drive
+  displayName: Single Drive
   superMode: 0
 --- !u!1 &5448079589320029653
 GameObject:

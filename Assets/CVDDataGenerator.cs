@@ -1,37 +1,27 @@
-using RosSharp.RosBridgeClient;
-using System.Collections;
-using System.Collections.Generic;
-
+using Unity.InferenceEngine;
 using UnityEngine;
 
 public class CVDDataGenerator : MonoBehaviour
 {
     public bool enableDebugLogging = false;
-    private bool first_run = true;
+    private bool firstRun = true;
 
-    Unity.InferenceEngine.Tensor<float> previous_rgbL;
-    Unity.InferenceEngine.Tensor<float> previous_rgbR;
-
-    //public BodyPoseSubscriber pose_subscriber;
+    private Tensor<float> previousRgbL;
+    private Tensor<float> previousRgbR;
 
     public DrawMeshInstanced render_left;
     public DrawMeshInstanced render_right;
 
-    //ComputeBuffer buffer_depthL;
-    //ComputeBuffer buffer_depthR;
-    //ComputeBuffer buffer_opticalL;
-    //ComputeBuffer buffer_opticalR;
-
     private DepthCompletion depth_completion;
     private OpticalFlowEstimator optical_flow_estimation;
 
-    ComputeBuffer buffer_depthL, buffer_depthR, buffer_opticalL, buffer_opticalR;
+    private ComputeBuffer bufferDepthL, bufferDepthR, bufferOpticalL, bufferOpticalR;
     // Only fallback optical buffers are owned here. Depth tensors and estimator output are borrowed.
     private bool ownsOpticalBuffers;
 
-    Matrix4x4 mat_l, mat_r;
+    private Matrix4x4 leftPose, rightPose;
 
-    private int GetOpticalBufferCount(Unity.InferenceEngine.Tensor<float> depthTensor)
+    private int GetOpticalBufferCount(Tensor<float> depthTensor)
     {
         return depthTensor != null ? Mathf.Max(1, depthTensor.count * 2) : 640 * 480 * 2;
     }
@@ -40,177 +30,78 @@ public class CVDDataGenerator : MonoBehaviour
     {
         depth_completion = GetComponent<DepthCompletion>();
         optical_flow_estimation = GetComponent<OpticalFlowEstimator>();
-        StartCoroutine(SetFirstRunFalseAfterDelay(1f));
-
-        mat_l = new Matrix4x4(
-            new Vector4(0, 0, 0, 0),
-            new Vector4(0, 0, 0, 0),
-            new Vector4(0, 0, 0, 0),
-            new Vector4(0, 0, 0, 0)
-        );
-
-        mat_r = new Matrix4x4(
-            new Vector4(0, 0, 0, 0),
-            new Vector4(0, 0, 0, 0),
-            new Vector4(0, 0, 0, 0),
-            new Vector4(0, 0, 0, 0)
-        );
     }
 
     void OnDestroy()
     {
-        previous_rgbL?.Dispose();
-        previous_rgbR?.Dispose();
+        previousRgbL?.Dispose();
+        previousRgbR?.Dispose();
         
         if (ownsOpticalBuffers)
         {
-            buffer_opticalL?.Release();
-            buffer_opticalR?.Release();
+            bufferOpticalL?.Release();
+            bufferOpticalR?.Release();
         }
         if (enableDebugLogging)
             Debug.Log("CVDDataGenerator destroyed and buffers released.");
     }
 
-    IEnumerator SetFirstRunFalseAfterDelay(float delay)
+    private void CopyPreviousRgb(Tensor<float> rgbL, Tensor<float> rgbR)
     {
-        yield return new WaitForSeconds(delay);
-        //first_run = false;
-        if (enableDebugLogging)
-            Debug.Log("first_run set to false");
+        // Optical flow needs history that survives SpotObserverClient reusing the live tensor buffers.
+        for (int i = 0; i < previousRgbL.count; i++)
+        {
+            previousRgbL[i] = rgbL[i];
+            previousRgbR[i] = rgbR[i];
+        }
     }
 
-    //public (ComputeBuffer, ComputeBuffer, ComputeBuffer, ComputeBuffer) generateData(Tensor<float> depthL, Tensor<float> rgbL, Tensor<float> depthR, Tensor<float> rgbR, bool activate_depth_completion, bool activate_optical_flow)
-    //{
-    //    if (first_run) 
-    //    {
-    //        previous_rgbL = rgbL;
-    //        previous_rgbR = rgbR;
-
-    //        //buffer_depthL?.Release();
-    //        //buffer_depthR?.Release();
-    //        //buffer_opticalL?.Release();
-    //        //buffer_opticalR?.Release();
-
-    //        buffer_depthL = ComputeTensorData.Pin(depthL).buffer;
-    //        buffer_depthR = ComputeTensorData.Pin(depthR).buffer;
-    //        buffer_opticalL = new ComputeBuffer(480 * 640 * 2, sizeof(float));
-    //        buffer_opticalR = new ComputeBuffer(480 * 640 * 2, sizeof(float));
-
-    //        //Debug.Log("first run return");
-
-    //        return (buffer_depthL, buffer_depthR, buffer_opticalL, buffer_opticalR);
-    //    }
-    //    else
-    //    {
-    //        if (activate_depth_completion)
-    //        {
-    //            //buffer_opticalL?.Release();
-    //            //buffer_opticalR?.Release();
-    //            (buffer_depthL, buffer_depthR) = depth_completion.complete(depthL, rgbL, depthR, rgbR);
-    //        }
-    //        else
-    //        {
-    //            //buffer_depthL?.Release();
-    //            //buffer_depthR?.Release();
-    //            buffer_depthL = ComputeTensorData.Pin(depthL).buffer;
-    //            buffer_depthR = ComputeTensorData.Pin(depthR).buffer;
-    //        }
-
-
-    //        if (activate_optical_flow)
-    //        {
-    //            //Debug.Log("optical flow?");
-    //            //buffer_opticalL?.Release();
-    //            //buffer_opticalR?.Release();
-    //            (buffer_opticalL, buffer_opticalR) = optical_flow_estimation.estimate_all(previous_rgbL, rgbL, previous_rgbR, rgbR);
-    //        }
-    //        else
-    //        {
-    //            //buffer_opticalL?.Release();
-    //            //buffer_opticalR?.Release();
-    //            buffer_opticalL = new ComputeBuffer(480 * 640 * 2, sizeof(float));
-    //            buffer_opticalR = new ComputeBuffer(480 * 640 * 2, sizeof(float));
-    //        }
-
-
-    //        previous_rgbL = rgbL;
-    //        previous_rgbR = rgbR;
-
-    //        //Debug.Log("not firstrun return");
-
-    //        return (buffer_depthL, buffer_depthR, buffer_opticalL, buffer_opticalR);
-    //    }
-
-
-    //}
-
-    public (ComputeBuffer, ComputeBuffer, Matrix4x4, Matrix4x4, ComputeBuffer, ComputeBuffer) generatePoseData(Unity.InferenceEngine.Tensor<float> depthL, Unity.InferenceEngine.Tensor<float> rgbL, Unity.InferenceEngine.Tensor<float> depthR, Unity.InferenceEngine.Tensor<float> rgbR, bool activate_depth_completion, bool activate_CVD)
+    public (ComputeBuffer, ComputeBuffer, Matrix4x4, Matrix4x4, ComputeBuffer, ComputeBuffer) generatePoseData(Tensor<float> depthL, Tensor<float> rgbL, Tensor<float> depthR, Tensor<float> rgbR, bool activate_depth_completion, bool activate_CVD)
     {
-        if (first_run)
+        if (firstRun)
         {
-            previous_rgbL = new Unity.InferenceEngine.Tensor<float>(rgbL.shape);
-            previous_rgbR = new Unity.InferenceEngine.Tensor<float>(rgbR.shape);
+            previousRgbL = new Tensor<float>(rgbL.shape);
+            previousRgbR = new Tensor<float>(rgbR.shape);
+            CopyPreviousRgb(rgbL, rgbR);
 
-            //buffer_depthL?.Release();
-            //buffer_depthR?.Release();
-            //buffer_opticalL?.Release();
-            //buffer_opticalR?.Release();
-
-            buffer_depthL = Unity.InferenceEngine.ComputeTensorData.Pin(depthL).buffer;
-            buffer_depthR = Unity.InferenceEngine.ComputeTensorData.Pin(depthR).buffer;
-            buffer_opticalL = new ComputeBuffer(GetOpticalBufferCount(depthL), sizeof(float));
-            buffer_opticalR = new ComputeBuffer(GetOpticalBufferCount(depthR), sizeof(float));
+            bufferDepthL = ComputeTensorData.Pin(depthL).buffer;
+            bufferDepthR = ComputeTensorData.Pin(depthR).buffer;
+            bufferOpticalL = new ComputeBuffer(GetOpticalBufferCount(depthL), sizeof(float));
+            bufferOpticalR = new ComputeBuffer(GetOpticalBufferCount(depthR), sizeof(float));
             ownsOpticalBuffers = true;
 
-            first_run = false;
-            //Debug.Log("first run return");
+            firstRun = false;
 
-            return (buffer_depthL, buffer_depthR, mat_l, mat_r, buffer_opticalL, buffer_opticalR);
+            return (bufferDepthL, bufferDepthR, leftPose, rightPose, bufferOpticalL, bufferOpticalR);
         }
         else
         {
             if (activate_depth_completion)
             {
-                //buffer_opticalL?.Release();
-                //buffer_opticalR?.Release();
-                (buffer_depthL, buffer_depthR) = depth_completion.complete(depthL, rgbL, depthR, rgbR);
+                (bufferDepthL, bufferDepthR) = depth_completion.complete(depthL, rgbL, depthR, rgbR);
             }
             else
             {
-                //buffer_depthL?.Release();
-                //buffer_depthR?.Release();
-                buffer_depthL = Unity.InferenceEngine.ComputeTensorData.Pin(depthL).buffer;
-                buffer_depthR = Unity.InferenceEngine.ComputeTensorData.Pin(depthR).buffer;
+                bufferDepthL = ComputeTensorData.Pin(depthL).buffer;
+                bufferDepthR = ComputeTensorData.Pin(depthR).buffer;
             }
-
 
             if (activate_CVD)
             {
-
-                mat_l = render_left.get_current_pose();
-                mat_r = render_right.get_current_pose();
-                //Debug.Log("optical flow?");
+                leftPose = render_left.get_current_pose();
+                rightPose = render_right.get_current_pose();
                 if (ownsOpticalBuffers)
                 {
-                    buffer_opticalL?.Release();
-                    buffer_opticalR?.Release();
+                    bufferOpticalL?.Release();
+                    bufferOpticalR?.Release();
                     ownsOpticalBuffers = false;
                 }
-                (buffer_opticalL, buffer_opticalR) = optical_flow_estimation.estimate_all(previous_rgbL, rgbL, previous_rgbR, rgbR);
+                (bufferOpticalL, bufferOpticalR) = optical_flow_estimation.estimate_all(previousRgbL, rgbL, previousRgbR, rgbR);
 
-                //previous_rgbL = ops.copy(rgbL);
-                // TODO: Come up with a better way to handle this copy.
-                for (int i = 0; i < previous_rgbL.count; i++)
-                {
-                    previous_rgbL[i] = rgbL[i];
-                    previous_rgbR[i] = rgbR[i];
-
-                }
+                CopyPreviousRgb(rgbL, rgbR);
             }
 
-            //Debug.Log("not firstrun return");
-
-            return (buffer_depthL, buffer_depthR, mat_l, mat_r, buffer_opticalL, buffer_opticalR);
+            return (bufferDepthL, bufferDepthR, leftPose, rightPose, bufferOpticalL, bufferOpticalR);
         }
     }
 }

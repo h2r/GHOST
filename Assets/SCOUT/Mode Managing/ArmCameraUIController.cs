@@ -18,14 +18,10 @@ public class ArmCameraUIController : MonoBehaviour
 
 
     private JPEGImageSubscriber jpegSubscriber;
-    private UIManager uiManager;
-
-    private bool lastSwapState = false;
 
     void Start()
     {
         jpegSubscriber = GetComponentInChildren<JPEGImageSubscriber>();
-        uiManager = FindFirstObjectByType<UIManager>();
 
         if (jpegSubscriber == null)
             Debug.LogError("Missing JPEGImageSubscriber in ArmCameraUIController or children");
@@ -39,17 +35,10 @@ public class ArmCameraUIController : MonoBehaviour
 
     void Update()
     {
-        if (centerEyeAnchor == null || uiManager == null || !gameObject.activeSelf)
+        if (centerEyeAnchor == null || !gameObject.activeSelf)
             return;
 
         UpdatePosition();
-
-        // Check for spot swap changes to update ROS topic
-        // if (uiManager.AreSpotsSwapped() != lastSwapState)
-        // {
-        //     UpdateTopic();
-        //     lastSwapState = uiManager.AreSpotsSwapped();
-        // }
     }
 
     private void UpdatePosition()
@@ -76,15 +65,13 @@ public class ArmCameraUIController : MonoBehaviour
         if (jpegSubscriber == null)
             return;
 
-        bool spotsSwapped = false;//uiManager.AreSpotsSwapped();
-
         if (isRightController)
         {
-            jpegSubscriber.Topic = spotsSwapped ? spot2Topic : spot1Topic;
+            jpegSubscriber.Topic = spot1Topic;
         }
         else
         {
-            jpegSubscriber.Topic = spotsSwapped ? spot1Topic : spot2Topic;
+            jpegSubscriber.Topic = spot2Topic;
         }
     }
 }
