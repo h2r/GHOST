@@ -105,7 +105,7 @@ public class MoveArm : MonoBehaviour
             }
             else
             {
-                // Maybe a single click — set flag and wait for possible second click next frame
+                // Maybe a single click ï¿½ set flag and wait for possible second click next frame
                 clickPending = true;
             }
 
@@ -176,7 +176,7 @@ public class MoveArm : MonoBehaviour
 
             foreach (DrawMeshInstanced ds in pointClouds)
             {
-                ds.continue_update();
+                ds.ContinueUpdate();
             }
         }
        //// Change the gripper percentage
