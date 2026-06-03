@@ -15,6 +15,7 @@ limitations under the License.
 */
 
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace RosSharp.RosBridgeClient
 {
@@ -24,7 +25,8 @@ namespace RosSharp.RosBridgeClient
         public float pointSize = 0.01f;
 
         public float range;
-        public Material pc_material;
+        [FormerlySerializedAs("pc_material")]
+        public Material pointCloudMaterial;
 
         private Mesh mesh;
         public int maxPointsToVisualize = 10000;
@@ -45,7 +47,7 @@ namespace RosSharp.RosBridgeClient
             positionBuffer = new ComputeBuffer(capacity, sizeof(float) * 3);
 
             // Setup render params
-            renderParams = new RenderParams(pc_material);
+            renderParams = new RenderParams(pointCloudMaterial);
             renderParams.worldBounds = new Bounds(Vector3.zero, Vector3.one * 1000f); // Large bounds to avoid culling
             renderParams.matProps = new MaterialPropertyBlock();
             renderParams.matProps.SetBuffer("_Positions", positionBuffer);
@@ -54,7 +56,7 @@ namespace RosSharp.RosBridgeClient
             commandBuffer = new GraphicsBuffer(GraphicsBuffer.Target.IndirectArguments, 1, GraphicsBuffer.IndirectDrawIndexedArgs.size);
         }
 
-        protected Vector3 get_normal()
+        protected Vector3 GetNormal()
         {
             if (mainCameraRot == null)
                 return -Vector3.forward;
@@ -111,7 +113,7 @@ namespace RosSharp.RosBridgeClient
                 return;
             }
             // Orient Quad facing the user
-            OrientQuad(mesh, get_normal());
+            OrientQuad(mesh, GetNormal());
             // Draw
             Graphics.RenderMeshIndirect(renderParams, mesh, commandBuffer);
         }
@@ -176,10 +178,10 @@ namespace RosSharp.RosBridgeClient
             return mesh;
         }
 
-        private void OrientQuad(Mesh mesh, Vector3 vec_dir)
+        private void OrientQuad(Mesh mesh, Vector3 direction)
         {
-            if (vec_dir.sqrMagnitude < 1e-6f) return;          // guard against zero
-            Quaternion rot = Quaternion.FromToRotation(-Vector3.forward, vec_dir.normalized);
+            if (direction.sqrMagnitude < 1e-6f) return;          // guard against zero
+            Quaternion rot = Quaternion.FromToRotation(-Vector3.forward, direction.normalized);
 
             float w = pointSize * .5f;
             float h = pointSize * .5f;

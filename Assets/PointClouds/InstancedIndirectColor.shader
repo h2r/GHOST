@@ -25,10 +25,10 @@ Shader "Custom/InstancedIndirectColor" {
 
             sampler2D _colorMap;
 
-            float width;
-            float height;
+            float invWidth;
+            float invHeight;
 
-            float a;
+            float angle;
 
             float4 _colorMap_ST;
             float4x4 _GOPose;
@@ -43,29 +43,31 @@ Shader "Custom/InstancedIndirectColor" {
 
             v2f vert(appdata_t i, uint instanceID: SV_InstanceID) {
                 v2f o;
-                
-                float d = _Properties[instanceID].pos.w ;
 
-                float iii = float(instanceID) * samplingSize;
+                float depthScale = _Properties[instanceID].pos.w;
+
+                float sampledIndex = float(instanceID) * samplingSize;
 
                 float3 billboardVertex = _BillboardRight * i.vertex.x + _BillboardUp * i.vertex.y;
                 float4 vpos = float4(billboardVertex, 1.0);
 
                 // Depth scales each quad in place, then the GameObject pose moves the cloud as a unit.
-                float4x4 mat = {    cos(a) * d,     0.0,    sin(a) * d, _Properties[instanceID].pos.x,
-							        0.0,            d,      0.0,        _Properties[instanceID].pos.y,
-							        - sin(a) * d,   0.0,    cos(a) * d, _Properties[instanceID].pos.z,
-							        0.0,            0.0,    0.0,        1.0 };
+                float4x4 mat = {
+                    cos(angle) * depthScale,   0.0,          sin(angle) * depthScale,   _Properties[instanceID].pos.x,
+                    0.0,                       depthScale,   0.0,                        _Properties[instanceID].pos.y,
+                    -sin(angle) * depthScale,  0.0,          cos(angle) * depthScale,    _Properties[instanceID].pos.z,
+                    0.0,                       0.0,          0.0,                        1.0
+                };
 
                 float4 pos = mul(_GOPose, mul(mat, vpos));
                 o.vertex = mul(UNITY_MATRIX_VP, pos);
-                
+
                 // Map the sampled instance back to its source image pixel for color lookup.
-                float4 coor = {1 - (iii - floor(iii * screenData.z) * screenData.x) * width, floor(iii * screenData.z) * height, 0.0, 0.0};
-                float2 uv = TRANSFORM_TEX(coor.xy, _colorMap);
-                coor.x = uv.x; coor.y = 1.0-uv.y;
-                o.color = tex2Dlod(_colorMap, coor);
-                
+                float4 texCoord = {1 - (sampledIndex - floor(sampledIndex * screenData.z) * screenData.x) * invWidth, floor(sampledIndex * screenData.z) * invHeight, 0.0, 0.0};
+                float2 uv = TRANSFORM_TEX(texCoord.xy, _colorMap);
+                texCoord.x = uv.x; texCoord.y = 1.0 - uv.y;
+                o.color = tex2Dlod(_colorMap, texCoord);
+
                 return o;
             }
 
