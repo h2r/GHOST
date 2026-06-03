@@ -88,8 +88,8 @@ public class CVDDataGenerator : MonoBehaviour
 
             if (activate_CVD)
             {
-                leftPose = render_left.get_current_pose();
-                rightPose = render_right.get_current_pose();
+                leftPose = render_left.GetCurrentPose();
+                rightPose = render_right.GetCurrentPose();
                 if (ownsOpticalBuffers)
                 {
                     bufferOpticalL?.Release();

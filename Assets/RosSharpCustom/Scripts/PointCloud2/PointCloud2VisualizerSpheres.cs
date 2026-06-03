@@ -15,6 +15,7 @@ limitations under the License.
 */
 
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace RosSharp.RosBridgeClient
 {
@@ -24,7 +25,8 @@ namespace RosSharp.RosBridgeClient
         public float pointSize = 0.01f;
 
         public float range;
-        public Material pc_material;
+        [FormerlySerializedAs("pc_material")]
+        public Material pointCloudMaterial;
 
         private Mesh mesh;
         public int maxPointsToVisualize = 10000;
@@ -42,7 +44,7 @@ namespace RosSharp.RosBridgeClient
             positionBuffer = new ComputeBuffer(capacity, sizeof(float) * 3);
 
             // Setup render params
-            renderParams = new RenderParams(pc_material);
+            renderParams = new RenderParams(pointCloudMaterial);
             renderParams.worldBounds = new Bounds(Vector3.zero, Vector3.one * 1000f); // Large bounds to avoid culling
             renderParams.matProps = new MaterialPropertyBlock();
             renderParams.matProps.SetBuffer("_Positions", positionBuffer);

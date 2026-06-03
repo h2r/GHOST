@@ -23,11 +23,11 @@ int pixelCount;
 int pointCount;
 float samplingSize;
 float t;
-float y_max;
-float z_max;
+float yMax;
+float zMax;
 
 float edgeThreshold;
-bool activate_edge_detection;
+bool activateEdgeDetection;
 
 float meanThreshold;
 
@@ -54,7 +54,7 @@ void EdgeDetector(uint3 id : SV_DispatchThreadID, uint3 groupThreadID : SV_Group
     uint sharedY = localY + BORDER_SIZE;
     
     // Load center tile data
-    if (indexX < WIDTH && indexY < HEIGHT)
+    if (indexX < (uint)WIDTH && indexY < (uint)HEIGHT)
     {
         sharedDepth[sharedY][sharedX] = _Depth[index].z;
     }
@@ -67,7 +67,7 @@ void EdgeDetector(uint3 id : SV_DispatchThreadID, uint3 groupThreadID : SV_Group
     if (localY < BORDER_SIZE)
     {
         int borderY = (int)indexY - BORDER_SIZE;
-        if (borderY >= 0 && indexX < WIDTH)
+        if (borderY >= 0 && indexX < (uint)WIDTH)
         {
             uint borderIndex = borderY * WIDTH + indexX;
             sharedDepth[localY][sharedX] = _Depth[borderIndex].z;
@@ -82,7 +82,7 @@ void EdgeDetector(uint3 id : SV_DispatchThreadID, uint3 groupThreadID : SV_Group
     if (localY >= TILE_SIZE - BORDER_SIZE)
     {
         int borderY = (int)indexY + BORDER_SIZE;
-        if (borderY < HEIGHT && indexX < WIDTH)
+        if (borderY < HEIGHT && indexX < (uint)WIDTH)
         {
             uint borderIndex = borderY * WIDTH + indexX;
             uint sharedBorderY = localY + 2 * BORDER_SIZE;
@@ -99,7 +99,7 @@ void EdgeDetector(uint3 id : SV_DispatchThreadID, uint3 groupThreadID : SV_Group
     if (localX < BORDER_SIZE)
     {
         int borderX = (int)indexX - BORDER_SIZE;
-        if (borderX >= 0 && indexY < HEIGHT)
+        if (borderX >= 0 && indexY < (uint)HEIGHT)
         {
             uint borderIndex = indexY * WIDTH + borderX;
             sharedDepth[sharedY][localX] = _Depth[borderIndex].z;
@@ -114,7 +114,7 @@ void EdgeDetector(uint3 id : SV_DispatchThreadID, uint3 groupThreadID : SV_Group
     if (localX >= TILE_SIZE - BORDER_SIZE)
     {
         int borderX = (int)indexX + BORDER_SIZE;
-        if (borderX < WIDTH && indexY < HEIGHT)
+        if (borderX < WIDTH && indexY < (uint)HEIGHT)
         {
             uint borderIndex = indexY * WIDTH + borderX;
             uint sharedBorderX = localX + 2 * BORDER_SIZE;
@@ -203,10 +203,10 @@ void EdgeDetector(uint3 id : SV_DispatchThreadID, uint3 groupThreadID : SV_Group
     GroupMemoryBarrierWithGroupSync();
     
     // Perform edge detection using shared memory
-    if (indexX >= BORDER_SIZE && indexX < WIDTH - BORDER_SIZE && 
-        indexY >= BORDER_SIZE && indexY < HEIGHT - BORDER_SIZE)
+    if (indexX >= BORDER_SIZE && indexX < (uint)(WIDTH - BORDER_SIZE) && 
+        indexY >= BORDER_SIZE && indexY < (uint)(HEIGHT - BORDER_SIZE))
     {
-        if (activate_edge_detection)
+        if (activateEdgeDetection)
         {
             const float kX[5][5] =
             {
@@ -277,7 +277,7 @@ void EdgeDetector(uint3 id : SV_DispatchThreadID, uint3 groupThreadID : SV_Group
             _Edge[index] = 0.0f;
         }
     }
-    else if (indexX < WIDTH && indexY < HEIGHT)
+    else if (indexX < (uint)WIDTH && indexY < (uint)HEIGHT)
     {
         _Edge[index] = 1.0f;
     }
@@ -288,34 +288,34 @@ void EdgeDetector(uint3 id : SV_DispatchThreadID, uint3 groupThreadID : SV_Group
 [numthreads(256, 1, 1)]
 void CSMain(uint3 id : SV_DispatchThreadID)
 {
-    if (id.x < pointCount)
+    if (id.x < (uint)pointCount)
     {
         
         uint sampleIndex = (uint)floor((float)id.x * samplingSize);
         if (sampleIndex >= (uint)pixelCount)
             return;
 
-        float3 pos = _Depth[id.x];
+        float3 pos = 0;
 
         float i = sampleIndex;
 
-        float col_y = floor(i * screenData.z);
-        float col_x = floor(i - col_y * screenData.x);
+        float colY = floor(i * screenData.z);
+        float colX = floor(i - colY * screenData.x);
 
-        uint depth_idx = (screenData.x * (screenData.y - col_y - 1)) + (screenData.x - col_x - 1);
-    
-        pos.z = _Depth[depth_idx].z * t + (1 - t);
+        uint depthIndex = (screenData.x * (screenData.y - colY - 1)) + (screenData.x - colX - 1);
 
-        pos.x = (col_y - intrinsics.y) * pos.z / intrinsics.z;
-        pos.y = (col_x - intrinsics.x) * pos.z / intrinsics.w;
-        
-        bool useSparseDepth = pos.y < y_max || pos.z < z_max || _Edge[depth_idx] > 0.5f;
+        pos.z = _Depth[depthIndex].z * t + (1 - t);
+
+        pos.x = (colY - intrinsics.y) * pos.z / intrinsics.z;
+        pos.y = (colX - intrinsics.x) * pos.z / intrinsics.w;
+
+        bool useSparseDepth = pos.y < yMax || pos.z < zMax || _Edge[depthIndex] > 0.5f;
         if (useSparseDepth)
         {
-            float sparseDepth = _Sparse[depth_idx] * t + (1 - t);
+            float sparseDepth = _Sparse[depthIndex] * t + (1 - t);
             pos.z = sparseDepth;
-            pos.x = (col_y - intrinsics.y) * pos.z / intrinsics.z;
-            pos.y = (col_x - intrinsics.x) * pos.z / intrinsics.w;
+            pos.x = (colY - intrinsics.y) * pos.z / intrinsics.z;
+            pos.y = (colX - intrinsics.x) * pos.z / intrinsics.w;
 
             _Properties[id.x].pos = float4(pos, sparseDepth);
             return;
