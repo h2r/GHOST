@@ -144,6 +144,7 @@ public class DriveAndArm : OneControllerMode
                 if (Mathf.Abs(joystick.x) > 0.1)
                     spot.Rotate(joystick.x * 0.5f);
 
+                // TODO: consider only allowing stow if not rotating (i.e. else if instead of if).
                 if (isJoystickPressed)
                     spot.StowArm();
 
@@ -165,7 +166,7 @@ public class DriveAndArm : OneControllerMode
 
                 thumbstickLabel = "Drive Spot";
                 triggerLabel = "Hold: Control Arm";
-                gripLabel = "Hold: Rotate";
+                gripLabel = "Hold: Rotate or Stow";
                 model.axLabel = "Lower Body";
                 model.byLabel = "Raise Body";
             }
