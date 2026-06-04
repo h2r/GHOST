@@ -23,6 +23,8 @@ public class DriveAndArm : OneControllerMode
     private Vector3 initialGripperPosition;
     private Quaternion initialGripperRotation;
     private bool isRelativeModeActive = false;
+    private float lastStowTime = -Mathf.Infinity;
+    private const float STOW_COOLDOWN = 0.50f;
 
     private void Awake()
     {
@@ -66,14 +68,46 @@ public class DriveAndArm : OneControllerMode
         string triggerLabel = "";
         string gripLabel = "";
 
+    
 
         if (isArmMode) // behave as Arm Mode
         {
 
-            if (isJoystickPressed && isGripHeld) // prevent false triggers with trigger combo
+            bool isStowCoolingDown = Time.time - lastStowTime < STOW_COOLDOWN;
+            if (isJoystickPressed && isGripHeld && !isStowCoolingDown) // prevent false triggers with trigger combo
             {
                 spot.stowArm();
                 isRelativeModeActive = false;
+                lastStowTime = Time.time;
+
+                thumbstickLabel = "Grip+Click: Stow Arm";
+                triggerLabel = "";
+                gripLabel = "";
+                model.axLabel = "Cycle PointClouds";
+                model.byLabel = "Cycle Views";
+
+                model.joystickLabel = thumbstickLabel;
+                model.indexLabel = triggerLabel;
+                model.gripLabel = gripLabel;
+
+                spot.ChangeGripperColorBasedOnDistance();
+                return;
+
+            }
+            if (isStowCoolingDown)
+            {
+                thumbstickLabel = "Stowing Arm";
+                triggerLabel = "";
+                gripLabel = "";
+                model.axLabel = "Cycle PointClouds";
+                model.byLabel = "Cycle Views";
+
+                model.joystickLabel = thumbstickLabel;
+                model.indexLabel = triggerLabel;
+                model.gripLabel = gripLabel;
+
+                spot.ChangeGripperColorBasedOnDistance();
+                return;
             }
 
             // === Arm Control Mode ===
