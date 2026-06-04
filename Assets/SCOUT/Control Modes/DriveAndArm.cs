@@ -54,16 +54,6 @@ public class DriveAndArm : OneControllerMode
 
     public override void ControlUpdate(SpotMode spot, ControllerModel model)
     {
-        if (OVRInput.GetDown(model.indexButton))
-        {
-            float timeSinceLastPress = Time.time - lastIndexPressTime;
-            if (timeSinceLastPress <= doubleClickInterval && lastIndexPressWasLeft == model.isLeft)
-                spot.StowArm();
-
-            lastIndexPressTime = Time.time;
-            lastIndexPressWasLeft = model.isLeft;
-        }
-
         bool isIndexHeld = OVRInput.Get(model.indexButton);
         bool isArmMode = isIndexHeld;
         bool indexPressed = OVRInput.GetDown(model.indexButton);
@@ -135,6 +125,16 @@ public class DriveAndArm : OneControllerMode
         }
         else // behave as Drive Mode
         {
+            if (OVRInput.GetDown(model.indexButton))
+            {
+                float timeSinceLastPress = Time.time - lastIndexPressTime;
+                if (timeSinceLastPress <= doubleClickInterval && lastIndexPressWasLeft == model.isLeft)
+                    spot.StowArm();
+
+                lastIndexPressTime = Time.time;
+                lastIndexPressWasLeft = model.isLeft;
+            }
+
             // === Drive Mode ===
             isRelativeModeActive = false;
 
