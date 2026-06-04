@@ -24,6 +24,10 @@ public class DriveAndArm : OneControllerMode
     private Quaternion initialGripperRotation;
     private bool isRelativeModeActive = false;
 
+    private float lastIndexPressTime = -Mathf.Infinity;
+    private bool lastIndexPressWasLeft;
+    private const float doubleClickInterval = 0.5f;
+
     private void Awake()
     {
         pointCloudCycler = viewOptionsConfigurer.GetComponent<PointCloudCycler>();
@@ -50,6 +54,16 @@ public class DriveAndArm : OneControllerMode
 
     public override void ControlUpdate(SpotMode spot, ControllerModel model)
     {
+        if (OVRInput.GetDown(model.indexButton))
+        {
+            float timeSinceLastPress = Time.time - lastIndexPressTime;
+            if (timeSinceLastPress <= doubleClickInterval && lastIndexPressWasLeft == model.isLeft)
+                spot.StowArm();
+
+            lastIndexPressTime = Time.time;
+            lastIndexPressWasLeft = model.isLeft;
+        }
+
         bool isIndexHeld = OVRInput.Get(model.indexButton);
         bool isArmMode = isIndexHeld;
         bool indexPressed = OVRInput.GetDown(model.indexButton);
@@ -114,7 +128,7 @@ public class DriveAndArm : OneControllerMode
             bool isGripperOpen = spot.GetGripperOpen();
 
             thumbstickLabel = "Arm Mode";
-            triggerLabel = "";
+            triggerLabel = "Double-click: Stow Arm";
             gripLabel = isGripperOpen ? "Close Gripper" : " Open Gripper";
             model.axLabel = "Cycle PointClouds";
             model.byLabel = "Cycle Views";
@@ -161,7 +175,7 @@ public class DriveAndArm : OneControllerMode
                     spot.AdjustHeight(-0.03f);
 
                 thumbstickLabel = "Drive Spot";
-                triggerLabel = "Hold: Control Arm";
+                triggerLabel = "Hold: Control Arm | Double-click: Stow Arm";
                 gripLabel = "Hold: Rotate";
                 model.axLabel = "Lower Body";
                 model.byLabel = "Raise Body";
@@ -186,7 +200,7 @@ public class DriveAndArm : OneControllerMode
     public override void AssignDefaultLabels(ControllerModel exampleModel)
     {
         exampleModel.joystickLabel = "Drive";
-        exampleModel.indexLabel = "Hold to Rotate";
-        exampleModel.gripLabel = "Hold to Control Arm";
+        exampleModel.indexLabel = "Hold: Control Arm | Double-click: Stow Arm";
+        exampleModel.gripLabel = "Hold to Rotate";
     }
 }
