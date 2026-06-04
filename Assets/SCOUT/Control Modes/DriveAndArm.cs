@@ -56,8 +56,8 @@ public class DriveAndArm : OneControllerMode
         bool isGripHeld = OVRInput.Get(model.gripButton);
         bool isJoystickPressed = OVRInput.GetDown(model.joystickButton);
         bool gripPressed = OVRInput.GetDown(model.gripButton);
-        // Control stowArm with joystick click as it's unused & requires user to already intentially be in arm control mode (prevents accidental activation)
-        bool stowPressed = OVRInput.GetDown(model.joystickButton); 
+        // Control stowArm with joystick click and gripper as it's unused & requires user to already intentially be in arm control mode (prevents accidental activation)
+        // bool stowPressed = OVRInput.GetDown(model.joystickButton); 
         Vector2 joystick = OVRInput.Get(model.joystick);
 
 
@@ -70,9 +70,11 @@ public class DriveAndArm : OneControllerMode
         if (isArmMode) // behave as Arm Mode
         {
 
-            if (stowPressed && isGripHeld) // prevent false triggers with trigger combo
-                spot StowArm();
+            if (isJoystickPressed && isGripHeld) // prevent false triggers with trigger combo
+            {
+                spot.stowArm();
                 isRelativeModeActive = false;
+            }
 
             // === Arm Control Mode ===
             if (OVRInput.GetDown(model.byButton))
@@ -121,7 +123,7 @@ public class DriveAndArm : OneControllerMode
 
             bool isGripperOpen = spot.GetGripperOpen();
 
-            thumbstickLabel = isGripHeld ? "Release Grip to Toggle" : "Grip+Click: Stow Arm";
+            thumbstickLabel = "Grip+Click: Stow Arm";
             triggerLabel = "";
             gripLabel = isGripperOpen ? "Close Gripper" : " Open Gripper";
             model.axLabel = "Cycle PointClouds";
