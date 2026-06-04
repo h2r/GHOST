@@ -76,7 +76,7 @@ public class DriveAndArm : OneControllerMode
             bool isStowCoolingDown = Time.time - lastStowTime < STOW_COOLDOWN;
             if (isJoystickPressed && isGripHeld && !isStowCoolingDown) // prevent false triggers with trigger combo
             {
-                spot.stowArm();
+                spot.StowArm();
                 isRelativeModeActive = false;
                 lastStowTime = Time.time;
 
