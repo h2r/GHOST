@@ -150,7 +150,7 @@ public class DriveAndArm : OneControllerMode
                 thumbstickLabel = "Rotate Spot";
                 gripLabel = "";
                 triggerLabel = "";
-                mode.joystickLabel = "Stow Arm";
+                model.joystickLabel = "Stow Arm";
             }
             else
             {
