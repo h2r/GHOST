@@ -1,4 +1,5 @@
 using System;
+using System.Security.Cryptography;
 using UnityEngine;
 
 public class DriveAndArm : OneControllerMode
@@ -23,11 +24,13 @@ public class DriveAndArm : OneControllerMode
     private Vector3 initialGripperPosition;
     private Quaternion initialGripperRotation;
     private bool isRelativeModeActive = false;
+    private float timeIndexClicked;
 
     private void Awake()
     {
         pointCloudCycler = viewOptionsConfigurer.GetComponent<PointCloudCycler>();
         positionPresetCycler = viewOptionsConfigurer.GetComponent<PositionPresetCycler>();
+        timeSinceIndexClicked = 0.0f;
     }
 
     private void ToggleArmCamera()
@@ -50,19 +53,27 @@ public class DriveAndArm : OneControllerMode
 
     public override void ControlUpdate(SpotMode spot, ControllerModel model)
     {
+
         bool isIndexHeld = OVRInput.Get(model.indexButton);
         bool isArmMode = isIndexHeld;
-        bool indexPressed = OVRInput.GetDown(model.indexButton);
+
+        bool indexPressed = OVRInput.GetDown(model.indexButton) && Time.time - timeIndexClicked >= 1.5f;
+        bool isIndexDoubleClicked = OVRInput.GetDown(model.indexButton) && Time.time - timeIndexClicked <= 1.5f;
+        if (OVRInput.GetDown(model.indexButton)) timeIndexClicked = Time.time;
+
         bool isGripHeld = OVRInput.Get(model.gripButton);
         bool isJoystickPressed = OVRInput.GetDown(model.joystickButton);
         bool gripPressed = OVRInput.GetDown(model.gripButton);
-        Vector2 joystick = OVRInput.Get(model.joystick);
-
+        Vector2 joystick = OVRInput.Get(model.joystick);   
 
         // UI Labels
         string thumbstickLabel = "";
         string triggerLabel = "";
         string gripLabel = "";
+
+        // Stow Command
+        if (isIndexDoubleClicked)
+            spot.StowArm();
 
 
         if (isArmMode) // behave as Arm Mode
@@ -143,8 +154,12 @@ public class DriveAndArm : OneControllerMode
 
                 if (Mathf.Abs(joystick.x) > 0.1)
                     spot.Rotate(joystick.x * 0.5f);
+                
+                // Stow Command
+                if (isJoystickPressed)
+                    spot.StowArm();
 
-                thumbstickLabel = "Rotate Spot";
+                thumbstickLabel = "Move: Rotate Spot | Click: Stow Spot";
                 gripLabel = "";
                 triggerLabel = "";
             }
@@ -186,7 +201,7 @@ public class DriveAndArm : OneControllerMode
     public override void AssignDefaultLabels(ControllerModel exampleModel)
     {
         exampleModel.joystickLabel = "Drive";
-        exampleModel.indexLabel = "Hold to Rotate";
+        exampleModel.indexLabel = "Hold to Rotate / Double Click to Stow";
         exampleModel.gripLabel = "Hold to Control Arm";
     }
 }
