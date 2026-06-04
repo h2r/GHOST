@@ -1,4 +1,5 @@
 using System;
+using RosSharp.RosBridgeClient;
 using UnityEngine;
 
 public class MultiSpotMode : SpotMode
