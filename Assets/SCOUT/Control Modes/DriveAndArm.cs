@@ -141,16 +141,17 @@ public class DriveAndArm : OneControllerMode
                 // === Rotate Mode ===
                 isRelativeModeActive = false;
 
-                if (Mathf.Abs(joystick.x) > 0.1)
-                    spot.Rotate(joystick.x * 0.5f);
-
-                if(isJoystickPressed)
+                if(isJoystickPressed){
                     spot.StowArm();
+                }
+                else if (Mathf.Abs(joystick.x) > 0.1){
+                    spot.Rotate(joystick.x * 0.5f);
+                }
 
-                thumbstickLabel = "Rotate Spot";
+
+                thumbstickLabel = "Rotate Spot (Click to Stow Arm)";
                 gripLabel = "";
                 triggerLabel = "";
-                model.joystickLabel = "Stow Arm";
             }
             else
             {
