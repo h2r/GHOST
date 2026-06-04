@@ -24,7 +24,7 @@ public class DriveAndArm : OneControllerMode
     private Quaternion initialGripperRotation;
     private bool isRelativeModeActive = false;
     private float lastStowTime = -Mathf.Infinity;
-    private const float STOW_COOLDOWN = 0.50f;
+    private const float STOW_COOLDOWN = 0.35f;
 
     private void Awake()
     {
