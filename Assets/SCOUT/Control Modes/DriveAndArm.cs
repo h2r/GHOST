@@ -57,11 +57,6 @@ public class DriveAndArm : OneControllerMode
         bool isIndexHeld = OVRInput.Get(model.indexButton);
         bool isArmMode = isIndexHeld;
 
-        bool indexPressed = OVRInput.GetDown(model.indexButton);
-        // && Time.time - timeIndexClicked >= 1.5f;
-        // bool isIndexDoubleClicked = OVRInput.GetDown(model.indexButton) && Time.time - timeIndexClicked <= 1.5f;
-        // if (OVRInput.GetDown(model.indexButton)) timeIndexClicked = Time.time;
-
         bool isGripHeld = OVRInput.Get(model.gripButton);
         bool isJoystickPressed = OVRInput.GetDown(model.joystickButton);
         bool gripPressed = OVRInput.GetDown(model.gripButton);
@@ -72,12 +67,20 @@ public class DriveAndArm : OneControllerMode
         string triggerLabel = "";
         string gripLabel = "";
 
-        // // Stow Command
-        // if (isIndexDoubleClicked)
-        //     spot.StowArm();
+        bool isIndexPressed = false;
+        bool isIndexDoubleClicked = false;
+
+        if (OVRInput.GetDown(model.indexButton))
+            isIndexPressed = Time.time - timeIndexClicked >= 1.5f;
+            isIndexDoubleClicked = Time.time - timeIndexClicked <= 1.5f;
+            timeIndexClicked = Time.time;
+
+        // Stow Command
+        if (isIndexDoubleClicked)
+            spot.StowArm();
 
 
-        if (isArmMode) // behave as Arm Mode
+        if (!isIndexDoubleClicked && isArmMode) // behave as Arm Mode
         {
             // === Arm Control Mode ===
             if (OVRInput.GetDown(model.byButton))
@@ -157,7 +160,7 @@ public class DriveAndArm : OneControllerMode
                     spot.Rotate(joystick.x * 0.5f);
                 
                 // Stow Command
-                if (OVRInput.GetDown(model.joystickButton))
+                if (OVRInput.Get(model.joystickButton))
                     spot.StowArm();
 
                 thumbstickLabel = "Move: Rotate Spot | Click: Stow Spot";
