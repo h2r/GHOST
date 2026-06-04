@@ -144,7 +144,10 @@ public class DriveAndArm : OneControllerMode
                 if (Mathf.Abs(joystick.x) > 0.1)
                     spot.Rotate(joystick.x * 0.5f);
 
-                thumbstickLabel = "Rotate Spot";
+                if (OVRInput.GetDown(model.joystickButton))
+                    spot.StowArm();
+
+                thumbstickLabel = "Rotate Spot (Press to Stow)";
                 gripLabel = "";
                 triggerLabel = "";
             }
@@ -186,7 +189,7 @@ public class DriveAndArm : OneControllerMode
     public override void AssignDefaultLabels(ControllerModel exampleModel)
     {
         exampleModel.joystickLabel = "Drive";
-        exampleModel.indexLabel = "Hold to Rotate";
+        exampleModel.indexLabel = "Hold to Rotate or Stow Arm";
         exampleModel.gripLabel = "Hold to Control Arm";
     }
 }

@@ -6,6 +6,7 @@ public class MultiSpotMode : SpotMode
     public GameObject rosConnectorOne, rosConnectorTwo;
 
     private ThreadedSyncMoveSpot moveSpotOne, moveSpotTwo;
+    private ThreadedStowArm stowArmOne, stowArmTwo;
 
     public override void Start()
     {
@@ -13,18 +14,26 @@ public class MultiSpotMode : SpotMode
         {
             moveSpotOne = rosConnectorOne.GetComponent<ThreadedSyncMoveSpot>();
 
+            stowArmOne = rosConnectorOne.GetComponent<ThreadedStowArm>();
+
             moveSpotOne.Move(Vector2.zero, 0, curHeight);
+
+            stowArmOne.Stow();
         }
         if (rosConnectorTwo != null)
         {
             moveSpotTwo = rosConnectorTwo.GetComponent<ThreadedSyncMoveSpot>();
 
+            stowArmTwo = rosConnectorTwo.GetComponent<ThreadedStowArm>();
+
             moveSpotTwo.Move(Vector2.zero, 0, curHeight);
+
+            stowArmTwo.Stow();
         }
     }
 
     public override void SetArmPoseEnabled(bool armPoseEnabled)
-    {}
+    { }
 
     public override void Drive(Vector2 direction)
     {
@@ -88,14 +97,18 @@ public class MultiSpotMode : SpotMode
 
     public override void StowArm()
     {
-        // not implemented on multi spot
+        // check if spot arms are not null before stowing -- prevents errors when stow arm button pressed before ros connectors assigned.
+        if (stowArmOne != null)
+            stowArmOne.Stow();
+        if (stowArmTwo != null)
+            stowArmTwo.Stow();
     }
 
     public override string GetName()
     {
         return modeName;
     }
-    
+
     public override Color GetSelectedColor()
     {
         return color;
