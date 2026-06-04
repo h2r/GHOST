@@ -144,9 +144,13 @@ public class DriveAndArm : OneControllerMode
                 if (Mathf.Abs(joystick.x) > 0.1)
                     spot.Rotate(joystick.x * 0.5f);
 
+                if(isJoystickPressed)
+                    spot.StowArm();
+
                 thumbstickLabel = "Rotate Spot";
                 gripLabel = "";
                 triggerLabel = "";
+                mode.joystickLabel = "Stow Arm";
             }
             else
             {
