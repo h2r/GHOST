@@ -141,7 +141,7 @@ public class DriveAndArm : OneControllerMode
                 // === Rotate Mode ===
                 isRelativeModeActive = false;
 
-                if(OVRInput.GetDown(model.joystickButton)){
+                if(OVRInput.Get(model.joystickButton)){
                     spot.StowArm();
                 }
                 else if (Mathf.Abs(joystick.x) > 0.1){
