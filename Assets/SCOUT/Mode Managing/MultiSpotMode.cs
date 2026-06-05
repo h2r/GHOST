@@ -19,7 +19,8 @@ public class MultiSpotMode : SpotMode
 
             moveSpotOne.Move(Vector2.zero, 0, curHeight);
 
-            stowArmOne.Stow();
+            if (stowArmOne != null)
+                stowArmOne.Stow();
         }
         if (rosConnectorTwo != null)
         {
@@ -28,8 +29,8 @@ public class MultiSpotMode : SpotMode
             stowArmTwo = rosConnectorTwo.GetComponent<ThreadedStowArm>();
 
             moveSpotTwo.Move(Vector2.zero, 0, curHeight);
-
-            stowArmTwo.Stow();
+            if (stowArmTwo != null)
+                stowArmTwo.Stow();
         }
     }
 
