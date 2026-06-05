@@ -6,6 +6,9 @@ public class MultiSpotMode : SpotMode
 {
     public GameObject rosConnectorOne, rosConnectorTwo;
 
+    public GameObject dummyGripperOne, readyDummyGripperOne;
+    public GameObject dummyGripperTwo, readyDummyGripperTwo;
+
     private ThreadedSyncMoveSpot moveSpotOne, moveSpotTwo;
     private ThreadedStowArm stowArmOne, stowArmTwo;
 
@@ -102,8 +105,19 @@ public class MultiSpotMode : SpotMode
         // check if spot arms are not null before stowing -- prevents errors when stow arm button pressed before ros connectors assigned.
         if (stowArmOne != null)
             stowArmOne.Stow();
+
         if (stowArmTwo != null)
             stowArmTwo.Stow();
+        
+        ResetDummyGripper(dummyGripperOne, readyDummyGripperOne);
+        ResetDummyGripper(dummyGripperTwo, readyDummyGripperTwo);
+    }
+
+    private void ResetDummyGripper(GameObject dummy, GameObject ready)
+    {
+        if (dummy == null || ready == null) return;
+
+        dummy.transform.SetPositionAndRotation(ready.transform.position, ready.transform.rotation);
     }
 
     public override string GetName()
