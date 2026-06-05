@@ -66,7 +66,7 @@ public class DriveAndArm : OneControllerMode
 
         if (OVRInput.Get(model.joystickButton) && isIndexHeld)
         {
-            spot.stowArm();
+            spot.StowArm();
         }
 
         if (isArmMode) // behave as Arm Mode
