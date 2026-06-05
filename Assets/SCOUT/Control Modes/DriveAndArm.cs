@@ -24,10 +24,6 @@ public class DriveAndArm : OneControllerMode
     private Quaternion initialGripperRotation;
     private bool isRelativeModeActive = false;
 
-    private float lastGripPressTime = -Mathf.Infinity;
-    private bool lastGripPressWasLeft;
-    private const float doubleClickInterval = 0.5f;
-
     private void Awake()
     {
         pointCloudCycler = viewOptionsConfigurer.GetComponent<PointCloudCycler>();
@@ -68,15 +64,9 @@ public class DriveAndArm : OneControllerMode
         string triggerLabel = "";
         string gripLabel = "";
 
-        if (gripPressed)
+        if (OVRInput.Get(model.joystickButton) && isIndexHeld)
         {
-            float timeSinceLastPress = Time.time - lastGripPressTime;
-            if (timeSinceLastPress <= doubleClickInterval && lastGripPressWasLeft == model.isLeft)
-                spot.StowArm();
-                
-
-            lastGripPressTime = Time.time;
-            lastGripPressWasLeft = model.isLeft;
+            spot.stowArm();
         }
 
         if (isArmMode) // behave as Arm Mode
