@@ -58,16 +58,10 @@ public class DriveAndArm : OneControllerMode
         bool gripPressed = OVRInput.GetDown(model.gripButton);
         Vector2 joystick = OVRInput.Get(model.joystick);
 
-
         // UI Labels
         string thumbstickLabel = "";
         string triggerLabel = "";
         string gripLabel = "";
-
-        if (OVRInput.Get(model.joystickButton) && isIndexHeld)
-        {
-            spot.StowArm();
-        }
 
         if (isArmMode) // behave as Arm Mode
         {
@@ -130,6 +124,12 @@ public class DriveAndArm : OneControllerMode
 
             if (isJoystickPressed)
             {
+                // Stow arm on joystick press + grip press
+                if (gripPressed)
+                {
+                    spot.StowArm(); 
+                }
+
                 // === Body Up/Down Mode ===
                 isRelativeModeActive = false;
 
