@@ -24,8 +24,8 @@ public class DriveAndArm : OneControllerMode
     private Quaternion initialGripperRotation;
     private bool isRelativeModeActive = false;
 
-    private float lastIndexPressTime = -Mathf.Infinity;
-    private bool lastIndexPressWasLeft;
+    private float lastGripPressTime = -Mathf.Infinity;
+    private bool lastGripPressWasLeft;
     private const float doubleClickInterval = 0.5f;
 
     private void Awake()
@@ -68,6 +68,16 @@ public class DriveAndArm : OneControllerMode
         string triggerLabel = "";
         string gripLabel = "";
 
+        if (gripPressed)
+        {
+            float timeSinceLastPress = Time.time - lastGripPressTime;
+            if (timeSinceLastPress <= doubleClickInterval && lastGripPressWasLeft == model.isLeft)
+                spot.StowArm();
+                
+
+            lastGripPressTime = Time.time;
+            lastGripPressWasLeft = model.isLeft;
+        }
 
         if (isArmMode) // behave as Arm Mode
         {
@@ -125,16 +135,6 @@ public class DriveAndArm : OneControllerMode
         }
         else // behave as Drive Mode
         {
-            if (OVRInput.GetDown(model.indexButton))
-            {
-                float timeSinceLastPress = Time.time - lastIndexPressTime;
-                if (timeSinceLastPress <= doubleClickInterval && lastIndexPressWasLeft == model.isLeft)
-                    spot.StowArm();
-
-                lastIndexPressTime = Time.time;
-                lastIndexPressWasLeft = model.isLeft;
-            }
-
             // === Drive Mode ===
             isRelativeModeActive = false;
 
