@@ -147,6 +147,11 @@ public class DriveAndArm : OneControllerMode
                 thumbstickLabel = "Rotate Spot";
                 gripLabel = "";
                 triggerLabel = "";
+
+                // if (isJoystickPressed)
+                // {
+                //     spot.StowArm();
+                // }
             }
             else
             {

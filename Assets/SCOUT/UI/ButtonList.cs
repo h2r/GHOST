@@ -17,7 +17,7 @@ public class ButtonList : MonoBehaviour
 
     private GameObject[] buttons;
 
-    public void Start()
+    public void Awake()
     {
         float x = 0, y = 0;
         
