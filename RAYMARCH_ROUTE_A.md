@@ -19,7 +19,7 @@ Route B (TSDF fusion + SDF ray march) is a later, separate effort.
 | # | Milestone | Status |
 |---|-----------|--------|
 | 0 | **Unify the camera model** — one canonical pinhole (C# + HLSL), provably-inverse project/unproject, validated. | DONE |
-| 1 | Single-camera software march — one depth texture, write to RT, composite with depth. Match the splat cloud. | TODO |
+| 1 | Single-camera software march — one depth texture, write to RT, composite with depth. Match the splat cloud. | WIP |
 | 2 | Multi-camera — depth/color `Texture2DArray` + `CameraGPU` buffer; all-camera surface test per sample. | TODO |
 | 3 | Color blending — view-dependent weights (Unstructured Lumigraph style) + per-camera exposure compensation. | TODO |
 | 4 | Acceleration — per-camera min/max depth pyramid (Hi-Z) + sphere-trace stepping. | TODO |
@@ -71,6 +71,25 @@ across all cameras. So we define one clean model and make everything else confor
 **Step 0 is COMPLETE.** Canonical model = `DepthCameraModel` (C# + `CameraModel.hlsl`), built per camera
 via `DepthCameraModelBuilder` (`BuildForSpotBodyCamera` for the 5 body cams; `Upright` for the hand cam).
 
+## Step 1 detail (current) — single-camera march, debug overlay
+First cut renders to a debug `RawImage` (user chose this over scene-integration); geometry-only,
+**depth-shaded grayscale** so we validate the march geometry before entangling color orientation.
+
+**Artifacts:**
+- `Assets/Raymarch/DepthToUpright.compute` — packs native post-CVD depth into an upright RFloat RT
+  (isolates the orientation mapping to one place; `_BodyCamera` flag picks Transpose+flipV vs Upright).
+- `Assets/Raymarch/MultiDepthRaymarch.compute` — `March` kernel: view-camera ray per pixel, marches
+  near→far, projects each sample via `CameraModel.hlsl`, detects surface crossing (sign change of
+  `zcam - storedDepth`) or ε-band hit, shades by depth.
+- `Assets/Raymarch/SingleCameraRaymarch.cs` — driver: builds the model, runs pack+march, shows on RawImage.
+
+**Sub-tasks:**
+- [x] Pack pass + march compute + driver (geometry-only, depth-shaded).
+- [ ] Wire up in scene (assign shaders/camera/RawImage) and validate vs the splat cloud.
+      Sanity check first: view camera ≈ source-camera pose → output should match that camera's own depth.
+- [ ] Add color (resample native RGB into an upright color RT; verify color orientation vs RGB).
+- [ ] Then proceed to Step 2 (multi-camera texture arrays).
+
 ## Decisions & constraints
 - **No hardware ray tracing (for now).** Confirmed by user. Keeps the renderer portable and
   needs no render-pipeline migration. Project is on the **built-in render pipeline** (no URP/HDRP
@@ -109,3 +128,6 @@ via `DepthCameraModelBuilder` (`BuildForSpotBodyCamera` for the 5 body cams; `Up
   one-click `PresetBodyCameraAndSample` context menu (sets candidate=CleanTransposed, Transpose, flipV).
   With it, green snapped onto gray and the frustum read correctly. **Step 0 closed**: baked the
   validated orientation into `BuildForSpotBodyCamera` / `BuildFor(..., flipU, flipV)`.
+- 2026-06-08: Step 1 started (debug-overlay, geometry-only). Added `DepthToUpright.compute`,
+  `MultiDepthRaymarch.compute`, `SingleCameraRaymarch.cs`. Depth-shaded march; surface detected by
+  sign-change of (zcam - storedDepth). Next: wire into scene and validate vs the splat cloud.

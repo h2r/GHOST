@@ -1,0 +1,102 @@
+// Route A, Step 1: single-camera direct ray-cast against one upright depth image.
+// Per output pixel: build the world ray from the view camera's inverse view-projection, march
+// near->far, project each sample into the depth camera, and detect the surface crossing
+// (delta = zcam - storedDepth changing sign). Shaded by depth (grayscale) for geometry validation;
+// color/blending come in later steps.
+#pragma kernel March
+
+#include "CameraModel.hlsl"
+
+Texture2D<float> _UprightDepth;   // the depth camera's upright depth (metric, camera-space Z)
+RWTexture2D<float4> _Output;
+
+// Depth camera model (upright). intrinsics = (cx, cy, fx, fy); fy may be negative (baked flip).
+float4 _CamIntrinsics;
+float2 _CamResolution;
+float4x4 _CamToWorld;
+float4x4 _WorldToCam;
+
+// View camera (defines the rays).
+float4x4 _InvViewProj;            // inverse of (projection * worldToCamera)
+
+int _OutWidth;
+int _OutHeight;
+float _Near;
+float _Far;
+int _Steps;
+float _DepthEps;
+float _MinValidDepth;
+
+CameraModel MakeCam()
+{
+    CameraModel c;
+    c.intrinsics = _CamIntrinsics;
+    c.resolution = _CamResolution;
+    c.cameraToWorld = _CamToWorld;
+    c.worldToCamera = _WorldToCam;
+    return c;
+}
+
+[numthreads(8, 8, 1)]
+void March(uint3 id : SV_DispatchThreadID)
+{
+    if ((int)id.x >= _OutWidth || (int)id.y >= _OutHeight)
+        return;
+
+    // Build the world-space ray for this output pixel from the view camera's inverse VP.
+    float2 uv = (float2(id.xy) + 0.5) / float2(_OutWidth, _OutHeight);
+    float2 ndc = uv * 2.0 - 1.0;
+    float4 nearW = mul(_InvViewProj, float4(ndc, -1.0, 1.0));
+    float4 farW  = mul(_InvViewProj, float4(ndc,  1.0, 1.0));
+    nearW /= nearW.w;
+    farW  /= farW.w;
+    float3 ro = nearW.xyz;
+    float3 dir = normalize(farW.xyz - nearW.xyz);
+
+    CameraModel cam = MakeCam();
+
+    float4 result = float4(0.0, 0.0, 0.0, 1.0); // opaque black background
+    float stepSize = (_Far - _Near) / (float)max(1, _Steps);
+    float invRange = 1.0 / max(1e-3, _Far - _Near);
+
+    bool prevValid = false;
+    float prevDelta = 0.0;
+
+    [loop]
+    for (int i = 0; i < _Steps; i++)
+    {
+        float t = _Near + stepSize * (float)i;
+        float3 X = ro + dir * t;
+
+        float3 p = CameraModel_ProjectFromWorld(cam, X); // (u, v, zcam)
+        float zcam = p.z;
+        if (zcam <= 0.0 || !CameraModel_InFrame(cam, p.xy))
+        {
+            prevValid = false;
+            continue;
+        }
+
+        float D = _UprightDepth.Load(int3((int)p.x, (int)p.y, 0));
+        if (D <= _MinValidDepth)
+        {
+            prevValid = false;
+            continue;
+        }
+
+        float delta = zcam - D;
+
+        // Surface hit: ray crosses from in-front (delta<0) to behind (delta>=0), or a tight band.
+        bool crossed = prevValid && prevDelta < 0.0 && delta >= 0.0;
+        if (crossed || abs(delta) < _DepthEps)
+        {
+            float shade = saturate((zcam - _Near) * invRange);
+            result = float4(1.0 - shade, 1.0 - shade, 1.0 - shade, 1.0); // near = bright
+            break;
+        }
+
+        prevValid = true;
+        prevDelta = delta;
+    }
+
+    _Output[id.xy] = result;
+}

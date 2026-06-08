@@ -1,0 +1,52 @@
+// Resamples a camera's native (post-CVD) depth buffer into the canonical UPRIGHT frame that
+// DepthCameraModel assumes. This isolates the per-camera orientation quirk to one place so the
+// raymarch can treat depth as a clean standard-pinhole image (u = column, v = row).
+//
+// For a Spot BODY camera (mounted rotated 90°, validated as Transpose + vertical flip):
+//   upright (u, v)  ->  native (col = (nativeWidth-1) - v, row = u)
+// This is the exact inverse of how DepthCameraModelBuilder builds the upright model, so
+// model.ProjectFromWorld(X) -> (u, v) indexes this texture correctly.
+#pragma kernel Pack
+
+// Native post-CVD depth: index = col + row * nativeWidth, .z = metric depth (camera-space Z).
+StructuredBuffer<float3> _PointDepth;
+RWTexture2D<float> _UprightDepth; // size (uprightWidth x uprightHeight)
+
+int _NativeWidth;
+int _NativeHeight;
+int _UprightWidth;
+int _UprightHeight;
+// 0 = upright already (hand camera), 1 = body camera (Transpose + flipV mapping above).
+int _BodyCamera;
+
+[numthreads(8, 8, 1)]
+void Pack(uint3 id : SV_DispatchThreadID)
+{
+    if ((int)id.x >= _UprightWidth || (int)id.y >= _UprightHeight)
+        return;
+
+    int u = (int)id.x;
+    int v = (int)id.y;
+
+    int nativeCol;
+    int nativeRow;
+    if (_BodyCamera != 0)
+    {
+        nativeCol = (_NativeWidth - 1) - v;
+        nativeRow = u;
+    }
+    else
+    {
+        nativeCol = u;
+        nativeRow = v;
+    }
+
+    float depth = 0.0;
+    if (nativeCol >= 0 && nativeCol < _NativeWidth && nativeRow >= 0 && nativeRow < _NativeHeight)
+    {
+        int idx = nativeCol + nativeRow * _NativeWidth;
+        depth = _PointDepth[idx].z;
+    }
+
+    _UprightDepth[uint2(u, v)] = depth;
+}
