@@ -111,7 +111,7 @@ public class VRDriveSpot : MonoBehaviour
             return;
         }
         Color baseColor = spotIndicatorMaterial.GetColor("_Color");
-        baseColor.a = 87f / 255f; // Convert 87 to Unity�s 0�1 range
+        baseColor.a = 87f / 255f; // Convert 87 to Unity's 0-1 range
         spotPanel.color = baseColor;
 
         Vector2 leftMove;
@@ -198,7 +198,7 @@ public class VRDriveSpot : MonoBehaviour
             spotPointer.SetActive(false);
 
         Color baseColor = spotIndicatorMaterial.GetColor("_Color");
-        baseColor.a = 87f / 255f; // Convert 87 to Unity�s 0�1 range
+        baseColor.a = 87f / 255f; // Convert 87 to Unity's 0-1 range
         spotPanel.color = baseColor;
 
     }

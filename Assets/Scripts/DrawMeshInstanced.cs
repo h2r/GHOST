@@ -465,6 +465,14 @@ public class DrawMeshInstanced : MonoBehaviour
         return Matrix4x4.TRS(transform.position, transform.rotation, new Vector3(1, 1, 1));
     }
 
+    // Read-only accessors used by Route A camera-model reconciliation tooling
+    // (CameraModelLiveProbe). These expose existing live state without changing behavior.
+    public ComputeBuffer PointDepthBuffer => pointDepthBuffer;
+    public int FrameWidth => frameWidth;
+    public int FrameHeight => frameHeight;
+    public Vector4 Intrinsics => GetIntrinsicsVector();
+    public bool HasFrameData => hasFrameData;
+
     private IEnumerator ToggleReadyToFreezeAfterDelay(float waitTime)
     {
         freezeLock = true;
