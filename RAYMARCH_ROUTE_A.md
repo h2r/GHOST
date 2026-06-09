@@ -12,6 +12,8 @@ blending the contributing cameras' RGB. Software compute-shader march only
 
 Route B (TSDF fusion + SDF ray march) is a later, separate effort.
 
+**Implementation walkthrough (CPU→GPU, with diagrams):** [RAYMARCH_IMPLEMENTATION.md](RAYMARCH_IMPLEMENTATION.md).
+
 ## Status legend
 `TODO` not started · `WIP` in progress · `DONE` complete · `BLOCKED` needs input
 
@@ -90,6 +92,43 @@ First cut renders to a debug `RawImage` (user chose this over scene-integration)
       color/depth are pixel-aligned), shade hits with it. `colorFlipU`/`colorFlipV` toggles cover the
       color texture's own row/col convention — verify against the RGB and lock the flips.
 - [ ] Then proceed to Step 2 (multi-camera texture arrays).
+
+## Review items (correctness & design debt)
+From `RAYMARCH_REVIEW_CHECKLIST.md` (2026-06-09). All six claims were verified against the code and
+found valid (R5 partial — see note). Fix-checklists/detail live in that file; tracked here as work,
+in priority order.
+
+- [ ] **R1 (HIGH) — single orientation/flip mapping contract.** `DepthToUpright.compute` hardcodes the
+  body mapping via `_BodyCamera` and IGNORES `flipU/flipV`, while `DepthCameraModelBuilder.BuildFor`
+  takes `orientation+flipU+flipV`. The packed depth/color and the camera model can therefore DESYNC —
+  likely entangled with the open flip reconciliation below. Fix: one native↔model pixel-transform type
+  used by the builder, the pack pass, and the probe; pass the same transform into `DepthToUpright`;
+  extend `NativeToModelPixel` to handle flips. (Checklist item 3.)
+- [ ] **R2 (HIGH) — view-camera ray double near-offset.** In view mode `ro = nearW` (near-plane point)
+  but the march starts `t = _Near`, so the first sample sits `_Near` beyond the near plane → very-near
+  surfaces missed, range skewed. Fix: pass the eye origin and march from it (or start `t` at 0); update
+  both drivers; re-validate with snap-to-source + a translated free camera. (Checklist item 1.)
+- [ ] **R3 (HIGH) — compositing ignores scene depth.** The march reads only `_SceneColor`; real Unity
+  geometry in front does not occlude the reconstruction. Fix: enable `DepthTextureMode.Depth`, bind
+  scene depth, compute each hit's camera-space depth, and depth-reject; add a validation scene with a
+  mesh in front. (Checklist item 2.)
+- [ ] **R4 (MED) — probe must validate the flipped runtime model.** `CameraModelLiveProbe` builds
+  `cleanModel` with `BuildFor(orientation)` (no flips) and `NativeToModelPixel` ignores flips, so
+  "green" validates transpose-only, not the shipped flipped model. Fix: pass `flipU/flipV`; use the
+  shared transform; drop the `AddCorner` ship→model workaround; log full orientation state. (Item 4.)
+- [ ] **R5 (MED, partial) — `_DepthEps` hit consistency.** The eps-band hit only fires on the first
+  valid sample; otherwise a sign-change crossing is required. True intersections are still caught by the
+  crossing, so impact is limited to thin/grazing/coarse-step cases. Fix: accept `|delta| <= eps` for any
+  valid sample while keeping crossing-refinement and discontinuity rejection. (Checklist item 6.)
+- [ ] **R6 (REFACTOR) — decouple ingestion from the splat renderer.** Raymarch consumes
+  `DrawMeshInstanced` directly, and its `Update` can't refresh depth without also drawing splats.
+  Introduce an `IDepthFrameSource`/`RaymarchDepthSource` (frame size, canonical model, native↔upright
+  mapping, depth buffer, color, sequence, ownership) consumed by BOTH the splat renderer and raymarch;
+  add a "depth without splat draw" switch; keep buffer ownership in the provider. (Checklist item 5 +
+  API-design target.)
+
+Done already (from the checklist's "observed" section): linear packed-color RTs (sRGB double-decode
+fix) and the compositor heartbeat log.
 
 ## Decisions & constraints
 - **No hardware ray tracing (for now).** Confirmed by user. Keeps the renderer portable and
@@ -182,3 +221,8 @@ First cut renders to a debug `RawImage` (user chose this over scene-integration)
   confusion). PENDING: confirm flipU holds under multi-angle orbit + matches reality; if so, bake
   `flipU=true, flipV=false` into `BuildForSpotBodyCamera`/defaults (supersedes Step 0). If it drifts
   under orbit, a flip is masking a ray-direction bug — debug instead.
+- 2026-06-09: Reviewed `RAYMARCH_REVIEW_CHECKLIST.md`. Verified all six claims against the code: all
+  valid (R5 partial). Added tracked items R1–R6 under "Review items". Notable: R1 (pack pass ignores
+  `flipU/flipV` while the model honors them → possible data/model desync) may be entangled with the
+  open orientation reconciliation, and R2 (view-camera ray starts `_Near` beyond the near plane) is a
+  real ray-origin bug masked by the self-consistent identity test.
