@@ -85,9 +85,10 @@ First cut renders to a debug `RawImage` (user chose this over scene-integration)
 
 **Sub-tasks:**
 - [x] Pack pass + march compute + driver (geometry-only, depth-shaded).
-- [ ] Wire up in scene (assign shaders/camera/RawImage) and validate vs the splat cloud.
-      Sanity check first: view camera ≈ source-camera pose → output should match that camera's own depth.
-- [ ] Add color (resample native RGB into an upright color RT; verify color orientation vs RGB).
+- [x] Validated geometry: depth march is upright, frame-filling (SourceCameraImage mode), 3D-consistent.
+- [~] Add color: pack native RGB into an upright color RT (same orientation mapping as depth, since
+      color/depth are pixel-aligned), shade hits with it. `colorFlipU`/`colorFlipV` toggles cover the
+      color texture's own row/col convention — verify against the RGB and lock the flips.
 - [ ] Then proceed to Step 2 (multi-camera texture arrays).
 
 ## Decisions & constraints
@@ -130,4 +131,54 @@ First cut renders to a debug `RawImage` (user chose this over scene-integration)
   validated orientation into `BuildForSpotBodyCamera` / `BuildFor(..., flipU, flipV)`.
 - 2026-06-08: Step 1 started (debug-overlay, geometry-only). Added `DepthToUpright.compute`,
   `MultiDepthRaymarch.compute`, `SingleCameraRaymarch.cs`. Depth-shaded march; surface detected by
-  sign-change of (zcam - storedDepth). Next: wire into scene and validate vs the splat cloud.
+  sign-change of (zcam - storedDepth).
+- 2026-06-08: First run showed depth (march works!) but upside-down + left/right margins. Fixes:
+  `_FlipV` (RWTexture2D top-left vs RawImage bottom-left display flip) and a `SourceCameraImage`
+  ray mode that generates rays from the depth model itself (output sized to the camera's portrait
+  resolution) to reproduce its own image and validate cleanly without view-camera FOV/aspect issues.
+  ViewCamera mode now builds the projection with the output aspect. Next: confirm upright+filled,
+  then switch to ViewCamera mode and move the camera to check 3D consistency vs the cloud.
+- 2026-06-08: Geometry validated (looks good). Added color: `DepthToUpright` now also packs native
+  RGB into an upright ARGB32 RT (`_HasColor`, `_ColorFlipU/V`); the march shades hits via `_UseColor`.
+  Driver exposes `useColor` + color flip toggles.
+- 2026-06-08: Color confirmed pixel-aligned (correct from the source viewpoint). Findings:
+  (1) `_FlipV` was doing double duty — the model-ray and view-camera paths need opposite vertical
+  flips. Fixed: the model path now flips relative to the view path in-shader, so `flipOutputV=OFF`
+  is upright for BOTH modes (default changed to false). (2) Translating the view shows colors on
+  wrong surfaces: this is the EXPECTED single-camera DIBR limit (parallax disocclusion + rubber-sheets
+  across depth discontinuities), not a bug — rotation is fine. Real fix = multi-camera (Step 2) +
+  edge-aware discontinuity handling (Step 4). Optional single-cam cleanup available now: hit
+  refinement + depth-discontinuity skip (holes instead of smears).
+- 2026-06-08: Added single-cam cleanup to `MultiDepthRaymarch`: (a) hit refinement — interpolate the
+  zero-crossing between the two bracketing samples and reproject for an accurate hit pixel/depth;
+  (b) `_DiscontinuityThreshold` — reject crossings where stored depth jumps (silhouette edges) and
+  keep marching to the real surface behind (holes, not rubber-sheets). Driver exposes
+  `discontinuityThreshold` (default 0.15m, 0 disables). Disocclusion gaps remain (fundamental to one
+  camera) until Step 2.
+- 2026-06-08: Hooked into the main camera (mono-first composite, user's choice). Added
+  `RaymarchCompositor.cs` (OnRenderImage on the camera): packs + marches this camera's rays and
+  composites over the rendered frame. Composite is done IN the march (`_Composite`/`_SceneColor`):
+  on a miss it shows the scene, sampled at the ray row so it stays aligned under `_FlipV`. Built-in
+  RP, mono matrices (`cam.projectionMatrix * worldToCameraMatrix`). CAVEAT: VR stereo runs
+  OnRenderImage per eye but uses mono matrices here -> validate with XR off / a non-XR camera first;
+  per-eye stereo is a later step. Marches at full screen res each frame (perf later).
+- 2026-06-08: Added validation tooling to the compositor: `_HitBlend`/`marchBlend` (see-through
+  reconstruction for overlay checks against the splat cloud) and a "Snap to source camera pose"
+  context menu (identity test). Validation method: cross-check the march against the trusted splat
+  cloud (gather vs scatter, both world-space) — set blend ~0.5, keep the cloud on, orbit a free
+  TEST camera (not CenterEyeAnchor, which is head-tracked + stereo); the march must stay glued to the
+  cloud from every angle. Main cam in scene = `CenterEyeAnchor` (Meta OVR rig; eyes render per-eye).
+- 2026-06-08: Added `RaymarchCompositor` diagnostics (logs whether OnRenderImage fires + COMPOSITE
+  vs PASSTHROUGH(reason) + heartbeat) to debug "no compositing" — likely the test camera isn't the
+  displayed one (XR rig renders the view). Added `FlyCamera.cs` (legacy Input, Active Input Handling
+  = Both) for WASD+QE/Space/Ctrl + RMB-look to fly the test camera during validation.
+- 2026-06-08: Compositor working. Two findings: (1) Color was too dark — project is LINEAR
+  (`m_ActiveColorSpace=1`) and `uprightColor` was a default(sRGB) RT, so the UAV-stored linear color
+  was sRGB-decoded again on `.Load()`. Fixed: `uprightColor` now created `RenderTextureReadWrite.Linear`
+  (both drivers). (2) ORIENTATION DISCREPANCY: to align the compositor to the cloud the user needed
+  Transpose + **flipU** (NOT flipV, NOT flipOutputV) — contradicts the Step 0 frustum reading (flipV).
+  The compositor-vs-cloud is the first independent world-orientation test (SourceCameraImage is
+  self-consistent and can't detect a wrong flip; the Step 0 frustum was eyeballed amid display-flip
+  confusion). PENDING: confirm flipU holds under multi-angle orbit + matches reality; if so, bake
+  `flipU=true, flipV=false` into `BuildForSpotBodyCamera`/defaults (supersedes Step 0). If it drifts
+  under orbit, a flip is masking a ray-direction bug — debug instead.

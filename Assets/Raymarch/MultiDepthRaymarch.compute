@@ -8,6 +8,8 @@
 #include "CameraModel.hlsl"
 
 Texture2D<float> _UprightDepth;   // the depth camera's upright depth (metric, camera-space Z)
+Texture2D<float4> _UprightColor;  // the depth camera's upright color (same pixel grid as depth)
+Texture2D<float4> _SceneColor;    // camera frame for compositing (sampled at the ray's row)
 RWTexture2D<float4> _Output;
 
 // Depth camera model (upright). intrinsics = (cx, cy, fx, fy); fy may be negative (baked flip).
@@ -26,6 +28,12 @@ float _Far;
 int _Steps;
 float _DepthEps;
 float _MinValidDepth;
+int _FlipV;        // 1 = flip output V (RWTexture2D top-left origin vs RawImage bottom-left)
+int _RayFromModel; // 1 = generate rays from the depth model itself (validation), 0 = view camera
+int _UseColor;     // 1 = shade hits with sampled RGB, 0 = depth grayscale
+float _DiscontinuityThreshold; // stored-depth jump (m) above which a crossing is a silhouette edge; 0 disables
+int _Composite;    // 1 = on a miss, show the scene (composite into the camera image); 0 = black
+float _HitBlend;   // hit color blend over background (1 = opaque; <1 = see-through for alignment checks)
 
 CameraModel MakeCam()
 {
@@ -37,30 +45,68 @@ CameraModel MakeCam()
     return c;
 }
 
+// Shade a hit at projected pixel/depth p = (u, v, zcam).
+float3 Shade(float3 p, float invRange)
+{
+    if (_UseColor != 0)
+        return _UprightColor.Load(int3((int)p.x, (int)p.y, 0)).rgb;
+    float s = saturate((p.z - _Near) * invRange);
+    return float3(1.0 - s, 1.0 - s, 1.0 - s); // near = bright
+}
+
 [numthreads(8, 8, 1)]
 void March(uint3 id : SV_DispatchThreadID)
 {
     if ((int)id.x >= _OutWidth || (int)id.y >= _OutHeight)
         return;
 
-    // Build the world-space ray for this output pixel from the view camera's inverse VP.
-    float2 uv = (float2(id.xy) + 0.5) / float2(_OutWidth, _OutHeight);
-    float2 ndc = uv * 2.0 - 1.0;
-    float4 nearW = mul(_InvViewProj, float4(ndc, -1.0, 1.0));
-    float4 farW  = mul(_InvViewProj, float4(ndc,  1.0, 1.0));
-    nearW /= nearW.w;
-    farW  /= farW.w;
-    float3 ro = nearW.xyz;
-    float3 dir = normalize(farW.xyz - nearW.xyz);
-
     CameraModel cam = MakeCam();
 
-    float4 result = float4(0.0, 0.0, 0.0, 1.0); // opaque black background
+    // Display upright in a bottom-left-origin RawImage. The view-camera path (NDC +Y up) and the
+    // model-ray path (model v is +Y down) have opposite vertical conventions, so the model path
+    // flips relative to the view path. _FlipV is an extra global override for platform/UI quirks;
+    // with it off (default), BOTH modes come out upright.
+    bool flip = (_FlipV != 0);
+    if (_RayFromModel != 0)
+        flip = !flip;
+    float py = flip ? (float)(_OutHeight - 1 - (int)id.y) : (float)id.y;
+    float2 pix = float2((float)id.x, py);
+
+    float3 ro;
+    float3 dir;
+    if (_RayFromModel != 0)
+    {
+        // Validation: rays from the depth camera model itself -> reproduces its own upright depth
+        // image and fills the frame (output RT is sized to the model resolution).
+        ro = mul(cam.cameraToWorld, float4(0.0, 0.0, 0.0, 1.0)).xyz;
+        float3 throughW = CameraModel_UnprojectToWorld(cam, pix + 0.5, 1.0);
+        dir = normalize(throughW - ro);
+    }
+    else
+    {
+        // Real mode: rays from the view camera's inverse view-projection.
+        float2 uv = (pix + 0.5) / float2(_OutWidth, _OutHeight);
+        float2 ndc = uv * 2.0 - 1.0;
+        float4 nearW = mul(_InvViewProj, float4(ndc, -1.0, 1.0));
+        float4 farW  = mul(_InvViewProj, float4(ndc,  1.0, 1.0));
+        nearW /= nearW.w;
+        farW  /= farW.w;
+        ro = nearW.xyz;
+        dir = normalize(farW.xyz - nearW.xyz);
+    }
+
+    // Background: the scene (so a miss shows what the camera rendered) when compositing, else black.
+    // Sampled at the ray's row (py) so the reconstruction and scene stay aligned under _FlipV.
+    float4 result = (_Composite != 0)
+        ? float4(_SceneColor.Load(int3((int)id.x, (int)py, 0)).rgb, 1.0)
+        : float4(0.0, 0.0, 0.0, 1.0);
     float stepSize = (_Far - _Near) / (float)max(1, _Steps);
     float invRange = 1.0 / max(1e-3, _Far - _Near);
 
     bool prevValid = false;
     float prevDelta = 0.0;
+    float prevD = 0.0;
+    float prevT = 0.0;
 
     [loop]
     for (int i = 0; i < _Steps; i++)
@@ -85,17 +131,42 @@ void March(uint3 id : SV_DispatchThreadID)
 
         float delta = zcam - D;
 
-        // Surface hit: ray crosses from in-front (delta<0) to behind (delta>=0), or a tight band.
-        bool crossed = prevValid && prevDelta < 0.0 && delta >= 0.0;
-        if (crossed || abs(delta) < _DepthEps)
+        // Surface crossing: in-front (delta<0) -> behind (delta>=0).
+        if (prevValid && prevDelta < 0.0 && delta >= 0.0)
         {
-            float shade = saturate((zcam - _Near) * invRange);
-            result = float4(1.0 - shade, 1.0 - shade, 1.0 - shade, 1.0); // near = bright
+            // Reject rubber-sheet crossings over a depth discontinuity (silhouette edge): keep
+            // marching so the ray reaches the real surface behind the edge (a hole, not a smear).
+            if (_DiscontinuityThreshold > 0.0 && abs(D - prevD) > _DiscontinuityThreshold)
+            {
+                prevDelta = delta;
+                prevD = D;
+                prevT = t;
+                continue;
+            }
+
+            // Hit refinement: linearly interpolate the zero crossing between the two samples so the
+            // hit point/pixel is accurate (less color smear at edges than snapping to a coarse step).
+            float denom = prevDelta - delta;
+            float frac = (abs(denom) > 1e-6) ? saturate(prevDelta / denom) : 0.0;
+            float tHit = prevT + frac * (t - prevT);
+            float3 pHit = CameraModel_ProjectFromWorld(cam, ro + dir * tHit);
+            // Blend the hit over the background (scene/black) so it can be made see-through for
+            // alignment checks against the splat cloud.
+            result = float4(lerp(result.rgb, Shade(pHit, invRange), _HitBlend), 1.0);
+            break;
+        }
+
+        // Fallback: first valid sample is already on/behind the surface (no crossing to refine).
+        if (!prevValid && abs(delta) < _DepthEps)
+        {
+            result = float4(lerp(result.rgb, Shade(p, invRange), _HitBlend), 1.0);
             break;
         }
 
         prevValid = true;
         prevDelta = delta;
+        prevD = D;
+        prevT = t;
     }
 
     _Output[id.xy] = result;

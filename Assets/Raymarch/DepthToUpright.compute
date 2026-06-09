@@ -19,6 +19,15 @@ int _UprightHeight;
 // 0 = upright already (hand camera), 1 = body camera (Transpose + flipV mapping above).
 int _BodyCamera;
 
+// Color (optional). Sampled at the SAME native pixel as depth (color and depth are pixel-aligned).
+// The flip toggles cover the color texture's own row/column convention.
+Texture2D<float4> _NativeColor;
+SamplerState sampler_NativeColor;
+RWTexture2D<float4> _UprightColor;
+int _HasColor;
+int _ColorFlipU;
+int _ColorFlipV;
+
 [numthreads(8, 8, 1)]
 void Pack(uint3 id : SV_DispatchThreadID)
 {
@@ -41,12 +50,27 @@ void Pack(uint3 id : SV_DispatchThreadID)
         nativeRow = v;
     }
 
+    bool inBounds = nativeCol >= 0 && nativeCol < _NativeWidth && nativeRow >= 0 && nativeRow < _NativeHeight;
+
     float depth = 0.0;
-    if (nativeCol >= 0 && nativeCol < _NativeWidth && nativeRow >= 0 && nativeRow < _NativeHeight)
+    if (inBounds)
     {
         int idx = nativeCol + nativeRow * _NativeWidth;
         depth = _PointDepth[idx].z;
     }
-
     _UprightDepth[uint2(u, v)] = depth;
+
+    if (_HasColor != 0)
+    {
+        float4 c = float4(0.0, 0.0, 0.0, 1.0);
+        if (inBounds)
+        {
+            float2 cuv = float2((nativeCol + 0.5) / (float)_NativeWidth,
+                                (nativeRow + 0.5) / (float)_NativeHeight);
+            if (_ColorFlipU != 0) cuv.x = 1.0 - cuv.x;
+            if (_ColorFlipV != 0) cuv.y = 1.0 - cuv.y;
+            c = _NativeColor.SampleLevel(sampler_NativeColor, cuv, 0);
+        }
+        _UprightColor[uint2(u, v)] = c;
+    }
 }
