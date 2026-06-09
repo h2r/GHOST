@@ -22438,6 +22438,7 @@ MonoBehaviour:
   - {fileID: 1273408083}
   - {fileID: 433495832}
   isLeft: 1
+  attachedSpotName: 
 --- !u!23 &758492290014997255
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -25043,6 +25044,7 @@ MonoBehaviour:
   redMaterial: {fileID: 2100000, guid: 86f944557dab0f94d8589ad8c224c4ed, type: 2}
   modeName: Blue Spot
   color: {r: 0, g: 0, b: 1, a: 1}
+  spotName: 
   useWorldDummyGripper: 0
 --- !u!1 &5616449089262962814
 GameObject:
@@ -25143,6 +25145,7 @@ MonoBehaviour:
   redMaterial: {fileID: 2100000, guid: 86f944557dab0f94d8589ad8c224c4ed, type: 2}
   modeName: Red Spot
   color: {r: 1, g: 0, b: 0, a: 1}
+  spotName: 
   useWorldDummyGripper: 0
 --- !u!1 &5704221352867220266
 GameObject:
@@ -25992,8 +25995,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RosSharp.RosBridgeClient.BGRRawImageSubscriber
   meshRenderer: {fileID: 1142502447079962882}
   controllerModel: {fileID: 7532563128813087666}
-  spotObserverClientRed: {fileID: 971801071}
-  spotObserverClientBlue: {fileID: 1028337600}
+  spotObserverClientSpotRos1: {fileID: 971801071}
+  spotObserverClientSpotRos2: {fileID: 1028337600}
   SpotObserverCameraIndex: 32
   SpotObserverStreamIdx: 1
   flipMode: 2
@@ -26040,6 +26043,7 @@ MonoBehaviour:
   - {fileID: 1560963606}
   - {fileID: 2087991522}
   isLeft: 0
+  attachedSpotName: 
 --- !u!4 &7548481229296391317
 Transform:
   m_ObjectHideFlags: 0
@@ -26328,8 +26332,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RosSharp.RosBridgeClient.BGRRawImageSubscriber
   meshRenderer: {fileID: 7700864136377476653}
   controllerModel: {fileID: 737598808418184447}
-  spotObserverClientRed: {fileID: 971801071}
-  spotObserverClientBlue: {fileID: 1028337600}
+  spotObserverClientSpotRos1: {fileID: 971801071}
+  spotObserverClientSpotRos2: {fileID: 1028337600}
   SpotObserverCameraIndex: 32
   SpotObserverStreamIdx: 1
   flipMode: 2
@@ -26819,6 +26823,7 @@ MonoBehaviour:
   redMaterial: {fileID: 0}
   modeName: Multi Spot
   color: {r: 0.5450981, g: 0, b: 0.5450981, a: 1}
+  spotName: 
   useWorldDummyGripper: 0
   rosConnectorOne: {fileID: 2123763348}
   rosConnectorTwo: {fileID: 669083912}

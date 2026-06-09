@@ -136,7 +136,9 @@ public class UIManager : MonoBehaviour
                 },
                 m => modeManager.singleDrive.rightSpot = (SpotMode)m,
                 m => ((UIOption)m).DoAction(modeManager)
-            } },
+            } }, //Action when selecting single drive control 
+
+
             { SuperMode.DualDrive, new Action<NamedOption>[] {
                 m => modeManager.dualDrive.spot = (SpotMode)m,
                 m => modeManager.dualDrive.control = (TwoControllerMode)m,

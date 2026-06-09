@@ -177,10 +177,12 @@ public class SingleDriveSuperMode
         if (leftSpot != null && leftControl != null)
         {
             leftControl.ControlUpdate(leftSpot, leftModel);
+            leftModel.attachedSpotName=leftSpot.spotName;
         }
         if (rightSpot != null && rightControl != null)
         {
             rightControl.ControlUpdate(rightSpot, rightModel);
+            rightModel.attachedSpotName=rightSpot.spotName;
         }
         AssignColors(leftModel, rightModel);
     }

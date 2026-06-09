@@ -7,6 +7,7 @@ public class ControllerModel : MonoBehaviour
     public SkinnedMeshRenderer skinRenderer;
     public TMP_Text[] labels;
     public bool isLeft;
+    public string attachedSpotName;
 
     public Color color
     {

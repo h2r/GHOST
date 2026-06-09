@@ -124,7 +124,7 @@ public class DriveAndArm : OneControllerMode
             // === Drive Mode ===
             isRelativeModeActive = false;
 
-            if (isJoystickPressed)
+            if (isJoystickPressed && !isGripHeld)
             {
                 // === Body Up/Down Mode ===
                 isRelativeModeActive = false;
@@ -148,10 +148,10 @@ public class DriveAndArm : OneControllerMode
                 gripLabel = "";
                 triggerLabel = "";
 
-                // if (isJoystickPressed)
-                // {
-                //     spot.StowArm();
-                // }
+                if (isJoystickPressed)
+                {
+                    spot.StowArm();
+                }
             }
             else
             {
