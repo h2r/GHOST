@@ -20,8 +20,18 @@ namespace Raymarch
         public DrawMeshInstanced sourceRenderer;
         [Tooltip("Spot body cameras = Transpose + Flip V. Hand camera = Upright.")]
         public ImageOrientation orientation = ImageOrientation.Transpose;
+        [Tooltip("Labeling flips of the upright frame. Applied identically to the model and the " +
+                 "packed textures (one NativePixelTransform), so they relabel texture coords " +
+                 "without changing the rendered geometry.")]
         public bool flipU = false;
         public bool flipV = true;
+        [Tooltip("Native CVD buffers store pixels 180°-rotated relative to their intrinsics (the " +
+                 "legacy splat shader compensates with a mirrored fetch). Leave ON to match the " +
+                 "trusted splat-cloud geometry; OFF only if a future source fixes the layout upstream.")]
+        public bool mirrorNativeBuffer = true;
+
+        private NativePixelTransform PixelTransform =>
+            new NativePixelTransform(orientation, flipU, flipV, mirrorNativeBuffer);
 
         [Header("Compute shaders")]
         public ComputeShader packShader;   // DepthToUpright.compute
@@ -111,7 +121,8 @@ namespace Raymarch
                 return;
             }
 
-            DepthCameraModel model = DepthCameraModelBuilder.BuildFor(sourceRenderer, orientation, flipU, flipV);
+            NativePixelTransform xform = PixelTransform;
+            DepthCameraModel model = DepthCameraModelBuilder.BuildFor(sourceRenderer, xform);
             int nativeW = sourceRenderer.FrameWidth;
             int nativeH = sourceRenderer.FrameHeight;
             int uW = model.width;
@@ -138,7 +149,7 @@ namespace Raymarch
             packShader.SetInt("_NativeHeight", nativeH);
             packShader.SetInt("_UprightWidth", uW);
             packShader.SetInt("_UprightHeight", uH);
-            packShader.SetInt("_BodyCamera", orientation == ImageOrientation.Transpose ? 1 : 0);
+            xform.ApplyTo(packShader); // same transform as the model build — they cannot desync (R1)
             packShader.SetInt("_HasColor", hasColor ? 1 : 0);
             packShader.SetInt("_ColorFlipU", colorFlipU ? 1 : 0);
             packShader.SetInt("_ColorFlipV", colorFlipV ? 1 : 0);
@@ -191,7 +202,7 @@ namespace Raymarch
                 return;
             }
 
-            DepthCameraModel model = DepthCameraModelBuilder.BuildFor(sourceRenderer, orientation, flipU, flipV);
+            DepthCameraModel model = DepthCameraModelBuilder.BuildFor(sourceRenderer, PixelTransform);
             Matrix4x4 c2w = model.cameraToWorld;
             c.transform.SetPositionAndRotation(c2w.GetColumn(3), c2w.rotation);
             // Vertical FOV from the (possibly flip-negated) focal length and the upright image height.

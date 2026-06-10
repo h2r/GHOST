@@ -27,25 +27,26 @@ Purpose: track the correctness, flexibility, and API-design issues found in the 
     - [ ] Decide whether to keep color-only compositing with depth rejection or move to a pass that can also write depth.
     - [ ] Add a validation scene with a simple Unity mesh in front of the depth reconstruction.
 
-- [ ] Orientation and flip handling uses one shared mapping contract.
-  - Status: OPEN.
-  - Evidence: `DepthCameraModelBuilder.BuildFor` supports `orientation`, `flipU`, and `flipV`, but `DepthToUpright.compute` only accepts `_BodyCamera` and hardcodes either Upright or Transpose+flipV. The drivers pass only `_BodyCamera` into the pack shader.
+- [x] Orientation and flip handling uses one shared mapping contract.
+  - Status: FIXED 2026-06-10 (see `RAYMARCH_ROUTE_A.md` R1 for the full analysis).
+  - Evidence (was): `DepthCameraModelBuilder.BuildFor` supports `orientation`, `flipU`, and `flipV`, but `DepthToUpright.compute` only accepts `_BodyCamera` and hardcodes either Upright or Transpose+flipV. The drivers pass only `_BodyCamera` into the pack shader.
   - Fix checklist:
-    - [ ] Define a single native-to-model/model-to-native pixel transform type for orientation and flips.
-    - [ ] Use that transform in `DepthCameraModelBuilder`.
-    - [ ] Replace `_BodyCamera` in `DepthToUpright.compute` with explicit orientation/flip parameters or a compact transform matrix.
-    - [ ] Update `SingleCameraRaymarch` and `RaymarchCompositor` so the pack pass receives the same transform used to build the model.
-    - [ ] Replace or extend `NativeToModelPixel` so it handles flips, not just transpose.
-    - [ ] Add tests or editor validation cases for Upright, Transpose, Transpose+flipV, and any hand-camera mapping once confirmed.
+    - [x] Define a single native-to-model/model-to-native pixel transform type for orientation and flips — `NativePixelTransform` in `DepthCameraModelBuilder.cs` (also carries `mirroredNativeBuffer`, see note below).
+    - [x] Use that transform in `DepthCameraModelBuilder` (`Build`/`BuildFor` overloads; renderer-free `Build` core).
+    - [x] Replace `_BodyCamera` in `DepthToUpright.compute` with explicit orientation/flip parameters — `_Transpose`, `_FlipU`, `_FlipV`, `_MirrorNative`, bound by `NativePixelTransform.ApplyTo`.
+    - [x] Update `SingleCameraRaymarch` and `RaymarchCompositor` so the pack pass receives the same transform used to build the model (single `PixelTransform` instance feeds both).
+    - [x] Replace or extend `NativeToModelPixel` so it handles flips — `NativePixelTransform.NativeToModel`/`ModelToNative`; the flip-less static remains as a probe-only legacy shim (item 4).
+    - [x] Add tests or editor validation cases for Upright, Transpose, Transpose+flipV — `CameraModelValidator.RunPixelTransformTests` covers all 8 orientation/flip combos (round-trip inverse + relabeling equivalence). Hand-camera mapping still needs live confirmation.
+  - Resolution note: the analysis showed synced model+pack flips cancel exactly (pure relabeling), so the geometry-affecting part of the mapping is the native buffers' 180°-rotated storage (legacy CSMain's mirrored depth fetch; the legacy color shader mirrors identically). That is now explicit as `NativePixelTransform.mirroredNativeBuffer` (default ON), which also resolves the 2026-06-08 "flipU vs flipV" compositor discrepancy: the desync was producing an accidental net-180° mapping equal to this mirror.
 
 - [ ] Camera-model live probe validates the same flipped model used at runtime.
   - Status: OPEN.
   - Evidence: `CameraModelLiveProbe.PresetBodyCameraAndSample` sets `flipV = true`, but `SampleAndCompare` builds `cleanModel` with `BuildFor(sourceRenderer, orientation)` and does not pass `flipU/flipV`. The per-sample `NativeToModelPixel` path also ignores flips.
-  - Fix checklist:
-    - [ ] Build `cleanModel` with `BuildFor(sourceRenderer, orientation, flipU, flipV)`.
-    - [ ] Update per-sample native-to-model conversion to use the shared orientation/flip transform.
+  - Fix checklist (updated 2026-06-10 for the item-3 fix):
+    - [ ] Build `cleanModel` from the shared `NativePixelTransform` (including `mirroredNativeBuffer` — the probe's green==gray comparison feeds the mirrored depth index by hand today, which is now the transform's job via `NativeToBufferPixel`).
+    - [ ] Update per-sample native-to-model conversion to use `NativePixelTransform.NativeToModel` (then delete the flip-less `NativeToModelPixel` shim).
     - [ ] Remove the separate `AddCorner` ship-to-model flip workaround once the clean model already represents the shipped mapping.
-    - [ ] Log the full orientation and flip state in probe output.
+    - [ ] Log the full transform state (orientation, flips, mirror) in probe output.
     - [ ] Re-run the body-camera preset and confirm green markers overlay the legacy points under the same model used by the pack/march path.
 
 - [ ] Raymarch data ingestion is decoupled from splat rendering.
@@ -66,6 +67,20 @@ Purpose: track the correctness, flexibility, and API-design issues found in the 
     - [ ] Prefer bracketed hit refinement when `prevValid && prevDelta < 0 && delta >= 0`.
     - [ ] Keep discontinuity rejection edge-aware so epsilon hits do not reintroduce rubber-sheet smearing at silhouettes.
     - [ ] Add a debug mode or synthetic depth test for thin surfaces and coarse step counts.
+
+- [ ] Pixel-center convention is consistent across ray-gen, flips, and sampling. (R7, found 2026-06-10)
+  - Status: OPEN (LOW).
+  - Evidence: `MultiDepthRaymarch.compute` generates rays at `pix + 0.5` (half-integer centers), while `NativePixelTransform`/the model flips mirror about `size-1` and depth/color reads truncate via `.Load((int)p)` (both integer-center conventions). Net ~0.5 px sampling bias.
+  - Fix checklist:
+    - [ ] Pick one convention (integer centers match how the intrinsics were measured/validated in Step 0).
+    - [ ] Apply it to ray generation, flip mirrors, and texture sampling (round instead of truncate if integer-centered).
+    - [ ] Re-run the validator and a snap-to-source identity check.
+
+- [ ] `EnsureRT` reuse accounts for sRGB/ReadWrite. (R8, found 2026-06-10)
+  - Status: OPEN (LOW).
+  - Evidence: both drivers' `EnsureRT` compares only width/height/format before reusing an RT, so an RT created under a different `RenderTextureReadWrite` survives with stale sRGB state — the same bug class as the earlier double-decode darkening.
+  - Fix checklist:
+    - [ ] Include the requested read-write mode in the reuse comparison (`rt.sRGB` is the queryable state).
 
 ## Related Improvements Already Observed
 

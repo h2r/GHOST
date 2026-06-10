@@ -22,7 +22,7 @@ Route B (TSDF fusion + SDF ray march) is a later, separate effort.
 |---|-----------|--------|
 | 0 | **Unify the camera model** — one canonical pinhole (C# + HLSL), provably-inverse project/unproject, validated. | DONE |
 | 1 | Single-camera software march — one depth texture, write to RT, composite with depth. Match the splat cloud. | WIP |
-| 2 | Multi-camera — depth/color `Texture2DArray` + `CameraGPU` buffer; all-camera surface test per sample. | TODO |
+| 2 | Multi-camera — depth/color `Texture2DArray` + `CameraGPU` buffer; all-camera surface test per sample. | WIP |
 | 3 | Color blending — view-dependent weights (Unstructured Lumigraph style) + per-camera exposure compensation. | TODO |
 | 4 | Acceleration — per-camera min/max depth pyramid (Hi-Z) + sphere-trace stepping. | TODO |
 | 5 | VR perf — per-eye dispatch, reduced-res march + upsample, temporal reprojection to hit framerate. | TODO |
@@ -67,8 +67,11 @@ across all cameras. So we define one clean model and make everything else confor
       `flipU`/`flipV`). Green==gray confirmed the transpose reproduces the live cloud.
       NOTE for Step 2: depth/color must be packed into the matching upright frame so
       `model.ProjectFromWorld` indexes the arrays correctly; the legacy 180° mirrored depth-fetch is a
-      legacy-only quirk we are NOT carrying forward. Hand camera orientation (likely Upright) still to
-      be confirmed when we first get a hand-camera frame.
+      legacy-only quirk we are NOT carrying forward. **[SUPERSEDED 2026-06-10 by the R1 fix: the mirror
+      is real data layout, not a quirk — the native buffers are stored 180°-rotated relative to their
+      intrinsics grid, and the legacy color shader mirrors its UVs identically. It is now explicit as
+      `NativePixelTransform.mirroredNativeBuffer` (default ON).]** Hand camera orientation (likely
+      Upright) still to be confirmed when we first get a hand-camera frame.
 
 **Step 0 is COMPLETE.** Canonical model = `DepthCameraModel` (C# + `CameraModel.hlsl`), built per camera
 via `DepthCameraModelBuilder` (`BuildForSpotBodyCamera` for the 5 body cams; `Upright` for the hand cam).
@@ -93,17 +96,58 @@ First cut renders to a debug `RawImage` (user chose this over scene-integration)
       color texture's own row/col convention — verify against the RGB and lock the flips.
 - [ ] Then proceed to Step 2 (multi-camera texture arrays).
 
+## Step 2 detail (current) — multi-camera gather
+Started 2026-06-10. Every output ray is tested against ALL cameras' upright depth maps; nearest
+refined crossing wins. Step-2 color is a simple average of the cameras that agree they see the hit
+(visibility check per camera); proper view-dependent weighting is Milestone 3.
+
+**Design decisions:**
+- Depth/color live in `Texture2DArray`s sized to the LARGEST upright frame (all 5 body cams are
+  480x640 upright; the hand cam may differ). Smaller cameras zero-pad their slice; each camera's
+  true resolution rides in the camera buffer so `InFrame` stays exact.
+- Camera models go to GPU as `StructuredBuffer<CameraGPU>`; matrices passed as four explicit
+  column `float4`s (transpose-reconstructed on GPU) to avoid Matrix4x4-vs-HLSL packing ambiguity.
+- `MarchMulti` keeps per-camera bracketing state (prev delta/depth + validity bitmask,
+  `MAX_CAMERAS = 8`); per-camera silhouette (discontinuity) rejection as in Step 1.
+- The multi kernel marches from the TRUE eye origin (`_ViewEyePos`) — born R2-correct; the
+  single-cam `March` kernel keeps the tracked R2 bug until that item is fixed.
+- Single-camera paths (March kernel, both Step 1 drivers) stay untouched as the validation
+  reference. The multi driver is a new component: `MultiCameraRaymarch` (OnRenderImage compositor
+  style), one entry per source camera with its own `NativePixelTransform` + color flips.
+
+**Sub-tasks:**
+- [x] a) Pack pass `PackArray` kernel: one camera -> one texture-array slice through the shared
+      `NativePixelTransform` mapping; full-slice dispatch zeroes the padding (`DepthToUpright.compute`).
+- [x] b) `CameraGPU` struct + `_Cameras` buffer + decode-to-`CameraModel` helper (`MultiDepthRaymarch.compute`).
+- [x] c) `MarchMulti` kernel: all-camera surface test per sample (per-camera bracketing state +
+      validity bitmask), nearest-hit refinement, per-camera silhouette rejection, agreement-averaged
+      color (magenta debug for unconfirmed hits), grayscale = eye distance.
+- [x] d) `MultiCameraRaymarch` driver: source list, array allocation at max upright dims, per-source
+      pack dispatch, camera-buffer upload, march + composite, diagnostics + snap-to-source menu.
+- [ ] e) Live validation (user): two overlapping cameras first (FL+FR) — reconstructions must agree in
+      the overlap (no double walls/seams) and match the splat cloud under orbit; then all 5 body cams.
+- [ ] f) Hand camera: add as an `Upright` source once a live frame confirms its transform.
+
 ## Review items (correctness & design debt)
 From `RAYMARCH_REVIEW_CHECKLIST.md` (2026-06-09). All six claims were verified against the code and
 found valid (R5 partial — see note). Fix-checklists/detail live in that file; tracked here as work,
 in priority order.
 
-- [ ] **R1 (HIGH) — single orientation/flip mapping contract.** `DepthToUpright.compute` hardcodes the
-  body mapping via `_BodyCamera` and IGNORES `flipU/flipV`, while `DepthCameraModelBuilder.BuildFor`
-  takes `orientation+flipU+flipV`. The packed depth/color and the camera model can therefore DESYNC —
-  likely entangled with the open flip reconciliation below. Fix: one native↔model pixel-transform type
-  used by the builder, the pack pass, and the probe; pass the same transform into `DepthToUpright`;
-  extend `NativeToModelPixel` to handle flips. (Checklist item 3.)
+- [x] **R1 (HIGH) — single orientation/flip mapping contract.** FIXED 2026-06-10. One serializable
+  `NativePixelTransform` (orientation + flipU/flipV + `mirroredNativeBuffer`) now drives BOTH the model
+  build (`DepthCameraModelBuilder.Build/BuildFor`) and the pack pass (`DepthToUpright.compute`, bound
+  via `ApplyTo`; `_BodyCamera` replaced by `_Transpose/_FlipU/_FlipV/_MirrorNative`). Both drivers pass
+  the same instance to both. KEY INSIGHT from the analysis (resolves the 2026-06-08 flipU-vs-flipV
+  PENDING item): when model and pack flips are synced they cancel exactly — flips are pure relabelings
+  and CANNOT change world geometry. What changes geometry is the legacy buffers' 180°-rotated storage
+  (CSMain's mirrored fetch `W*(H-row-1)+(W-col-1)`; the legacy color shader mirrors identically), now
+  explicit as `mirroredNativeBuffer` (default ON). The user's "Transpose+flipU aligns, flipV doesn't"
+  observation was the old desync (model flipU × hardcoded pack flipV = net 180° = exactly this mirror);
+  the new default (Transpose, flipV, mirror ON) produces mathematically identical geometry to that
+  validated config. `CameraModelValidator` gained contract tests (mapping round-trip inverse +
+  relabeling equivalence, all orientation/flip combos). Color cuv flips stay a separate native
+  texture-origin compensation; validated values unaffected (mirror moves depth and color together).
+  TO VERIFY live: orbit vs the splat cloud should still align with defaults (one quick check).
 - [ ] **R2 (HIGH) — view-camera ray double near-offset.** In view mode `ro = nearW` (near-plane point)
   but the march starts `t = _Near`, so the first sample sits `_Near` beyond the near plane → very-near
   surfaces missed, range skewed. Fix: pass the eye origin and march from it (or start `t` at 0); update
@@ -114,8 +158,11 @@ in priority order.
   mesh in front. (Checklist item 2.)
 - [ ] **R4 (MED) — probe must validate the flipped runtime model.** `CameraModelLiveProbe` builds
   `cleanModel` with `BuildFor(orientation)` (no flips) and `NativeToModelPixel` ignores flips, so
-  "green" validates transpose-only, not the shipped flipped model. Fix: pass `flipU/flipV`; use the
-  shared transform; drop the `AddCorner` ship→model workaround; log full orientation state. (Item 4.)
+  "green" validates transpose-only, not the shipped flipped model. Fix (updated for the R1 fix):
+  migrate the probe to `NativePixelTransform` (including `mirroredNativeBuffer` — its green==gray test
+  feeds the mirrored depth explicitly today, which is now the contract's job); use
+  `NativeToModel`/`ModelToNative` instead of the legacy `NativeToModelPixel` shim; drop the `AddCorner`
+  ship→model workaround; log the full transform state. (Item 4.)
 - [ ] **R5 (MED, partial) — `_DepthEps` hit consistency.** The eps-band hit only fires on the first
   valid sample; otherwise a sign-change crossing is required. True intersections are still caught by the
   crossing, so impact is limited to thin/grazing/coarse-step cases. Fix: accept `|delta| <= eps` for any
@@ -126,6 +173,19 @@ in priority order.
   mapping, depth buffer, color, sequence, ownership) consumed by BOTH the splat renderer and raymarch;
   add a "depth without splat draw" switch; keep buffer ownership in the provider. (Checklist item 5 +
   API-design target.)
+
+- [ ] **R7 (LOW) — pixel-center convention is inconsistent (half-pixel bias).** Found during the R1
+  fix (2026-06-10). The march generates rays at `pix + 0.5` (centers on the half-integer grid), but
+  the transform/flips/model mirror about `size-1` and texture reads truncate via `.Load((int)p)` —
+  both integer-center conventions. Net ~0.5 px sampling bias. Harmless at Step 1 scale; will matter
+  for Step 4 (Hi-Z) accuracy and multi-camera blending seams. Fix: pick ONE convention (integer
+  centers match how the intrinsics were measured) and apply it to ray-gen, flips, and sampling
+  (round, not truncate, if staying integer-centered).
+- [ ] **R8 (LOW) — `EnsureRT` reuse check ignores sRGB/ReadWrite.** Found during the R1 fix
+  (2026-06-10). Both drivers' `EnsureRT` only compares width/height/format, so an RT created before a
+  `RenderTextureReadWrite` change survives reuse with stale sRGB state — the exact class of bug behind
+  the earlier double-decode darkening. One-liner: include the requested `rw` in the reuse comparison
+  (note `rt.sRGB` is the queryable state).
 
 Done already (from the checklist's "observed" section): linear packed-color RTs (sRGB double-decode
 fix) and the compositor heartbeat log.
@@ -226,3 +286,32 @@ fix) and the compositor heartbeat log.
   `flipU/flipV` while the model honors them → possible data/model desync) may be entangled with the
   open orientation reconciliation, and R2 (view-camera ray starts `_Near` beyond the near plane) is a
   real ray-origin bug masked by the self-consistent identity test.
+- 2026-06-10: **R1 fixed** — introduced `NativePixelTransform` (orientation + labeling flips +
+  `mirroredNativeBuffer`) as the single native↔model mapping contract, used by the builder
+  (`DepthCameraModelBuilder.Build/BuildFor`), the pack pass (`DepthToUpright.compute`; `_BodyCamera`
+  → `_Transpose/_FlipU/_FlipV/_MirrorNative` via `ApplyTo`), and both drivers (new
+  `mirrorNativeBuffer` field, default ON). Analysis resolved the 2026-06-08 PENDING flip discrepancy:
+  synced model+pack flips cancel (pure relabeling, geometry-invariant), so the only
+  geometry-affecting term is the legacy buffers' 180°-rotated storage — previously dismissed as a
+  "legacy-only quirk", actually real data layout (legacy CSMain mirrors its depth fetch AND
+  `InstancedIndirectColor` mirrors its color UV the same way). The user's working "flipU" compositor
+  config was the desync accidentally reproducing that mirror; defaults (Transpose, flipV, mirror ON)
+  now give identical geometry by construction. Added `CameraModelValidator` contract tests
+  (round-trip + relabeling equivalence). Existing scene components pick up `mirrorNativeBuffer=true`
+  automatically (new serialized field default). Pending: one quick orbit-vs-cloud visual confirm.
+  Flagged two new review items while in the code: R7 (half-pixel center convention mismatch), R8
+  (`EnsureRT` ignores sRGB/ReadWrite on reuse).
+- 2026-06-10: **Step 2 (multi-camera) implementation landed** (sub-tasks a–d; see Step 2 detail).
+  `DepthToUpright.compute` gained `PackArray` (one camera per `Texture2DArray` slice, shared
+  `NativePixelTransform` mapping refactored into helpers, full-slice dispatch zeroes padding).
+  `MultiDepthRaymarch.compute` gained `CameraGPU` (`StructuredBuffer`, matrices as explicit columns
+  to dodge Matrix4x4/HLSL packing ambiguity, `MAX_CAMERAS=8`) and `MarchMulti` (per-sample
+  all-camera test with per-camera bracketing state, nearest refined crossing wins, per-camera
+  discontinuity rejection, agreement-averaged color with per-camera occlusion check; marches from
+  the true eye origin `_ViewEyePos`, so the multi path is born WITHOUT the R2 near-offset bug —
+  R2 remains open for the single-cam `March` kernel only). New `MultiCameraRaymarch` driver
+  (OnRenderImage compositor): per-source orientation/flips/mirror + color flips, slices sized to
+  the largest upright frame, camera buffer rebuilt per frame, heartbeat diagnostics, snap-to-source
+  context menu. Single-camera paths untouched (validation reference). NEXT: live validation (e) —
+  two overlapping cameras (FL+FR), overlap must agree (no double walls) and match the cloud under
+  orbit; then all 5 body cams; hand camera (f) once its transform is confirmed.

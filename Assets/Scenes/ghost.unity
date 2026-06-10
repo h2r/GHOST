@@ -12605,6 +12605,7 @@ MonoBehaviour:
   orientation: 1
   flipU: 0
   flipV: 1
+  mirrorNativeBuffer: 1
   rayMode: 0
   flipOutputV: 0
   viewCamera: {fileID: 1961063980}
@@ -20511,13 +20512,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1961063977}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0.70710677, z: 0.70710677, w: 0}
+  m_LocalRotation: {x: -0.70710677, y: 0, z: 0, w: 0.70710677}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1965869693}
-  m_LocalEulerAnglesHint: {x: -90, y: 90, z: 90}
+  m_LocalEulerAnglesHint: {x: -90, y: -90, z: 90}
 --- !u!114 &1961063979
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20534,6 +20535,7 @@ MonoBehaviour:
   orientation: 1
   flipU: 0
   flipV: 1
+  mirrorNativeBuffer: 1
   packShader: {fileID: 7200000, guid: 31d2bf8f0f5a4bc419588dd9ff3b73f1, type: 3}
   marchShader: {fileID: 7200000, guid: 3b633b0038522fc4daf6ae0b196a7a0b, type: 3}
   near: 0.1
@@ -20544,7 +20546,7 @@ MonoBehaviour:
   discontinuityThreshold: 0.15
   useColor: 1
   colorFlipU: 0
-  colorFlipV: 1
+  colorFlipV: 0
   composite: 1
   flipOutputV: 0
   marchBlend: 0.502

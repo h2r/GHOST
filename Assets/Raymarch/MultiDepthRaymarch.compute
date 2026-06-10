@@ -1,9 +1,14 @@
-// Route A, Step 1: single-camera direct ray-cast against one upright depth image.
-// Per output pixel: build the world ray from the view camera's inverse view-projection, march
-// near->far, project each sample into the depth camera, and detect the surface crossing
-// (delta = zcam - storedDepth changing sign). Shaded by depth (grayscale) for geometry validation;
-// color/blending come in later steps.
+// Route A direct ray-cast against camera depth images.
+//   March      (Step 1) — single camera, one upright depth/color texture.
+//   MarchMulti (Step 2) — N cameras via Texture2DArray slices + a CameraGPU buffer; every ray
+//                         sample is tested against ALL cameras, nearest refined hit wins, and the
+//                         hit is shaded by averaging the cameras that agree they see it
+//                         (view-dependent lumigraph weights come in Step 3).
+// Per output pixel: build the world ray from the view camera, march near->far, project each sample
+// into the depth camera(s), and detect the surface crossing (delta = zcam - storedDepth changing
+// sign), with silhouette-edge (depth-discontinuity) rejection and bracketed hit refinement.
 #pragma kernel March
+#pragma kernel MarchMulti
 
 #include "CameraModel.hlsl"
 
@@ -34,6 +39,43 @@ int _UseColor;     // 1 = shade hits with sampled RGB, 0 = depth grayscale
 float _DiscontinuityThreshold; // stored-depth jump (m) above which a crossing is a silhouette edge; 0 disables
 int _Composite;    // 1 = on a miss, show the scene (composite into the camera image); 0 = black
 float _HitBlend;   // hit color blend over background (1 = opaque; <1 = see-through for alignment checks)
+
+// ---- Step 2: multi-camera inputs --------------------------------------------------------------
+// KEEP IN LOCKSTEP with MultiCameraRaymarch.CameraGPU (C#). Matrices are passed as explicit
+// columns so the C#->GPU layout is unambiguous (no Matrix4x4 vs HLSL row/column packing pitfalls).
+#define MAX_CAMERAS 8
+
+struct CameraGPU
+{
+    float4 intrinsics;   // (cx, cy, fx, fy); focals may be negative (baked labeling flips)
+    float4 resolution;   // (width, height, hasColor ? 1 : 0, unused)
+    float4 camToWorldC0; // columns of cameraToWorld
+    float4 camToWorldC1;
+    float4 camToWorldC2;
+    float4 camToWorldC3;
+    float4 worldToCamC0; // columns of worldToCamera
+    float4 worldToCamC1;
+    float4 worldToCamC2;
+    float4 worldToCamC3;
+};
+
+StructuredBuffer<CameraGPU> _Cameras;
+int _CameraCount;
+float3 _ViewEyePos;                      // world-space eye origin; t marches [_Near,_Far] from here
+Texture2DArray<float> _UprightDepthArr;  // slice c = camera c's upright depth (zero-padded)
+Texture2DArray<float4> _UprightColorArr; // slice c = camera c's upright color
+
+CameraModel DecodeCamera(CameraGPU g)
+{
+    CameraModel c;
+    c.intrinsics = g.intrinsics;
+    c.resolution = g.resolution.xy;
+    // float4x4(a,b,c,d) builds ROWS from the four vectors; we pass columns, so transpose.
+    c.cameraToWorld = transpose(float4x4(g.camToWorldC0, g.camToWorldC1, g.camToWorldC2, g.camToWorldC3));
+    c.worldToCamera = transpose(float4x4(g.worldToCamC0, g.worldToCamC1, g.worldToCamC2, g.worldToCamC3));
+    return c;
+}
+// -----------------------------------------------------------------------------------------------
 
 CameraModel MakeCam()
 {
@@ -167,6 +209,150 @@ void March(uint3 id : SV_DispatchThreadID)
         prevDelta = delta;
         prevD = D;
         prevT = t;
+    }
+
+    _Output[id.xy] = result;
+}
+
+// ---- Step 2: multi-camera march ---------------------------------------------------------------
+// Every sample is projected into ALL cameras; each camera keeps its own bracketing state, and the
+// nearest refined crossing at a step wins. Marches from the TRUE eye origin (_ViewEyePos) with t
+// as the absolute distance — this path does not have the single-cam kernel's R2 near-offset bug.
+[numthreads(8, 8, 1)]
+void MarchMulti(uint3 id : SV_DispatchThreadID)
+{
+    if ((int)id.x >= _OutWidth || (int)id.y >= _OutHeight)
+        return;
+
+    int camCount = min(_CameraCount, MAX_CAMERAS);
+
+    // View-camera rays only (the SourceCameraImage validation mode is single-cam; use March).
+    bool flip = (_FlipV != 0);
+    float py = flip ? (float)(_OutHeight - 1 - (int)id.y) : (float)id.y;
+    float2 pix = float2((float)id.x, py);
+
+    float2 uv = (pix + 0.5) / float2(_OutWidth, _OutHeight);
+    float2 ndc = uv * 2.0 - 1.0;
+    float4 farW = mul(_InvViewProj, float4(ndc, 1.0, 1.0));
+    farW /= farW.w;
+    float3 ro = _ViewEyePos;
+    float3 dir = normalize(farW.xyz - ro);
+
+    float4 result = (_Composite != 0)
+        ? float4(_SceneColor.Load(int3((int)id.x, (int)py, 0)).rgb, 1.0)
+        : float4(0.0, 0.0, 0.0, 1.0);
+    float stepSize = (_Far - _Near) / (float)max(1, _Steps);
+    float invRange = 1.0 / max(1e-3, _Far - _Near);
+
+    // Per-camera bracketing state. prevT is shared: a camera's prev state is only consumed when it
+    // was valid at the immediately previous step (an invalid step clears its mask bit).
+    float prevDelta[MAX_CAMERAS];
+    float prevD[MAX_CAMERAS];
+    uint prevValidMask = 0u;
+    float prevT = 0.0;
+
+    float tHit = -1.0;
+
+    [loop]
+    for (int i = 0; i < _Steps; i++)
+    {
+        float t = _Near + stepSize * (float)i;
+        float3 X = ro + dir * t;
+
+        float tBest = 1e30;
+
+        [loop]
+        for (int c = 0; c < camCount; c++)
+        {
+            uint bit = 1u << (uint)c;
+            CameraModel cam = DecodeCamera(_Cameras[c]);
+
+            float3 p = CameraModel_ProjectFromWorld(cam, X); // (u, v, zcam)
+            if (p.z <= 0.0 || !CameraModel_InFrame(cam, p.xy))
+            {
+                prevValidMask &= ~bit;
+                continue;
+            }
+
+            float D = _UprightDepthArr.Load(int4((int)p.x, (int)p.y, c, 0));
+            if (D <= _MinValidDepth)
+            {
+                prevValidMask &= ~bit;
+                continue;
+            }
+
+            float delta = p.z - D;
+            bool wasValid = (prevValidMask & bit) != 0u;
+
+            // Surface crossing in this camera: in-front (delta<0) -> behind (delta>=0), unless the
+            // stored depth jumps (silhouette edge) — then keep marching to the surface behind.
+            if (wasValid && prevDelta[c] < 0.0 && delta >= 0.0)
+            {
+                if (!(_DiscontinuityThreshold > 0.0 && abs(D - prevD[c]) > _DiscontinuityThreshold))
+                {
+                    float denom = prevDelta[c] - delta;
+                    float frac = (abs(denom) > 1e-6) ? saturate(prevDelta[c] / denom) : 0.0;
+                    tBest = min(tBest, prevT + frac * (t - prevT));
+                }
+            }
+            // Fallback: first valid sample already on the surface (same semantics as single-cam; R5).
+            else if (!wasValid && abs(delta) < _DepthEps)
+            {
+                tBest = min(tBest, t);
+            }
+
+            prevDelta[c] = delta;
+            prevD[c] = D;
+            prevValidMask |= bit;
+        }
+
+        if (tBest < 1e29)
+        {
+            tHit = tBest;
+            break;
+        }
+        prevT = t;
+    }
+
+    if (tHit >= 0.0)
+    {
+        float3 hit = ro + dir * tHit;
+        float3 shade;
+
+        if (_UseColor != 0)
+        {
+            // Step 2 color: average every camera that AGREES it sees this hit (its stored depth
+            // matches the hit within eps — this doubles as the occlusion test). View-dependent
+            // lumigraph weighting is Step 3.
+            float3 sum = float3(0.0, 0.0, 0.0);
+            float wsum = 0.0;
+
+            [loop]
+            for (int c2 = 0; c2 < camCount; c2++)
+            {
+                if (_Cameras[c2].resolution.z < 0.5) // camera has no color this frame
+                    continue;
+                CameraModel cam2 = DecodeCamera(_Cameras[c2]);
+                float3 ph = CameraModel_ProjectFromWorld(cam2, hit);
+                if (ph.z <= 0.0 || !CameraModel_InFrame(cam2, ph.xy))
+                    continue;
+                float Dh = _UprightDepthArr.Load(int4((int)ph.x, (int)ph.y, c2, 0));
+                if (Dh <= _MinValidDepth || abs(ph.z - Dh) > _DepthEps)
+                    continue; // invalid, occluded, or disagreeing in this camera
+                sum += _UprightColorArr.Load(int4((int)ph.x, (int)ph.y, c2, 0)).rgb;
+                wsum += 1.0;
+            }
+
+            // Magenta = a camera detected the crossing but none confirms the hit point (debug aid).
+            shade = (wsum > 0.0) ? sum / wsum : float3(1.0, 0.0, 1.0);
+        }
+        else
+        {
+            float s = saturate((tHit - _Near) * invRange); // grayscale by eye distance, near = bright
+            shade = float3(1.0 - s, 1.0 - s, 1.0 - s);
+        }
+
+        result = float4(lerp(result.rgb, shade, _HitBlend), 1.0);
     }
 
     _Output[id.xy] = result;
