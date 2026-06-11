@@ -360,3 +360,11 @@ fix) and the compositor heartbeat log.
   that prompted it: tightening `depthEps` to clean up geometry pushed the color agreement test (which
   had reused `_DepthEps`) too strict, so confirmed hits collapsed to the magenta "no camera agrees"
   fallback everywhere. Deliberate decouple, not a regression — superseded by Step 3's soft weights.
+- 2026-06-11: VR per-eye support in `MultiCameraRaymarch` (first step toward Milestone 5). OnRenderImage
+  fires once per eye; `GetViewMatrices` now feeds THIS eye's `GetStereoViewMatrix`/`GetStereoProjectionMatrix`
+  and the eye-offset origin (`_ViewEyePos`), with a mono fallback when XR is off so flat-camera
+  validation is unchanged. Requires MULTI-PASS stereo (single-pass(/instanced) gives src as a texture
+  array, unsupported by this 2D path — a one-time warning fires on the wrong mode). STILL MISSING for
+  comfortable VR: perf (full-res × steps × N cams × 2 eyes will miss framerate → Milestones 4 Hi-Z / 5
+  reduced-res+upsample), single-pass-instanced support, and the component must sit on the actual XR eye
+  camera. A seated low-res/few-cam/reduced-steps smoke test is fine for a first correctness look.

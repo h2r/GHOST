@@ -1089,7 +1089,7 @@ MonoBehaviour:
   _headPoseRelativeOffsetRotation: {x: 0, y: 0, z: 0}
   _headPoseRelativeOffsetTranslation: {x: 0, y: 0, z: 0}
   profilerTcpPort: 32419
-  expandMixedRealityCapturePropertySheet: 0
+  expandMixedRealityCapturePropertySheet: 1
   enableMixedReality: 0
   compositionMethod: 0
   extraHiddenLayers:
@@ -18229,7 +18229,7 @@ MonoBehaviour:
   marchShader: {fileID: 7200000, guid: 3b633b0038522fc4daf6ae0b196a7a0b, type: 3}
   near: 0.1
   far: 10
-  steps: 256
+  steps: 512
   depthEps: 0.001
   colorAgreeEps: 0.1
   minValidDepth: 0.05
@@ -18242,6 +18242,8 @@ MonoBehaviour:
   marchBlend: 1
   snapSourceIndex: 0
   enableDebugLog: 1
+  eyeDebugTint: 0
+  rayNdcFlipY: 0
 --- !u!114 &1747440752
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -20,8 +20,13 @@ namespace Raymarch
     ///      replaces this with view-dependent weights).
     ///
     /// Slices are sized to the LARGEST upright frame; smaller cameras zero-pad (depth 0 = invalid)
-    /// and carry their true resolution in the camera buffer. Mono matrices (same VR caveat as
-    /// RaymarchCompositor): validate with XR off / a free test camera first.
+    /// and carry their true resolution in the camera buffer.
+    ///
+    /// VR: per-eye view/projection are used when stereo is active (OnRenderImage fires per eye), with
+    /// a mono fallback when XR is off so flat-camera validation is unchanged. Requires MULTI-PASS
+    /// stereo — single-pass(/instanced) delivers src as a texture array, which this 2D pack/march/blit
+    /// path does not yet support (a one-time warning fires if the mode is wrong). Performance is still
+    /// full-res per eye (Milestones 4/5); expect sub-framerate until then.
     /// </summary>
     [RequireComponent(typeof(Camera))]
     public class MultiCameraRaymarch : MonoBehaviour
@@ -97,6 +102,14 @@ namespace Raymarch
         [Header("Debug")]
         [Tooltip("Logs whether OnRenderImage fires, active camera count, and pass/composite state.")]
         public bool enableDebugLog = true;
+        [Tooltip("VR eye-attribution aid: tints each eye pass (left=red, right=blue; border + hits). " +
+                 "Each eye must show only its own color in the headset — both colors or two borders " +
+                 "in ONE eye means another source (extra camera / overlay layer) duplicates the view.")]
+        public bool eyeDebugTint = false;
+        [Tooltip("VR registration probe: flip ray-gen NDC y only (scene sampling/output untouched). " +
+                 "If the recon-vs-scene offset flips sign top vs bottom of the view, toggle this — " +
+                 "it tests a VR-only eye-RT row-order mismatch. If it fixes VR, we bake it properly.")]
+        public bool rayNdcFlipY = false;
 
         // KEEP IN LOCKSTEP with CameraGPU in MultiDepthRaymarch.compute. Matrices as explicit
         // columns so the GPU layout is unambiguous.
@@ -127,6 +140,7 @@ namespace Raymarch
         private int packKernel = -1;
         private int marchKernel = -1;
         private string lastLogState;
+        private bool warnedStereoMode;
 
         private void OnEnable()
         {
@@ -158,25 +172,37 @@ namespace Raymarch
 
             if (enableDebugLog)
             {
+                // Stereo state is the key VR diagnostic: if stereoActiveEye reads Mono (or
+                // stereoEnabled is false) in here, the per-eye branch never engages and BOTH eyes
+                // get head-center matrices -> reconstruction at the wrong disparity vs the scene.
+                string eyeInfo = $"stereoEnabled={cam.stereoEnabled}, activeEye={cam.stereoActiveEye}, " +
+                                 $"targetEye={cam.stereoTargetEye}";
                 string state = ready
-                    ? $"COMPOSITE ({active.Count}/{sources.Count} cameras)"
+                    ? $"COMPOSITE ({active.Count}/{sources.Count} cameras, {eyeInfo})"
                     : "PASSTHROUGH ("
                         + $"packShader={(packShader != null)}, marchShader={(marchShader != null)}, "
                         + $"packKernel={packKernel}, marchKernel={marchKernel}, "
                         + $"activeSources={active.Count}/{sources.Count})";
                 if (state != lastLogState || Time.frameCount % 300 == 0)
                 {
+                    // FPS matters in VR: well below the HMD refresh rate, the compositor reprojects
+                    // stale frames (ATW/ASW), which shows up as ghosting/doubles and zoom/pan swim
+                    // during head rotation — easily mistaken for a registration bug.
+                    float fps = Time.smoothDeltaTime > 0f ? 1f / Time.smoothDeltaTime : 0f;
                     Debug.Log($"[MultiCameraRaymarch] OnRenderImage on '{name}' [{src.width}x{src.height}] " +
-                              $"frame {Time.frameCount}: {state}");
+                              $"frame {Time.frameCount} (~{fps:F1} fps): {state}");
                     lastLogState = state;
                 }
             }
 
+            // 
+            Graphics.Blit(src, dst);
+
             if (!ready)
             {
-                Graphics.Blit(src, dst);
                 return;
             }
+            
             // Preserve depth output even if another component rewrites depthTextureMode.
             cam.depthTextureMode |= DepthTextureMode.Depth;
 
@@ -250,14 +276,27 @@ namespace Raymarch
             cameraBuffer.SetData(cameraData, 0, 0, active.Count);
 
             // 2) March this camera's rays against all slices and composite over the scene.
-            Matrix4x4 invVP = (cam.projectionMatrix * cam.worldToCameraMatrix).inverse;
-            Vector3 eye = cam.cameraToWorldMatrix.GetColumn(3); // true eye origin (R2-correct path)
+            // Per-eye in VR: OnRenderImage fires once per eye, so use THIS eye's view/projection
+            // (each eye is offset ~IPD/2 from head-center with its own frustum). Falls back to the
+            // mono matrices when XR is off, so flat-camera validation is unchanged. Requires
+            // multi-pass stereo — single-pass instanced delivers src as a texture array, which this
+            // 2D pack/march/blit path does not yet handle.
+            GetViewMatrices(out Matrix4x4 viewMatrix, out Matrix4x4 projMatrix, out Vector3 eye);
+            Matrix4x4 invVP = (projMatrix * viewMatrix).inverse;
+            if (enableDebugLog && Time.frameCount % 120 == 0)
+            {
+                // Confirm the eye origin is actually offset from head-center (~IPD/2 laterally) and
+                // differs L vs R. If eye == head for both, GetStereoViewMatrix isn't giving parallax.
+                Vector3 head = cam.transform.position;
+                Debug.Log($"[MultiCameraRaymarch] eye={cam.stereoActiveEye} origin={eye} " +
+                          $"head={head} offset={(eye - head).ToString("F4")} (|{(eye - head).magnitude:F4}|m)");
+            }
             bool useSceneDepth = composite && respectSceneDepth;
             marchShader.SetBuffer(marchKernel, "_Cameras", cameraBuffer);
             marchShader.SetInt("_CameraCount", active.Count);
             marchShader.SetVector("_ViewEyePos", eye);
             marchShader.SetMatrix("_InvViewProj", invVP);
-            marchShader.SetMatrix("_ViewWorldToCamera", cam.worldToCameraMatrix);
+            marchShader.SetMatrix("_ViewWorldToCamera", viewMatrix);
             marchShader.SetVector("_ZBufferParams", Shader.GetGlobalVector("_ZBufferParams"));
             marchShader.SetInt("_OutWidth", src.width);
             marchShader.SetInt("_OutHeight", src.height);
@@ -275,6 +314,12 @@ namespace Raymarch
             marchShader.SetFloat("_HitBlend", marchBlend);
             marchShader.SetInt("_UseSceneDepth", useSceneDepth ? 1 : 0);
             marchShader.SetFloat("_SceneDepthBias", Mathf.Max(0f, sceneDepthBias));
+            int eyeTint = 0;
+            if (eyeDebugTint && cam.stereoEnabled)
+                eyeTint = cam.stereoActiveEye == Camera.MonoOrStereoscopicEye.Right ? 2
+                    : cam.stereoActiveEye == Camera.MonoOrStereoscopicEye.Left ? 1 : 0;
+            marchShader.SetInt("_DebugEyeTint", eyeTint);
+            marchShader.SetInt("_RayNdcFlipY", rayNdcFlipY ? 1 : 0);
             marchShader.SetTexture(marchKernel, "_UprightDepthArr", uprightDepthArr);
             marchShader.SetTexture(marchKernel, "_UprightColorArr", uprightColorArr);
             marchShader.SetTexture(marchKernel, "_SceneColor", src);
@@ -289,6 +334,44 @@ namespace Raymarch
                 Mathf.CeilToInt(src.width / 8f), Mathf.CeilToInt(src.height / 8f), 1);
 
             Graphics.Blit(composited, dst);
+        }
+
+        // Resolves the view/projection/eye-origin for the eye currently being rendered. In VR
+        // (multi-pass) OnRenderImage runs per eye and cam.stereoActiveEye identifies which; we use
+        // that eye's stereo matrices. Outside XR (or mono eye), falls back to the camera's mono
+        // matrices so flat-camera validation behaves exactly as before.
+        private void GetViewMatrices(out Matrix4x4 viewMatrix, out Matrix4x4 projMatrix, out Vector3 eye)
+        {
+            if (cam.stereoEnabled && cam.stereoActiveEye != Camera.MonoOrStereoscopicEye.Mono)
+            {
+                WarnIfNotMultiPass();
+                Camera.StereoscopicEye stereo_eye = cam.stereoActiveEye == Camera.MonoOrStereoscopicEye.Right
+                    ? Camera.StereoscopicEye.Right
+                    : Camera.StereoscopicEye.Left;
+                viewMatrix = cam.GetStereoViewMatrix(stereo_eye);
+                projMatrix = cam.GetStereoProjectionMatrix(stereo_eye);
+            }
+            else
+            {
+                viewMatrix = cam.worldToCameraMatrix;
+                projMatrix = cam.projectionMatrix;
+            }
+            // Eye world origin = inverse view translation (the eye-offset camera position in VR).
+            eye = viewMatrix.inverse.GetColumn(3);
+        }
+
+        // This OnRenderImage + 2D compute path needs multi-pass stereo (src is a plain per-eye RT).
+        // Single-pass(/instanced) delivers src as a texture array, which this path can't yet handle.
+        private void WarnIfNotMultiPass()
+        {
+            if (warnedStereoMode)
+                return;
+            warnedStereoMode = true;
+            var mode = UnityEngine.XR.XRSettings.stereoRenderingMode;
+            if (mode != UnityEngine.XR.XRSettings.StereoRenderingMode.MultiPass)
+                Debug.LogWarning($"[MultiCameraRaymarch] Stereo rendering mode is '{mode}'. This " +
+                    "compositor currently supports MultiPass only; other modes deliver src as a " +
+                    "texture array and will misrender. Set XR stereo rendering to Multi Pass.");
         }
 
         private void CollectActive()

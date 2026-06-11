@@ -47,6 +47,11 @@ float _HitBlend;   // hit color blend over background (1 = opaque; <1 = see-thro
 float3 _ViewEyePos; // world-space eye origin; t marches [_Near,_Far] from here in view-camera modes
 int _UseSceneDepth; // 1 = reject raymarch hits behind Unity scene geometry
 float _SceneDepthBias; // metres of tolerance so equal-depth overlays are not accidentally rejected
+int _DebugEyeTint;  // 0 = off, 1 = left eye (red), 2 = right eye (blue). Border + hit tint so each
+                    // displayed buffer can be attributed to the eye pass that produced it.
+int _RayNdcFlipY;   // MarchMulti only: flip ray-gen NDC y WITHOUT touching scene sampling/output.
+                    // Probes a VR-only row-order mismatch between the eye RT and the flat path
+                    // (recon vertically mirrored relative to the rasterized scene).
 
 // ---- Step 2: multi-camera inputs --------------------------------------------------------------
 // KEEP IN LOCKSTEP with MultiCameraRaymarch.CameraGPU (C#). Matrices are passed as explicit
@@ -283,6 +288,8 @@ void MarchMulti(uint3 id : SV_DispatchThreadID)
     float2 pix = float2((float)id.x, py);
 
     float2 ndc = PixelToNdc(pix);
+    if (_RayNdcFlipY != 0)
+        ndc.y = -ndc.y; // ray-gen only; scene sampling and output rows stay untouched
     float4 farW = mul(_InvViewProj, float4(ndc, 1.0, 1.0));
     farW /= farW.w;
     float3 ro = _ViewEyePos;
@@ -418,6 +425,21 @@ void MarchMulti(uint3 id : SV_DispatchThreadID)
 
             result = float4(lerp(result.rgb, shade, _HitBlend), 1.0);
         }
+    }
+
+    // Eye-attribution debug: solid border + tinted hits per eye pass (left=red, right=blue).
+    // In the headset each eye must show ONLY its own color. Both colors / two borders in one eye
+    // means a second presentation source is duplicating the view (extra camera, overlay layer);
+    // mismatched border vs eye means the buffers are routed to the wrong eye.
+    if (_DebugEyeTint != 0)
+    {
+        float3 tint = (_DebugEyeTint == 1) ? float3(1.0, 0.0, 0.0) : float3(0.0, 0.3, 1.0);
+        bool border = (int)id.x < 16 || (int)id.x >= _OutWidth - 16
+                   || (int)id.y < 16 || (int)id.y >= _OutHeight - 16;
+        if (border)
+            result = float4(tint, 1.0);
+        else if (tHit >= 0.0)
+            result = float4(lerp(result.rgb, tint, 0.35), 1.0);
     }
 
     _Output[id.xy] = result;
