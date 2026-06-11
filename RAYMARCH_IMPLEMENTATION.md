@@ -4,8 +4,8 @@ A detailed tour of the direct multi-depth-map ray-cast renderer, from the CPU
 orchestration down through the GPU compute kernels. Companion to the progress
 tracker in [RAYMARCH_ROUTE_A.md](RAYMARCH_ROUTE_A.md).
 
-> Status: single-camera (Step 1) + main-camera composite. Multi-camera (Step 2)
-> and per-eye stereo are not implemented yet; this doc describes what exists today.
+> Status: single-camera (Step 1), main-camera composite, and initial multi-camera
+> gather (Step 2) are implemented. Per-eye stereo is not implemented yet.
 
 ## Contents
 1. [Big picture](#1-big-picture)
@@ -165,8 +165,10 @@ OnRenderImage(src, dst):
                  composited   (ARGBFloat, screen size)
     ── PASS 1 ──  set Pack params; bind PointDepthBuffer, colorImage; Dispatch(Pack)
     ── PASS 2 ──  invVP = (cam.projectionMatrix * cam.worldToCameraMatrix).inverse
-                  set March params (model intrinsics/matrices, near/far/steps/eps…)
-                  bind uprightDepth, uprightColor, src(=scene); Dispatch(March) → composited
+                  set March params (model intrinsics/matrices, _ViewEyePos,
+                                    scene depth, near/far/steps/eps…)
+                  bind uprightDepth, uprightColor, src(=scene), _CameraDepthTexture
+                  Dispatch(March) → composited
     Graphics.Blit(composited, dst)
 ```
 
@@ -196,6 +198,8 @@ worldToCamera; }` plus free functions that mirror the C# model **exactly**:
 - `CameraModel_UnprojectToWorld(c, uv, depth)` → world point.
 - `CameraModel_ProjectFromWorld(c, world)` → `(u, v, zcam)`.
 - `CameraModel_InFrame(c, uv)` → bounds test.
+- `CameraModel_RoundPixel(c, uv)` / `CameraModel_InFramePixel(...)` → integer-centered
+  nearest-pixel sampling helpers used before texture `.Load`.
 
 Keeping this in lockstep with `DepthCameraModel.cs` is what lets the CPU validation
 (probe, round-trip) certify the GPU march.
@@ -229,10 +233,15 @@ One thread per **output** pixel. Three phases: build a ray, march it, shade the 
 
 **(a) Ray generation** ([:63-96](Assets/Raymarch/MultiDepthRaymarch.compute#L63-L96)). Two modes:
 
-- *View camera* (real use): unproject the pixel's NDC through `_InvViewProj` at the near
-  and far planes, ray = `normalize(far - near)`, origin = near point.
+- *View camera* (real use): unproject the pixel's NDC through `_InvViewProj` at the far
+  plane, ray = `normalize(far - _ViewEyePos)`, origin = the real eye/camera position.
+  The march distance `t` is a single absolute range from `_Near` to `_Far`.
 - *Model* (`_RayFromModel`, validation): rays come from the depth model itself, so the
   output reproduces that camera's own image — used to sanity-check the plumbing.
+
+Pixels are treated as integer-centered throughout the raymarch path: model rays use `pix`,
+view rays map `pix` over `0..width-1` / `0..height-1`, and projected depth/color lookups
+round to the nearest integer pixel before `.Load`.
 
 A `_FlipV` term handles the bottom-left-origin RawImage vs top-left compute-write
 convention; the two ray modes have opposite vertical conventions, so the model path
@@ -240,11 +249,12 @@ flips relative to the view path (off by default = both upright).
 
 **(b) The march loop** ([:111-170](Assets/Raymarch/MultiDepthRaymarch.compute#L111-L170)). Step `t` from near to far. At each sample `X = ro + dir·t`:
 
-1. Project `X` into the depth camera → `(u, v, zcam)`. Skip if behind (`zcam ≤ 0`) or
-   out of frame.
-2. Read stored depth `D = uprightDepth.Load(u, v)`. Skip if invalid (`≤ minValidDepth`).
+1. Project `X` into the depth camera → `(u, v, zcam)`, round `(u, v)` to the nearest
+   integer pixel, and skip if behind (`zcam ≤ 0`) or out of frame.
+2. Read stored depth `D = uprightDepth.Load(roundedPixel)`. Skip if invalid (`≤ minValidDepth`).
 3. `delta = zcam − D`. The surface is where `delta` changes sign from negative (the
-   sample is *in front of* the stored surface) to non-negative (*behind* it):
+   sample is *in front of* the stored surface) to non-negative (*behind* it), or where
+   `|delta| <= _DepthEps` for a valid non-discontinuity sample:
 
 ```
  view ray ──●────●────●────●────●────●──▶ t
@@ -271,6 +281,9 @@ color is sampled at the accurate pixel (much less edge bleed).
 **(e) Shading & compositing** ([:48-55](Assets/Raymarch/MultiDepthRaymarch.compute#L48-L55), [:98-102](Assets/Raymarch/MultiDepthRaymarch.compute#L98-L102), [:155](Assets/Raymarch/MultiDepthRaymarch.compute#L155)).
 - `Shade()` returns sampled RGB (`_UseColor`) or a depth-grayscale (near = bright).
 - The pixel's **background** is the scene (`_SceneColor`, for compositing) or black.
+- When `respectSceneDepth` is enabled, the compositor camera provides `_CameraDepthTexture`;
+  the shader linearizes it with `_ZBufferParams`, computes the raymarch hit's Unity eye
+  depth from `_ViewWorldToCamera`, and rejects hits behind closer Unity geometry.
 - The hit is blended over the background with `_HitBlend` (1 = opaque; <1 = see-through,
   for overlaying against the splat cloud during validation).
 - On a miss, the background (scene) shows through — that's the composite.
@@ -309,10 +322,9 @@ The final `Blit` to the (sRGB) framebuffer does the single encode, matching the 
 
 ## 7. Limitations & what's next
 
-- **Single camera.** Only `front_left` is wired. Translating the view reveals
-  **disocclusion** (regions the one camera never saw) and is the core motivation for
-  **Step 2 — multi-camera** (`Texture2DArray` of all cameras + an all-camera surface test
-  + view-dependent color blend).
+- **Multi-camera validation pending.** The `Texture2DArray`/`MarchMulti` path is in code,
+  but still needs live overlap validation across multiple Spot cameras before replacing the
+  single-camera reference path.
 - **Mono only.** The compositor uses the camera's center matrices; VR needs a **per-eye**
   pass with each eye's `GetStereoView/ProjectionMatrix`.
 - **Brute-force march.** Fixed-step, full screen resolution every frame. Acceleration

@@ -53,6 +53,10 @@ namespace Raymarch
         [Header("Composite")]
         [Tooltip("Composite the reconstruction over the camera image. Off = show it on black.")]
         public bool composite = true;
+        [Tooltip("When compositing, reject raymarch hits behind already-rendered Unity geometry.")]
+        public bool respectSceneDepth = true;
+        [Tooltip("Depth-test tolerance in metres; prevents equal-depth validation overlays from flickering out.")]
+        public float sceneDepthBias = 0.02f;
         [Tooltip("Uniform vertical flip of the composited output (escape hatch; normally off).")]
         public bool flipOutputV = false;
 
@@ -77,6 +81,9 @@ namespace Raymarch
         private void OnEnable()
         {
             cam = GetComponent<Camera>();
+            // OnRenderImage gives us the rendered color in src, but scene-depth occlusion
+            // requires Unity's separate camera depth texture.
+            cam.depthTextureMode |= DepthTextureMode.Depth;
             if (packShader != null) packKernel = packShader.FindKernel("Pack");
             if (marchShader != null) marchKernel = marchShader.FindKernel("March");
             if (enableDebugLog)
@@ -120,6 +127,8 @@ namespace Raymarch
                 Graphics.Blit(src, dst); // passthrough so the view still renders
                 return;
             }
+            // Keep the flag set in case another component changed depthTextureMode at runtime.
+            cam.depthTextureMode |= DepthTextureMode.Depth;
 
             NativePixelTransform xform = PixelTransform;
             DepthCameraModel model = DepthCameraModelBuilder.BuildFor(sourceRenderer, xform);
@@ -162,11 +171,16 @@ namespace Raymarch
 
             // 2) March this camera's rays and composite over the scene.
             Matrix4x4 invVP = (cam.projectionMatrix * cam.worldToCameraMatrix).inverse;
+            Vector3 viewEyePos = cam.cameraToWorldMatrix.GetColumn(3);
+            bool useSceneDepth = composite && respectSceneDepth;
             marchShader.SetVector("_CamIntrinsics", new Vector4(model.cx, model.cy, model.fx, model.fy));
             marchShader.SetVector("_CamResolution", new Vector2(model.width, model.height));
             marchShader.SetMatrix("_CamToWorld", model.cameraToWorld);
             marchShader.SetMatrix("_WorldToCam", model.worldToCamera);
             marchShader.SetMatrix("_InvViewProj", invVP);
+            marchShader.SetMatrix("_ViewWorldToCamera", cam.worldToCameraMatrix);
+            marchShader.SetVector("_ViewEyePos", viewEyePos);
+            marchShader.SetVector("_ZBufferParams", Shader.GetGlobalVector("_ZBufferParams"));
             marchShader.SetInt("_OutWidth", outW);
             marchShader.SetInt("_OutHeight", outH);
             marchShader.SetFloat("_Near", near);
@@ -180,9 +194,17 @@ namespace Raymarch
             marchShader.SetInt("_UseColor", hasColor ? 1 : 0);
             marchShader.SetInt("_Composite", composite ? 1 : 0);
             marchShader.SetFloat("_HitBlend", marchBlend);
+            marchShader.SetInt("_UseSceneDepth", useSceneDepth ? 1 : 0);
+            marchShader.SetFloat("_SceneDepthBias", Mathf.Max(0f, sceneDepthBias));
             marchShader.SetTexture(marchKernel, "_UprightDepth", uprightDepth);
             marchShader.SetTexture(marchKernel, "_UprightColor", uprightColor);
             marchShader.SetTexture(marchKernel, "_SceneColor", src);
+            // _CameraDepthTexture is produced by the camera and exposed as a global texture.
+            // Binding it by name avoids copying depth into an intermediate RT.
+            if (useSceneDepth)
+                marchShader.SetTextureFromGlobal(marchKernel, "_SceneDepth", "_CameraDepthTexture");
+            else
+                marchShader.SetTexture(marchKernel, "_SceneDepth", Texture2D.blackTexture);
             marchShader.SetTexture(marchKernel, "_Output", composited);
             marchShader.Dispatch(marchKernel, Mathf.CeilToInt(outW / 8f), Mathf.CeilToInt(outH / 8f), 1);
 
@@ -223,11 +245,22 @@ namespace Raymarch
         private static void EnsureRT(ref RenderTexture rt, int w, int h, RenderTextureFormat fmt,
             RenderTextureReadWrite rw = RenderTextureReadWrite.Default)
         {
-            if (rt != null && rt.width == w && rt.height == h && rt.format == fmt)
+            if (rt != null && rt.width == w && rt.height == h && rt.format == fmt
+                && rt.sRGB == DesiredSRGB(fmt, rw))
                 return;
             ReleaseRT(ref rt);
             rt = new RenderTexture(w, h, 0, fmt, rw) { enableRandomWrite = true };
             rt.Create();
+        }
+
+        private static bool DesiredSRGB(RenderTextureFormat fmt, RenderTextureReadWrite rw)
+        {
+            if (rw == RenderTextureReadWrite.Linear)
+                return false;
+            if (rw == RenderTextureReadWrite.sRGB)
+                return true;
+            return QualitySettings.activeColorSpace == ColorSpace.Linear
+                && (fmt == RenderTextureFormat.ARGB32 || fmt == RenderTextureFormat.Default);
         }
 
         private static void ReleaseRT(ref RenderTexture rt)

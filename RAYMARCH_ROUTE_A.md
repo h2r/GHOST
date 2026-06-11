@@ -109,8 +109,8 @@ refined crossing wins. Step-2 color is a simple average of the cameras that agre
   column `float4`s (transpose-reconstructed on GPU) to avoid Matrix4x4-vs-HLSL packing ambiguity.
 - `MarchMulti` keeps per-camera bracketing state (prev delta/depth + validity bitmask,
   `MAX_CAMERAS = 8`); per-camera silhouette (discontinuity) rejection as in Step 1.
-- The multi kernel marches from the TRUE eye origin (`_ViewEyePos`) — born R2-correct; the
-  single-cam `March` kernel keeps the tracked R2 bug until that item is fixed.
+- Both view-camera kernels march from the TRUE eye origin (`_ViewEyePos`), with `t` as the
+  single absolute march distance from `_Near` to `_Far` (R2 fixed 2026-06-11).
 - Single-camera paths (March kernel, both Step 1 drivers) stay untouched as the validation
   reference. The multi driver is a new component: `MultiCameraRaymarch` (OnRenderImage compositor
   style), one entry per source camera with its own `NativePixelTransform` + color flips.
@@ -148,25 +148,28 @@ in priority order.
   relabeling equivalence, all orientation/flip combos). Color cuv flips stay a separate native
   texture-origin compensation; validated values unaffected (mirror moves depth and color together).
   TO VERIFY live: orbit vs the splat cloud should still align with defaults (one quick check).
-- [ ] **R2 (HIGH) — view-camera ray double near-offset.** In view mode `ro = nearW` (near-plane point)
-  but the march starts `t = _Near`, so the first sample sits `_Near` beyond the near plane → very-near
-  surfaces missed, range skewed. Fix: pass the eye origin and march from it (or start `t` at 0); update
-  both drivers; re-validate with snap-to-source + a translated free camera. (Checklist item 1.)
-- [ ] **R3 (HIGH) — compositing ignores scene depth.** The march reads only `_SceneColor`; real Unity
-  geometry in front does not occlude the reconstruction. Fix: enable `DepthTextureMode.Depth`, bind
-  scene depth, compute each hit's camera-space depth, and depth-reject; add a validation scene with a
-  mesh in front. (Checklist item 2.)
-- [ ] **R4 (MED) — probe must validate the flipped runtime model.** `CameraModelLiveProbe` builds
-  `cleanModel` with `BuildFor(orientation)` (no flips) and `NativeToModelPixel` ignores flips, so
-  "green" validates transpose-only, not the shipped flipped model. Fix (updated for the R1 fix):
-  migrate the probe to `NativePixelTransform` (including `mirroredNativeBuffer` — its green==gray test
-  feeds the mirrored depth explicitly today, which is now the contract's job); use
-  `NativeToModel`/`ModelToNative` instead of the legacy `NativeToModelPixel` shim; drop the `AddCorner`
-  ship→model workaround; log the full transform state. (Item 4.)
-- [ ] **R5 (MED, partial) — `_DepthEps` hit consistency.** The eps-band hit only fires on the first
-  valid sample; otherwise a sign-change crossing is required. True intersections are still caught by the
-  crossing, so impact is limited to thin/grazing/coarse-step cases. Fix: accept `|delta| <= eps` for any
-  valid sample while keeping crossing-refinement and discontinuity rejection. (Checklist item 6.)
+- [x] **R2 (HIGH) — view-camera ray double near-offset.** FIXED IN CODE 2026-06-11. `March`
+  now matches `MarchMulti`: view-camera rays start at `_ViewEyePos`, direction comes from the far-plane
+  point, and `t` is the single absolute distance over `[_Near,_Far]`. `SingleCameraRaymarch` and
+  `RaymarchCompositor` both bind `_ViewEyePos`. Live snap-to-source/orbit validation remains recommended.
+  (Checklist item 1.)
+- [x] **R3 (HIGH) — compositing ignores scene depth.** FIXED IN CODE 2026-06-11.
+  `RaymarchCompositor` and `MultiCameraRaymarch` request `DepthTextureMode.Depth`, bind
+  `_CameraDepthTexture`, pass the view matrix + `_ZBufferParams`, and enable `_UseSceneDepth` when
+  compositing. `March`/`MarchMulti` compare each hit's Unity eye depth against linearized scene depth
+  and leave the scene color when real Unity geometry is closer. This remains color-only compositing
+  with depth rejection; no depth buffer is written. Mesh-in-front validation remains pending.
+  (Checklist item 2.)
+- [x] **R4 (MED) — probe must validate the flipped runtime model.** FIXED IN CODE 2026-06-11.
+  `CameraModelLiveProbe` now uses the same `NativePixelTransform` contract as runtime, including
+  `mirroredNativeBuffer`: it builds `cleanModel` from the transform, fetches sample depth through
+  `NativeToBufferPixel`, maps samples through `NativeToModel`, logs the full transform, and draws
+  frustum corners directly through the flipped clean model. The old flip-less `NativeToModelPixel`
+  shim was deleted. Live body-camera preset confirmation remains pending. (Item 4.)
+- [x] **R5 (MED, partial) — `_DepthEps` hit consistency.** FIXED IN CODE 2026-06-11. Both
+  `March` and `MarchMulti` now accept `|delta| <= eps` for any valid sample after preferring bracketed
+  crossing refinement, and epsilon hits are rejected across depth discontinuities so silhouette holes are
+  preserved. A synthetic/coarse-step debug test is still useful. (Checklist item 6.)
 - [ ] **R6 (REFACTOR) — decouple ingestion from the splat renderer.** Raymarch consumes
   `DrawMeshInstanced` directly, and its `Update` can't refresh depth without also drawing splats.
   Introduce an `IDepthFrameSource`/`RaymarchDepthSource` (frame size, canonical model, native↔upright
@@ -174,18 +177,14 @@ in priority order.
   add a "depth without splat draw" switch; keep buffer ownership in the provider. (Checklist item 5 +
   API-design target.)
 
-- [ ] **R7 (LOW) — pixel-center convention is inconsistent (half-pixel bias).** Found during the R1
-  fix (2026-06-10). The march generates rays at `pix + 0.5` (centers on the half-integer grid), but
-  the transform/flips/model mirror about `size-1` and texture reads truncate via `.Load((int)p)` —
-  both integer-center conventions. Net ~0.5 px sampling bias. Harmless at Step 1 scale; will matter
-  for Step 4 (Hi-Z) accuracy and multi-camera blending seams. Fix: pick ONE convention (integer
-  centers match how the intrinsics were measured) and apply it to ray-gen, flips, and sampling
-  (round, not truncate, if staying integer-centered).
-- [ ] **R8 (LOW) — `EnsureRT` reuse check ignores sRGB/ReadWrite.** Found during the R1 fix
-  (2026-06-10). Both drivers' `EnsureRT` only compares width/height/format, so an RT created before a
-  `RenderTextureReadWrite` change survives reuse with stale sRGB state — the exact class of bug behind
-  the earlier double-decode darkening. One-liner: include the requested `rw` in the reuse comparison
-  (note `rt.sRGB` is the queryable state).
+- [x] **R7 (LOW) — pixel-center convention is inconsistent (half-pixel bias).** FIXED IN CODE
+  2026-06-11. The march now uses integer-centered rays (`pix`, with view NDC mapped over
+  `0..width-1`/`0..height-1`) and rounds projected pixels before depth/color `.Load`, matching the
+  integer-centered transform/flips/model convention. Validator + snap-to-source checks remain pending.
+- [x] **R8 (LOW) — `EnsureRT` reuse check ignores sRGB/ReadWrite.** FIXED 2026-06-11.
+  `SingleCameraRaymarch`, `RaymarchCompositor`, and `MultiCameraRaymarch` now compare `rt.sRGB` against
+  the requested `RenderTextureReadWrite` mode before reusing RTs/texture arrays, preventing stale color
+  read/write state after configuration changes.
 
 Done already (from the checklist's "observed" section): linear packed-color RTs (sRGB double-decode
 fix) and the compositor heartbeat log.
@@ -309,9 +308,23 @@ fix) and the compositor heartbeat log.
   all-camera test with per-camera bracketing state, nearest refined crossing wins, per-camera
   discontinuity rejection, agreement-averaged color with per-camera occlusion check; marches from
   the true eye origin `_ViewEyePos`, so the multi path is born WITHOUT the R2 near-offset bug —
-  R2 remains open for the single-cam `March` kernel only). New `MultiCameraRaymarch` driver
+  at that point R2 remained open for the single-cam `March` kernel only; fixed 2026-06-11).
+  New `MultiCameraRaymarch` driver
   (OnRenderImage compositor): per-source orientation/flips/mirror + color flips, slices sized to
   the largest upright frame, camera buffer rebuilt per frame, heartbeat diagnostics, snap-to-source
   context menu. Single-camera paths untouched (validation reference). NEXT: live validation (e) —
   two overlapping cameras (FL+FR), overlap must agree (no double walls) and match the cloud under
   orbit; then all 5 body cams; hand camera (f) once its transform is confirmed.
+- 2026-06-11: Closed three bounded review gaps in code. R2: single-camera `March` now starts
+  view-camera rays at `_ViewEyePos` and both single-camera drivers bind that input. R5: epsilon-band
+  hit detection now applies to any valid sample in both `March` and `MarchMulti`, while bracketed
+  refinement still wins and depth discontinuities still reject hits. R8: RT/texture-array reuse now
+  checks the requested sRGB/read-write state in all raymarch drivers. Pending validation: snap/orbit
+  check for R2 and a coarse-step/synthetic case for R5.
+- 2026-06-11: Closed R3/R4/R7 in code. R3: compositor drivers now request/bind Unity scene depth and
+  `March`/`MarchMulti` reject hits behind closer scene geometry using linearized eye depth (color-only
+  rejection, no depth write). R4: `CameraModelLiveProbe` now uses the runtime `NativePixelTransform`
+  end-to-end, including native-buffer mirror, and the old flip-less pixel shim was removed. R7: ray
+  generation and projected texture reads now consistently use integer pixel centers, with projected
+  samples rounded before load. Pending validation: mesh-in-front test, live body-camera probe preset,
+  validator/snap checks.

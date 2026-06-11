@@ -156,12 +156,14 @@ namespace Raymarch
             // 2) March. In ViewCamera mode, build the projection with the OUTPUT aspect (not the
             // camera's screen aspect) so there is no horizontal stretch/margin from an aspect mismatch.
             Matrix4x4 invVP = Matrix4x4.identity;
+            Vector3 viewEyePos = Vector3.zero;
             if (!fromModel)
             {
                 float aspect = (float)outW / outH;
                 Matrix4x4 proj = Matrix4x4.Perspective(
                     cam.fieldOfView, aspect, Mathf.Max(0.01f, near), Mathf.Max(near + 0.01f, far));
                 invVP = (proj * cam.worldToCameraMatrix).inverse;
+                viewEyePos = cam.cameraToWorldMatrix.GetColumn(3);
             }
 
             marchShader.SetVector("_CamIntrinsics", new Vector4(model.cx, model.cy, model.fx, model.fy));
@@ -169,6 +171,9 @@ namespace Raymarch
             marchShader.SetMatrix("_CamToWorld", model.cameraToWorld);
             marchShader.SetMatrix("_WorldToCam", model.worldToCamera);
             marchShader.SetMatrix("_InvViewProj", invVP);
+            marchShader.SetMatrix("_ViewWorldToCamera", cam != null ? cam.worldToCameraMatrix : Matrix4x4.identity);
+            marchShader.SetVector("_ViewEyePos", viewEyePos);
+            marchShader.SetVector("_ZBufferParams", Vector4.zero);
             marchShader.SetInt("_OutWidth", outW);
             marchShader.SetInt("_OutHeight", outH);
             marchShader.SetFloat("_Near", near);
@@ -182,9 +187,14 @@ namespace Raymarch
             marchShader.SetInt("_UseColor", hasColor ? 1 : 0);
             marchShader.SetInt("_Composite", 0); // debug driver never composites the scene
             marchShader.SetFloat("_HitBlend", 1f);
+            // RawImage validation has no Unity scene depth to respect; keep the shader inputs
+            // explicitly bound so kernel state cannot leak from compositor components.
+            marchShader.SetInt("_UseSceneDepth", 0);
+            marchShader.SetFloat("_SceneDepthBias", 0f);
             marchShader.SetTexture(marchKernel, "_UprightDepth", uprightDepth);
             marchShader.SetTexture(marchKernel, "_UprightColor", uprightColor);
             marchShader.SetTexture(marchKernel, "_SceneColor", Texture2D.blackTexture);
+            marchShader.SetTexture(marchKernel, "_SceneDepth", Texture2D.blackTexture);
             marchShader.SetTexture(marchKernel, "_Output", output);
             marchShader.Dispatch(marchKernel, Mathf.CeilToInt(outW / 8f), Mathf.CeilToInt(outH / 8f), 1);
 
@@ -195,11 +205,22 @@ namespace Raymarch
         private static void EnsureRT(ref RenderTexture rt, int w, int h, RenderTextureFormat fmt,
             RenderTextureReadWrite rw = RenderTextureReadWrite.Default)
         {
-            if (rt != null && rt.width == w && rt.height == h && rt.format == fmt)
+            if (rt != null && rt.width == w && rt.height == h && rt.format == fmt
+                && rt.sRGB == DesiredSRGB(fmt, rw))
                 return;
             ReleaseRT(ref rt);
             rt = new RenderTexture(w, h, 0, fmt, rw) { enableRandomWrite = true };
             rt.Create();
+        }
+
+        private static bool DesiredSRGB(RenderTextureFormat fmt, RenderTextureReadWrite rw)
+        {
+            if (rw == RenderTextureReadWrite.Linear)
+                return false;
+            if (rw == RenderTextureReadWrite.sRGB)
+                return true;
+            return QualitySettings.activeColorSpace == ColorSpace.Linear
+                && (fmt == RenderTextureFormat.ARGB32 || fmt == RenderTextureFormat.Default);
         }
 
         private static void ReleaseRT(ref RenderTexture rt)

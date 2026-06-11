@@ -60,4 +60,19 @@ bool CameraModel_InFrame(CameraModel c, float2 uv)
     return uv.x >= 0.0 && uv.x < c.resolution.x && uv.y >= 0.0 && uv.y < c.resolution.y;
 }
 
+// Route A uses computer-vision pixel coordinates: integer pixel centers
+// (0, 1, ... size-1). Projected float pixels are rounded before Texture.Load
+// so sampling stays on the same grid as calibration, flips, and native mapping.
+int2 CameraModel_RoundPixel(float2 uv)
+{
+    float2 rounded = floor(uv + 0.5);
+    return int2((int)rounded.x, (int)rounded.y);
+}
+
+bool CameraModel_InFramePixel(CameraModel c, int2 pixel)
+{
+    return pixel.x >= 0 && pixel.x < (int)c.resolution.x
+        && pixel.y >= 0 && pixel.y < (int)c.resolution.y;
+}
+
 #endif // RAYMARCH_CAMERA_MODEL_INCLUDED

@@ -27,7 +27,7 @@ namespace Raymarch
             LegacyOnly,
             Identity,        // canonical fed (u=col, v=row), depth sampled at (col, row)
             Transpose,       // canonical fed (u=row, v=col), depth sampled at (col, row)
-            CleanTransposed, // the BAKED model from DepthCameraModelBuilder; should overlay red
+            CleanTransposed, // the runtime NativePixelTransform model; should overlay gray
         }
 
         [Header("Source")]
@@ -64,6 +64,14 @@ namespace Raymarch
         public bool flipU = false;
         [Tooltip("Flip the de-rotated image vertically (top<->bottom). Set this per the corner test.")]
         public bool flipV = false;
+        [Tooltip("Native CVD buffers store pixels 180°-rotated relative to their intrinsics grid. " +
+                 "Leave ON to probe the same transform used by the raymarch runtime.")]
+        public bool mirrorNativeBuffer = true;
+
+        // Keep the probe on the exact same mapping contract as DepthToUpright + raymarch.
+        // Otherwise green markers can validate a stale probe-only convention.
+        private NativePixelTransform PixelTransform =>
+            new NativePixelTransform(orientation, flipU, flipV, mirrorNativeBuffer);
 
         [Header("Debug visibility")]
         [Tooltip("Always draw anchor wire spheres (cyan = this object, orange = source camera origin) " +
@@ -100,8 +108,9 @@ namespace Raymarch
             orientation = ImageOrientation.Transpose;
             flipU = false;
             flipV = true;
+            mirrorNativeBuffer = true;
             Debug.Log("[CameraModelLiveProbe] Preset set: candidate=CleanTransposed, " +
-                      "orientation=Transpose, flipU=False, flipV=True.");
+                      "orientation=Transpose, flipU=False, flipV=True, mirrorNativeBuffer=True.");
             SampleAndCompare();
         }
 
@@ -144,8 +153,9 @@ namespace Raymarch
             Matrix4x4 cameraToWorld = sourceRenderer.GetCurrentPose();
             Vector3 camPos = cameraToWorld.GetColumn(3);
             DepthCameraModel model = DepthCameraModel.FromIntrinsicsVector(intr, w, h, cameraToWorld);
-            // The baked clean model (folds away the transpose); used by CleanTransposed + frustum test.
-            DepthCameraModel cleanModel = DepthCameraModelBuilder.BuildFor(sourceRenderer, orientation);
+            NativePixelTransform xform = PixelTransform;
+            // The runtime clean model; used by CleanTransposed + frustum test.
+            DepthCameraModel cleanModel = DepthCameraModelBuilder.BuildFor(sourceRenderer, xform);
 
             marks.Clear();
 
@@ -153,7 +163,7 @@ namespace Raymarch
             var sb = new StringBuilder();
             sb.AppendLine($"[CameraModelLiveProbe] '{sourceRenderer.name}'  {w}x{h}  " +
                           $"intr(cx,cy,fx,fy)=({intr.x:F1},{intr.y:F1},{intr.z:F1},{intr.w:F1})  " +
-                          $"candidate={candidate}  orientation={orientation}");
+                          $"candidate={candidate}  transform={xform}");
             sb.AppendLine("  px(col,row)  depth   -> canonical needs (u*, v*, d*)   [u*-col, v*-row]");
 
             for (int gy = 1; gy <= n; gy++)
@@ -164,8 +174,8 @@ namespace Raymarch
                     int row = Mathf.Clamp(Mathf.RoundToInt(h * gy / (float)(n + 1)), 0, h - 1);
 
                     // --- Legacy reproduction (exact match to CSMain) ---
-                    int mirrorIndex = (w * (h - row - 1)) + (w - col - 1);
-                    float legacyDepth = depthData[mirrorIndex].z;
+                    Vector2Int bufferPixel = xform.NativeToBufferPixel(col, row, w, h);
+                    float legacyDepth = depthData[bufferPixel.x + bufferPixel.y * w].z;
                     if (legacyDepth <= minValidDepth)
                         continue;
 
@@ -190,10 +200,10 @@ namespace Raymarch
 
                         if (candidate == Candidate.CleanTransposed)
                         {
-                            // Verify the baked model reproduces the legacy geometry: feed it the SAME
-                            // (mirrored) depth as red, so only the projection convention differs.
-                            // Green should land on top of red.
-                            Vector2 muv = DepthCameraModelBuilder.NativeToModelPixel(col, row, orientation);
+                            // Verify the runtime transform reproduces the legacy geometry: feed it the
+                            // same native-grid pixel + mirrored-buffer depth that runtime packing uses.
+                            // Green should land on top of gray.
+                            Vector2 muv = xform.NativeToModel(col, row, w, h);
                             candWorld = cleanModel.UnprojectToWorld(muv.x, muv.y, legacyDepth);
                         }
                         else
@@ -215,7 +225,7 @@ namespace Raymarch
             }
 
             if (frustumTest)
-                AddFrustumCorners(cleanModel, camPos, sb);
+                AddFrustumCorners(cleanModel, camPos, xform, sb);
 
             // Diagnostics: confirm marks were created and report WHERE they live in world space,
             // so the Scene view can be framed on them.
@@ -232,9 +242,10 @@ namespace Raymarch
             Debug.Log(sb.ToString());
         }
 
-        // Places color-coded markers at the four image corners (+ center) at a fixed depth so the
-        // camera frame's orientation in 3D is unambiguous. Uses the clean model + current orientation.
-        private void AddFrustumCorners(DepthCameraModel cleanModel, Vector3 camPos, StringBuilder sb)
+        // Places color-coded markers at the four model-image corners (+ center) at a fixed depth so the
+        // camera frame's orientation in 3D is unambiguous. The clean model already includes flips.
+        private void AddFrustumCorners(DepthCameraModel cleanModel, Vector3 camPos,
+            NativePixelTransform xform, StringBuilder sb)
         {
             int w = (int)cleanModel.width;   // model-space (de-rotated) dimensions
             int h = (int)cleanModel.height;
@@ -250,7 +261,7 @@ namespace Raymarch
             AddCorner(cleanModel, camPos, w * 0.5f, h * 0.5f, d, Color.white, "center");
 
 
-            sb.AppendLine($"  frustum test @ {d:F2}m (flipU={flipU}, flipV={flipV}): " +
+            sb.AppendLine($"  frustum test @ {d:F2}m ({xform}): " +
                           "blue=top-left  red=top-right  yellow=bottom-left  magenta=bottom-right  white=center");
         }
 
@@ -269,13 +280,9 @@ namespace Raymarch
             return sb.ToString();
         }
 
-        // (u, v) are the desired SHIP (final, upright) image corner; flipU/flipV map ship->model
-        // pixels before unprojecting, so the colors always label the shipped image's corners.
         private void AddCorner(DepthCameraModel cleanModel, Vector3 camPos, float u, float v, float d, Color c, string label)
         {
-            float mu = flipU ? (cleanModel.width - 1 - u) : u;
-            float mv = flipV ? (cleanModel.height - 1 - v) : v;
-            Vector3 p = cleanModel.UnprojectToWorld(mu, mv, d);
+            Vector3 p = cleanModel.UnprojectToWorld(u, v, d);
             AddPoint(p, c, gizmoRadius * 1.4f);
             AddLine(camPos, p, c);
         }

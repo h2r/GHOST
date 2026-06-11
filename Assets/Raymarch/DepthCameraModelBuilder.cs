@@ -213,16 +213,5 @@ namespace Raymarch
             return DepthCameraModel.Create(mfx, mfy, mcx, mcy, mw, mh, cameraToWorld);
         }
 
-        /// <summary>
-        /// Maps a native source pixel (col, row) to the canonical model pixel (u, v) for the given
-        /// orientation, IGNORING flips. Legacy shim kept for <see cref="CameraModelLiveProbe"/>
-        /// (tracked as R4); new code should use <see cref="NativePixelTransform.NativeToModel"/>.
-        /// </summary>
-        public static Vector2 NativeToModelPixel(int col, int row, ImageOrientation orientation)
-        {
-            return orientation == ImageOrientation.Transpose
-                ? new Vector2(row, col)
-                : new Vector2(col, row);
-        }
     }
 }
