@@ -111,6 +111,11 @@ refined crossing wins. Step-2 color is a simple average of the cameras that agre
   `MAX_CAMERAS = 8`); per-camera silhouette (discontinuity) rejection as in Step 1.
 - Both view-camera kernels march from the TRUE eye origin (`_ViewEyePos`), with `t` as the
   single absolute march distance from `_Near` to `_Far` (R2 fixed 2026-06-11).
+- Color visibility/agreement uses its OWN tolerance `_ColorAgreeEps`, SEPARATE from the geometric
+  crossing `_DepthEps` and clamped `>= _DepthEps` in the driver (2026-06-11). The reprojected+rounded
+  hit point carries more error than crossing detection, so sharing one eps means tightening geometry
+  starves the color test and every hit falls back to magenta. NOT a regression — it's a deliberate
+  decouple; the binary accept/reject goes away with Step 3's soft lumigraph weights. Default 0.1.
 - Single-camera paths (March kernel, both Step 1 drivers) stay untouched as the validation
   reference. The multi driver is a new component: `MultiCameraRaymarch` (OnRenderImage compositor
   style), one entry per source camera with its own `NativePixelTransform` + color flips.
@@ -177,10 +182,19 @@ in priority order.
   add a "depth without splat draw" switch; keep buffer ownership in the provider. (Checklist item 5 +
   API-design target.)
 
-- [x] **R7 (LOW) — pixel-center convention is inconsistent (half-pixel bias).** FIXED IN CODE
-  2026-06-11. The march now uses integer-centered rays (`pix`, with view NDC mapped over
-  `0..width-1`/`0..height-1`) and rounds projected pixels before depth/color `.Load`, matching the
-  integer-centered transform/flips/model convention. Validator + snap-to-source checks remain pending.
+- [x] **R7 (LOW) — pixel-center convention is inconsistent (half-pixel bias).** FIXED 2026-06-11,
+  REVISED 2026-06-11. KEY DISTINCTION (cost a real misalignment first): there are TWO independent
+  pixel grids and they must NOT share a convention. (a) The DEPTH-camera model grid (world→depth
+  pixel projection + array sampling) is integer-centered — principal point at integer `u=cx`; fixed
+  by rounding projected pixels (`CameraModel_RoundPixel`) before `.Load`. (b) The VIEW-camera ray
+  grid (`PixelToNdc`) must follow Unity's raster convention `(i+0.5)/res`, matching
+  `cam.projectionMatrix` and where the splat cloud rasterizes via `UNITY_MATRIX_VP` — that is what
+  the reconstruction is overlaid against. The first revision wrongly made the VIEW grid
+  integer-centered too (`pix/(W-1)`), which biased rays up to ~½ px toward the image edges (zero at
+  center) and pulled the march off the cloud near the borders. Now: depth grid integer-centered +
+  round; view grid half-pixel. The `_RayFromModel` validation path correctly stays integer-centered
+  (it samples the depth model itself, not a Unity camera). Validator + snap-to-source checks remain
+  pending.
 - [x] **R8 (LOW) — `EnsureRT` reuse check ignores sRGB/ReadWrite.** FIXED 2026-06-11.
   `SingleCameraRaymarch`, `RaymarchCompositor`, and `MultiCameraRaymarch` now compare `rt.sRGB` against
   the requested `RenderTextureReadWrite` mode before reusing RTs/texture arrays, preventing stale color
@@ -328,3 +342,21 @@ fix) and the compositor heartbeat log.
   generation and projected texture reads now consistently use integer pixel centers, with projected
   samples rounded before load. Pending validation: mesh-in-front test, live body-camera probe preset,
   validator/snap checks.
+- 2026-06-11: R7 correction — the prior fix over-unified the pixel grids and made the VIEW-camera ray
+  grid integer-centered (`pix/(W-1)`), causing a sub-pixel reconstruction-vs-cloud misalignment that
+  grew toward the image edges (zero at center). Root cause: the view ray belongs to the Unity test
+  camera and must use the raster half-pixel convention `(i+0.5)/res` (matching `cam.projectionMatrix`
+  and the splat cloud's `UNITY_MATRIX_VP` rasterization); it is a SEPARATE grid from the
+  integer-centered depth model (which keeps `RoundPixel` sampling). Reverted `PixelToNdc` to
+  half-pixel; depth-side rounding unchanged. Affects both `March` and `MarchMulti` (view path only).
+- 2026-06-11: Splat billboard is now a true per-point camera-facing quad (`InstancedIndirectColor`
+  builds its basis from `_WorldSpaceCameraPos`), replacing the uniform yaw-only `_BillboardRight/Up`
+  + `angle` matrix (now unused in C#). Reason: the old cloud only faced one fixed yaw, so when viewed
+  from a different camera the flat cards projected off the true surface and read as "doubles" vs the
+  geometrically-exact march — an unfaithful reference, not a march bug. Now the cloud faces whatever
+  camera renders (test cam, and per-eye for the XR rig), so it's a valid comparison from any angle.
+- 2026-06-11: Split the multi-cam color visibility tolerance into `_ColorAgreeEps`, separate from the
+  geometric `_DepthEps` and clamped `>= _DepthEps` in `MultiCameraRaymarch` (default 0.1). Symptom
+  that prompted it: tightening `depthEps` to clean up geometry pushed the color agreement test (which
+  had reused `_DepthEps`) too strict, so confirmed hits collapsed to the magenta "no camera agrees"
+  fallback everywhere. Deliberate decouple, not a regression — superseded by Step 3's soft weights.

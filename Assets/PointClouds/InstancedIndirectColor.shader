@@ -48,19 +48,22 @@ Shader "Custom/InstancedIndirectColor" {
 
                 float sampledIndex = float(instanceID) * samplingSize;
 
-                float3 billboardVertex = _BillboardRight * i.vertex.x + _BillboardUp * i.vertex.y;
-                float4 vpos = float4(billboardVertex, 1.0);
+                // Point center in world space (GameObject pose moves the cloud as a unit).
+                float3 centerWorld = mul(_GOPose, float4(_Properties[instanceID].pos.xyz, 1.0)).xyz;
 
-                // Depth scales each quad in place, then the GameObject pose moves the cloud as a unit.
-                float4x4 mat = {
-                    cos(angle) * depthScale,   0.0,          sin(angle) * depthScale,   _Properties[instanceID].pos.x,
-                    0.0,                       depthScale,   0.0,                        _Properties[instanceID].pos.y,
-                    -sin(angle) * depthScale,  0.0,          cos(angle) * depthScale,    _Properties[instanceID].pos.z,
-                    0.0,                       0.0,          0.0,                        1.0
-                };
+                // True per-point billboard: face whichever camera is rendering this pass
+                // (_WorldSpaceCameraPos is set per camera, and per-eye for the XR rig), so the cloud
+                // stays a faithful flat-card approximation of the surface from any viewpoint instead
+                // of only from one fixed yaw. Replaces the uniform _BillboardRight/_BillboardUp + the
+                // 'angle' yaw matrix (both now unused).
+                float3 toCam = _WorldSpaceCameraPos.xyz - centerWorld;
+                float3 fwd = (dot(toCam, toCam) > 1e-12) ? normalize(toCam) : float3(0.0, 0.0, -1.0);
+                float3 worldUp = (abs(fwd.y) > 0.999) ? float3(0.0, 0.0, 1.0) : float3(0.0, 1.0, 0.0);
+                float3 right = normalize(cross(worldUp, fwd));
+                float3 up = cross(fwd, right);
 
-                float4 pos = mul(_GOPose, mul(mat, vpos));
-                o.vertex = mul(UNITY_MATRIX_VP, pos);
+                float3 offsetWorld = (right * i.vertex.x + up * i.vertex.y) * depthScale;
+                o.vertex = mul(UNITY_MATRIX_VP, float4(centerWorld + offsetWorld, 1.0));
 
                 // Map the sampled instance back to its source image pixel for color lookup.
                 float4 texCoord = {1 - (sampledIndex - floor(sampledIndex * screenData.z) * screenData.x) * invWidth, floor(sampledIndex * screenData.z) * invHeight, 0.0, 0.0};

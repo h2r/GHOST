@@ -35,6 +35,8 @@ float _Near;
 float _Far;
 int _Steps;
 float _DepthEps;
+float _ColorAgreeEps; // looser tolerance for the multi-cam color visibility/agreement test; kept
+                      // separate from _DepthEps so tightening crossing detection doesn't starve color
 float _MinValidDepth;
 int _FlipV;        // 1 = flip output V (RWTexture2D top-left origin vs RawImage bottom-left)
 int _RayFromModel; // 1 = generate rays from the depth model itself (validation), 0 = view camera
@@ -94,12 +96,14 @@ CameraModel MakeCam()
 
 float2 PixelToNdc(float2 pix)
 {
-    // Keep view rays on the same integer-centered pixel grid as DepthCameraModel.
-    // The alternative half-pixel raster convention would require changing the
-    // calibrated intrinsics, flip mirrors, probe math, and texture sampling together.
-    float ux = (_OutWidth > 1) ? pix.x / (float)(_OutWidth - 1) : 0.5;
-    float uy = (_OutHeight > 1) ? pix.y / (float)(_OutHeight - 1) : 0.5;
-    return float2(ux, uy) * 2.0 - 1.0;
+    // VIEW-camera ray grid: follow Unity's raster convention (pixel center i -> (i+0.5)/res),
+    // matching cam.projectionMatrix and where the splat cloud rasterizes through UNITY_MATRIX_VP.
+    // This is independent of the DEPTH model's integer-centered grid (sampled with RoundPixel) —
+    // the world-space ray is the bridge, so the two conventions don't have to match. Using the
+    // (W-1) integer-centered form here instead biases rays by up to ~half a pixel toward the image
+    // edges (zero at center), pulling the reconstruction off the cloud near the borders.
+    float2 uv = (pix + 0.5) / float2(_OutWidth, _OutHeight);
+    return uv * 2.0 - 1.0;
 }
 
 float LinearEyeDepthFromRaw(float rawDepth)
@@ -377,8 +381,10 @@ void MarchMulti(uint3 id : SV_DispatchThreadID)
             if (_UseColor != 0)
             {
                 // Step 2 color: average every camera that AGREES it sees this hit (its stored depth
-                // matches the hit within eps — this doubles as the occlusion test). View-dependent
-                // lumigraph weighting is Step 3.
+                // matches the hit within _ColorAgreeEps — this doubles as the occlusion test).
+                // Looser than the geometric _DepthEps: the reprojected/rounded hit carries more
+                // error than crossing detection, so a strict eps would reject even the camera that
+                // saw the surface (-> magenta everywhere). View-dependent weighting is Step 3.
                 float3 sum = float3(0.0, 0.0, 0.0);
                 float wsum = 0.0;
 
@@ -395,7 +401,7 @@ void MarchMulti(uint3 id : SV_DispatchThreadID)
                     if (ph.z <= 0.0 || !CameraModel_InFramePixel(cam2, phPixel))
                         continue;
                     float Dh = _UprightDepthArr.Load(int4(phPixel.x, phPixel.y, c2, 0));
-                    if (Dh <= _MinValidDepth || abs(ph.z - Dh) > _DepthEps)
+                    if (Dh <= _MinValidDepth || abs(ph.z - Dh) > _ColorAgreeEps)
                         continue; // invalid, occluded, or disagreeing in this camera
                     sum += _UprightColorArr.Load(int4(phPixel.x, phPixel.y, c2, 0)).rgb;
                     wsum += 1.0;

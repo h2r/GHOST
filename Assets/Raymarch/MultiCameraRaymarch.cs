@@ -65,6 +65,11 @@ namespace Raymarch
         public float far = 10f;
         [Range(8, 1024)] public int steps = 256;
         public float depthEps = 0.05f;
+        [Tooltip("Tolerance for the per-camera color visibility/agreement test (occlusion). Kept " +
+                 "separate from (and never tighter than) depthEps: tighten depthEps to clean up " +
+                 "geometry without starving color into magenta. Raise if you see magenta on " +
+                 "surfaces a camera clearly sees.")]
+        public float colorAgreeEps = 0.1f;
         public float minValidDepth = 0.05f;
         [Tooltip("Reject crossings where stored depth jumps more than this (m) — silhouette edges.")]
         public float discontinuityThreshold = 0.15f;
@@ -260,6 +265,8 @@ namespace Raymarch
             marchShader.SetFloat("_Far", far);
             marchShader.SetInt("_Steps", steps);
             marchShader.SetFloat("_DepthEps", depthEps);
+            // Color agreement is never stricter than crossing detection (else hits go magenta).
+            marchShader.SetFloat("_ColorAgreeEps", Mathf.Max(depthEps, colorAgreeEps));
             marchShader.SetFloat("_MinValidDepth", minValidDepth);
             marchShader.SetFloat("_DiscontinuityThreshold", discontinuityThreshold);
             marchShader.SetInt("_FlipV", flipOutputV ? 1 : 0);

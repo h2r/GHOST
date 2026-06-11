@@ -29,6 +29,8 @@ namespace Raymarch
 
         private void OnEnable()
         {
+            Input.ResetInputAxes();
+
             Vector3 e = transform.eulerAngles;
             yaw = e.y;
             pitch = e.x;
@@ -42,6 +44,11 @@ namespace Raymarch
                 pitch -= Input.GetAxis("Mouse Y") * lookSensitivity;
                 pitch = Mathf.Clamp(pitch, -89f, 89f);
                 transform.rotation = Quaternion.Euler(pitch, yaw, 0f);
+            }
+            else
+            {
+                // If not looking, reset mouse delta to avoid sudden jumps when re-engaging look.
+                Input.ResetInputAxes();
             }
 
             float speed = moveSpeed * (Input.GetKey(KeyCode.LeftShift) ? boostMultiplier : 1f);

@@ -6466,9 +6466,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3699985937472072426, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 796725191}
-    - targetCorrespondingSourceObject: {fileID: 3699985937472072426, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1961063978}
     - targetCorrespondingSourceObject: {fileID: 2251966328704835437, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1748619557}
@@ -6487,9 +6484,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4430176667488560218, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 810747191}
-    - targetCorrespondingSourceObject: {fileID: 8486301965680439917, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1151083537}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 1137478773745686191, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       insertIndex: 4
@@ -12500,145 +12494,6 @@ MonoBehaviour:
   installationRoutineCheckpoint:
     _installationRoutineId: 
     _installationVariants: []
---- !u!1 &1151083534
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1151083537}
-  - component: {fileID: 1151083536}
-  - component: {fileID: 1151083535}
-  m_Layer: 5
-  m_Name: RawImage
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1151083535
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1151083534}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Texture: {fileID: 0}
-  m_UVRect:
-    serializedVersion: 2
-    x: 0
-    y: 0
-    width: 1
-    height: 1
---- !u!222 &1151083536
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1151083534}
-  m_CullTransparentMesh: 1
---- !u!224 &1151083537
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1151083534}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 10, y: 10, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1705981429}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 15.052307, y: 578}
-  m_SizeDelta: {x: 100, y: 100}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &1165784384
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1165784386}
-  - component: {fileID: 1165784385}
-  m_Layer: 0
-  m_Name: RayMarcher
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1165784385
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1165784384}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3e4b4b251e405434a969e6c139a090a6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Raymarch.SingleCameraRaymarch
-  sourceRenderer: {fileID: 326679877}
-  orientation: 1
-  flipU: 0
-  flipV: 1
-  mirrorNativeBuffer: 1
-  rayMode: 0
-  flipOutputV: 0
-  viewCamera: {fileID: 1961063980}
-  packShader: {fileID: 7200000, guid: 31d2bf8f0f5a4bc419588dd9ff3b73f1, type: 3}
-  marchShader: {fileID: 7200000, guid: 3b633b0038522fc4daf6ae0b196a7a0b, type: 3}
-  outputWidth: 480
-  outputHeight: 640
-  display: {fileID: 1151083535}
-  near: 0.1
-  far: 10
-  steps: 256
-  depthEps: 0.05
-  minValidDepth: 0.05
-  discontinuityThreshold: 0.15
-  runContinuously: 1
-  useColor: 1
-  colorFlipU: 0
-  colorFlipV: 1
---- !u!4 &1165784386
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1165784384}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.15569, y: -0.18017, z: -0.3505}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1167233215
 GameObject:
   m_ObjectHideFlags: 0
@@ -17840,11 +17695,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TextFaceCamera
   mainCamera: {fileID: 1747440746}
---- !u!224 &1705981429 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 8486301965680439917, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
-  m_PrefabInstance: {fileID: 409472599}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1708770774
 GameObject:
   m_ObjectHideFlags: 0
@@ -18250,6 +18100,8 @@ GameObject:
   - component: {fileID: 1747440747}
   - component: {fileID: 1747440749}
   - component: {fileID: 1747440748}
+  - component: {fileID: 1747440751}
+  - component: {fileID: 1747440752}
   m_Layer: 0
   m_Name: CenterEyeAnchor
   m_TagString: MainCamera
@@ -18332,6 +18184,80 @@ AudioListener:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1747440746}
   m_Enabled: 1
+--- !u!114 &1747440751
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1747440746}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66d6a65c1c401854d8d0992dee153df7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Raymarch.MultiCameraRaymarch
+  sources:
+  - renderer: {fileID: 326679877}
+    orientation: 1
+    flipU: 0
+    flipV: 0
+    mirrorNativeBuffer: 1
+    colorFlipU: 0
+    colorFlipV: 0
+  - renderer: {fileID: 107554149}
+    orientation: 1
+    flipU: 0
+    flipV: 0
+    mirrorNativeBuffer: 1
+    colorFlipU: 0
+    colorFlipV: 0
+  - renderer: {fileID: 409472603}
+    orientation: 1
+    flipU: 0
+    flipV: 0
+    mirrorNativeBuffer: 1
+    colorFlipU: 0
+    colorFlipV: 0
+  - renderer: {fileID: 409472602}
+    orientation: 1
+    flipU: 0
+    flipV: 0
+    mirrorNativeBuffer: 1
+    colorFlipU: 0
+    colorFlipV: 0
+  packShader: {fileID: 7200000, guid: 31d2bf8f0f5a4bc419588dd9ff3b73f1, type: 3}
+  marchShader: {fileID: 7200000, guid: 3b633b0038522fc4daf6ae0b196a7a0b, type: 3}
+  near: 0.1
+  far: 10
+  steps: 256
+  depthEps: 0.001
+  colorAgreeEps: 0.1
+  minValidDepth: 0.05
+  discontinuityThreshold: 0.15
+  useColor: 1
+  composite: 1
+  respectSceneDepth: 1
+  sceneDepthBias: 0.02
+  flipOutputV: 0
+  marchBlend: 1
+  snapSourceIndex: 0
+  enableDebugLog: 1
+--- !u!114 &1747440752
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1747440746}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08d243f20b3964a48af6c29ab56177bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Raymarch.FlyCamera
+  moveSpeed: 3
+  boostMultiplier: 4
+  lookSensitivity: 2
+  requireRightMouseToLook: 1
 --- !u!1 &1748619556
 GameObject:
   m_ObjectHideFlags: 0
@@ -20485,139 +20411,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1137478773629964866, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
   m_PrefabInstance: {fileID: 409472599}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1961063977
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1961063978}
-  - component: {fileID: 1961063980}
-  - component: {fileID: 1961063979}
-  - component: {fileID: 1961063981}
-  m_Layer: 0
-  m_Name: Camera
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1961063978
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1961063977}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0.70710677, y: 0, z: 0, w: 0.70710677}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1965869693}
-  m_LocalEulerAnglesHint: {x: -90, y: -90, z: 90}
---- !u!114 &1961063979
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1961063977}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f8cca5f1abdbfaf40badb9351cec7dbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Raymarch.RaymarchCompositor
-  sourceRenderer: {fileID: 326679877}
-  orientation: 1
-  flipU: 0
-  flipV: 1
-  mirrorNativeBuffer: 1
-  packShader: {fileID: 7200000, guid: 31d2bf8f0f5a4bc419588dd9ff3b73f1, type: 3}
-  marchShader: {fileID: 7200000, guid: 3b633b0038522fc4daf6ae0b196a7a0b, type: 3}
-  near: 0.1
-  far: 10
-  steps: 256
-  depthEps: 0.05
-  minValidDepth: 0.05
-  discontinuityThreshold: 0.15
-  useColor: 1
-  colorFlipU: 0
-  colorFlipV: 0
-  composite: 1
-  flipOutputV: 0
-  marchBlend: 0.502
-  enableDebugLog: 1
---- !u!20 &1961063980
-Camera:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1961063977}
-  m_Enabled: 1
-  serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
-  m_projectionMatrixMode: 1
-  m_GateFitMode: 2
-  m_FOVAxisMode: 0
-  m_Iso: 200
-  m_ShutterSpeed: 0.005
-  m_Aperture: 16
-  m_FocusDistance: 10
-  m_FocalLength: 50
-  m_BladeCount: 5
-  m_Curvature: {x: 2, y: 11}
-  m_BarrelClipping: 0.25
-  m_Anamorphism: 0
-  m_SensorSize: {x: 36, y: 24}
-  m_LensShift: {x: 0, y: 0}
-  m_NormalizedViewPortRect:
-    serializedVersion: 2
-    x: 0
-    y: 0
-    width: 1
-    height: 1
-  near clip plane: 0.3
-  far clip plane: 1000
-  field of view: 60
-  orthographic: 0
-  orthographic size: 5
-  m_Depth: 10
-  m_CullingMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_RenderingPath: -1
-  m_TargetTexture: {fileID: 0}
-  m_TargetDisplay: 1
-  m_TargetEye: 0
-  m_HDR: 1
-  m_AllowMSAA: 1
-  m_AllowDynamicResolution: 0
-  m_ForceIntoRT: 0
-  m_OcclusionCulling: 1
-  m_StereoConvergence: 10
-  m_StereoSeparation: 0.022
---- !u!114 &1961063981
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1961063977}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 08d243f20b3964a48af6c29ab56177bf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Raymarch.FlyCamera
-  moveSpeed: 3
-  boostMultiplier: 4
-  lookSensitivity: 2
-  requireRightMouseToLook: 1
 --- !u!4 &1965869693 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3699985937472072426, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
@@ -22396,66 +22189,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 823720264}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &2143274324
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2143274326}
-  - component: {fileID: 2143274325}
-  m_Layer: 0
-  m_Name: CameraModelProbe
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &2143274325
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2143274324}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9e1c06f3d58a11e4d8fc983064f4071a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Raymarch.CameraModelLiveProbe
-  sourceRenderer: {fileID: 326679877}
-  gridPerAxis: 3
-  continuous: 0
-  sampleIntervalFrames: 30
-  minValidDepth: 0.01
-  orientation: 1
-  candidate: 1
-  gizmoRadius: 0.04
-  drawRayFromCamera: 1
-  frustumTest: 1
-  frustumTestDepth: 1.5
-  frustumInset: 0.08
-  flipU: 0
-  flipV: 0
-  alwaysOnAnchor: 1
-  anchorRadius: 0.25
---- !u!4 &2143274326
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2143274324}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.34622, y: 0, z: 4.71135}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8257722304105629
 MonoBehaviour:
@@ -27443,5 +27176,3 @@ SceneRoots:
   - {fileID: 1646626576}
   - {fileID: 420483825}
   - {fileID: 9217194773734636244}
-  - {fileID: 2143274326}
-  - {fileID: 1165784386}
