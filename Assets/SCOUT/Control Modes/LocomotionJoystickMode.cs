@@ -101,7 +101,13 @@ public class LocomotionJoystickMode : OneControllerMode
         if (OVRInput.GetDown(model.byButton))
             positionPresetCycler.CyclePresets();
 
-        if (doRotate)
+        // no joystick locomotion while locked to a spot; only the robot moves the viewpoint
+        bool lockedToSpot = positionPresetCycler != null && positionPresetCycler.IsLockedToSpot;
+
+        if (lockedToSpot)
+        {
+        }
+        else if (doRotate)
         {
             if (Mathf.Abs(joystick.x) > 0.1)
             {
@@ -224,15 +230,17 @@ public class LocomotionJoystickMode : OneControllerMode
         // Reset Y label
         model.axLabel = model.isLeft ? (hasInitialY ? "Reset Y (X)" : "") : (hasInitialY ? "Reset Y (A)" : "");
 
-        if (doRotate)
+        if (lockedToSpot)
+            model.joystickLabel = "Locked to Spot";
+        else if (doRotate)
             model.joystickLabel = "Rotate";
         else if (doHeightAdjust)
             model.joystickLabel = "Up/Down";
         else
             model.joystickLabel = "Fly";
 
-        model.gripLabel = doRotate ? "" : "Hold: Rotate";
-        model.indexLabel = doHeightAdjust ? "" : "Hold: Up/Down";
+        model.gripLabel = lockedToSpot ? "" : (doRotate ? "" : "Hold: Rotate");
+        model.indexLabel = lockedToSpot ? "" : (doHeightAdjust ? "" : "Hold: Up/Down");
         model.axLabel = "Cycle PointClouds";
         model.byLabel = "Cycle ViewPoints";
 

@@ -10,6 +10,18 @@ public class PositionPresetCycler : MonoBehaviour
     // Current control flow leaves preset cycling disabled, but keeping it reachable avoids dead code.
     public bool enablePresetCycling;
 
+    [Header("Spot Front-Camera Lock")]
+    [Tooltip("Match rig yaw to the spot heading")]
+    public bool matchSpotHeading = true;
+
+    // offset from the spot anchor to the front-camera viewpoint, in the spot's local frame
+    [Tooltip("Forward offset to the front camera (+Z is forward)")]
+    [Range(-3f, 3f)] public float cameraForwardOffset = 0.45f;
+    [Tooltip("Height offset to the front camera")]
+    [Range(-2f, 2f)] public float cameraHeightOffset = 0.0f;
+    [Tooltip("Sideways offset to the front camera (+X is right)")]
+    [Range(-2f, 2f)] public float cameraLateralOffset = 0.0f;
+
     public enum RigAnchorPoints
     {
         World,
@@ -17,6 +29,9 @@ public class PositionPresetCycler : MonoBehaviour
         SpotTwo
     }
     public RigAnchorPoints currentAnchorPoint = RigAnchorPoints.World;
+
+    // true while the rig is locked to a spot
+    public bool IsLockedToSpot => currentAnchorPoint != RigAnchorPoints.World;
 
     enum Preset
     {
@@ -36,38 +51,33 @@ public class PositionPresetCycler : MonoBehaviour
     };
     private int curPresetIndex = -1;
 
-    // Track relative offset and rotation from anchor point
-    private Vector3 relativeOffset = Vector3.zero;
-    private Quaternion relativeRotation = Quaternion.identity;
-    private Vector3 lastAnchorPosition = Vector3.zero;
-    private Quaternion lastAnchorRotation = Quaternion.identity;
+    private Vector3 CameraOffset => new(cameraLateralOffset, cameraHeightOffset, cameraForwardOffset);
 
-    private void Update()
+    // re-pin the rig to the spot after the control modes run, so the joystick can't move it
+    private void LateUpdate()
     {
-        if (currentAnchorPoint == RigAnchorPoints.World)
+        if (!IsLockedToSpot)
             return;
 
         Transform anchorTransform = GetCurrentAnchorTransform();
         if (anchorTransform == null)
             return;
 
-        // Check if anchor has moved or rotated
-        if (Vector3.Distance(anchorTransform.position, lastAnchorPosition) > 0.1f ||
-            Quaternion.Angle(anchorTransform.rotation, lastAnchorRotation) > Mathf.Epsilon)
+        ApplyLockedPose(anchorTransform);
+    }
+
+    private void ApplyLockedPose(Transform anchorTransform)
+    {
+        Vector3 cameraPosition = anchorTransform.position + anchorTransform.TransformDirection(CameraOffset);
+
+        rigPositioner.x = cameraPosition.x;
+        rigPositioner.y = cameraPosition.y;
+        rigPositioner.z = cameraPosition.z;
+
+        if (matchSpotHeading)
         {
-            // Calculate world position by applying relative offset to anchor
-            Vector3 worldOffset = anchorTransform.TransformDirection(relativeOffset);
-            Vector3 newCameraPosition = anchorTransform.position + worldOffset;
-
-            // Calculate world rotation by combining anchor rotation with relative rotation
-            Quaternion newCameraRotation = anchorTransform.rotation * relativeRotation;
-
-            rigPositioner.x = newCameraPosition.x;
-            rigPositioner.z = newCameraPosition.z;
-            rigPositioner.rotation = newCameraRotation;
-
-            lastAnchorPosition = anchorTransform.position;
-            lastAnchorRotation = anchorTransform.rotation;
+            // face where the robot faces; head tracking still lets you look around freely
+            rigPositioner.rotation = Quaternion.Euler(0, anchorTransform.eulerAngles.y, 0);
         }
     }
 
@@ -91,66 +101,39 @@ public class PositionPresetCycler : MonoBehaviour
 
         curPresetIndex = (curPresetIndex + 1) % presetOrder.Length;
 
-        Vector3 cameraPosition = Vector3.zero;
-        Quaternion cameraRotation = Quaternion.identity;
-        Transform anchorTransform = null;
-
         switch (presetOrder[curPresetIndex])
         {
             case Preset.BehindSpotOne:
-                anchorTransform = spotOne.transform;
-                cameraPosition = anchorTransform.position + anchorTransform.TransformDirection(new Vector3(0, 0, -2.65f));
                 currentAnchorPoint = RigAnchorPoints.SpotOne;
+                ApplyLockedPose(spotOne.transform);
                 if (messageManager) messageManager.ShowMessage("Camera Anchor: Lock To Spot One");
                 break;
 
             case Preset.BehindSpotTwo:
-                anchorTransform = spotTwo.transform;
-                cameraPosition = anchorTransform.position + anchorTransform.TransformDirection(new Vector3(0, 0, -2.65f));
                 currentAnchorPoint = RigAnchorPoints.SpotTwo;
+                ApplyLockedPose(spotTwo.transform);
                 if (messageManager) messageManager.ShowMessage("Camera Anchor: Lock To Spot Two");
                 break;
 
             case Preset.BetweenSpots:
-                cameraPosition = (spotOne.transform.position + spotTwo.transform.position) / 2 - new Vector3(0, 0, .5f);
                 currentAnchorPoint = RigAnchorPoints.World;
+                Vector3 cameraPosition = (spotOne.transform.position + spotTwo.transform.position) / 2 - new Vector3(0, 0, .5f);
+                rigPositioner.x = cameraPosition.x;
+                rigPositioner.z = cameraPosition.z;
                 if (messageManager) messageManager.ShowMessage("Camera Anchor: World");
                 break;
 
             case Preset.ArmSpotOne:
-                anchorTransform = spotOne.transform;
-                cameraPosition = spotOneArm.transform.position + anchorTransform.TransformDirection(new Vector3(0, 0, -1.45f));
                 currentAnchorPoint = RigAnchorPoints.SpotOne;
+                ApplyLockedPose(spotOneArm.transform);
                 if (messageManager) messageManager.ShowMessage("Camera Anchor: Lock To Spot One");
                 break;
 
             case Preset.ArmSpotTwo:
-                anchorTransform = spotTwo.transform;
-                cameraPosition = spotTwoArm.transform.position + anchorTransform.TransformDirection(new Vector3(0, 0, -1.45f));
                 currentAnchorPoint = RigAnchorPoints.SpotTwo;
+                ApplyLockedPose(spotTwoArm.transform);
                 if (messageManager) messageManager.ShowMessage("Camera Anchor: Lock To Spot Two");
                 break;
-        }
-
-
-        rigPositioner.x = cameraPosition.x;
-        rigPositioner.z = cameraPosition.z;
-        if (currentAnchorPoint != RigAnchorPoints.World)
-        {
-            // update the rotation of the camera, only keeping yaw rotation.
-            // unity uses body ZXY order for euler angles, so to extract yaw only, we only need to zero out X and Z
-            // if in the future we want to keep pitch and roll, we will need to do a more complex calculation.
-            cameraRotation = Quaternion.Euler(0, anchorTransform.eulerAngles.y, 0);
-            rigPositioner.rotation = cameraRotation;
-        }
-
-        // Update relative offset, rotation, and last anchor state
-        if (anchorTransform != null)
-        {
-            relativeOffset = anchorTransform.InverseTransformDirection(cameraPosition - anchorTransform.position);
-            relativeRotation = Quaternion.Inverse(anchorTransform.rotation) * rigPositioner.rotation;
-            lastAnchorPosition = anchorTransform.position;
-            lastAnchorRotation = anchorTransform.rotation;
         }
     }
 
