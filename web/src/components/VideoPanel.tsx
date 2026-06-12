@@ -12,8 +12,8 @@ interface Props {
 }
 
 /** The WebRTC scene stream (WHEP from MediaMTX), full screen with
- * auto-reconnect. While there's no stream the panel is just the plain
- * background. */
+ * auto-reconnect. While there's no stream the panel shows the animated
+ * static background — no text. */
 export default function VideoPanel({ whepUrl, focused }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [status, setStatus] = useState<StreamStatus>("connecting");
@@ -61,6 +61,7 @@ export default function VideoPanel({ whepUrl, focused }: Props) {
 
   return (
     <section className="video-panel" aria-label="scene video">
+      {status !== "live" && <div className="video-noise" />}
       <video
         ref={videoRef}
         className="video-stream"

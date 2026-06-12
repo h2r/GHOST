@@ -49,6 +49,33 @@ body {
   object-fit: cover;
 }
 
+.video-noise {
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 2px, rgba(255, 255, 255, 0.012) 2px 4px),
+    repeating-linear-gradient(90deg, transparent 0 3px, rgba(255, 255, 255, 0.008) 3px 6px);
+}
+
+.video-noise::after {
+  content: "";
+  position: absolute;
+  inset: -100% 0;
+  background: linear-gradient(
+    180deg,
+    transparent 47%,
+    rgba(120, 160, 190, 0.05) 50%,
+    transparent 53%
+  );
+  animation: sweep 7s linear infinite;
+}
+
+@keyframes sweep {
+  to {
+    transform: translateY(50%);
+  }
+}
+
 .video-blur-overlay {
   position: absolute;
   inset: 0;
