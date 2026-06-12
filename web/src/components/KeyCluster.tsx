@@ -10,7 +10,7 @@ function keyImage(name: string): string {
 }
 
 /** T-shaped keycap cluster (one top key over three bottom keys) with the
- * robot's name underneath. Caps depress while their key is held. */
+ * robot's name underneath. Held keys swap to the pack's pressed frame. */
 export default function KeyCluster({ binding, heldKeys }: Props) {
   const [top, left, middle, right] = binding.caps;
   return (
@@ -37,10 +37,10 @@ function Cap({
 }) {
   return (
     <img
-      src={keyImage(cap.img)}
+      src={keyImage(held ? cap.img.replace(/\.png$/, ".pressed.png") : cap.img)}
       alt={cap.code}
       draggable={false}
-      className={held ? "keycap keycap-held" : "keycap"}
+      className="keycap"
       style={style}
     />
   );

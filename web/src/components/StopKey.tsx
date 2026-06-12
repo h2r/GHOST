@@ -1,4 +1,5 @@
 import delCap from "../assets/keys/DEL.png";
+import delCapPressed from "../assets/keys/DEL.pressed.png";
 
 interface Props {
   flash: boolean;
@@ -11,11 +12,16 @@ export default function StopKey({ flash, onActivate }: Props) {
   return (
     <button
       type="button"
-      className={flash ? "stop-key stop-key-flash" : "stop-key"}
+      className="stop-key"
       onClick={onActivate}
       aria-label="e-stop both robots"
     >
-      <img src={delCap} alt="" draggable={false} className="keycap stop-cap" />
+      <img
+        src={flash ? delCapPressed : delCap}
+        alt=""
+        draggable={false}
+        className="keycap stop-cap"
+      />
       <span className="key-label">Stop</span>
     </button>
   );

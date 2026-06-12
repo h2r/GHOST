@@ -72,7 +72,7 @@ export default function VideoPanel({ whepUrl, focused }: Props) {
       />
       {!focused && (
         <div className="video-blur-overlay">
-          <span>INPUT SUSPENDED — CLICK TO RESUME</span>
+          <span>CLICK TO RESUME</span>
         </div>
       )}
     </section>

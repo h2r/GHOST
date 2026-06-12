@@ -97,11 +97,6 @@ body {
   height: 64px;
   image-rendering: pixelated;
   user-select: none;
-  transition: transform 50ms linear;
-}
-
-.keycap-held {
-  transform: translateY(4px);
 }
 
 .key-label {
@@ -162,11 +157,6 @@ body {
 .stop-cap {
   width: 156px; /* 39x16 source pixels at 4x */
   height: 64px;
-}
-
-.stop-key:active .keycap,
-.stop-key-flash .keycap {
-  transform: translateY(4px);
 }
 
 .stop-key:focus-visible {
