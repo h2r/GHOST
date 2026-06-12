@@ -4,9 +4,10 @@ Browser client for multi-operator teleoperation. Publishes keyboard drive
 commands as `ghost_msgs/OperatorInput` to `/operators/input` over rosbridge
 and renders `/ui_state` — each channel's operators, their aggregation
 weights, and the fused command actually sent to the robots (see
-`ghost_aggregator` in the ROS 2 workspace). The center panel is reserved for
-the WebRTC scene stream. Talks the rosbridge v2 JSON protocol directly over
-a WebSocket; no ROS client library involved.
+`ghost_aggregator` in the ROS 2 workspace). The center panel plays the
+shared scene stream over WebRTC (WHEP from MediaMTX — see `stream/` at the
+repo root), auto-reconnecting until the stream is up. Talks the rosbridge v2
+JSON protocol directly over a WebSocket; no ROS client library involved.
 
 ## Controls
 

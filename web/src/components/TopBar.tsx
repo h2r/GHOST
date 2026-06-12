@@ -12,16 +12,20 @@ const STATUS_LABEL: Record<ConnectionStatus, string> = {
 interface Props {
   status: ConnectionStatus;
   url: string;
+  whepUrl: string;
   operatorId: string;
   onUrlChange: (url: string) => void;
+  onWhepUrlChange: (url: string) => void;
   onOperatorIdChange: (id: string) => void;
 }
 
 export default function TopBar({
   status,
   url,
+  whepUrl,
   operatorId,
   onUrlChange,
+  onWhepUrlChange,
   onOperatorIdChange,
 }: Props) {
   return (
@@ -37,6 +41,12 @@ export default function TopBar({
           value={url}
           onCommit={onUrlChange}
           width={26}
+        />
+        <EditableField
+          label="video"
+          value={whepUrl}
+          onCommit={onWhepUrlChange}
+          width={30}
         />
         <EditableField
           label="operator"

@@ -1,6 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import { BINDINGS, defaultOperatorId, defaultRosbridgeUrl } from "./config";
+import {
+  BINDINGS,
+  defaultOperatorId,
+  defaultRosbridgeUrl,
+  defaultWhepUrl,
+} from "./config";
 import { DriveInputEngine } from "./control/keyboard";
 import { RosConsole, type ConnectionStatus } from "./ros/connection";
 import type { UiState } from "./ros/messages";
@@ -16,6 +21,7 @@ export default function App() {
   const [focused, setFocused] = useState(document.hasFocus());
   const [operatorId, setOperatorId] = useState(defaultOperatorId);
   const [url, setUrl] = useState(defaultRosbridgeUrl);
+  const [whepUrl, setWhepUrl] = useState(defaultWhepUrl);
 
   const operatorIdRef = useRef(operatorId);
   operatorIdRef.current = operatorId;
@@ -64,18 +70,27 @@ export default function App() {
     localStorage.setItem("ghost.rosbridgeUrl", trimmed);
   };
 
+  const applyWhepUrl = (next: string) => {
+    const trimmed = next.trim();
+    if (!trimmed) return;
+    setWhepUrl(trimmed);
+    localStorage.setItem("ghost.whepUrl", trimmed);
+  };
+
   return (
     <div className="console">
       <TopBar
         status={status}
         url={url}
+        whepUrl={whepUrl}
         operatorId={operatorId}
         onUrlChange={applyUrl}
+        onWhepUrlChange={applyWhepUrl}
         onOperatorIdChange={applyOperatorId}
       />
 
       <main className="console-main">
-        <VideoPanel focused={focused} />
+        <VideoPanel whepUrl={whepUrl} focused={focused} />
 
         <aside className="channel-stack">
           {BINDINGS.map((binding, index) => (

@@ -63,6 +63,12 @@ export function defaultRosbridgeUrl(): string {
   return `ws://${window.location.hostname}:9090`;
 }
 
+export function defaultWhepUrl(): string {
+  const stored = localStorage.getItem("ghost.whepUrl");
+  if (stored) return stored;
+  return `https://${window.location.hostname}:8889/scene/whep`;
+}
+
 const CALLSIGNS = [
   "basalt", "cobalt", "juniper", "mesa", "onyx", "quartz",
   "saffron", "talon", "umber", "vector", "wren", "zenith",
