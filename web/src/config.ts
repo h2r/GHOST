@@ -13,9 +13,22 @@ export const INPUT_TYPE = "ghost_msgs/msg/OperatorInput";
 export const UI_STATE_TOPIC = "/ui_state";
 export const UI_STATE_TYPE = "ghost_msgs/msg/UiState";
 
-/** Pressing this key (or clicking the on-screen STOP cap) force-stops both
- * robots: zero-twists through the aggregator plus each driver's stop service. */
+/** Pressing this key (or clicking the on-screen DEL cap) e-stops both
+ * robots: zero-twists through the aggregator plus each driver's gentle
+ * e-stop service (latched until estop/release). */
 export const STOP_KEY = "Delete";
+
+/** Read a setting from the URL query (?ros= ?video= ?op=), persisting any
+ * override to localStorage — the only configuration path now that the
+ * settings UI is gone. */
+function setting(param: string, storageKey: string, fallback: string): string {
+  const fromQuery = new URLSearchParams(window.location.search).get(param);
+  if (fromQuery) {
+    localStorage.setItem(storageKey, fromQuery);
+    return fromQuery;
+  }
+  return localStorage.getItem(storageKey) ?? fallback;
+}
 
 export interface ChannelBinding {
   channel: string;
@@ -24,7 +37,7 @@ export interface ChannelBinding {
   /** key code -> twist contribution at full scale */
   keys: Record<string, { x?: number; yaw?: number }>;
   /** T-shaped cluster, in [top, bottom-left, bottom-middle, bottom-right]
-   * order; img is a SimpleKeys cap in src/assets/keys */
+   * order; img is a SimpleKeys (Classic/Light) cap in src/assets/keys */
   caps: { code: string; img: string }[];
 }
 
@@ -66,15 +79,15 @@ export const BINDINGS: ChannelBinding[] = [
 ];
 
 export function defaultRosbridgeUrl(): string {
-  const stored = localStorage.getItem("ghost.rosbridgeUrl");
-  if (stored) return stored;
-  return `ws://${window.location.hostname}:9090`;
+  return setting("ros", "ghost.rosbridgeUrl", `ws://${window.location.hostname}:9090`);
 }
 
 export function defaultWhepUrl(): string {
-  const stored = localStorage.getItem("ghost.whepUrl");
-  if (stored) return stored;
-  return `https://${window.location.hostname}:8889/scene/whep`;
+  return setting(
+    "video",
+    "ghost.whepUrl",
+    `https://${window.location.hostname}:8889/scene/whep`,
+  );
 }
 
 const CALLSIGNS = [
@@ -83,10 +96,9 @@ const CALLSIGNS = [
 ];
 
 export function defaultOperatorId(): string {
-  const stored = localStorage.getItem("ghost.operatorId");
-  if (stored) return stored;
   const word = CALLSIGNS[Math.floor(Math.random() * CALLSIGNS.length)];
-  const id = `${word}-${Math.floor(Math.random() * 90 + 10)}`;
+  const generated = `${word}-${Math.floor(Math.random() * 90 + 10)}`;
+  const id = setting("op", "ghost.operatorId", generated);
   localStorage.setItem("ghost.operatorId", id);
   return id;
 }

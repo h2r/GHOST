@@ -8,22 +8,23 @@ import {
   defaultWhepUrl,
 } from "./config";
 import { DriveInputEngine } from "./control/keyboard";
-import { RosConsole, type ConnectionStatus } from "./ros/connection";
+import { RosConsole } from "./ros/connection";
 import { stampNow, zeroTwist } from "./ros/messages";
 
 import KeyCluster from "./components/KeyCluster";
 import StopKey from "./components/StopKey";
-import TopBar from "./components/TopBar";
 import VideoPanel from "./components/VideoPanel";
 
 export default function App() {
-  const [status, setStatus] = useState<ConnectionStatus>("closed");
   const [heldKeys, setHeldKeys] = useState<Set<string>>(new Set());
   const [focused, setFocused] = useState(document.hasFocus());
   const [stopFlash, setStopFlash] = useState(false);
-  const [operatorId, setOperatorId] = useState(defaultOperatorId);
-  const [url, setUrl] = useState(defaultRosbridgeUrl);
-  const [whepUrl, setWhepUrl] = useState(defaultWhepUrl);
+
+  // No settings UI for now — these come from localStorage / ?ros= ?video=
+  // ?op= query parameters (see config.ts).
+  const operatorId = useMemo(defaultOperatorId, []);
+  const rosbridgeUrl = useMemo(defaultRosbridgeUrl, []);
+  const whepUrl = useMemo(defaultWhepUrl, []);
 
   const operatorIdRef = useRef(operatorId);
   operatorIdRef.current = operatorId;
@@ -35,10 +36,9 @@ export default function App() {
   );
 
   useEffect(() => {
-    ros.onStatus = setStatus;
-    ros.connect(url);
+    ros.connect(rosbridgeUrl);
     return () => ros.disconnect();
-  }, [ros, url]);
+  }, [ros, rosbridgeUrl]);
 
   useEffect(() => {
     engine.onKeysChanged = setHeldKeys;
@@ -57,7 +57,7 @@ export default function App() {
     };
   }, []);
 
-  const forceStop = useCallback(() => {
+  const eStop = useCallback(() => {
     engine.releaseAll();
     for (const binding of BINDINGS) {
       ros.publishInput({
@@ -66,8 +66,9 @@ export default function App() {
         channel: binding.channel,
         twist: zeroTwist(),
       });
+      // Latched robot-side; resume requires /<robot>/estop/release.
       const robot = binding.channel.split("/")[0];
-      ros.callService(`/${robot}/stop`, "std_srvs/srv/Trigger");
+      ros.callService(`/${robot}/estop/gentle`, "std_srvs/srv/Trigger");
     }
     setStopFlash(true);
     window.setTimeout(() => setStopFlash(false), 350);
@@ -77,54 +78,23 @@ export default function App() {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.code !== STOP_KEY) return;
       event.preventDefault();
-      forceStop();
+      eStop();
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [forceStop]);
-
-  const applyOperatorId = (id: string) => {
-    const trimmed = id.trim();
-    if (!trimmed) return;
-    setOperatorId(trimmed);
-    localStorage.setItem("ghost.operatorId", trimmed);
-  };
-
-  const applyUrl = (next: string) => {
-    const trimmed = next.trim();
-    if (!trimmed) return;
-    setUrl(trimmed);
-    localStorage.setItem("ghost.rosbridgeUrl", trimmed);
-  };
-
-  const applyWhepUrl = (next: string) => {
-    const trimmed = next.trim();
-    if (!trimmed) return;
-    setWhepUrl(trimmed);
-    localStorage.setItem("ghost.whepUrl", trimmed);
-  };
+  }, [eStop]);
 
   return (
     <div className="console-fs">
       <VideoPanel whepUrl={whepUrl} focused={focused} />
 
-      <TopBar
-        status={status}
-        url={url}
-        whepUrl={whepUrl}
-        operatorId={operatorId}
-        onUrlChange={applyUrl}
-        onWhepUrlChange={applyWhepUrl}
-        onOperatorIdChange={applyOperatorId}
-      />
-
-      <StopKey flash={stopFlash} onActivate={forceStop} />
+      <StopKey flash={stopFlash} onActivate={eStop} />
 
       <div className="cluster-left">
-        <KeyCluster binding={BINDINGS[0]} heldKeys={heldKeys} accent="a" />
+        <KeyCluster binding={BINDINGS[0]} heldKeys={heldKeys} />
       </div>
       <div className="cluster-right">
-        <KeyCluster binding={BINDINGS[1]} heldKeys={heldKeys} accent="b" />
+        <KeyCluster binding={BINDINGS[1]} heldKeys={heldKeys} />
       </div>
     </div>
   );

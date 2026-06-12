@@ -11,7 +11,9 @@ interface Props {
   focused: boolean;
 }
 
-/** The WebRTC scene stream (WHEP from MediaMTX), with auto-reconnect. */
+/** The WebRTC scene stream (WHEP from MediaMTX), full screen with
+ * auto-reconnect. While there's no stream the panel is just the plain
+ * background. */
 export default function VideoPanel({ whepUrl, focused }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [status, setStatus] = useState<StreamStatus>("connecting");
@@ -57,36 +59,16 @@ export default function VideoPanel({ whepUrl, focused }: Props) {
     };
   }, [whepUrl]);
 
-  const live = status === "live";
-
   return (
     <section className="video-panel" aria-label="scene video">
       <video
         ref={videoRef}
         className="video-stream"
-        style={{ opacity: live ? 1 : 0 }}
+        style={{ opacity: status === "live" ? 1 : 0 }}
         autoPlay
         muted
         playsInline
       />
-      {!live && (
-        <>
-          <div className="video-noise" />
-          <div className="video-center">
-            <div className="video-nosignal">NO SIGNAL</div>
-            <div className="video-pending">
-              {status === "connecting" ? "connecting to scene stream" : "stream unreachable — retrying"}
-            </div>
-            {status === "error" && (
-              <div className="video-hint">
-                if this persists, open {whepUrl.replace(/\/whep$/, "")} once to
-                trust the stream certificate
-              </div>
-            )}
-          </div>
-        </>
-      )}
-      {live && <span className="video-live">LIVE</span>}
       {!focused && (
         <div className="video-blur-overlay">
           <span>INPUT SUSPENDED — CLICK TO RESUME</span>

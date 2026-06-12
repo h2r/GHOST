@@ -3,8 +3,6 @@ import type { ChannelBinding } from "../config";
 interface Props {
   binding: ChannelBinding;
   heldKeys: Set<string>;
-  /** "a" (cyan) or "b" (amber) accent for the robot sublabel and key glow */
-  accent: "a" | "b";
 }
 
 function keyImage(name: string): string {
@@ -12,18 +10,18 @@ function keyImage(name: string): string {
 }
 
 /** T-shaped keycap cluster (one top key over three bottom keys) with the
- * robot's name underneath. Caps light up while their key is held. */
-export default function KeyCluster({ binding, heldKeys, accent }: Props) {
+ * robot's name underneath. Caps depress while their key is held. */
+export default function KeyCluster({ binding, heldKeys }: Props) {
   const [top, left, middle, right] = binding.caps;
   return (
-    <div className={`key-cluster accent-${accent}`}>
+    <div className="key-cluster">
       <div className="key-grid">
         <Cap cap={top} held={heldKeys.has(top.code)} style={{ gridArea: "1 / 2" }} />
         <Cap cap={left} held={heldKeys.has(left.code)} style={{ gridArea: "2 / 1" }} />
         <Cap cap={middle} held={heldKeys.has(middle.code)} style={{ gridArea: "2 / 2" }} />
         <Cap cap={right} held={heldKeys.has(right.code)} style={{ gridArea: "2 / 3" }} />
       </div>
-      <div className="key-cluster-label">{binding.label}</div>
+      <span className="key-label">{binding.label}</span>
     </div>
   );
 }

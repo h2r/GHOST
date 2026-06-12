@@ -1,23 +1,22 @@
-import blankCap from "../assets/keys/BLANK.png";
+import delCap from "../assets/keys/DEL.png";
 
 interface Props {
   flash: boolean;
   onActivate: () => void;
 }
 
-/** Force-stop cap (blank SimpleKeys key labeled STOP). Click — or press
- * Delete — to zero both channels and call each driver's stop service. */
+/** E-stop cap. Click — or press Delete — to zero both channels and assert
+ * each driver's gentle e-stop (latched robot-side until estop/release). */
 export default function StopKey({ flash, onActivate }: Props) {
   return (
     <button
       type="button"
       className={flash ? "stop-key stop-key-flash" : "stop-key"}
       onClick={onActivate}
-      aria-label="force stop both robots"
+      aria-label="e-stop both robots"
     >
-      <img src={blankCap} alt="" draggable={false} className="keycap stop-cap" />
-      <span className="stop-text">STOP</span>
-      <span className="stop-sublabel">del · force stop</span>
+      <img src={delCap} alt="" draggable={false} className="keycap stop-cap" />
+      <span className="key-label">Stop</span>
     </button>
   );
 }
