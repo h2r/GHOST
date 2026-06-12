@@ -124,8 +124,8 @@ public class DriveAndArm : OneControllerMode
 
             if (isJoystickPressed)
             {
-                // Stow arm on joystick press + grip press
-                if (gripPressed)
+                // Stow arm on joystick press + index press
+                if (indexPressed)
                 {
                     spot.StowArm(); 
                 }
