@@ -30,7 +30,7 @@ public class DriveAndArm : OneControllerMode
     {
         pointCloudCycler = viewOptionsConfigurer.GetComponent<PointCloudCycler>();
         positionPresetCycler = viewOptionsConfigurer.GetComponent<PositionPresetCycler>();
-        timeSinceIndexClicked = 0.0f;
+        timeIndexClicked = 0.0f;
     }
 
     private void ToggleArmCamera()
@@ -71,12 +71,20 @@ public class DriveAndArm : OneControllerMode
         string triggerLabel = "";
         string gripLabel = "";
 
+        bool isIndexPressed = false;
+        bool isIndexDoubleClicked = false;
+
+        if (OVRInput.GetDown(model.indexButton))
+            isIndexPressed = Time.time - timeIndexClicked >= 1.5f;
+            isIndexDoubleClicked = Time.time - timeIndexClicked <= 1.5f;
+            timeIndexClicked = Time.time;
+
         // Stow Command
         if (isIndexDoubleClicked)
             spot.StowArm();
 
 
-        if (isArmMode) // behave as Arm Mode
+        if (!isIndexDoubleClicked && isArmMode) // behave as Arm Mode
         {
             // === Arm Control Mode ===
             if (OVRInput.GetDown(model.byButton))
@@ -156,7 +164,7 @@ public class DriveAndArm : OneControllerMode
                     spot.Rotate(joystick.x * 0.5f);
                 
                 // Stow Command
-                if (isJoystickPressed)
+                if (OVRInput.Get(model.joystickButton))
                     spot.StowArm();
 
                 thumbstickLabel = "Move: Rotate Spot | Click: Stow Spot";
