@@ -24,6 +24,10 @@ public class DriveAndArm : OneControllerMode
     private Quaternion initialGripperRotation;
     private bool isRelativeModeActive = false;
 
+    [Header("Double Click Settings")]
+    private float lastIndexClickTime = 0f;
+    private float doubleClickThreshold = 0.3f;
+
     private void Awake()
     {
         pointCloudCycler = viewOptionsConfigurer.GetComponent<PointCloudCycler>();
@@ -57,6 +61,22 @@ public class DriveAndArm : OneControllerMode
         bool isJoystickPressed = OVRInput.GetDown(model.joystickButton);
         bool gripPressed = OVRInput.GetDown(model.gripButton);
         Vector2 joystick = OVRInput.Get(model.joystick);
+
+        // Check for double index click
+        if (indexPressed)
+        {
+            float timeSinceLastClick = Time.time - lastIndexClickTime;
+            if (timeSinceLastClick <= doubleClickThreshold)
+            {
+                // Double click detected - stow arm
+                spot.StowArm();
+                lastIndexClickTime = 0f; // Reset to prevent triple clicks
+            }
+            else
+            {
+                lastIndexClickTime = Time.time;
+            }
+        }
 
         // UI Labels
         string thumbstickLabel = "";
@@ -112,7 +132,7 @@ public class DriveAndArm : OneControllerMode
             bool isGripperOpen = spot.GetGripperOpen();
 
             thumbstickLabel = "Arm Mode";
-            triggerLabel = "Double-click: Stow Arm";
+            triggerLabel = "Double Index Click: Stow Arm";
             gripLabel = isGripperOpen ? "Close Gripper" : " Open Gripper";
             model.axLabel = "Cycle PointClouds";
             model.byLabel = "Cycle Views";
@@ -124,12 +144,6 @@ public class DriveAndArm : OneControllerMode
 
             if (isJoystickPressed)
             {
-                // Stow arm on joystick press + index press
-                if (indexPressed)
-                {
-                    spot.StowArm(); 
-                }
-
                 // === Body Up/Down Mode ===
                 isRelativeModeActive = false;
 
@@ -165,7 +179,7 @@ public class DriveAndArm : OneControllerMode
                     spot.AdjustHeight(-0.03f);
 
                 thumbstickLabel = "Drive Spot";
-                triggerLabel = "Hold: Control Arm | Double-click: Stow Arm";
+                triggerLabel = "Hold: Control Arm | Double Index Click: Stow Arm";
                 gripLabel = "Hold: Rotate";
                 model.axLabel = "Lower Body";
                 model.byLabel = "Raise Body";
@@ -190,7 +204,7 @@ public class DriveAndArm : OneControllerMode
     public override void AssignDefaultLabels(ControllerModel exampleModel)
     {
         exampleModel.joystickLabel = "Drive";
-        exampleModel.indexLabel = "Hold: Control Arm | Double-click: Stow Arm";
+        exampleModel.indexLabel = "Hold: Control Arm | Double Index Click: Stow Arm";
         exampleModel.gripLabel = "Hold to Rotate";
     }
 }
