@@ -57,15 +57,15 @@ public class DriveAndArm : OneControllerMode
         bool isIndexHeld = OVRInput.Get(model.indexButton);
         bool isArmMode = isIndexHeld;
 
-        bool indexPressed = OVRInput.GetDown(model.indexButton) && Time.time - timeIndexClicked >= 1.5f;
-        bool isIndexDoubleClicked = OVRInput.GetDown(model.indexButton) && Time.time - timeIndexClicked <= 1.5f;
-        if (OVRInput.GetDown(model.indexButton)) timeIndexClicked = Time.time;
+        bool indexPressed = OVRInput.GetDown(model.indexButton); // && Time.time - timeIndexClicked >= 1.5f;
+        // bool isIndexDoubleClicked = OVRInput.GetDown(model.indexButton) && Time.time - timeIndexClicked <= 1.5f;
+        // if (OVRInput.GetDown(model.indexButton)) timeIndexClicked = Time.time;
 
         bool isGripHeld = OVRInput.Get(model.gripButton);
         bool isJoystickPressed = OVRInput.GetDown(model.joystickButton);
         bool gripPressed = OVRInput.GetDown(model.gripButton);
         Vector2 joystick = OVRInput.Get(model.joystick);   
-
+        
         // UI Labels
         string thumbstickLabel = "";
         string triggerLabel = "";
