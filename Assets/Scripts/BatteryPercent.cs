@@ -8,8 +8,7 @@ namespace RosSharp.RosBridgeClient
     public class FloatSubscriber : UnitySubscriber<BatteryStateArray>
     {
         [Tooltip("Label for the robot or device this subscriber is monitoring.")]
-        public string spotIdentifier = "Red"; //should this always be red?
-
+        public string spotIdentifier = "Red"; 
         public TextMeshProUGUI batteryText;
 
         private double batteryLevel = -1; // Default to "No Data"
