@@ -1,24 +1,26 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import {
   BINDINGS,
+  STOP_KEY,
   defaultOperatorId,
   defaultRosbridgeUrl,
   defaultWhepUrl,
 } from "./config";
 import { DriveInputEngine } from "./control/keyboard";
 import { RosConsole, type ConnectionStatus } from "./ros/connection";
-import type { UiState } from "./ros/messages";
+import { stampNow, zeroTwist } from "./ros/messages";
 
-import ChannelCard from "./components/ChannelCard";
+import KeyCluster from "./components/KeyCluster";
+import StopKey from "./components/StopKey";
 import TopBar from "./components/TopBar";
 import VideoPanel from "./components/VideoPanel";
 
 export default function App() {
   const [status, setStatus] = useState<ConnectionStatus>("closed");
-  const [uiState, setUiState] = useState<UiState | null>(null);
   const [heldKeys, setHeldKeys] = useState<Set<string>>(new Set());
   const [focused, setFocused] = useState(document.hasFocus());
+  const [stopFlash, setStopFlash] = useState(false);
   const [operatorId, setOperatorId] = useState(defaultOperatorId);
   const [url, setUrl] = useState(defaultRosbridgeUrl);
   const [whepUrl, setWhepUrl] = useState(defaultWhepUrl);
@@ -34,7 +36,6 @@ export default function App() {
 
   useEffect(() => {
     ros.onStatus = setStatus;
-    ros.onUiState = setUiState;
     ros.connect(url);
     return () => ros.disconnect();
   }, [ros, url]);
@@ -55,6 +56,32 @@ export default function App() {
       window.removeEventListener("blur", onBlur);
     };
   }, []);
+
+  const forceStop = useCallback(() => {
+    engine.releaseAll();
+    for (const binding of BINDINGS) {
+      ros.publishInput({
+        header: stampNow(),
+        operator_id: operatorIdRef.current,
+        channel: binding.channel,
+        twist: zeroTwist(),
+      });
+      const robot = binding.channel.split("/")[0];
+      ros.callService(`/${robot}/stop`, "std_srvs/srv/Trigger");
+    }
+    setStopFlash(true);
+    window.setTimeout(() => setStopFlash(false), 350);
+  }, [ros, engine]);
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.code !== STOP_KEY) return;
+      event.preventDefault();
+      forceStop();
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [forceStop]);
 
   const applyOperatorId = (id: string) => {
     const trimmed = id.trim();
@@ -78,7 +105,9 @@ export default function App() {
   };
 
   return (
-    <div className="console">
+    <div className="console-fs">
+      <VideoPanel whepUrl={whepUrl} focused={focused} />
+
       <TopBar
         status={status}
         url={url}
@@ -89,31 +118,14 @@ export default function App() {
         onOperatorIdChange={applyOperatorId}
       />
 
-      <main className="console-main">
-        <VideoPanel whepUrl={whepUrl} focused={focused} />
+      <StopKey flash={stopFlash} onActivate={forceStop} />
 
-        <aside className="channel-stack">
-          {BINDINGS.map((binding, index) => (
-            <ChannelCard
-              key={binding.channel}
-              binding={binding}
-              index={index}
-              state={uiState?.channels.find((c) => c.channel === binding.channel)}
-              heldKeys={heldKeys}
-              selfId={operatorId}
-            />
-          ))}
-        </aside>
-      </main>
-
-      <footer className="console-footer">
-        <span>
-          <b>W A S D</b> — SPOT&ensp;·&ensp;<b>▲ ◀ ▼ ▶</b> — SPOT2
-        </span>
-        <span className="footer-note">
-          inputs zero on key release & window blur
-        </span>
-      </footer>
+      <div className="cluster-left">
+        <KeyCluster binding={BINDINGS[0]} heldKeys={heldKeys} accent="a" />
+      </div>
+      <div className="cluster-right">
+        <KeyCluster binding={BINDINGS[1]} heldKeys={heldKeys} accent="b" />
+      </div>
     </div>
   );
 }

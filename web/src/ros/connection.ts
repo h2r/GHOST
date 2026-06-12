@@ -84,6 +84,12 @@ export class RosConsole {
     this.send({ op: "publish", topic: INPUT_TOPIC, msg: input });
   }
 
+  /** Fire-and-forget ROS service call (e.g. the drivers' stop Triggers). */
+  callService(service: string, type: string) {
+    if (this.status !== "connected") return;
+    this.send({ op: "call_service", service, type, args: {} });
+  }
+
   private send(message: object) {
     if (this.socket?.readyState === WebSocket.OPEN) {
       this.socket.send(JSON.stringify(message));

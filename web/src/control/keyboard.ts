@@ -59,7 +59,8 @@ export class DriveInputEngine {
     }
   };
 
-  private releaseAll = () => {
+  /** Drop all held keys (window blur, force stop). */
+  releaseAll = () => {
     if (this.held.size === 0) return;
     this.held.clear();
     this.onKeysChanged(this.held);

@@ -60,7 +60,7 @@ export default function VideoPanel({ whepUrl, focused }: Props) {
   const live = status === "live";
 
   return (
-    <section className="video-panel corners" aria-label="scene video">
+    <section className="video-panel" aria-label="scene video">
       <video
         ref={videoRef}
         className="video-stream"

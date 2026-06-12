@@ -13,19 +13,27 @@ export const INPUT_TYPE = "ghost_msgs/msg/OperatorInput";
 export const UI_STATE_TOPIC = "/ui_state";
 export const UI_STATE_TYPE = "ghost_msgs/msg/UiState";
 
+/** Pressing this key (or clicking the on-screen STOP cap) force-stops both
+ * robots: zero-twists through the aggregator plus each driver's stop service. */
+export const STOP_KEY = "Delete";
+
 export interface ChannelBinding {
   channel: string;
+  /** robot display name shown under the key cluster */
   label: string;
   /** key code -> twist contribution at full scale */
   keys: Record<string, { x?: number; yaw?: number }>;
-  /** keycap hints rendered in the channel card, in display order */
-  caps: { code: string; glyph: string }[];
+  /** T-shaped cluster, in [top, bottom-left, bottom-middle, bottom-right]
+   * order; img is a SimpleKeys cap in src/assets/keys */
+  caps: { code: string; img: string }[];
 }
 
+// Robot display names assume the launch order in launch_multi_spot.sh
+// (tusker first -> /spot, gouger second -> /spot2); fix here if swapped.
 export const BINDINGS: ChannelBinding[] = [
   {
     channel: "spot/drive",
-    label: "SPOT",
+    label: "Tusker",
     keys: {
       KeyW: { x: +LINEAR_SPEED },
       KeyS: { x: -LINEAR_SPEED },
@@ -33,15 +41,15 @@ export const BINDINGS: ChannelBinding[] = [
       KeyD: { yaw: -ANGULAR_SPEED },
     },
     caps: [
-      { code: "KeyW", glyph: "W" },
-      { code: "KeyA", glyph: "A" },
-      { code: "KeyS", glyph: "S" },
-      { code: "KeyD", glyph: "D" },
+      { code: "KeyW", img: "W.png" },
+      { code: "KeyA", img: "A.png" },
+      { code: "KeyS", img: "S.png" },
+      { code: "KeyD", img: "D.png" },
     ],
   },
   {
     channel: "spot2/drive",
-    label: "SPOT2",
+    label: "Gouger",
     keys: {
       ArrowUp: { x: +LINEAR_SPEED },
       ArrowDown: { x: -LINEAR_SPEED },
@@ -49,10 +57,10 @@ export const BINDINGS: ChannelBinding[] = [
       ArrowRight: { yaw: -ANGULAR_SPEED },
     },
     caps: [
-      { code: "ArrowUp", glyph: "▲" },
-      { code: "ArrowLeft", glyph: "◀" },
-      { code: "ArrowDown", glyph: "▼" },
-      { code: "ArrowRight", glyph: "▶" },
+      { code: "ArrowUp", img: "UP.png" },
+      { code: "ArrowLeft", img: "LEFT.png" },
+      { code: "ArrowDown", img: "DOWN.png" },
+      { code: "ArrowRight", img: "RIGHT.png" },
     ],
   },
 ];
