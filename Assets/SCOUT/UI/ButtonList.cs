@@ -116,6 +116,7 @@ public class ButtonList : MonoBehaviour
 
     public bool PressButtonIndex(int index)
     {
-        return PressButton(buttons[index]); 
+        optionSetter(options[index]);
+        return true;
     }
 }

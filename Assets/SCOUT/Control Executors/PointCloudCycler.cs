@@ -7,6 +7,35 @@ public class PointCloudCycler : MonoBehaviour
     public MessageBadge messageManager;
 
     private int currentIndex = -1;
+    private bool[] storedShowStates;
+
+    // turn all point clouds off (e.g. while the video windows are up), remembering their state
+    public void HideAllPointClouds()
+    {
+        if (depthManagers == null)
+            return;
+
+        storedShowStates = new bool[depthManagers.Length];
+        for (int i = 0; i < depthManagers.Length; i++)
+        {
+            storedShowStates[i] = depthManagers[i].show_spot;
+            depthManagers[i].show_spot = false;
+        }
+
+        if (messageManager != null)
+            messageManager.ShowMessage("PointCloud: Off");
+    }
+
+    // restore whatever was showing before HideAllPointClouds
+    public void RestorePointClouds()
+    {
+        if (depthManagers == null || storedShowStates == null)
+            return;
+
+        for (int i = 0; i < depthManagers.Length && i < storedShowStates.Length; i++)
+            depthManagers[i].show_spot = storedShowStates[i];
+        storedShowStates = null;
+    }
 
     public void CyclePointClouds()
     {
