@@ -44,12 +44,12 @@ namespace RosSharp.RosBridgeClient
             {
                 if (batteryLevel < 0)
                 {
-                    Debug.Log($"[{spotIdentifier}] BatteryLevel is invalid (<0) → Displaying 'No Data'");
+                    //Debug.Log($"[{spotIdentifier}] BatteryLevel is invalid (<0) → Displaying 'No Data'");
                     batteryText.text = $"{spotIdentifier} Spot Battery: No Data";
                 }
                 else
                 {
-                    Debug.Log($"[{spotIdentifier}] BatteryLevel: {batteryLevel:F1}% → Displaying value");
+                    //Debug.Log($"[{spotIdentifier}] BatteryLevel: {batteryLevel:F1}% → Displaying value");
                     batteryText.text = $"{spotIdentifier} Spot Battery: {batteryLevel:F1}%";
                 }
             }
