@@ -21885,6 +21885,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RosSharp.RosBridgeClient.SetHeight
   serviceName: /spot/set_stand_height
+--- !u!114 &2123763469 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1137478773745686185, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2123763348}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff98778ae051cfd40a6e4effdf851ebd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2127769091
 GameObject:
   m_ObjectHideFlags: 0
@@ -24679,7 +24690,7 @@ MonoBehaviour:
   EnsureThreadSafety: 0
   spotIdentifier: Blue
   batteryText: {fileID: 8976075098727268183}
-  rosConnector: {fileID: 0}
+  rosConnector: {fileID: 2123763469}
 --- !u!114 &5012595544634239250
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -26992,7 +27003,7 @@ MonoBehaviour:
   EnsureThreadSafety: 0
   spotIdentifier: Red
   batteryText: {fileID: 8475420282403359433}
-  rosConnector: {fileID: 0}
+  rosConnector: {fileID: 2123763469}
 --- !u!1 &9138406639211093368
 GameObject:
   m_ObjectHideFlags: 0
