@@ -2,7 +2,6 @@ using UnityEngine;
 using TMPro;
 using RosSharp.RosBridgeClient;
 using RosSharp.RosBridgeClient.MessageTypes.Spot;
-using System.Collections;
 
 namespace RosSharp.RosBridgeClient
 {
@@ -49,14 +48,14 @@ namespace RosSharp.RosBridgeClient
             base.Start();
             Debug.Log($"[BatteryPercent] base.Start() completed. Subscription should be active for topic: {Topic}");
             
-            // Start coroutine to check subscription status
-            StartCoroutine(CheckSubscriptionStatus());
+            // Use Invoke instead of coroutine to avoid potential issues
+            Debug.Log("[BatteryPercent] Setting up delayed check...");
+            Invoke("DelayedCheck", 2f);
         }
         
-        private IEnumerator CheckSubscriptionStatus()
+        private void DelayedCheck()
         {
-            yield return new UnityEngine.WaitForSeconds(2f);
-            
+            Debug.Log("[BatteryPercent] DelayedCheck called - checking subscription status");
             if (!hasReceivedMessage)
             {
                 Debug.LogWarning($"[BatteryPercent] After 2 seconds, still no messages received.");
@@ -67,6 +66,10 @@ namespace RosSharp.RosBridgeClient
                 {
                     Debug.LogError("[BatteryPercent] RosConnector is null!");
                 }
+            }
+            else
+            {
+                Debug.Log("[BatteryPercent] SUCCESS: Messages are being received!");
             }
         }
 
