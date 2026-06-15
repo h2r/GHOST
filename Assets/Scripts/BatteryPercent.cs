@@ -37,15 +37,8 @@ namespace RosSharp.RosBridgeClient
             
             if (rosConnector != null)
             {
-                Debug.Log($"[BatteryPercent] RosConnector URL: {rosConnector.RosBridgeServerUrl}");
-                Debug.Log($"[BatteryPercent] RosConnector Protocol: {rosConnector.protocol}");
-                Debug.Log($"[BatteryPercent] RosConnector IsConnected: {rosConnector.IsConnected}");
-                
-                // Check if websocket is actually connected
-                if (!rosConnector.IsConnected)
-                {
-                    Debug.LogError("[BatteryPercent] RosConnector is NOT connected to ROS bridge!");
-                }
+                Debug.Log("[BatteryPercent] RosConnector is assigned");
+                // Removed property access that might not exist
             }
             else
             {
@@ -70,9 +63,9 @@ namespace RosSharp.RosBridgeClient
                 Debug.LogWarning($"[BatteryPercent] Verify in ROS2: ros2 topic echo {Topic}");
                 Debug.LogWarning($"[BatteryPercent] Also check: ros2 topic info {Topic} -v");
                 
-                if (rosConnector != null && !rosConnector.IsConnected)
+                if (rosConnector == null)
                 {
-                    Debug.LogError("[BatteryPercent] RosConnector lost connection!");
+                    Debug.LogError("[BatteryPercent] RosConnector is null!");
                 }
             }
         }
