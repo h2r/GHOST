@@ -42,6 +42,7 @@ public class SpotMode : NamedOption
             moveSpot.Move(Vector2.zero, 0, curHeight);
             setGripper.CloseGripper();
             stowArm.Stow();
+            ResetDummyGripper();
         }
     }
 
@@ -174,13 +175,19 @@ public class SpotMode : NamedOption
         {
             worldLocalGripperSync.useWorldGripper = false; // disable world gripper when stowing arm
             stowArm.Stow();
-            dummyGripper.transform.position = readyDummyGripper.transform.position;
-            dummyGripper.transform.rotation = readyDummyGripper.transform.rotation;
+            ResetDummyGripper();
         }
         else
         {
             Debug.LogWarning("ThreadedStowArm not found on rosConnector!");
         }
+    }
+
+    private void ResetDummyGripper()
+    {
+        if (dummyGripper == null || readyDummyGripper == null) return;
+
+        dummyGripper.transform.SetPositionAndRotation(readyDummyGripper.transform.position, readyDummyGripper.transform.rotation);
     }
 
     public override string GetName()
