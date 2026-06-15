@@ -73,6 +73,9 @@ public class DriveAndArm : OneControllerMode
                 // Reset dummy gripper to ready position
                 spot.dummyGripper.transform.position = spot.readyDummyGripper.transform.position;
                 spot.dummyGripper.transform.rotation = spot.readyDummyGripper.transform.rotation;
+                // Also reset the anchor position so AbsolutePos mode doesn't override it
+                model.anchor.transform.position = spot.readyDummyGripper.transform.position;
+                model.anchor.transform.rotation = spot.readyDummyGripper.transform.rotation;
                 lastIndexClickTime = 0f; // Reset to prevent triple clicks
             }
             else
