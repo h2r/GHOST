@@ -56,11 +56,11 @@ namespace RosSharp.RosBridgeClient
             base.Start();
             Debug.Log($"[BatteryPercent] base.Start() completed. Subscription should be active for topic: {Topic}");
             
-            // Try to manually subscribe if needed
+            // Start coroutine to check subscription status
             StartCoroutine(CheckSubscriptionStatus());
         }
         
-        private System.Collections.IEnumerator CheckSubscriptionStatus()
+        private IEnumerator CheckSubscriptionStatus()
         {
             yield return new UnityEngine.WaitForSeconds(2f);
             
