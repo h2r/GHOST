@@ -70,6 +70,9 @@ public class DriveAndArm : OneControllerMode
             {
                 // Double click detected - stow arm
                 spot.StowArm();
+                // Reset dummy gripper to ready position
+                spot.dummyGripper.transform.position = spot.readyDummyGripper.transform.position;
+                spot.dummyGripper.transform.rotation = spot.readyDummyGripper.transform.rotation;
                 lastIndexClickTime = 0f; // Reset to prevent triple clicks
             }
             else
