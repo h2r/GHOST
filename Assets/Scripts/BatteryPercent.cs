@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using RosSharp.RosBridgeClient;
 using RosSharp.RosBridgeClient.MessageTypes.Spot;
+using System.Collections;
 
 namespace RosSharp.RosBridgeClient
 {
@@ -28,14 +29,52 @@ namespace RosSharp.RosBridgeClient
             Debug.Log($"[BatteryPercent] Topic: '{Topic}'");
             Debug.Log($"[BatteryPercent] RosConnector assigned: {rosConnector != null}");
             
+            if (rosConnector == null)
+            {
+                rosConnector = GetComponent<RosConnector>();
+                Debug.Log($"[BatteryPercent] Getting RosConnector from GameObject: {rosConnector != null}");
+            }
+            
             if (rosConnector != null)
             {
                 Debug.Log($"[BatteryPercent] RosConnector URL: {rosConnector.RosBridgeServerUrl}");
                 Debug.Log($"[BatteryPercent] RosConnector Protocol: {rosConnector.protocol}");
+                Debug.Log($"[BatteryPercent] RosConnector IsConnected: {rosConnector.IsConnected}");
+                
+                // Check if websocket is actually connected
+                if (!rosConnector.IsConnected)
+                {
+                    Debug.LogError("[BatteryPercent] RosConnector is NOT connected to ROS bridge!");
+                }
+            }
+            else
+            {
+                Debug.LogError("[BatteryPercent] No RosConnector found! Subscription will fail.");
             }
             
+            Debug.Log("[BatteryPercent] Calling base.Start() to create subscription...");
             base.Start();
-            Debug.Log("[BatteryPercent] Subscriber started with topic " + Topic);
+            Debug.Log($"[BatteryPercent] base.Start() completed. Subscription should be active for topic: {Topic}");
+            
+            // Try to manually subscribe if needed
+            StartCoroutine(CheckSubscriptionStatus());
+        }
+        
+        private System.Collections.IEnumerator CheckSubscriptionStatus()
+        {
+            yield return new UnityEngine.WaitForSeconds(2f);
+            
+            if (!hasReceivedMessage)
+            {
+                Debug.LogWarning($"[BatteryPercent] After 2 seconds, still no messages received.");
+                Debug.LogWarning($"[BatteryPercent] Verify in ROS2: ros2 topic echo {Topic}");
+                Debug.LogWarning($"[BatteryPercent] Also check: ros2 topic info {Topic} -v");
+                
+                if (rosConnector != null && !rosConnector.IsConnected)
+                {
+                    Debug.LogError("[BatteryPercent] RosConnector lost connection!");
+                }
+            }
         }
 
 
