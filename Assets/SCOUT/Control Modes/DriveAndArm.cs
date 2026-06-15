@@ -62,28 +62,6 @@ public class DriveAndArm : OneControllerMode
         bool gripPressed = OVRInput.GetDown(model.gripButton);
         Vector2 joystick = OVRInput.Get(model.joystick);
 
-        // Check for double index click
-        if (indexPressed)
-        {
-            float timeSinceLastClick = Time.time - lastIndexClickTime;
-            if (timeSinceLastClick <= doubleClickThreshold)
-            {
-                // Double click detected - stow arm
-                spot.StowArm();
-                // Reset dummy gripper to ready position
-                spot.dummyGripper.transform.position = spot.readyDummyGripper.transform.position;
-                spot.dummyGripper.transform.rotation = spot.readyDummyGripper.transform.rotation;
-                // Also reset the anchor position so AbsolutePos mode doesn't override it
-                model.anchor.transform.position = spot.readyDummyGripper.transform.position;
-                model.anchor.transform.rotation = spot.readyDummyGripper.transform.rotation;
-                lastIndexClickTime = 0f; // Reset to prevent triple clicks
-            }
-            else
-            {
-                lastIndexClickTime = Time.time;
-            }
-        }
-
         // UI Labels
         string thumbstickLabel = "";
         string triggerLabel = "";
@@ -196,6 +174,27 @@ public class DriveAndArm : OneControllerMode
         model.indexLabel = triggerLabel;
         model.gripLabel = gripLabel;
 
+        // Check for double index click - do this AFTER arm mode updates
+        if (indexPressed)
+        {
+            float timeSinceLastClick = Time.time - lastIndexClickTime;
+            if (timeSinceLastClick <= doubleClickThreshold)
+            {
+                // Double click detected - stow arm
+                spot.StowArm();
+                // Reset dummy gripper to ready position (do this after arm mode updates)
+                spot.dummyGripper.transform.position = spot.readyDummyGripper.transform.position;
+                spot.dummyGripper.transform.rotation = spot.readyDummyGripper.transform.rotation;
+                // Also reset the anchor position so AbsolutePos mode doesn't override it
+                model.anchor.transform.position = spot.readyDummyGripper.transform.position;
+                model.anchor.transform.rotation = spot.readyDummyGripper.transform.rotation;
+                lastIndexClickTime = 0f; // Reset to prevent triple clicks
+            }
+            else
+            {
+                lastIndexClickTime = Time.time;
+            }
+        }
 
         spot.ChangeGripperColorBasedOnDistance();
     }
