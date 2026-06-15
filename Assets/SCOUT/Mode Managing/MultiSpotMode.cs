@@ -35,9 +35,6 @@ public class MultiSpotMode : SpotMode
             if (stowArmTwo != null)
                 stowArmTwo.Stow();
         }
-
-        ResetDummyGripper(dummyGripperOne, readyDummyGripperOne);
-        ResetDummyGripper(dummyGripperTwo, readyDummyGripperTwo);
     }
 
     public override void SetArmPoseEnabled(bool armPoseEnabled)
