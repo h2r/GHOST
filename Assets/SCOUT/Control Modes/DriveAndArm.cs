@@ -28,7 +28,6 @@ public class DriveAndArm : OneControllerMode
     {
         pointCloudCycler = viewOptionsConfigurer.GetComponent<PointCloudCycler>();
         positionPresetCycler = viewOptionsConfigurer.GetComponent<PositionPresetCycler>();
-        spot.StowArm();
     }
 
     private void ToggleArmCamera()
