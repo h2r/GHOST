@@ -71,9 +71,15 @@ namespace Ghost.SpectatorStream
             camera.backgroundColor = Color.black;
             camera.stereoTargetEye = StereoTargetEyeMask.None;
 
-            float[] pose = ParsePose(GetArg("-spectator-pose"), new float[] { 0f, 2.5f, -3.5f, 25f, 0f });
+            // The rig tracks the robots (above + behind, looking down/forward)
+            // so the view stays on them wherever localization places them.
+            // -spectator-pose seeds the fallback pose used before robots exist.
+            float[] pose = ParsePose(GetArg("-spectator-pose"), new float[] { 0f, 3f, -4.5f, 28f, 0f });
             cameraObject.transform.position = new Vector3(pose[0], pose[1], pose[2]);
             cameraObject.transform.rotation = Quaternion.Euler(pose[3], pose[4], 0f);
+            var rig = cameraObject.AddComponent<SpectatorCameraRig>();
+            rig.fallbackPosition = new Vector3(pose[0], pose[1], pose[2]);
+            rig.fallbackEuler = new Vector3(pose[3], pose[4], 0f);
 
             var streamer = root.AddComponent<SpectatorStreamer>();
             streamer.captureCamera = camera;
