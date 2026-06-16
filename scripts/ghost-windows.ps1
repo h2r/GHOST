@@ -9,10 +9,13 @@
 #
 # Set $env:GHOST_NO_PULL=1 to skip the local pull (offline / local edits).
 
-$GhostRoot = Split-Path -Parent $PSScriptRoot
-$RosUser   = 'vr-teleop'
-$RosHost   = '128.148.138.132'
+$GhostRoot  = Split-Path -Parent $PSScriptRoot
+$RosUser    = 'vr-teleop'
+$RosHost    = '128.148.138.132'
 $OperatorId = $env:USERNAME
+# Dedicated server-side checkout for this branch (keep the lab's shared
+# spot_ros2_multi_ws clean on main). Clone many-humans here once; see notes.
+$ServerRepo = '~/ghost-many-humans'
 
 if (-not $env:GHOST_NO_PULL) {
     Write-Host 'Updating local GHOST (for Unity)...' -ForegroundColor DarkGray
@@ -51,4 +54,4 @@ Write-Host 'Bringing up the server stack (one flat 6-pane tmux)...' -ForegroundC
 
 # Pull the server workspace and launch the flat session, attaching here.
 # Single ssh call (no Windows Terminal), so the '&&' chain is safe.
-ssh -t "$RosUser@$RosHost" "cd ~/spot_ros2_multi_ws && git fetch -q && git checkout -q many-humans && git pull --ff-only && bash scripts/ghost-up.sh"
+ssh -t "$RosUser@$RosHost" "cd $ServerRepo && git fetch -q && git checkout -q many-humans && git pull --ff-only && bash scripts/ghost-up.sh"
