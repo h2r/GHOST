@@ -15,7 +15,7 @@ $RosHost    = '128.148.138.132'
 $OperatorId = $env:USERNAME
 # Dedicated server-side checkout for this branch (keep the lab's shared
 # spot_ros2_multi_ws clean on main). Clone many-humans here once; see notes.
-$ServerRepo = '~/ghost-many-humans'
+$ServerRepo = '~/many-humans'
 
 if (-not $env:GHOST_NO_PULL) {
     Write-Host 'Updating local GHOST (for Unity)...' -ForegroundColor DarkGray
