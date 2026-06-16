@@ -40,8 +40,10 @@ On the Windows machine:
 ```powershell
 pwsh .\scripts\ghost-windows.ps1
 ```
-That opens the **Video**, **Web**, and **ROS** tabs (the ROS tab SSHes in and
-starts the labelled tmux stack). Then:
+That **auto-updates both repos** (Windows pulls GHOST; the ROS tab pulls the
+workspace on the server and rebuilds the ghost packages), then opens the
+**Video**, **Web**, and **ROS** tabs — so you never have to fetch/pull by
+hand. Then:
 
 1. **Unity:** open GHOST, press **Play** (spectator mode streams the scene).
 2. **Console:** open the URL the script prints —
@@ -74,6 +76,10 @@ is lost.
   `video=` URL is `http://…:8889/scene/whep`, not https.
 - **Skip drivers:** `START_DRIVERS=false bash /ros2_ws/launch_ghost.sh` brings
   up everything except the robot drivers.
+- **Auto-update toggles:** the launcher pulls both repos and rebuilds on every
+  run. Set `$env:GHOST_NO_PULL=1` (Windows) to skip the GHOST pull, or
+  `SKIP_BUILD=true` on the server to skip the colcon rebuild — useful offline
+  or when you have local edits you don't want a `--ff-only` pull to trip over.
 - **Tear down:** detach a tmux window with `Ctrl-b d`; kill the whole server
   stack with `tmux kill-session -t ghost`. Close the Windows tabs to stop
   MediaMTX / vite.

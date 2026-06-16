@@ -27,8 +27,19 @@ if (-not (Get-Command wt -ErrorAction SilentlyContinue)) {
     exit 1
 }
 
-# The server tab: ssh in, drop into the container, run the labelled tmux stack.
-$rosInner = "docker exec -it ros2_ws bash -lc 'bash $ServerScript'"
+# Auto-update this repo (web app + scripts) before launching. Set
+# $env:GHOST_NO_PULL=1 to skip (e.g. offline, or you have local edits).
+if (-not $env:GHOST_NO_PULL) {
+    Write-Host 'Updating GHOST repo...' -ForegroundColor DarkGray
+    git -C "$GhostRoot" fetch --quiet
+    git -C "$GhostRoot" checkout --quiet many-humans
+    git -C "$GhostRoot" pull --ff-only
+}
+
+# The server tab: ssh in, pull the workspace on the host, then run the
+# labelled tmux stack inside the container (which rebuilds + launches).
+$rosPull  = 'cd ~/spot_ros2_multi_ws && git fetch -q && git checkout -q many-humans && git pull --ff-only'
+$rosInner = "$rosPull; docker exec -it ros2_ws bash -lc 'bash $ServerScript'"
 
 # Open one Windows Terminal window with three named tabs.
 wt new-tab  --title 'Video' -d "$StreamDir" pwsh -NoExit -Command '.\bin\mediamtx.exe mediamtx.yml' `
