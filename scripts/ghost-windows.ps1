@@ -30,6 +30,6 @@ Write-Host "  http://$RosHost`:5173/?ros=ws://$RosHost`:9090&video=http://$RosHo
 Write-Host ''
 Write-Host 'Bringing up the server stack (one flat 6-pane tmux)...' -ForegroundColor DarkGray
 
-# Pull the server's GHOST clone and launch the flat session, attaching here.
+# Pull the server workspace and launch the flat session, attaching here.
 # Single ssh call (no Windows Terminal), so the '&&' chain is safe.
-ssh -t "$RosUser@$RosHost" "cd ~/GHOST && git fetch -q && git checkout -q many-humans && git pull --ff-only && bash scripts/ghost-up.sh"
+ssh -t "$RosUser@$RosHost" "cd ~/spot_ros2_multi_ws && git fetch -q && git checkout -q many-humans && git pull --ff-only && bash scripts/ghost-up.sh"

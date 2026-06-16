@@ -21,11 +21,10 @@ operators' browsers ───────────────►  right = Vi
 
 ## One-time setup
 
-**Server** (clone GHOST here too — it carries the web app, stream config, and
-launcher):
+**Server** (the web console, stream config, and launcher now live in the
+workspace repo — no GHOST clone needed here):
 ```bash
-git clone https://github.com/h2r/GHOST.git ~/GHOST && cd ~/GHOST
-git checkout many-humans
+cd ~/spot_ros2_multi_ws && git checkout many-humans && git pull
 bash scripts/build-web.sh          # builds web/dist via a throwaway node container
 cd stream && ./get_mediamtx.sh linux && cd ..
 sudo apt-get install -y tmux       # if the host lacks it
