@@ -78,8 +78,13 @@ namespace Ghost.SpectatorStream
             var streamer = root.AddComponent<SpectatorStreamer>();
             streamer.captureCamera = camera;
 
-            string rtsp = GetArg("-spectator-rtsp");
-            if (rtsp != null) streamer.rtspUrl = rtsp;
+            // RTSP push target: -spectator-rtsp arg, else GHOST_SPECTATOR_RTSP
+            // env var (usable from the editor), else the streamer default. Point
+            // this at the server in the server-centric setup, e.g.
+            // rtsp://128.148.138.132:8554/scene.
+            string rtsp = GetArg("-spectator-rtsp")
+                ?? Environment.GetEnvironmentVariable("GHOST_SPECTATOR_RTSP");
+            if (!string.IsNullOrEmpty(rtsp)) streamer.rtspUrl = rtsp;
 
             string ffmpeg = GetArg("-spectator-ffmpeg");
             if (ffmpeg != null) streamer.ffmpegPath = ffmpeg;

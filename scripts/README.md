@@ -1,85 +1,88 @@
 # GHOST launch protocol
 
-The system spans two machines. One command on the Windows box brings up the
-whole stack in labelled terminals; two manual steps remain (Unity Play, open
-the console).
+**Server-centric:** everything operators touch — the web console, the video
+relay, and ROS — runs on the always-reachable **server**, shown as one flat
+6-pane tmux. **Windows runs only Unity**, which produces the scene video and
+pushes it to the server. This is also why multi-device "just works": every
+operator hits one reachable host instead of the Windows workstation behind its
+firewall.
 
 ```
-Windows machine                         ROS server (128.148.138.132, in docker)
-─────────────────                       ───────────────────────────────────────
-ghost-windows.ps1 ── wt tabs ──┐
-  Video : MediaMTX              │  ssh   ┌─ tmux session "ghost" ──────────────┐
-  Web   : vite console          ├──────► │ Bridge     rosbridge + file_server  │
-  ROS   : ssh → launch_ghost.sh ┘        │ Drivers    spot tusker + gouger     │
-                                         │ Coord      spot_multi (localization)│
-Unity (manual): press Play               │ Aggregator operator_aggregator      │
-                                         │ Localize   re-runnable fiducial fix │
-                                         └─────────────────────────────────────┘
+Windows (producer)                    Server 128.148.138.132 — one tmux "ghost"
+─────────────────                     ┌────────────┬────────────┬───────────┐
+Unity -spectator                      │ Drivers    │ Aggregator │  Video    │  MediaMTX
+  SpotObserver depth (GPU)            ├────────────┼────────────┤───────────┤
+  render + NVENC ── RTSP ──────────►  │ Bridge     │ Coord      │  Web      │  console
+                  to :8554            └────────────┴────────────┴───────────┘
+                                       left 2×2 = ROS (in the ros2_ws container)
+operators' browsers ───────────────►  right = Video/Web (on the host)
+   page :5173 · video :8889 · ros :9090
 ```
 
 ## One-time setup
 
-**Server** (in the container, `docker compose exec ros2_ws bash`):
+**Server** (clone GHOST here too — it carries the web app, stream config, and
+launcher):
 ```bash
-cd /ros2_ws && git checkout many-humans
-colcon build --packages-select ghost_msgs ghost_aggregator
+git clone https://github.com/h2r/GHOST.git ~/GHOST && cd ~/GHOST
+git checkout many-humans
+bash scripts/build-web.sh          # builds web/dist via a throwaway node container
+cd stream && ./get_mediamtx.sh linux && cd ..
+sudo apt-get install -y tmux       # if the host lacks it
 ```
+In the `ros2_ws` container (once): `colcon build --packages-select ghost_msgs ghost_aggregator`.
+Make sure `stream/mediamtx.yml` has `webrtcEncryption: no` (plain-http LAN).
 
-**Windows:**
-- `git checkout many-humans`, then in Unity install the SpotObserver DLLs
-  (`Assets\Plugins\x86_64\`) and the depth model
-  (`Assets\onnx\promptda\...onnx`) — these are Git-LFS / vendor files.
-- `cd stream` → download MediaMTX (`get_mediamtx.sh windows`) and create
-  `mediamtx.yml` certs *or* run with `webrtcEncryption: no` for plain-http LAN.
-- `cd web && npm install`.
-- Set the `GHOST_SPECTATOR=1` env var (so Unity Play enters spectator mode).
+**Windows:** clone GHOST, checkout `many-humans`, install the SpotObserver
+DLLs (`Assets\Plugins\x86_64\`) and depth model (`Assets\onnx\promptda\`), and
+set `GHOST_SPECTATOR=1` + `GHOST_SPECTATOR_RTSP=rtsp://128.148.138.132:8554/scene`
+(so editor-Play streams to the server).
 
 ## Every session
 
-On the Windows machine:
+On Windows:
 ```powershell
 pwsh .\scripts\ghost-windows.ps1
 ```
-That **auto-updates both repos** (Windows pulls GHOST; the ROS tab pulls the
-workspace on the server and rebuilds the ghost packages), then opens the
-**Video**, **Web**, and **ROS** tabs — so you never have to fetch/pull by
-hand. Then:
-
-1. **Unity:** open GHOST, press **Play** (spectator mode streams the scene).
-2. **Console:** open the URL the script prints —
-   `http://localhost:5173/?ros=ws://<server>:9090&video=http://localhost:8889/scene/whep&op=<you>`
+It updates the repo, prints the Unity launch line and the operator URL, then
+SSHes in and brings up the flat 6-pane tmux (this window becomes that view).
+Then:
+1. **Unity:** Play in spectator mode (pushes video to the server).
+2. **Operators:** open
+   `http://128.148.138.132:5173/?ros=ws://128.148.138.132:9090&video=http://128.148.138.132:8889/scene/whep&op=<you>`
+   — from **any** device on the network.
 
 Drive: `WASD` → Tusker, arrows → Gouger, `Del` → e-stop both.
 
 ## Localization
 
-`spot_multi` (the **Coord** window) attempts GraphNav fiducial localization at
-startup. If a robot couldn't see a fiducial then and reports "not localized",
-point its cameras at a marker and, in the **Localize** window, run:
+`spot_multi` (the **Coord** pane) attempts GraphNav fiducial localization at
+startup. If a robot reports "not localized", point its cameras at a fiducial
+and, in the **Coord** pane (or any container shell), run:
+```bash
+bash /ros2_ws/ghost-localize.sh
 ```
-localize
-```
-(equivalently `bash /ros2_ws/ghost-localize.sh`). Re-run any time localization
-is lost.
 
 ## Good to know
 
 - **Single commander, with a caveat.** The aggregator is the intended sole
-  publisher to `/spot*/cmd_vel`. `spot_multi`'s sync-drive node is also wired
-  there but stays **dormant** unless something publishes `/multi_spot/cmd_vel`
-  — so joint control is available later, but don't drive both paths at once.
-  Sanity check: `ros2 topic info /spot/cmd_vel`.
-- **Lease:** the robot must be brought up (powered/standing) and its control
-  handed to ROS (not held by the BD tablet) before commands move it; keep the
-  tablet's e-stop in reserve.
-- **Video is plain http** on the LAN (`webrtcEncryption: no`), so the console
-  `video=` URL is `http://…:8889/scene/whep`, not https.
-- **Skip drivers:** `START_DRIVERS=false bash /ros2_ws/launch_ghost.sh` brings
-  up everything except the robot drivers.
-- **Auto-update toggles:** the launcher pulls both repos and rebuilds on every
-  run. Set `$env:GHOST_NO_PULL=1` (Windows) to skip the GHOST pull, or
-  `SKIP_BUILD=true` on the server to skip the colcon rebuild — useful offline
-  or when you have local edits you don't want a `--ff-only` pull to trip over.
-- **Tear down:** detach a tmux window with `Ctrl-b d`; kill the whole server
-  stack with `tmux kill-session -t ghost`. Close the Windows tabs to stop
-  MediaMTX / vite.
+  publisher to `/spot*/cmd_vel`. `spot_multi`'s sync-drive is also wired there
+  but stays dormant unless something publishes `/multi_spot/cmd_vel` — joint
+  control stays available; don't drive both at once. Check: `ros2 topic info /spot/cmd_vel`.
+- **Lease:** bring the robot up and hand its control to ROS (not the BD tablet)
+  before commands move it; keep the tablet's e-stop in reserve.
+- **Firewall:** the server must allow inbound 5173 (page), 8889/TCP + 8189/UDP
+  (WebRTC), 9090 (rosbridge). 8554 must accept Unity's RTSP push.
+- **Tear down:** `tmux kill-session -t ghost` stops everything (ROS panes,
+  MediaMTX, web server).
+- **The older `spot_ros2_multi_ws/launch_ghost.sh`** (ROS-only, runs inside the
+  container) is superseded by this but still works if you only want the ROS
+  half.
+
+## Untested — verify on first run
+
+This server-centric launcher hasn't been run end-to-end yet. Likely first-run
+snags: the host may lack `tmux`; `tmux split-window -p` may need `-l 34%` on
+newer tmux; the **Drivers** pane runs both robots with `&` (interleaved logs);
+MediaMTX WebRTC may need the server LAN IP in `webrtcAdditionalHosts` for
+cross-device video. Paste whatever the first run shows and we tune it.
