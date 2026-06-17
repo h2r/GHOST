@@ -7,6 +7,7 @@ public class DriveAndArm : OneControllerMode
     public GameObject viewOptionsConfigurer;
     private PointCloudCycler pointCloudCycler;
     private PositionPresetCycler positionPresetCycler;
+    private float indexDownTimeSeconds;
 
     public enum ArmControlMode
     {
@@ -51,7 +52,7 @@ public class DriveAndArm : OneControllerMode
     public override void ControlUpdate(SpotMode spot, ControllerModel model)
     {
         bool isIndexHeld = OVRInput.Get(model.indexButton);
-        bool isArmMode = isIndexHeld;
+        bool isArmMode;
         bool indexPressed = OVRInput.GetDown(model.indexButton);
         bool isGripHeld = OVRInput.Get(model.gripButton);
         bool isJoystickPressed = OVRInput.GetDown(model.joystickButton);
@@ -64,7 +65,24 @@ public class DriveAndArm : OneControllerMode
         string triggerLabel = "";
         string gripLabel = "";
 
-
+        if(indexPressed)
+        {
+            float deltaTime=Time.time-indexDownTimeSeconds;
+            if(deltaTime<.3f)
+            {
+                spot.StowArm();
+            }
+            indexDownTimeSeconds = Time.time;
+            isArmMode=false; // default to drive mode on index press, if they want arm mode they have to hold for >0.3 seconds
+        }
+        else if (isIndexHeld&&Time.time-indexDownTimeSeconds>0.3f)
+        {
+            isArmMode = true;
+        }
+        else
+        {
+            isArmMode = false;
+        }
         if (isArmMode) // behave as Arm Mode
         {
             // === Arm Control Mode ===
@@ -164,7 +182,7 @@ public class DriveAndArm : OneControllerMode
 
                 if (OVRInput.Get(model.axButton))
                     spot.AdjustHeight(-0.03f);
-
+                triggerLabel = "Double Press to Stow Arm";
                 thumbstickLabel = "Drive Spot";
                 triggerLabel = "Hold: Control Arm";
                 gripLabel = "Hold: Rotate";
