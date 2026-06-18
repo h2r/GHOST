@@ -106,6 +106,10 @@ public class LocomotionJoystickMode : OneControllerMode
 
         if (lockedToSpot)
         {
+            // In the no-robot video view the locomotion stick is free, so use it to move the video panels.
+            // Hold the index trigger to push the panels closer/further instead of panning them.
+            if (positionPresetCycler != null && positionPresetCycler.IsNoRobotVideoView)
+                positionPresetCycler.AdjustPanels(joystick, doHeightAdjust);
         }
         else if (doRotate)
         {
@@ -230,8 +234,10 @@ public class LocomotionJoystickMode : OneControllerMode
         // Reset Y label
         model.axLabel = model.isLeft ? (hasInitialY ? "Reset Y (X)" : "") : (hasInitialY ? "Reset Y (A)" : "");
 
+        bool movePanels = positionPresetCycler != null && positionPresetCycler.IsNoRobotVideoView;
+
         if (lockedToSpot)
-            model.joystickLabel = "Locked to Spot";
+            model.joystickLabel = movePanels ? "Move Panels" : "Locked to Spot";
         else if (doRotate)
             model.joystickLabel = "Rotate";
         else if (doHeightAdjust)
@@ -240,7 +246,7 @@ public class LocomotionJoystickMode : OneControllerMode
             model.joystickLabel = "Fly";
 
         model.gripLabel = lockedToSpot ? "" : (doRotate ? "" : "Hold: Rotate");
-        model.indexLabel = lockedToSpot ? "" : (doHeightAdjust ? "" : "Hold: Up/Down");
+        model.indexLabel = lockedToSpot ? (movePanels ? "Hold: Panel Depth" : "") : (doHeightAdjust ? "" : "Hold: Up/Down");
         model.axLabel = "Cycle PointClouds";
         model.byLabel = "Cycle ViewPoints";
 

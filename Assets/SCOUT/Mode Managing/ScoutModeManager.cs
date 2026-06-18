@@ -134,12 +134,29 @@ public class ScoutModeManager : MonoBehaviour
             foreach (SpotMode spot in spots)
             {
                 if (spot == null) continue;
-                bool spotArm = (activeSuperMode == SuperMode.SingleDrive && singleDrive.leftSpot == spot && singleDrive.leftControl != null && singleDrive.leftControl.RequiresArmCamera) ||
-                             (activeSuperMode == SuperMode.SingleDrive && singleDrive.rightSpot == spot && singleDrive.rightControl != null && singleDrive.rightControl.RequiresArmCamera) ||
-                             (activeSuperMode == SuperMode.DualDrive && dualDrive.spot == spot && dualDrive.control != null && dualDrive.control.RequiresArmCamera);
-                spot.SetArmPoseEnabled(spotArm);
+                spot.SetArmPoseEnabled(IsArmSpot(spot));
             }
         }
+    }
+
+    // True when the given spot's active control mode is currently driving its arm.
+    private bool IsArmSpot(SpotMode spot)
+    {
+        return (activeSuperMode == SuperMode.SingleDrive && singleDrive.leftSpot == spot && singleDrive.leftControl != null && singleDrive.leftControl.RequiresArmCamera) ||
+               (activeSuperMode == SuperMode.SingleDrive && singleDrive.rightSpot == spot && singleDrive.rightControl != null && singleDrive.rightControl.RequiresArmCamera) ||
+               (activeSuperMode == SuperMode.DualDrive && dualDrive.spot == spot && dualDrive.control != null && dualDrive.control.RequiresArmCamera);
+    }
+
+    // The spot whose arm is currently being controlled, or null if none.
+    public SpotMode GetActiveArmSpot()
+    {
+        if (isMenuOpen) return null;
+        foreach (SpotMode spot in spots)
+        {
+            if (spot == null) continue;
+            if (IsArmSpot(spot)) return spot;
+        }
+        return null;
     }
 
     public void SetUISuperMode(SuperMode mode)
