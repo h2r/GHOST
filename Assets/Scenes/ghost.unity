@@ -20592,6 +20592,37 @@ MonoBehaviour:
   installationRoutineCheckpoint:
     _installationRoutineId: 
     _installationVariants: []
+--- !u!1 &1983687859
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1983687860}
+  m_Layer: 0
+  m_Name: Record
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1983687860
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1983687859}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 9217194773734636244}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1988184484
 GameObject:
   m_ObjectHideFlags: 0
@@ -22817,7 +22848,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3181486097775744836}
   m_Layer: 0
-  m_Name: Camera settings Button Lists
+  m_Name: Recording Button Lists
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -23620,7 +23651,7 @@ GameObject:
   - component: {fileID: 4941976351440134606}
   - component: {fileID: 7810662768180412517}
   m_Layer: 0
-  m_Name: (Camera) Mode
+  m_Name: (Recording) Start
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -26198,7 +26229,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 381e127de9f024afab1e8cb841ff9e4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  title: Camera Feed Views
+  title: Record Action
   isHorizontal: 0
   options:
   - {fileID: 340065215537436307}
@@ -26378,7 +26409,7 @@ GameObject:
   - component: {fileID: 6792441478959543359}
   - component: {fileID: 7316655389271179010}
   m_Layer: 0
-  m_Name: (Camera) Bottom Panel
+  m_Name: (Recording) Bottom Panel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -27085,6 +27116,7 @@ Transform:
   - {fileID: 1885078169}
   - {fileID: 4819413781800261329}
   - {fileID: 2925042530075760595}
+  - {fileID: 1983687860}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
