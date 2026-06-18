@@ -144,6 +144,7 @@ public class DriveAndArm : OneControllerMode
                 if(OVRInput.Get(model.joystickButton)){
                     spot.StowArm();
                 }
+                
                 else if (Mathf.Abs(joystick.x) > 0.1){
                     spot.Rotate(joystick.x * 0.5f);
                 }
