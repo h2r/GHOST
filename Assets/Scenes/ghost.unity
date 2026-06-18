@@ -5117,9 +5117,9 @@ MonoBehaviour:
   m_MaxConnectAttempts: 60
   m_DisconnectTimeoutMS: 30000
   ConnectionData:
-    Address: 127.0.0.1
+    Address: 128.148.138.135
     Port: 7777
-    ServerListenAddress: 127.0.0.1
+    ServerListenAddress: 0.0.0.0
   DebugSimulator:
     PacketDelayMS: 0
     PacketJitterMS: 0
@@ -5302,7 +5302,7 @@ MonoBehaviour:
   - {fileID: 743524688}
   - {fileID: 1105617977}
   - {fileID: 1427034451}
-  robotTransform: {fileID: 1939202892}
+  robotTransform: {fileID: 1337538586}
 --- !u!114 &1337538584
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5318,6 +5318,11 @@ MonoBehaviour:
   serverObjects:
   - {fileID: 2136176454}
   clientObjects: []
+--- !u!4 &1337538586 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1137478775509555832, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1353487718
 GameObject:
   m_ObjectHideFlags: 0

@@ -38,9 +38,10 @@ public class RobotSyncState : NetworkBehaviour
         for (int i = 0; i < robotJointReaders.Length; i++)
         {
             robotJointReaders[i].Read(out string name, out float position, out float velocity, out float effort);
-            jointStates.Add(position);
+            if(IsServer) jointStates.Add(position);
             
         }
+        if(IsServer){bodyPose.Value=new TransformData(robotTransform.position,robotTransform.rotation);}
         bodyPose.OnValueChanged +=OnPoseChanged;
         Debug.Log("Adding Joint States");
         jointStates.OnListChanged += OnJointStatesChanged;
