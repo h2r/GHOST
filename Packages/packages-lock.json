@@ -96,10 +96,11 @@
       "url": "https://packages.unity.com"
     },
     "com.siemens.ros-sharp": {
-      "version": "file:C:\\Users\\jtoribio\\Documents\\liam\\ros-sharp\\com.siemens.ros-sharp",
+      "version": "https://github.com/ltriv131/ros-sharp-no-newtonsoft.git?path=/com.siemens.ros-sharp",
       "depth": 0,
-      "source": "local",
-      "dependencies": {}
+      "source": "git",
+      "dependencies": {},
+      "hash": "f285da2e188e895147da224459028c2af730b8b1"
     },
     "com.unity.ai.inference": {
       "version": "2.3.0",

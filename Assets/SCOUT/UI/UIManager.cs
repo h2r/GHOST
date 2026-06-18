@@ -40,6 +40,7 @@ public enum SpotColor
 public class UIManager : MonoBehaviour
 {
     public ScoutModeManager modeManager;
+    public PlayerObjectsBridge bridge;
 
     public ButtonList[] singleControllerLists, dualControllerLists, cameraLists, tabSelectionLists;
 
@@ -67,6 +68,11 @@ public class UIManager : MonoBehaviour
 
     public void Start()
     {
+        
+        modeManager.leftModel.labels=bridge.Storage.LeftLabels;
+        modeManager.rightModel.labels=bridge.Storage.RightLabels;
+        modeManager.rightModel.anchor=bridge.Storage.RightControllerAnchor;
+        modeManager.leftModel.anchor=bridge.Storage.LeftControllerAnchor;
         rigPositioner=NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<RigPositioner>();
         rigPositioner.y = 1; // Initial Height change; 0 is ground level, 
         robotWorldY = 0;
@@ -248,6 +254,8 @@ public class UIManager : MonoBehaviour
     private void SetDefaultControls()
     {
         var activeLists = superModeLists[modeManager.uiSuperMode];
+        modeManager.singleDrive.leftControl=null;
+        modeManager.singleDrive.rightControl=null;
         switch (modeManager.uiSuperMode)
         {
 

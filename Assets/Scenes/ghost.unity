@@ -119,6 +119,28 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!114 &45265832 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1137478774957855878, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3122a7138a008c14f83e8b3df6286693, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &45265833 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1137478774957855877, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aec95d463d3b5794e8e0107fc6647fcd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &51234521 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2892712994899796207, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
@@ -830,6 +852,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IsBaseLink: 0
+--- !u!114 &224475070 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1137478775618133814, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3122a7138a008c14f83e8b3df6286693, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &224475071 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1137478775618133813, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aec95d463d3b5794e8e0107fc6647fcd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &233780883
 GameObject:
   m_ObjectHideFlags: 0
@@ -895,7 +939,6 @@ MonoBehaviour:
   Serializer: 0
   protocol: 0
   RosBridgeServerUrl: ws://128.148.140.230:9090
-  isConnecting: 0
 --- !u!65 &233780887
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1043,7 +1086,6 @@ MonoBehaviour:
   Serializer: 0
   protocol: 0
   RosBridgeServerUrl: ws://128.148.140.230:9090
-  isConnecting: 0
 --- !u!65 &245902176
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1540,6 +1582,46 @@ PrefabInstance:
       propertyPath: Mass
       value: 1.904699
       objectReference: {fileID: 0}
+    - target: {fileID: 1137478773715407139, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: CenterOfMass.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478773715407139, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: CenterOfMass.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478773715407139, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: CenterOfMass.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478773715407139, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: InertiaTensor.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478773715407139, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: InertiaTensor.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478773715407139, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: InertiaTensor.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478773715407139, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: InertiaTensorRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478773715407139, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: InertiaTensorRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478773715407139, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: InertiaTensorRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478773715407139, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: InertiaTensorRotation.z
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1137478773745686173, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: TimeStep
       value: 0
@@ -1688,6 +1770,46 @@ PrefabInstance:
       propertyPath: RosBridgeServerUrl
       value: ws://128.148.138.132:9090
       objectReference: {fileID: 0}
+    - target: {fileID: 1137478774129148072, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: CenterOfMass.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478774129148072, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: CenterOfMass.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478774129148072, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: CenterOfMass.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478774129148072, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: InertiaTensor.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478774129148072, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: InertiaTensor.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478774129148072, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: InertiaTensor.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478774129148072, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: InertiaTensorRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478774129148072, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: InertiaTensorRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478774129148072, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: InertiaTensorRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478774129148072, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: InertiaTensorRotation.z
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1137478774281308965, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -1748,6 +1870,46 @@ PrefabInstance:
       propertyPath: RosBridgeServerUrl
       value: ws://128.148.138.132:9090
       objectReference: {fileID: 0}
+    - target: {fileID: 1137478774510168480, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: CenterOfMass.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478774510168480, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: CenterOfMass.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478774510168480, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: CenterOfMass.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478774510168480, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: InertiaTensor.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478774510168480, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: InertiaTensor.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478774510168480, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: InertiaTensor.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478774510168480, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: InertiaTensorRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478774510168480, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: InertiaTensorRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478774510168480, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: InertiaTensorRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478774510168480, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: InertiaTensorRotation.z
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1137478774556839317, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -1803,6 +1965,50 @@ PrefabInstance:
     - target: {fileID: 1137478774599216621, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: spotObserverStreamIndex
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478774649817018, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: Mass
+      value: 1.904699
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478774749370620, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: CenterOfMass.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478774749370620, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: CenterOfMass.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478774749370620, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: CenterOfMass.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478774749370620, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: InertiaTensor.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478774749370620, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: InertiaTensor.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478774749370620, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: InertiaTensor.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478774749370620, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: InertiaTensorRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478774749370620, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: InertiaTensorRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478774749370620, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: InertiaTensorRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478774749370620, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: InertiaTensorRotation.z
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1137478774821249048, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
@@ -1885,6 +2091,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775039851721, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: Mass
+      value: 1.904699
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478775080379462, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Mass
       value: 1.904699
       objectReference: {fileID: 0}
@@ -3305,7 +3515,6 @@ MonoBehaviour:
   Serializer: 0
   protocol: 0
   RosBridgeServerUrl: ws://128.148.138.233:9090
-  isConnecting: 0
 --- !u!114 &423304876
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3768,6 +3977,94 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1 &706471865
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 706471867}
+  - component: {fileID: 706471866}
+  m_Layer: 0
+  m_Name: PlayerObjectsBridge
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &706471866
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 706471865}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17b4097f78330b54c9f76f363205574d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerObjectsBridge
+--- !u!4 &706471867
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 706471865}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2.68872, y: 0, z: 1.7658}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &709060071 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1137478775502448915, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3122a7138a008c14f83e8b3df6286693, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &709060072 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1137478775502448914, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aec95d463d3b5794e8e0107fc6647fcd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &743524688 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1137478775425144411, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3122a7138a008c14f83e8b3df6286693, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &743524689 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1137478775425144410, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aec95d463d3b5794e8e0107fc6647fcd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &752419342 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3310871052421458289, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
@@ -4068,7 +4365,6 @@ MonoBehaviour:
   Serializer: 0
   protocol: 0
   RosBridgeServerUrl: ws://128.148.140.230:9090
-  isConnecting: 0
 --- !u!65 &842827528
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4285,6 +4581,28 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 1137478775229705923, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
   m_PrefabInstance: {fileID: 409472599}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &929725228 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1137478775155148930, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3122a7138a008c14f83e8b3df6286693, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &929725229 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1137478775155148929, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aec95d463d3b5794e8e0107fc6647fcd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
@@ -4625,11 +4943,77 @@ Transform:
   m_Children: []
   m_Father: {fileID: 475214583}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1067533989 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1137478774749370616, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3122a7138a008c14f83e8b3df6286693, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1067533990 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1137478774749370623, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aec95d463d3b5794e8e0107fc6647fcd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &1105617976 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1137478774177714629, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
   m_PrefabInstance: {fileID: 409472599}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1105617977 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1137478774177714631, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 448829935}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3122a7138a008c14f83e8b3df6286693, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1105617978 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1137478774177714630, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 448829935}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aec95d463d3b5794e8e0107fc6647fcd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1226996514 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1137478774510168483, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3122a7138a008c14f83e8b3df6286693, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1226996515 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1137478774510168482, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aec95d463d3b5794e8e0107fc6647fcd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1245967629 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1137478773629964870, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
@@ -4813,6 +5197,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 46398bc5d6905ad429a6d2d973afe002, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1307975288 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1137478774129148084, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3122a7138a008c14f83e8b3df6286693, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1307975289 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1137478774129148075, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aec95d463d3b5794e8e0107fc6647fcd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1337538581 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1137478775509555839, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
@@ -4860,10 +5266,43 @@ MonoBehaviour:
   - {fileID: 111206517}
   - {fileID: 111206515}
   - {fileID: 111206513}
+  - {fileID: 1473003080}
+  - {fileID: 1226996515}
+  - {fileID: 1768930609}
+  - {fileID: 1798646042}
+  - {fileID: 1953856624}
+  - {fileID: 1307975289}
+  - {fileID: 2080541738}
+  - {fileID: 1355343296}
+  - {fileID: 1067533990}
+  - {fileID: 45265833}
+  - {fileID: 929725229}
+  - {fileID: 709060072}
+  - {fileID: 224475071}
+  - {fileID: 743524689}
+  - {fileID: 1105617978}
+  - {fileID: 1427034452}
   robotJointReaders:
   - {fileID: 111206516}
   - {fileID: 111206514}
   - {fileID: 111206512}
+  - {fileID: 1473003079}
+  - {fileID: 1226996514}
+  - {fileID: 1768930608}
+  - {fileID: 1798646041}
+  - {fileID: 1953856623}
+  - {fileID: 1307975288}
+  - {fileID: 2080541737}
+  - {fileID: 1355343295}
+  - {fileID: 1067533989}
+  - {fileID: 45265832}
+  - {fileID: 929725228}
+  - {fileID: 709060071}
+  - {fileID: 224475070}
+  - {fileID: 743524688}
+  - {fileID: 1105617977}
+  - {fileID: 1427034451}
+  robotTransform: {fileID: 1939202892}
 --- !u!114 &1337538584
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4968,6 +5407,28 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1353487718}
   m_Mesh: {fileID: 7606092742683292342, guid: afcc5b4344792e64b9603b47353a75f0, type: 3}
+--- !u!114 &1355343295 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1137478774649816965, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3122a7138a008c14f83e8b3df6286693, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1355343296 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1137478774649816964, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aec95d463d3b5794e8e0107fc6647fcd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1358233130 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3310871051925088970, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
@@ -5074,7 +5535,6 @@ MonoBehaviour:
   Serializer: 0
   protocol: 0
   RosBridgeServerUrl: ws://128.148.138.233:9090
-  isConnecting: 0
 --- !u!114 &1404339522
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5270,7 +5730,6 @@ MonoBehaviour:
   Serializer: 0
   protocol: 0
   RosBridgeServerUrl: ws://128.148.140.230:9090
-  isConnecting: 0
 --- !u!65 &1417051216
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5353,6 +5812,28 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1137478774413737873, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
   m_PrefabInstance: {fileID: 409472599}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1427034451 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1137478774413737874, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3122a7138a008c14f83e8b3df6286693, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1427034452 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1137478774413737865, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aec95d463d3b5794e8e0107fc6647fcd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1444031538
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5435,6 +5916,28 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 25a763f0d1c3de6408d9e9a067e75e73, type: 3}
   m_PrefabInstance: {fileID: 1444031538}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1473003079 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1137478774581538828, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3122a7138a008c14f83e8b3df6286693, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1473003080 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1137478774581538819, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aec95d463d3b5794e8e0107fc6647fcd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &1475223667 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1137478774763210852, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
@@ -5505,7 +6008,6 @@ MonoBehaviour:
   Serializer: 0
   protocol: 0
   RosBridgeServerUrl: ws://128.148.140.230:9090
-  isConnecting: 0
 --- !u!65 &1484428276
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5828,7 +6330,6 @@ MonoBehaviour:
   Serializer: 0
   protocol: 0
   RosBridgeServerUrl: ws://128.148.140.230:9090
-  isConnecting: 0
 --- !u!65 &1534932284
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6352,6 +6853,28 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1853494789}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1768930608 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1137478773715407151, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3122a7138a008c14f83e8b3df6286693, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1768930609 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1137478773715407150, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aec95d463d3b5794e8e0107fc6647fcd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1780268926
 GameObject:
   m_ObjectHideFlags: 0
@@ -6417,7 +6940,6 @@ MonoBehaviour:
   Serializer: 0
   protocol: 0
   RosBridgeServerUrl: ws://128.148.140.230:9090
-  isConnecting: 0
 --- !u!65 &1780268930
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6495,6 +7017,28 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1780268926}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1798646041 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1137478774876305368, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3122a7138a008c14f83e8b3df6286693, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1798646042 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1137478774876305375, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aec95d463d3b5794e8e0107fc6647fcd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1832322121
 GameObject:
   m_ObjectHideFlags: 0
@@ -6700,6 +7244,28 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1137478773629964866, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
   m_PrefabInstance: {fileID: 409472599}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1953856623 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1137478775080379457, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3122a7138a008c14f83e8b3df6286693, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1953856624 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1137478775080379456, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aec95d463d3b5794e8e0107fc6647fcd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &1965869693 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3699985937472072426, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
@@ -6770,7 +7336,6 @@ MonoBehaviour:
   Serializer: 0
   protocol: 0
   RosBridgeServerUrl: ws://128.148.140.230:9090
-  isConnecting: 0
 --- !u!65 &1978628313
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6918,7 +7483,6 @@ MonoBehaviour:
   Serializer: 0
   protocol: 0
   RosBridgeServerUrl: ws://128.148.140.230:9090
-  isConnecting: 0
 --- !u!65 &2030473359
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -7061,7 +7625,6 @@ MonoBehaviour:
   Serializer: 0
   protocol: 0
   RosBridgeServerUrl: ws://128.148.140.230:9090
-  isConnecting: 0
 --- !u!65 &2055724984
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -7242,6 +7805,28 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 1137478775422990296, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
   m_PrefabInstance: {fileID: 409472599}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2080541737 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1137478775039851732, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3122a7138a008c14f83e8b3df6286693, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2080541738 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1137478775039851723, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aec95d463d3b5794e8e0107fc6647fcd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2123763348 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1137478773745686191, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
@@ -7607,7 +8192,6 @@ MonoBehaviour:
   Serializer: 0
   protocol: 0
   RosBridgeServerUrl: ws://128.148.140.230:9090
-  isConnecting: 0
 --- !u!224 &657055350318488269
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7670,13 +8254,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   anchor: {fileID: 0}
   skinRenderer: {fileID: 0}
-  labels:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  labels: []
   isLeft: 1
 --- !u!23 &758492290014997255
 MeshRenderer:
@@ -8144,7 +8722,6 @@ MonoBehaviour:
   Serializer: 0
   protocol: 0
   RosBridgeServerUrl: ws://128.148.140.230:9090
-  isConnecting: 0
 --- !u!4 &1433287230236820279
 Transform:
   m_ObjectHideFlags: 0
@@ -8582,7 +9159,6 @@ MonoBehaviour:
   Serializer: 0
   protocol: 1
   RosBridgeServerUrl: ws://128.148.138.132:9090
-  isConnecting: 0
 --- !u!1 &2369611931696308318
 GameObject:
   m_ObjectHideFlags: 0
@@ -8761,7 +9337,6 @@ MonoBehaviour:
   Serializer: 0
   protocol: 0
   RosBridgeServerUrl: ws://128.148.140.230:9090
-  isConnecting: 0
 --- !u!4 &2716672147705470783
 Transform:
   m_ObjectHideFlags: 0
@@ -9046,7 +9621,6 @@ MonoBehaviour:
   Serializer: 0
   protocol: 0
   RosBridgeServerUrl: ws://128.148.140.230:9090
-  isConnecting: 0
 --- !u!224 &3181486097775744836
 RectTransform:
   m_ObjectHideFlags: 0
@@ -9579,7 +10153,6 @@ MonoBehaviour:
   Serializer: 0
   protocol: 0
   RosBridgeServerUrl: ws://128.148.140.230:9090
-  isConnecting: 0
 --- !u!4 &4282992145198049810
 Transform:
   m_ObjectHideFlags: 0
@@ -9673,7 +10246,6 @@ MonoBehaviour:
   Serializer: 0
   protocol: 1
   RosBridgeServerUrl: ws://128.148.138.233:9090
-  isConnecting: 0
 --- !u!1 &4460779199687081897
 GameObject:
   m_ObjectHideFlags: 0
@@ -9953,7 +10525,6 @@ MonoBehaviour:
   Serializer: 0
   protocol: 0
   RosBridgeServerUrl: ws://128.148.140.230:9090
-  isConnecting: 0
 --- !u!1 &5077746146378663966
 GameObject:
   m_ObjectHideFlags: 0
@@ -9988,7 +10559,6 @@ MonoBehaviour:
   Serializer: 0
   protocol: 1
   RosBridgeServerUrl: ws://128.148.138.233:9090
-  isConnecting: 0
 --- !u!4 &5105090148137265867
 Transform:
   m_ObjectHideFlags: 0
@@ -10031,7 +10601,6 @@ MonoBehaviour:
   Serializer: 0
   protocol: 0
   RosBridgeServerUrl: ws://128.148.140.230:9090
-  isConnecting: 0
 --- !u!4 &5132032239802979657
 Transform:
   m_ObjectHideFlags: 0
@@ -10719,7 +11288,6 @@ MonoBehaviour:
   Serializer: 0
   protocol: 0
   RosBridgeServerUrl: ws://128.148.140.230:9090
-  isConnecting: 0
 --- !u!4 &6490191315841282200
 Transform:
   m_ObjectHideFlags: 0
@@ -10972,6 +11540,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   modeManager: {fileID: 4292472505881168793}
+  bridge: {fileID: 706471866}
   singleControllerLists:
   - {fileID: 4793615066664591691}
   - {fileID: 2228162574880614873}
@@ -11279,13 +11848,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   anchor: {fileID: 0}
   skinRenderer: {fileID: 0}
-  labels:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  labels: []
   isLeft: 0
 --- !u!4 &7548481229296391317
 Transform:
@@ -11429,7 +11992,6 @@ MonoBehaviour:
   Serializer: 0
   protocol: 0
   RosBridgeServerUrl: ws://128.148.140.230:9090
-  isConnecting: 0
 --- !u!114 &7810662768180412517
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11562,7 +12124,6 @@ MonoBehaviour:
   Serializer: 0
   protocol: 1
   RosBridgeServerUrl: ws://128.148.138.132:9090
-  isConnecting: 0
 --- !u!114 &7892326592595442517
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11967,7 +12528,6 @@ MonoBehaviour:
   Serializer: 0
   protocol: 0
   RosBridgeServerUrl: ws://128.148.140.230:9090
-  isConnecting: 0
 --- !u!1 &8554322912593671254
 GameObject:
   m_ObjectHideFlags: 0
@@ -12358,6 +12918,7 @@ MonoBehaviour:
   - {fileID: 1885078168}
   - {fileID: 4868753326603241157}
   - {fileID: 8916049519973978855}
+  - {fileID: 706471865}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -12372,3 +12933,4 @@ SceneRoots:
   - {fileID: 420483825}
   - {fileID: 9217194773734636244}
   - {fileID: 1248370348}
+  - {fileID: 706471867}

@@ -6115,7 +6115,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 3014772982
+  GlobalObjectIdHash: 1268658104
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -6191,6 +6191,20 @@ MonoBehaviour:
   LeftEyeAnchor: {fileID: 389380674165434164}
   LeftControllerAnchor: {fileID: 8070725818112572679}
   RightControllerAnchor: {fileID: 1062676668703197675}
+  RightLabels:
+  - {fileID: 3110259579428230118}
+  - {fileID: 5467280937671278971}
+  - {fileID: 3234343493271392755}
+  - {fileID: 4027744652516923522}
+  - {fileID: 3474518694969715148}
+  - {fileID: 1971753855350524018}
+  LeftLabels:
+  - {fileID: 5117613841553346267}
+  - {fileID: 8648845853155136488}
+  - {fileID: 6211732613852485974}
+  - {fileID: 7525627305139167294}
+  - {fileID: 662955982189475188}
+  - {fileID: 8724468926547198520}
 --- !u!1 &3409726256067166460
 GameObject:
   m_ObjectHideFlags: 0
