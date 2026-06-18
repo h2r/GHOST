@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
-
+using Unity.Netcode;
+using System.Diagnostics;
 public class LocomotionJoystickMode : OneControllerMode
 {
     [Header("View Settings")]
@@ -63,6 +64,12 @@ public class LocomotionJoystickMode : OneControllerMode
 
     private void Awake()
     {
+        GameObjectStorage storage=NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<GameObjectStorage>();
+        cameraRig=storage.gameObject;
+        rigPositioner=cameraRig.GetComponent<RigPositioner>();
+        headTransform=storage.CenterEyeAnchor.transform;
+        leftControllerTransform=storage.LeftControllerAnchor.transform;
+        rightControllerTransform=storage.RightControllerAnchor.transform;
         LastMoveDelta = Vector3.zero;
         IsJoystickInUse = false;
 
@@ -72,7 +79,7 @@ public class LocomotionJoystickMode : OneControllerMode
 
     public override void ControlUpdate(SpotMode spot, ControllerModel model)
     {
-        if (cameraRig == null) return;
+        if (cameraRig == null) {UnityEngine.Debug.Log("Ah"); return;}
 
         Vector3 positionBeforeUpdate = cameraRig.transform.position;
 

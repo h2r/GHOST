@@ -1,12 +1,17 @@
 {
   "dependencies": {
     "com.meta.xr.sdk.all": "78.0.0",
-    "com.siemens.ros-sharp": "https://github.com/siemens/ros-sharp.git?path=/com.siemens.ros-sharp",
+    "com.siemens.ros-sharp": "file:C:\\Users\\jtoribio\\Documents\\liam\\ros-sharp\\com.siemens.ros-sharp",
     "com.unity.collab-proxy": "2.9.3",
     "com.unity.feature.development": "1.0.2",
     "com.unity.memoryprofiler": "1.1.9",
     "com.unity.multiplayer.center": "1.0.0",
+    "com.unity.multiplayer.playmode": "1.6.3",
+    "com.unity.multiplayer.tools": "2.2.8",
+    "com.unity.multiplayer.widgets": "1.0.5",
+    "com.unity.netcode.gameobjects": "2.7.0",
     "com.unity.sentis": "2.2.0",
+    "com.unity.services.multiplayer": "1.1.8",
     "com.unity.timeline": "1.8.9",
     "com.unity.ugui": "2.0.0",
     "com.unity.visualscripting": "1.9.9",

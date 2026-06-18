@@ -1,6 +1,7 @@
 using UnityEngine;
 using RosSharp.RosBridgeClient;
 using RosSharp.RosBridgeClient.MessageTypes.Std;
+using System.Diagnostics;
 
 namespace RosSharp.RosBridgeClient
 {
@@ -10,6 +11,7 @@ namespace RosSharp.RosBridgeClient
         protected override void Start()
         {
             base.Start();
+            
         }
 
         public void OpenGripper()
@@ -31,7 +33,7 @@ namespace RosSharp.RosBridgeClient
 
             Publish(message);
 
-            Debug.Log($"Published gripper angle: {clampedAngle}");
+            UnityEngine.Debug.Log($"Published gripper angle: {clampedAngle}");
         }
     }
 }

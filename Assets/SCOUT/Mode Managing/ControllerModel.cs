@@ -1,13 +1,22 @@
 using TMPro;
 using UnityEngine;
-
+using Unity.Netcode;
+using System.Diagnostics;
 public class ControllerModel : MonoBehaviour
 {
     public GameObject anchor;
     public SkinnedMeshRenderer skinRenderer;
     public TMP_Text[] labels;
     public bool isLeft;
-
+    public void Awake()
+    {
+        GameObjectStorage storage=NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<GameObjectStorage>();
+        anchor=isLeft?storage.LeftControllerAnchor:storage.RightControllerAnchor;
+        if (anchor == null)
+        {
+            UnityEngine.Debug.Log("Anchor is Null!");
+        }
+    }
     public Color color
     {
         get => skinRenderer.material.color;

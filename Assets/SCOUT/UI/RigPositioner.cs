@@ -4,7 +4,7 @@ using UnityEngine;
 public class RigPositioner : MonoBehaviour
 {
     [NonSerialized]
-    public float x = 0, y = 100, z = 0;
+    public float x = 0, y = 1, z = 0;
 
     [NonSerialized]
     public Quaternion rotation = Quaternion.identity;

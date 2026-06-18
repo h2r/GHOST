@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using Unity.Netcode;
+using System.Diagnostics;
 
 public class UIRaycast : MonoBehaviour
 {
@@ -9,19 +11,32 @@ public class UIRaycast : MonoBehaviour
     public UIManager uiManager;
     public Canvas canvas;
     public GraphicRaycaster raycaster;
+    private GameObject canvasGo;
     public EventSystem eventSystem;
     public bool isLeft;
 
     private LineRenderer lineRenderer;
     private GameObject highlightBox;
 
-    public void Start()
-    {
-    lineRenderer = GetComponent<LineRenderer>();
-    }
+    
 
     public void Update()
     {
+
+        if (canvasGo == null)
+        {
+            canvasGo=GameObject.FindWithTag("Canvas");
+            
+            canvas=canvasGo.GetComponent<Canvas>();
+            uiManager=canvas.transform.Find("UI Root").GetComponent<UIManager>();
+            raycaster=canvas.gameObject.GetComponent<GraphicRaycaster>();
+        
+            eventSystem=GameObject.Find("EventSystem").GetComponent<EventSystem>();
+            lineRenderer = GetComponent<LineRenderer>();
+            
+            return;
+        }
+        
         if (uiManager.modeManager.isMenuOpen)
         {
             lineRenderer.enabled = true;

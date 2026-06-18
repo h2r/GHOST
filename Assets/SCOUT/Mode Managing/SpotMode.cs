@@ -27,10 +27,12 @@ public class SpotMode : NamedOption
     private WorldLocalGripperSync worldLocalGripperSync;
     private PoseStampedRelativePublisher enableLocalGripperCmd;
     private PoseStampedRelativeGlobalPublisher enableWorldGripperCmd;
+    private float timeStartConnectionRosBridge;
     public virtual void Start()
     {
         if (rosConnector != null)
         {
+            
             moveSpot = rosConnector.GetComponent<ThreadedMoveSpot>();
             setGripper = rosConnector.GetComponent<ThreadedSetGripper>();
             stowArm = rosConnector.GetComponent<ThreadedStowArm>();
@@ -38,10 +40,12 @@ public class SpotMode : NamedOption
             worldLocalGripperSync = rosConnector.GetComponent<WorldLocalGripperSync>();
             enableLocalGripperCmd = rosConnector.GetComponent<PoseStampedRelativePublisher>();
             enableWorldGripperCmd = rosConnector.GetComponent<PoseStampedRelativeGlobalPublisher>();
-
+            timeStartConnectionRosBridge=Time.time;
+            
             moveSpot.Move(Vector2.zero, 0, curHeight);
             setGripper.CloseGripper();
             stowArm.Stow();
+            
         }
     }
 

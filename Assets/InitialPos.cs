@@ -4,11 +4,12 @@ using UnityEngine;
 
 public class InitialPos : MonoBehaviour
 {
-    public Transform armBaseLocation;
+    private Transform armBaseLocation;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
+        armBaseLocation=GameObject.Find("SpotRos1/spot/body/arm0.link_sh0").transform;
         SetInitialPosition();
     }
 

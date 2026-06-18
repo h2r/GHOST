@@ -16,7 +16,7 @@ namespace RosSharp.RosBridgeClient
 
         private BatteryState batteryState;
 
-        public RosConnector rosConnector;
+       
 
         protected override void Start()
         {            

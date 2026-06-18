@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Meta.WitAi.Events.Editor;
 using UnityEngine;
-
+using Unity.Netcode;
 
 // enums used for default controller settings for readability 
 public enum SingleControl
@@ -67,7 +67,7 @@ public class UIManager : MonoBehaviour
 
     public void Start()
     {
-
+        rigPositioner=NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<RigPositioner>();
         rigPositioner.y = 1; // Initial Height change; 0 is ground level, 
         robotWorldY = 0;
 

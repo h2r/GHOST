@@ -1,5 +1,5 @@
 using UnityEngine;
-
+using Unity.Netcode;
 public class UIHeadTrack : MonoBehaviour
 {
     private enum PanelState
@@ -42,6 +42,7 @@ public class UIHeadTrack : MonoBehaviour
 
     void Start()
     {
+        centerEyeAnchor=NetworkManager.Singleton.LocalClient.PlayerObject.gameObject.transform.Find("TrackingSpace/CenterEyeAnchor");
         if (centerEyeAnchor == null)
         {
             Debug.LogError("Center Eye Anchor not assigned.");

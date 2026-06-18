@@ -1,9 +1,14 @@
 using UnityEngine;
-
+using Unity.Netcode;
+using System.Diagnostics;
 public class TextFaceCamera : MonoBehaviour
 {
-    public GameObject mainCamera; // Assign in Inspector or use Camera.main
-
+    private GameObject mainCamera; // Assign in Inspector or use Camera.main
+    void Awake()
+    {
+        mainCamera=NetworkManager.Singleton.LocalClient.PlayerObject.gameObject.transform.Find("TrackingSpace/CenterEyeAnchor").gameObject;
+        UnityEngine.Debug.Log("Main Camera:"+mainCamera.name);
+    }
     void Update()
     {
         Quaternion lookRotation = Quaternion.LookRotation(mainCamera.transform.forward, Vector3.up);
