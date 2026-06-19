@@ -4,7 +4,7 @@ using System.Diagnostics;
 public class TextFaceCamera : MonoBehaviour
 {
     private GameObject mainCamera; // Assign in Inspector or use Camera.main
-    void Awake()
+    void Start()
     {
         mainCamera=NetworkManager.Singleton.LocalClient.PlayerObject.gameObject.transform.Find("TrackingSpace/CenterEyeAnchor").gameObject;
         UnityEngine.Debug.Log("Main Camera:"+mainCamera.name);

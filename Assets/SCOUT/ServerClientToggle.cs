@@ -1,18 +1,16 @@
 using UnityEngine;
 using System.Collections.Generic;
 using Unity.Netcode;
-public class ServerClientToggle : MonoBehaviour
+//using System.Diagnostics;
+public class ServerClientToggle : NetworkBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public List<GameObject> serverObjects=new List<GameObject>();
     public List<GameObject> clientObjects=new List<GameObject>();
      
-    void Update()
+    public override void OnNetworkSpawn()
     {
-        if (NetworkManager.Singleton == null)
-        {
-            return;
-        }
+        Debug.Log("Toggling on objects");
        for (int i = 0; i < serverObjects.Count; i++)
        {
             Debug.Log(NetworkManager.Singleton.IsServer);
