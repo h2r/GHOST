@@ -62,7 +62,7 @@ public class LocomotionJoystickMode : OneControllerMode
     private float lastSnapTime = 0f;
     private float currentTurnVelocity = 0f;
 
-    private void Awake()
+    private void Start()
     {
         GameObjectStorage storage=NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<GameObjectStorage>();
         cameraRig=storage.gameObject;
