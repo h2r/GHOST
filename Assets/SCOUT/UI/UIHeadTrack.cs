@@ -1,5 +1,6 @@
 using UnityEngine;
 using Unity.Netcode;
+
 public class UIHeadTrack : MonoBehaviour
 {
     private enum PanelState
@@ -37,17 +38,18 @@ public class UIHeadTrack : MonoBehaviour
     // Nod detection state
     private float lastPitch;
     private int lastPitchSign = 0;
+    public PlayerObjectsBridge bridge;
     private float lastNodTime;
     private int nodCount = 0;
 
     void Start()
     {
-        centerEyeAnchor=NetworkManager.Singleton.LocalClient.PlayerObject.gameObject.transform.Find("TrackingSpace/CenterEyeAnchor");
+        if(bridge.Storage!=null) centerEyeAnchor=bridge.Storage.CenterEyeAnchor.transform;
         if (centerEyeAnchor == null)
         {
-            Debug.LogError("Center Eye Anchor not assigned.");
-            enabled = false;
+            Debug.Log("Center Eye Anchor not assigned.");
             return;
+            
         }
 
         defaultPosition = transform.position;
@@ -58,6 +60,18 @@ public class UIHeadTrack : MonoBehaviour
 
     void Update()
     {
+        if(centerEyeAnchor==null){
+            if(bridge.Storage!=null){
+                 centerEyeAnchor=bridge.Storage.CenterEyeAnchor.transform;
+                 defaultPosition = transform.position;
+                defaultRotation = transform.rotation;
+                defaultYaw = GetHeadYaw();
+                lastPitch = GetHeadPitch();
+                 Debug.Log("Found CenterEye");
+            }
+            else{return;}
+        }
+        
         float currentYaw = GetHeadYaw();
         float currentPitch = GetHeadPitch();
 

@@ -69,14 +69,16 @@ public class UIManager : MonoBehaviour
     public void Start()
     {
         
-        modeManager.leftModel.labels=bridge.Storage.LeftLabels;
-        modeManager.rightModel.labels=bridge.Storage.RightLabels;
-        modeManager.rightModel.anchor=bridge.Storage.RightControllerAnchor;
-        modeManager.leftModel.anchor=bridge.Storage.LeftControllerAnchor;
-        rigPositioner=NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<RigPositioner>();
-        rigPositioner.y = 1; // Initial Height change; 0 is ground level, 
-        robotWorldY = 0;
-
+        if(bridge.Storage!=null){
+            modeManager.leftModel.labels=bridge.Storage.LeftLabels;
+            modeManager.rightModel.labels=bridge.Storage.RightLabels;
+            modeManager.rightModel.anchor=bridge.Storage.RightControllerAnchor;
+            modeManager.leftModel.anchor=bridge.Storage.LeftControllerAnchor;
+            rigPositioner=NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<RigPositioner>();
+            rigPositioner.y = 1; // Initial Height change; 0 is ground level, 
+            robotWorldY = 0;
+            SetDefaultControls();
+        }
         superModeLists = new()
         {
             { SuperMode.SingleDrive, singleControllerLists },
@@ -168,7 +170,7 @@ public class UIManager : MonoBehaviour
             {
                 lists[i].optionGetter = getters[i];
                 lists[i].optionSetter = setters[i];
-                lists[i].Reset();
+                
             }
         }
 
@@ -177,11 +179,40 @@ public class UIManager : MonoBehaviour
         {
             modeManager.cameraView.SetActiveCameraMode((CameraMode)cameraLists[0].options[0]);
         }
-        SetDefaultControls();
+        
     }
 
     void Update()
     {
+        if (modeManager.leftModel.anchor == null)
+        {
+            if(bridge.Storage!=null){
+                modeManager.leftModel.labels=bridge.Storage.LeftLabels;
+                modeManager.rightModel.labels=bridge.Storage.RightLabels;
+                modeManager.rightModel.anchor=bridge.Storage.RightControllerAnchor;
+                modeManager.leftModel.anchor=bridge.Storage.LeftControllerAnchor;
+                rigPositioner=NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<RigPositioner>();
+                rigPositioner.y = 1; // Initial Height change; 0 is ground level, 
+                robotWorldY = 0;
+                superModeLists = new()
+                {
+                    { SuperMode.SingleDrive, singleControllerLists },
+                    { SuperMode.DualDrive, dualControllerLists },
+                    { SuperMode.Camera, cameraLists },
+                    { SuperMode.TabSelection, tabSelectionLists }
+                };
+                foreach (var kvp in superModeLists)
+                {
+                    var lists = superModeLists[kvp.Key];
+                    for (int i = 0; i < lists.Length; i++)
+                    {
+                        
+                        lists[i].Reset();
+                    }
+                }
+                SetDefaultControls();
+            }
+        }
         if (OVRInput.GetDown(OVRInput.Button.Start))
         {
             modeManager.isMenuOpen = !modeManager.isMenuOpen;

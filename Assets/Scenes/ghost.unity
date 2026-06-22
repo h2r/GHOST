@@ -5552,7 +5552,7 @@ MonoBehaviour:
   m_MaxConnectAttempts: 60
   m_DisconnectTimeoutMS: 30000
   ConnectionData:
-    Address: 0.0.0.0
+    Address: 128.148.138.135
     Port: 7777
     ServerListenAddress: 0.0.0.0
   DebugSimulator:
@@ -10572,6 +10572,7 @@ MonoBehaviour:
   nodDetectionWindow: 1.2
   pitchThresholdDegrees: 20
   centerEyeAnchor: {fileID: 0}
+  bridge: {fileID: 706471866}
 --- !u!1 &3775408169275130787
 GameObject:
   m_ObjectHideFlags: 0
@@ -10744,6 +10745,7 @@ MonoBehaviour:
   commonWristOffset: {x: 0, y: 0.08, z: 0.06}
   wristCam1Offset: {x: 0.05, y: 0, z: 0}
   wristCam2Offset: {x: -0.05, y: 0, z: 0}
+  bridge: {fileID: 706471866}
 --- !u!4 &4021286285207285070
 Transform:
   m_ObjectHideFlags: 0
@@ -13220,8 +13222,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9217194773734636244}
-  - component: {fileID: 9217194773734636245}
   - component: {fileID: 9217194773734636246}
+  - component: {fileID: 9217194773734636245}
   m_Layer: 0
   m_Name: SCOUT Objects
   m_TagString: Untagged

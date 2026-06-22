@@ -75,19 +75,29 @@ public class ArmCameraPositioner : MonoBehaviour
     public Vector3 wristCam1Offset = Vector3.zero;
     [Tooltip("A specific offset for the second wrist camera, added to the common offset")]
     public Vector3 wristCam2Offset = Vector3.zero;
+    public PlayerObjectsBridge bridge;
 
     void Awake()
     {
-        GameObjectStorage storage=NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<GameObjectStorage>();
-        centerEyeAnchor=storage.CenterEyeAnchor.transform;
-        leftController=storage.LeftControllerAnchor.transform;
-        rightController=storage.RightControllerAnchor.transform;
+        if (bridge.Storage != null)
+        {
+            centerEyeAnchor=bridge.Storage.CenterEyeAnchor.transform;
+            leftController=bridge.Storage.LeftControllerAnchor.transform;
+            rightController=bridge.Storage.RightControllerAnchor.transform;
+        }
+        
     }
     void Update()
     {
         if (centerEyeAnchor == null)
         {
             Debug.LogWarning("CenterEyeAnchor not assigned in ArmCameraPositioner.");
+            if (bridge.Storage != null)
+            {
+                centerEyeAnchor=bridge.Storage.CenterEyeAnchor.transform;
+                leftController=bridge.Storage.LeftControllerAnchor.transform;
+                rightController=bridge.Storage.RightControllerAnchor.transform;
+            }
             return;
         }
 

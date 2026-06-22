@@ -14,11 +14,11 @@ public class ServerClientToggle : NetworkBehaviour
        for (int i = 0; i < serverObjects.Count; i++)
        {
             Debug.Log(NetworkManager.Singleton.IsServer);
-           serverObjects[i].SetActive(NetworkManager.Singleton.IsServer);
+           serverObjects[i].SetActive(IsServer);
        } 
        for (int i = 0; i < clientObjects.Count; i++)
         {
-            clientObjects[i].SetActive(NetworkManager.Singleton.IsClient);
+            clientObjects[i].SetActive(IsClient);
         }
     }
 
