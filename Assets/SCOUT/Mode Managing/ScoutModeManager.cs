@@ -160,7 +160,7 @@ public class SingleDriveSuperMode
 
     public void Update(ControllerModel leftModel, ControllerModel rightModel)
     {
-        if (leftModel.attachedSpotMode == null)
+        if (leftModel.attachedSpotMode == null || rightModel.attachedSpotMode == null)
         {
             leftModel.attachedSpotMode = leftSpot;
             rightModel.attachedSpotMode = rightSpot;
