@@ -142,19 +142,7 @@ public class DriveAndArm : OneControllerMode
             // === Drive Mode ===
             isRelativeModeActive = false;
 
-            if (isJoystickPressed && !isGripHeld)
-            {
-                // === Body Up/Down Mode ===
-                isRelativeModeActive = false;
-
-                if (Mathf.Abs(joystick.y) > 0.1)
-                    spot.AdjustHeight(joystick.y * 0.02f);
-
-                thumbstickLabel = "Body Up/Down";
-                gripLabel = "";
-                triggerLabel = ""; // Trigger disabled while body up/down
-            }
-            else if (isGripHeld)
+            if (isGripHeld)
             {
                 // === Rotate Mode ===
                 isRelativeModeActive = false;
