@@ -64,7 +64,6 @@ public class DriveAndArm : OneControllerMode
         string triggerLabel = "";
         string gripLabel = "";
 
-
         if (isArmMode) // behave as Arm Mode
         {
             // === Arm Control Mode ===
@@ -124,19 +123,7 @@ public class DriveAndArm : OneControllerMode
             // === Drive Mode ===
             isRelativeModeActive = false;
 
-            if (isJoystickPressed)
-            {
-                // === Body Up/Down Mode ===
-                isRelativeModeActive = false;
-
-                if (Mathf.Abs(joystick.y) > 0.1)
-                    spot.AdjustHeight(joystick.y * 0.02f);
-
-                thumbstickLabel = "Body Up/Down";
-                gripLabel = "";
-                triggerLabel = ""; // Trigger disabled while body up/down
-            }
-            else if (isGripHeld)
+            if (isGripHeld)
             {
                 // === Rotate Mode ===
                 isRelativeModeActive = false;
@@ -144,9 +131,14 @@ public class DriveAndArm : OneControllerMode
                 if (Mathf.Abs(joystick.x) > 0.1)
                     spot.Rotate(joystick.x * 0.5f);
 
-                thumbstickLabel = "Rotate Spot";
+                thumbstickLabel = "Rotate Spot | Press to Stow Arm";
                 gripLabel = "";
                 triggerLabel = "";
+
+                if (isJoystickPressed)
+                {
+                    spot.StowArm();
+                }
             }
             else
             {
@@ -159,7 +151,6 @@ public class DriveAndArm : OneControllerMode
 
                 if (OVRInput.Get(model.axButton))
                     spot.AdjustHeight(-0.03f);
-
                 thumbstickLabel = "Drive Spot";
                 triggerLabel = "Hold: Control Arm";
                 gripLabel = "Hold: Rotate";

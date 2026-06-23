@@ -160,6 +160,11 @@ public class SingleDriveSuperMode
 
     public void Update(ControllerModel leftModel, ControllerModel rightModel)
     {
+        if (leftModel.attachedSpotMode == null || rightModel.attachedSpotMode == null)
+        {
+            leftModel.attachedSpotMode = leftSpot;
+            rightModel.attachedSpotMode = rightSpot;
+        }
         // Check if left control mode changed
         if (_previousLeftControl != leftControl)
         {
@@ -177,10 +182,12 @@ public class SingleDriveSuperMode
         if (leftSpot != null && leftControl != null)
         {
             leftControl.ControlUpdate(leftSpot, leftModel);
+            leftModel.attachedSpotMode=leftSpot;
         }
         if (rightSpot != null && rightControl != null)
         {
             rightControl.ControlUpdate(rightSpot, rightModel);
+            rightModel.attachedSpotMode=rightSpot;
         }
         AssignColors(leftModel, rightModel);
     }
@@ -236,8 +243,13 @@ public class DualDriveSuperMode
         {
             _previousControl?.OnModeExit();
             _previousControl = control;
+            
         }
-
+        if(spot!=null && leftModel!=null && rightModel != null)
+        {
+            leftModel.attachedSpotMode = spot;
+            rightModel.attachedSpotMode = spot;
+        }
         if (spot != null && control != null)
         {
             control.ControlUpdate(spot, leftModel, rightModel);
@@ -252,6 +264,7 @@ public class DualDriveSuperMode
             {
                 leftModel.color = spot.color;
                 rightModel.color = spot.color;
+
             }
             else
             {

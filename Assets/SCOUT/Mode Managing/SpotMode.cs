@@ -9,6 +9,8 @@ public class SpotMode : NamedOption
     public Material greenMaterial, grayMaterial, redMaterial;
     public string modeName;
     public Color color;
+    public SpotObserverClient spotObserverClient;
+    
 
     public bool useWorldDummyGripper = false;
 
@@ -42,6 +44,7 @@ public class SpotMode : NamedOption
             moveSpot.Move(Vector2.zero, 0, curHeight);
             setGripper.CloseGripper();
             stowArm.Stow();
+            
         }
     }
 
