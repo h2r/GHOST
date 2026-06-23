@@ -23,8 +23,8 @@ public class DriveAndArm : OneControllerMode
     private Vector3 initialGripperPosition;
     private Quaternion initialGripperRotation;
     private bool isRelativeModeActive = false;
-    private float lastStowTime = -Mathf.Infinity;
-    private const float STOW_COOLDOWN = 0.35f;
+    private float lastStowTime = -Mathf.Infinity; // no cooldown yet
+    private const float STOW_COOLDOWN = 0.25f; // quarter of a second cooldown after stow
 
     private void Awake()
     {
@@ -83,8 +83,6 @@ public class DriveAndArm : OneControllerMode
                 thumbstickLabel = "Grip+Click: Stow Arm";
                 triggerLabel = "";
                 gripLabel = "";
-                model.axLabel = "Cycle PointClouds";
-                model.byLabel = "Cycle Views";
 
                 model.joystickLabel = thumbstickLabel;
                 model.indexLabel = triggerLabel;
@@ -99,8 +97,6 @@ public class DriveAndArm : OneControllerMode
                 thumbstickLabel = "Stowing Arm";
                 triggerLabel = "";
                 gripLabel = "";
-                model.axLabel = "Cycle PointClouds";
-                model.byLabel = "Cycle Views";
 
                 model.joystickLabel = thumbstickLabel;
                 model.indexLabel = triggerLabel;
