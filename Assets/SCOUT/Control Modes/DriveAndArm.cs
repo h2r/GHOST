@@ -58,8 +58,6 @@ public class DriveAndArm : OneControllerMode
         bool isGripHeld = OVRInput.Get(model.gripButton);
         bool isJoystickPressed = OVRInput.GetDown(model.joystickButton);
         bool gripPressed = OVRInput.GetDown(model.gripButton);
-        // Control stowArm with joystick click and gripper as it's unused & requires user to already intentially be in arm control mode (prevents accidental activation)
-        // bool stowPressed = OVRInput.GetDown(model.joystickButton); 
         Vector2 joystick = OVRInput.Get(model.joystick);
 
 
@@ -102,7 +100,6 @@ public class DriveAndArm : OneControllerMode
                 model.indexLabel = triggerLabel;
                 model.gripLabel = gripLabel;
 
-                spot.ChangeGripperColorBasedOnDistance();
                 return;
             }
 
@@ -213,7 +210,6 @@ public class DriveAndArm : OneControllerMode
         model.gripLabel = gripLabel;
 
 
-        spot.ChangeGripperColorBasedOnDistance();
     }
 
     public override string GetName() => "Dynamic Control";
