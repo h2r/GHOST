@@ -1640,6 +1640,10 @@ PrefabInstance:
       propertyPath: Topic
       value: /spot2/arm_pose_body_follow_commands
       objectReference: {fileID: 0}
+    - target: {fileID: 655718077593562028, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 934838920937526486, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Topic
       value: /spot/camera/hand/image111
@@ -2360,6 +2364,10 @@ PrefabInstance:
       propertyPath: subscriber
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 1252929639408472513, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1731835587416712801, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -2379,6 +2387,10 @@ PrefabInstance:
     - target: {fileID: 1731835589123072397, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_Enabled
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2251966328704835433, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2901775122262056809, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Serializer
@@ -2998,7 +3010,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3699985937472072438, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3854576936163257970, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: spot_prefix
@@ -3020,6 +3032,10 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 8d651bf5d7e26084dbdf01c4cf0e5fde, type: 2}
+    - target: {fileID: 4430176667488560222, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4598551965856578696, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: LAx
       value: 1
@@ -7368,6 +7384,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0be7301858fab814cad6e12b0de615d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TextFaceCamera
+  bridge: {fileID: 706471866}
 --- !u!114 &1726808360 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3310871052832564226, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}

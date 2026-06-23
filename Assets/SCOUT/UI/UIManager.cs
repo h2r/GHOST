@@ -45,7 +45,7 @@ public class UIManager : MonoBehaviour
     public ButtonList[] singleControllerLists, dualControllerLists, cameraLists, tabSelectionLists;
 
     public RigPositioner rigPositioner;
-
+    private bool started=false;
     private Dictionary<SuperMode, ButtonList[]> superModeLists;
 
     private float robotWorldY = 0;
@@ -184,7 +184,7 @@ public class UIManager : MonoBehaviour
 
     void Update()
     {
-        if (modeManager.leftModel.anchor == null)
+        if (!started)
         {
             if(bridge.Storage!=null){
                 modeManager.leftModel.labels=bridge.Storage.LeftLabels;
@@ -211,6 +211,11 @@ public class UIManager : MonoBehaviour
                     }
                 }
                 SetDefaultControls();
+                started=true;
+            }
+            else
+            {
+                return;
             }
         }
         if (OVRInput.GetDown(OVRInput.Button.Start))

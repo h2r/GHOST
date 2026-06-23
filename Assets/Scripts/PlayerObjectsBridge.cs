@@ -1,5 +1,6 @@
 using UnityEngine;
 using Unity.Netcode;
+
 public class PlayerObjectsBridge : MonoBehaviour
 {
     
@@ -10,7 +11,10 @@ public class PlayerObjectsBridge : MonoBehaviour
     void Awake()
     {
         if(NetworkManager.Singleton.LocalClient!=null){
-            Storage=NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<GameObjectStorage>();
+            if(NetworkManager.Singleton.LocalClient.PlayerObject!=null){
+                Storage=NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<GameObjectStorage>();
+                mainCameraTemp.SetActive(false);
+            }
         }
     }
 
@@ -19,8 +23,11 @@ public class PlayerObjectsBridge : MonoBehaviour
     {
         if (Storage == null&&NetworkManager.Singleton.LocalClient!=null)
         {
-            Storage=NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<GameObjectStorage>();
-            mainCameraTemp.SetActive(false);
+            if(NetworkManager.Singleton.LocalClient.PlayerObject!=null){
+                Storage=NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<GameObjectStorage>();
+                mainCameraTemp.SetActive(false);
+                Debug.Log("Found playerobject");
+            }
         }
     }
 }
