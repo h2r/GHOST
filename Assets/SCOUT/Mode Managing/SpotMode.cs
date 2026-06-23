@@ -9,7 +9,8 @@ public class SpotMode : NamedOption
     public Material greenMaterial, grayMaterial, redMaterial;
     public string modeName;
     public Color color;
-    public string spotName;
+    public SpotObserverClient spotObserverClient;
+    
 
     public bool useWorldDummyGripper = false;
 
@@ -43,7 +44,7 @@ public class SpotMode : NamedOption
             moveSpot.Move(Vector2.zero, 0, curHeight);
             setGripper.CloseGripper();
             stowArm.Stow();
-            spotName=rosConnector.transform.parent.parent.name; // get the name of the spot from the ros connector's grandparent object to ID SPOTs
+            
         }
     }
 

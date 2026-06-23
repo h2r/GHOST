@@ -6,8 +6,7 @@ public class BGRRawImageSubscriber : MonoBehaviour
     public MeshRenderer meshRenderer;
     
     public ControllerModel controllerModel;
-    public SpotObserverClient spotObserverClientSpotRos1;
-    public SpotObserverClient spotObserverClientSpotRos2;
+    
     private SpotObserverClient activeSpotObserverClient;
     
     public SpotCamera SpotObserverCameraIndex;
@@ -28,7 +27,7 @@ public class BGRRawImageSubscriber : MonoBehaviour
 
     private void Start()
     {
-        activeSpotObserverClient=spotObserverClientSpotRos1;
+        
         runtimeMaterial = new Material(Shader.Find("Standard"));
         meshRenderer.sharedMaterial = runtimeMaterial;
         if (flipMode == Flip.FlipVertical)
@@ -40,18 +39,14 @@ public class BGRRawImageSubscriber : MonoBehaviour
 
     private void Update()
     {
-        Debug.Log(controllerModel.color);
-        Debug.Log(controllerModel.color == Color.red);
-        activeSpotObserverClient = controllerModel.attachedSpotName == "SpotRos1" ? spotObserverClientSpotRos1 : activeSpotObserverClient;
-        activeSpotObserverClient = controllerModel.attachedSpotName == "SpotRos2" ? spotObserverClientSpotRos2 : activeSpotObserverClient;
-        Debug.Log(activeSpotObserverClient);
+        activeSpotObserverClient = controllerModel.attachedSpotMode.spotObserverClient;
         if (activeSpotObserverClient != null && activeSpotObserverClient.TryGetCameraFrame(SpotObserverStreamIdx, SpotObserverCameraIndex, out SpotObserverClient.CameraDepthFrame frame))
         {
             texture2D = frame.ColorTexture;
             runtimeMaterial.mainTexture = texture2D;
         }
     }
-
+    
     private void OnDestroy()
     {
         if (runtimeMaterial != null)
