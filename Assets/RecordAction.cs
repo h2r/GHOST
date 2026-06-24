@@ -15,7 +15,6 @@ public class RecordAction : UIOption
     {
        timerActive = true;
        elapsedTime = 0f;
-       DebugLog("Button Pressed!"); //remove once actual logic is here
     }
 
     private void Update()
@@ -25,8 +24,9 @@ public class RecordAction : UIOption
         elapsedTime += Time.deltaTime;
 
         //put ROS logic here later
-        DebugLog("Pretend I'm recording..."); //remove for actual logic
-        if (elapsedTime >= maxRecordingTime) 
+       
+
+        if (elapsedTime >= maxRecordingTime)
         {
             StopRecording();
         }
