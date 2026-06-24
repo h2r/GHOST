@@ -6,7 +6,6 @@ public enum SuperMode
     SingleDrive,
     DualDrive,
     Camera,
-    Record,
     TabSelection
 }
 
