@@ -20,6 +20,15 @@ public enum DualControl
     FLY
 }
 
+public enum CameraSettings
+{
+    ALL_OFF,
+    RED_PANO,
+    BLUE_PANO,
+    ARM, 
+    ALL_CAMS
+}
+
 public enum RecordingSettings
 {
     RECORD,
@@ -37,7 +46,7 @@ public class UIManager : MonoBehaviour
 {
     public ScoutModeManager modeManager;
 
-    public ButtonList[] singleControllerLists, dualControllerLists, recordingLists, tabSelectionLists;
+    public ButtonList[] singleControllerLists, dualControllerLists, cameraLists, tabSelectionLists;
 
     public RigPositioner rigPositioner;
 
@@ -45,6 +54,21 @@ public class UIManager : MonoBehaviour
 
     private float robotWorldY = 0;
 
+
+    public CameraMode FindCameraMode<T>() where T : CameraMode
+    {
+        foreach (var list in cameraLists)
+        {
+            foreach (var option in list.options)
+            {
+                if (option is T cameraMode)
+                {
+                    return cameraMode;
+                }
+            }
+        }
+        return null;
+    }
 
     public void Start()
     {
@@ -56,7 +80,7 @@ public class UIManager : MonoBehaviour
         {
             { SuperMode.SingleDrive, singleControllerLists },
             { SuperMode.DualDrive, dualControllerLists },
-            { SuperMode.Camera, recordingLists }, //change this
+            { SuperMode.Camera, cameraLists },
             { SuperMode.TabSelection, tabSelectionLists }
         };
         var superModeGetters = new Dictionary<SuperMode, Func<NamedOption>[]>()
@@ -75,7 +99,7 @@ public class UIManager : MonoBehaviour
                 () => null,
                 () => null,
             } },
-            { SuperMode.Camera, new Func<NamedOption>[]{ //change this
+            { SuperMode.Camera, new Func<NamedOption>[]{
                 () => modeManager.cameraView.activeCameraMode,
                 () => null,
                 () => null,
@@ -125,9 +149,9 @@ public class UIManager : MonoBehaviour
                 m => modeManager.dualDrive.control = (TwoControllerMode)m,
                 m => ((UIOption)m).DoAction(modeManager)
             } },
-            { SuperMode.Camera, new Action<NamedOption>[] { //change this 
-                m => modeManager.cameraView.SetActiveCameraMode((CameraMode)m), //change to do action as well
-                m => ((UIOption) m).DoAction(modeManager) 
+            { SuperMode.Camera, new Action<NamedOption>[] {
+                m => modeManager.cameraView.SetActiveCameraMode((CameraMode)m),
+                m => ((UIOption) m).DoAction(modeManager)
             } },
             // ADDED: Setters for TabSelection
             { SuperMode.TabSelection, new Action<NamedOption>[] {
@@ -149,6 +173,11 @@ public class UIManager : MonoBehaviour
             }
         }
 
+        // ADDED: Default selection for Camera SuperMode
+        if (modeManager.uiSuperMode == SuperMode.Camera && cameraLists.Length > 0 && cameraLists[0].options.Length > 0)
+        {
+            modeManager.cameraView.SetActiveCameraMode((CameraMode)cameraLists[0].options[0]);
+        }
         SetDefaultControls();
     }
 
