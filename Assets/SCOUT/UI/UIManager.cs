@@ -37,28 +37,13 @@ public class UIManager : MonoBehaviour
 {
     public ScoutModeManager modeManager;
 
-    public ButtonList[] singleControllerLists, dualControllerLists, cameraLists, recordingLists, tabSelectionLists;
+    public ButtonList[] singleControllerLists, dualControllerLists, recordingLists, tabSelectionLists;
 
     public RigPositioner rigPositioner;
 
     private Dictionary<SuperMode, ButtonList[]> superModeLists;
 
     private float robotWorldY = 0;
-
-    public CameraMode FindCameraMode<T>() where T : CameraMode
-    {
-        foreach (var list in cameraLists)
-        {
-            foreach (var option in list.options)
-            {
-                if (option is T cameraMode)
-                {
-                    return cameraMode;
-                }
-            }
-        }
-        return null;
-    }
 
     public void Start()
     {
