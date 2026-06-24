@@ -9096,7 +9096,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: End Record
   isHorizontal: 0
-  options: []
+  options:
+  - {fileID: 340065215537436307}
+  - {fileID: 4423366195813605072}
+  - {fileID: 1832135600870570308}
+  - {fileID: 770272435582215544}
+  - {fileID: 7899945183317588484}
   titlePrefab: {fileID: 3278048788002158022, guid: bfe2b15985d2d437fb47203f0df723ee, type: 3}
   buttonPrefab: {fileID: 1520795838076098022, guid: 39fc7b698942e4ac18e866a2f1f87352, type: 3}
 --- !u!1 &689495059
@@ -25833,10 +25838,8 @@ MonoBehaviour:
   - {fileID: 6359877404965610923}
   - {fileID: 897257341188292110}
   - {fileID: 8393932135056192585}
-  cameraLists: []
-  recordingLists:
+  cameraLists:
   - {fileID: 7810662768180412517}
-  - {fileID: 686737357}
   - {fileID: 7316655389271179010}
   tabSelectionLists:
   - {fileID: 5858338137894916716}
@@ -26297,7 +26300,11 @@ MonoBehaviour:
   title: Record Action
   isHorizontal: 0
   options:
-  - {fileID: 1983687861}
+  - {fileID: 340065215537436307}
+  - {fileID: 4423366195813605072}
+  - {fileID: 1832135600870570308}
+  - {fileID: 770272435582215544}
+  - {fileID: 7899945183317588484}
   titlePrefab: {fileID: 3278048788002158022, guid: bfe2b15985d2d437fb47203f0df723ee, type: 3}
   buttonPrefab: {fileID: 1520795838076098022, guid: 39fc7b698942e4ac18e866a2f1f87352, type: 3}
 --- !u!114 &7811334636564698287
