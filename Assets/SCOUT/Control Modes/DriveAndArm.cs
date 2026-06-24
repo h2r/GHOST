@@ -76,7 +76,7 @@ public class DriveAndArm : OneControllerMode
             switch (armControlMode)
             {
                 case ArmControlMode.AbsolutePos:
-                    spot.SetGripperTf(model.anchor.transform);
+                    spot.SetGripperTfRPC(model.anchor.transform);
                     isRelativeModeActive = false;
                     break;
 
@@ -103,7 +103,7 @@ public class DriveAndArm : OneControllerMode
                     Vector3 newGripperPosition = initialGripperPosition + controllerDelta;
                     Quaternion newGripperRotation = controllerDeltaRot * initialGripperRotation;
 
-                    spot.SetGripperWorldPose(newGripperPosition, newGripperRotation);
+                    spot.SetGripperWorldPoseRPC(newGripperPosition, newGripperRotation);
                     break;
             }
 

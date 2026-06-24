@@ -59,12 +59,12 @@ public class MultiSpotMode : SpotMode
         SetHeight(Mathf.Clamp(curHeight + deltaHeight, -0.1f, 0.15f));
     }
 
-    public override void SetGripperTf(Transform tf)
+    public override void SetGripperTfRPC(Transform tf)
     {
         // not implemented on multi spot
     }
 
-    public override void SetGripperWorldPose(Vector3 position, Quaternion rotation)
+    public override void SetGripperWorldPoseRPC(Vector3 position, Quaternion rotation)
     {
         // not implemented on multi spot
     }

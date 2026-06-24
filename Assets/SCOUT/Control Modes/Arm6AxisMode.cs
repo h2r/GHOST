@@ -136,7 +136,7 @@ public class Arm6AxisMode : OneControllerMode
                 case ArmControlMode.Absolute:
                     if (canControlArm && triggerHeld && !anyJoystickInUse)
                     {
-                        spot.SetGripperTf(model.anchor.transform);
+                        spot.SetGripperTfRPC(model.anchor.transform);
                     }
                     break;
 
@@ -165,7 +165,7 @@ public class Arm6AxisMode : OneControllerMode
                             Vector3 newPos = initialGripperPosition + deltaPos;
                             Quaternion newRot = deltaRot * initialGripperRotation;
 
-                            spot.SetGripperWorldPose(newPos, newRot);
+                            spot.SetGripperWorldPoseRPC(newPos, newRot);
                         }
                     }
                     else

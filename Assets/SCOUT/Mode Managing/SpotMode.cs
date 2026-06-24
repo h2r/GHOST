@@ -1,5 +1,6 @@
 using System;
 using RosSharp.RosBridgeClient;
+using Unity.Netcode;
 using UnityEngine;
 
 public class SpotMode : NamedOption
@@ -101,13 +102,13 @@ public class SpotMode : NamedOption
         lastHeightChangeTime = Time.time;
         SetHeight(Mathf.Clamp(curHeight + deltaHeight, -0.15f, 0.15f));
     }
-
-    public virtual void SetGripperTf(Transform tf)
+    [Rpc(SendTo.Server)]
+    public virtual void SetGripperTfRPC(Transform tf)
     {
-        SetGripperWorldPose(tf.position, tf.rotation);
+        SetGripperWorldPoseRPC(tf.position, tf.rotation);
     }
-
-    public virtual void SetGripperWorldPose(Vector3 position, Quaternion rotation)
+    [Rpc(SendTo.Server)]
+    public virtual void SetGripperWorldPoseRPC(Vector3 position, Quaternion rotation)
     {
         worldLocalGripperSync.useWorldGripper = useWorldDummyGripper;
 

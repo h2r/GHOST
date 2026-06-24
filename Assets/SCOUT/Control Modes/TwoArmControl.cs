@@ -123,7 +123,7 @@ public class TwoArmControl : TwoControllerMode
             }
             Vector3 deltaPos = leftModel.anchor.transform.position - initialControllerPositionL;
             Quaternion deltaRot = leftModel.anchor.transform.rotation * Quaternion.Inverse(initialControllerRotationL);
-            leftTargetSpot.SetGripperWorldPose(initialGripperPositionL + deltaPos, deltaRot * initialGripperRotationL);
+            leftTargetSpot.SetGripperWorldPoseRPC(initialGripperPositionL + deltaPos, deltaRot * initialGripperRotationL);
             leftTargetSpot.ChangeGripperColorBasedOnDistance();
         }
         else { isRelativeModeActiveL = false; }
@@ -141,7 +141,7 @@ public class TwoArmControl : TwoControllerMode
             }
             Vector3 deltaPos = rightModel.anchor.transform.position - initialControllerPositionR;
             Quaternion deltaRot = rightModel.anchor.transform.rotation * Quaternion.Inverse(initialControllerRotationR);
-            rightTargetSpot.SetGripperWorldPose(initialGripperPositionR + deltaPos, deltaRot * initialGripperRotationR);
+            rightTargetSpot.SetGripperWorldPoseRPC(initialGripperPositionR + deltaPos, deltaRot * initialGripperRotationR);
             rightTargetSpot.ChangeGripperColorBasedOnDistance();
         }
         else { isRelativeModeActiveR = false; }
