@@ -5,7 +5,7 @@ public enum SuperMode
 {
     SingleDrive,
     DualDrive,
-    Camera,
+    Record,
     TabSelection
 }
 
@@ -30,14 +30,14 @@ public class ScoutModeManager : MonoBehaviour
     public PositionPresetCycler positionPresetCycler;
 
     [NonSerialized]
-    public SuperMode uiSuperMode = SuperMode.Camera;
+    public SuperMode uiSuperMode = SuperMode.TabSelection;
     [NonSerialized]
     public SuperMode activeSuperMode = SuperMode.SingleDrive;
     private SuperMode _previousActiveSuperMode = SuperMode.SingleDrive;
 
     public SingleDriveSuperMode singleDrive = new();
     public DualDriveSuperMode dualDrive = new();
-    public CameraSuperMode cameraView = new();
+
 
     [NonSerialized]
     public bool isMenuOpen = false;
@@ -55,20 +55,7 @@ public class ScoutModeManager : MonoBehaviour
         }
 
         // Check if isMenuOpen has changed
-        if (isMenuOpen != _previousIsMenuOpen)
-        {
-            // If the menu is now closed and a camera mode is active, activate its controlledGameObject
-            if (!isMenuOpen && cameraView.activeCameraMode != null && cameraView.activeCameraMode.controlledGameObject != null)
-            {
-                cameraView.activeCameraMode.controlledGameObject.SetActive(true);
-            }
-            // If the menu is now open and a camera mode is active, deactivate its controlledGameObject
-            else if (isMenuOpen && cameraView.activeCameraMode != null && cameraView.activeCameraMode.controlledGameObject != null)
-            {
-                cameraView.activeCameraMode.controlledGameObject.SetActive(false);
-            }
-            _previousIsMenuOpen = isMenuOpen; // Update the previous state
-        }
+        
 
         if (!isMenuOpen && !hasMenuClosed)
         {
@@ -277,31 +264,3 @@ public class DualDriveSuperMode
     }
 }
 
-public class CameraSuperMode
-{
-    public CameraMode cameraMode;
-    public CameraMode activeCameraMode; // ADDED: To store the currently selected camera mode
-
-    public void SetActiveCameraMode(CameraMode mode)
-    {
-        if (activeCameraMode != null && activeCameraMode.controlledGameObject != null)
-        {
-            activeCameraMode.controlledGameObject.SetActive(false);
-        }
-
-        activeCameraMode = mode;
-
-        if (activeCameraMode != null && activeCameraMode.controlledGameObject != null)
-        {
-            if (ScoutModeManager.Instance != null && !ScoutModeManager.Instance.isMenuOpen)
-            {
-                activeCameraMode.controlledGameObject.SetActive(true);
-            }
-            else
-            {
-                activeCameraMode.controlledGameObject.SetActive(false);
-            }
-        }
-        Debug.Log("Active Camera Mode set to: " + mode.GetName()); // For debugging
-    }
-}
