@@ -24492,7 +24492,7 @@ GameObject:
   - component: {fileID: 708188389574442797}
   - component: {fileID: 6231037889903052285}
   m_Layer: 0
-  m_Name: Camera Settings
+  m_Name: Recording Settings
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -25373,7 +25373,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7db896cb2568f244ea1db473bf2415d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  displayName: Camera Settings
+  displayName: Recording Settings
   superMode: 2
 --- !u!1 &6305392753868467143
 GameObject:
@@ -26192,7 +26192,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 381e127de9f024afab1e8cb841ff9e4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  title: Camera Feed Views
+  title: Options
   isHorizontal: 0
   options:
   - {fileID: 340065215537436307}
