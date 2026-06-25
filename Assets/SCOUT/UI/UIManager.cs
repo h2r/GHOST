@@ -75,7 +75,7 @@ public class UIManager : MonoBehaviour
         {
             { SuperMode.SingleDrive, singleControllerLists },
             { SuperMode.DualDrive, dualControllerLists },
-            { SuperMode.Camera, cameraLists },
+            { SuperMode.Record, recordLists },
             { SuperMode.TabSelection, tabSelectionLists }
         };
         var superModeGetters = new Dictionary<SuperMode, Func<NamedOption>[]>()
@@ -94,8 +94,9 @@ public class UIManager : MonoBehaviour
                 () => null,
                 () => null,
             } },
-            { SuperMode.Camera, new Func<NamedOption>[]{
-                () => modeManager.cameraView.activeCameraMode,
+
+            { SuperMode.Record, new Func<NamedOption>[]{
+                () => null,
                 () => null,
                 () => null,
             }},
@@ -142,8 +143,8 @@ public class UIManager : MonoBehaviour
                 m => modeManager.dualDrive.control = (TwoControllerMode)m,
                 m => ((UIOption)m).DoAction(modeManager)
             } },
-            { SuperMode.Camera, new Action<NamedOption>[] { //replace with record
-                m => modeManager.cameraView.SetActiveCameraMode((CameraMode)m),
+            { SuperMode.Record, new Action<NamedOption>[] { //replace with record
+                m => ((UIOption) m).DoAction(modeManager),
                 m => ((UIOption) m).DoAction(modeManager)
             } },
             // ADDED: Setters for TabSelection
