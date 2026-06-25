@@ -29,6 +29,11 @@ public enum CameraSettings
     ALL_CAMS
 }
 
+public enum RecordingSettings
+{
+    RECORD,
+    STOP
+}
 
 public enum SpotColor
 {
