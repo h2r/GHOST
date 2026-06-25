@@ -110,6 +110,7 @@ public class SpotMode : NamedOption
     [Rpc(SendTo.Server)]
     public virtual void SetGripperWorldPoseRPC(Vector3 position, Quaternion rotation)
     {
+        Debug.Log("Setting Gripper World Pose On Server");
         worldLocalGripperSync.useWorldGripper = useWorldDummyGripper;
 
         GameObject GripperToUse = useWorldDummyGripper ? worldDummyGripper : dummyGripper;
