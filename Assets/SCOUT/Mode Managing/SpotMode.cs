@@ -92,8 +92,10 @@ public class SpotMode : NamedOption
         curHeight = height;
         print(modeName + " set height: " + curHeight);
         if (rosConnector != null)
+        {
             Debug.Log("Height: rosconnector connected sending height to setheight.cs");
             setHeight.SetHeightPercentage(curHeight);
+        }
     }
 
     public virtual void AdjustHeight(float deltaHeight)
@@ -102,15 +104,13 @@ public class SpotMode : NamedOption
         lastHeightChangeTime = Time.time;
         SetHeight(Mathf.Clamp(curHeight + deltaHeight, -0.15f, 0.15f));
     }
-    [Rpc(SendTo.Server)]
-    public virtual void SetGripperTfRPC(Transform tf)
+    public virtual void SetGripperTf(Transform tf)
     {
-        SetGripperWorldPoseRPC(tf.position, tf.rotation);
+        SetGripperWorldPose(tf.position, tf.rotation);
     }
-    [Rpc(SendTo.Server)]
-    public virtual void SetGripperWorldPoseRPC(Vector3 position, Quaternion rotation)
+
+    public virtual void SetGripperWorldPose(Vector3 position, Quaternion rotation)
     {
-        Debug.Log("Setting Gripper World Pose On Server");
         worldLocalGripperSync.useWorldGripper = useWorldDummyGripper;
 
         GameObject GripperToUse = useWorldDummyGripper ? worldDummyGripper : dummyGripper;
