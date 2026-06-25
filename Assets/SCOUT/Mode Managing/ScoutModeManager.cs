@@ -6,6 +6,7 @@ public enum SuperMode
     SingleDrive,
     DualDrive,
     Camera,
+    Record,
     TabSelection
 }
 
@@ -38,6 +39,9 @@ public class ScoutModeManager : MonoBehaviour
     public SingleDriveSuperMode singleDrive = new();
     public DualDriveSuperMode dualDrive = new();
     public CameraSuperMode cameraView = new();
+
+    public RecordSuperMode record = new();
+    
 
     [NonSerialized]
     public bool isMenuOpen = false;
@@ -290,7 +294,7 @@ public class DualDriveSuperMode
     }
 }
 
-public class CameraSuperMode
+public class CameraSuperMode 
 {
     public CameraMode cameraMode;
     public CameraMode activeCameraMode; // ADDED: To store the currently selected camera mode
@@ -317,4 +321,11 @@ public class CameraSuperMode
         }
         Debug.Log("Active Camera Mode set to: " + mode.GetName()); // For debugging
     }
+}
+
+public class RecordSuperMode
+{
+    public RecordSuperMode recordMode;
+
+
 }
