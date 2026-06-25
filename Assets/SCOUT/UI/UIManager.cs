@@ -41,7 +41,7 @@ public class UIManager : MonoBehaviour
 {
     public ScoutModeManager modeManager;
 
-    public ButtonList[] singleControllerLists, dualControllerLists, cameraLists, tabSelectionLists;
+    public ButtonList[] singleControllerLists, dualControllerLists, cameraLists, recordLists, tabSelectionLists;
 
     public RigPositioner rigPositioner;
 
