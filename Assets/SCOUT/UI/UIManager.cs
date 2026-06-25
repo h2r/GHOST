@@ -142,7 +142,7 @@ public class UIManager : MonoBehaviour
                 m => modeManager.dualDrive.control = (TwoControllerMode)m,
                 m => ((UIOption)m).DoAction(modeManager)
             } },
-            { SuperMode.Camera, new Action<NamedOption>[] {
+            { SuperMode.Camera, new Action<NamedOption>[] { //replace with record
                 m => modeManager.cameraView.SetActiveCameraMode((CameraMode)m),
                 m => ((UIOption) m).DoAction(modeManager)
             } },
