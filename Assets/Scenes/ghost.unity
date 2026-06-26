@@ -25611,7 +25611,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   displayName: Recording Settings
-  superMode: 2
+  superMode: 3
 --- !u!1 &6305392753868467143
 GameObject:
   m_ObjectHideFlags: 0
