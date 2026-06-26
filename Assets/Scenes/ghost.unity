@@ -198,7 +198,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 381e127de9f024afab1e8cb841ff9e4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  title: Mode
+  title: 
   isHorizontal: 0
   options:
   - {fileID: 340065215537436307}
@@ -206,8 +206,8 @@ MonoBehaviour:
   - {fileID: 1832135600870570308}
   - {fileID: 770272435582215544}
   - {fileID: 7899945183317588484}
-  titlePrefab: {fileID: 0}
-  buttonPrefab: {fileID: 0}
+  titlePrefab: {fileID: 3278048788002158022, guid: bfe2b15985d2d437fb47203f0df723ee, type: 3}
+  buttonPrefab: {fileID: 1520795838076098022, guid: 39fc7b698942e4ac18e866a2f1f87352, type: 3}
 --- !u!1 &15000016
 GameObject:
   m_ObjectHideFlags: 0
