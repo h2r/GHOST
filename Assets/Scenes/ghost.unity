@@ -198,7 +198,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 381e127de9f024afab1e8cb841ff9e4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  title: 
+  title: Unenabled Camera Mode
   isHorizontal: 0
   options:
   - {fileID: 340065215537436307}
