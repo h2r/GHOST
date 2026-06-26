@@ -4024,7 +4024,7 @@ Camera:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2421841541043653957}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0.019607844}
@@ -6164,7 +6164,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 3014772982
+  GlobalObjectIdHash: 1268658104
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -6254,6 +6254,8 @@ MonoBehaviour:
   - {fileID: 7525627305139167294}
   - {fileID: 662955982189475188}
   - {fileID: 8724468926547198520}
+  SkinRendererLeft: {fileID: 61029059703604}
+  SkinRendererRight: {fileID: 4635313953072415973}
 --- !u!114 &3794236184048541466
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -65,15 +65,20 @@ public class UIManager : MonoBehaviour
         }
         return null;
     }
-
+    private void initControllerModels()
+    {
+        modeManager.leftModel.labels = bridge.Storage.LeftLabels;
+        modeManager.rightModel.labels = bridge.Storage.RightLabels;
+        modeManager.rightModel.anchor = bridge.Storage.RightControllerAnchor;
+        modeManager.leftModel.anchor = bridge.Storage.LeftControllerAnchor;
+        modeManager.leftModel.skinRenderer = bridge.Storage.SkinRendererLeft;
+        modeManager.rightModel.skinRenderer = bridge.Storage.SkinRendererRight;
+    }
     public void Start()
     {
         
         if(bridge.Storage!=null){
-            modeManager.leftModel.labels=bridge.Storage.LeftLabels;
-            modeManager.rightModel.labels=bridge.Storage.RightLabels;
-            modeManager.rightModel.anchor=bridge.Storage.RightControllerAnchor;
-            modeManager.leftModel.anchor=bridge.Storage.LeftControllerAnchor;
+            initControllerModels();
             rigPositioner=NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<RigPositioner>();
             rigPositioner.y = 1; // Initial Height change; 0 is ground level, 
             robotWorldY = 0;
@@ -187,10 +192,7 @@ public class UIManager : MonoBehaviour
         if (!started)
         {
             if(bridge.Storage!=null){
-                modeManager.leftModel.labels=bridge.Storage.LeftLabels;
-                modeManager.rightModel.labels=bridge.Storage.RightLabels;
-                modeManager.rightModel.anchor=bridge.Storage.RightControllerAnchor;
-                modeManager.leftModel.anchor=bridge.Storage.LeftControllerAnchor;
+                initControllerModels();
                 rigPositioner=NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<RigPositioner>();
                 rigPositioner.y = 1; // Initial Height change; 0 is ground level, 
                 robotWorldY = 0;
