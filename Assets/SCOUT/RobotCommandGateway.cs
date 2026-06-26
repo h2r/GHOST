@@ -6,12 +6,6 @@ public class RobotCommandGateway : NetworkBehaviour
 {
     [Tooltip("Match this order to ScoutModeManager.spots and UI spot selection.")]
     public SpotMode[] spots;
-
-    [Tooltip("Allow clients to send robot commands before robot ownership is implemented.")]
-    public bool allowUnclaimedControl = true;
-
-    private NetworkVariable<int> redSpotOwner = new(-1);
-    private NetworkVariable<int> blueSpotOwner = new(-1);
     private NetworkVariable<bool> redGripperOpen = new(false);
     private NetworkVariable<bool> blueGripperOpen = new(false);
 
@@ -219,7 +213,7 @@ public class RobotCommandGateway : NetworkBehaviour
 
     private void ExecuteDrive(int spotIndex, Vector2 direction, ulong senderClientId)
     {
-        if (!CanClientControlSpot(senderClientId, spotIndex) || !TryGetSpot(spotIndex, out SpotMode spot))
+        if (!TryGetSpot(spotIndex, out SpotMode spot))
             return;
 
         spot.Drive(direction);
@@ -227,7 +221,7 @@ public class RobotCommandGateway : NetworkBehaviour
 
     private void ExecuteRotate(int spotIndex, float direction, ulong senderClientId)
     {
-        if (!CanClientControlSpot(senderClientId, spotIndex) || !TryGetSpot(spotIndex, out SpotMode spot))
+        if (!TryGetSpot(spotIndex, out SpotMode spot))
             return;
 
         spot.Rotate(direction);
@@ -235,7 +229,7 @@ public class RobotCommandGateway : NetworkBehaviour
 
     private void ExecuteSetHeight(int spotIndex, float height, ulong senderClientId)
     {
-        if (!CanClientControlSpot(senderClientId, spotIndex) || !TryGetSpot(spotIndex, out SpotMode spot))
+        if (!TryGetSpot(spotIndex, out SpotMode spot))
             return;
 
         spot.SetHeight(height);
@@ -243,7 +237,7 @@ public class RobotCommandGateway : NetworkBehaviour
 
     private void ExecuteAdjustHeight(int spotIndex, float deltaHeight, ulong senderClientId)
     {
-        if (!CanClientControlSpot(senderClientId, spotIndex) || !TryGetSpot(spotIndex, out SpotMode spot))
+        if (!TryGetSpot(spotIndex, out SpotMode spot))
             return;
 
         spot.AdjustHeight(deltaHeight);
@@ -251,7 +245,7 @@ public class RobotCommandGateway : NetworkBehaviour
 
     private void ExecuteSetGripperWorldPose(int spotIndex, Vector3 position, Quaternion rotation, ulong senderClientId)
     {
-        if (!CanClientControlSpot(senderClientId, spotIndex) || !TryGetSpot(spotIndex, out SpotMode spot))
+        if (!TryGetSpot(spotIndex, out SpotMode spot))
             return;
 
         spot.SetGripperWorldPose(position, rotation);
@@ -259,7 +253,7 @@ public class RobotCommandGateway : NetworkBehaviour
 
     private void ExecuteSetGripperOpen(int spotIndex, bool isOpen, ulong senderClientId)
     {
-        if (!CanClientControlSpot(senderClientId, spotIndex) || !TryGetSpot(spotIndex, out SpotMode spot))
+        if (!TryGetSpot(spotIndex, out SpotMode spot))
             return;
         if (spotIndex == 0)
         {
@@ -274,7 +268,7 @@ public class RobotCommandGateway : NetworkBehaviour
 
     private void ExecuteStowArm(int spotIndex, ulong senderClientId)
     {
-        if (!CanClientControlSpot(senderClientId, spotIndex) || !TryGetSpot(spotIndex, out SpotMode spot))
+        if (!TryGetSpot(spotIndex, out SpotMode spot))
             return;
 
         spot.StowArm();
@@ -288,85 +282,5 @@ public class RobotCommandGateway : NetworkBehaviour
 
         spot = spots[spotIndex];
         return spot != null;
-    }
-
-    private bool CanClientControlSpot(ulong clientId, int spotIndex)
-    {
-        if (!TryGetSpot(spotIndex, out _))
-            return false;
-
-        int owner = GetOwnerForSpot(spotIndex);
-        if (owner < 0)
-            return allowUnclaimedControl;
-
-        return owner == unchecked((int)clientId);
-    }
-
-    private int GetOwnerForSpot(int spotIndex)
-    {
-        if (spotIndex == 0)
-            return redSpotOwner.Value;
-        if (spotIndex == 1)
-            return blueSpotOwner.Value;
-
-        return -1;
-    }
-
-    public void SetLocalSpotOwner(int spotIndex)
-    {
-        if (IsServer)
-            SetSpotOwner(spotIndex, NetworkManager.Singleton.LocalClientId);
-        else
-            SetSpotOwnerServerRpc(spotIndex);
-    }
-
-    public void ClearLocalSpotOwner(int spotIndex)
-    {
-        if (IsServer)
-            ClearSpotOwner(spotIndex, NetworkManager.Singleton.LocalClientId);
-        else
-            ClearSpotOwnerServerRpc(spotIndex);
-    }
-
-    [ServerRpc(RequireOwnership = false)]
-    private void SetSpotOwnerServerRpc(int spotIndex, ServerRpcParams rpcParams = default)
-    {
-        SetSpotOwner(spotIndex, rpcParams.Receive.SenderClientId);
-    }
-
-    [ServerRpc(RequireOwnership = false)]
-    private void ClearSpotOwnerServerRpc(int spotIndex, ServerRpcParams rpcParams = default)
-    {
-        ClearSpotOwner(spotIndex, rpcParams.Receive.SenderClientId);
-    }
-
-    private void SetSpotOwner(int spotIndex, ulong clientId)
-    {
-        if (!TryGetSpot(spotIndex, out _))
-            return;
-
-        int currentOwner = GetOwnerForSpot(spotIndex);
-        if (currentOwner >= 0 && currentOwner != unchecked((int)clientId))
-            return;
-
-        SetOwnerForSpot(spotIndex, unchecked((int)clientId));
-    }
-
-    private void ClearSpotOwner(int spotIndex, ulong clientId)
-    {
-        if (!TryGetSpot(spotIndex, out _))
-            return;
-
-        int currentOwner = GetOwnerForSpot(spotIndex);
-        if (currentOwner == unchecked((int)clientId) || clientId == NetworkManager.ServerClientId)
-            SetOwnerForSpot(spotIndex, -1);
-    }
-
-    private void SetOwnerForSpot(int spotIndex, int ownerClientId)
-    {
-        if (spotIndex == 0)
-            redSpotOwner.Value = ownerClientId;
-        else if (spotIndex == 1)
-            blueSpotOwner.Value = ownerClientId;
-    }
+    }   
 }

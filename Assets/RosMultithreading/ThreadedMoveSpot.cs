@@ -2,7 +2,7 @@ using UnityEngine;
 using RosSharp;
 using MessageTypes = RosSharp.RosBridgeClient.MessageTypes;
 using RosSharp.RosBridgeClient.MessageTypes.Spot;
-using UnityEditor.UI;
+
 using RosSharp.RosBridgeClient;
 
 public class ThreadedMoveSpot : ThreadedUnityPublisher<MessageTypes.Geometry.Twist>
