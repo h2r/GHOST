@@ -31,7 +31,7 @@ public class ScoutModeManager : MonoBehaviour
     public PositionPresetCycler positionPresetCycler;
 
     [NonSerialized]
-    public SuperMode uiSuperMode = SuperMode.Camera;
+    public SuperMode uiSuperMode = SuperMode.Record;
     [NonSerialized]
     public SuperMode activeSuperMode = SuperMode.SingleDrive;
     private SuperMode _previousActiveSuperMode = SuperMode.SingleDrive;
