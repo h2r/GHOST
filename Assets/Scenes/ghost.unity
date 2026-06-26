@@ -198,7 +198,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 381e127de9f024afab1e8cb841ff9e4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  title: Options
+  title: Mode
   isHorizontal: 0
   options:
   - {fileID: 340065215537436307}
@@ -206,8 +206,8 @@ MonoBehaviour:
   - {fileID: 1832135600870570308}
   - {fileID: 770272435582215544}
   - {fileID: 7899945183317588484}
-  titlePrefab: {fileID: 3278048788002158022, guid: bfe2b15985d2d437fb47203f0df723ee, type: 3}
-  buttonPrefab: {fileID: 1520795838076098022, guid: 39fc7b698942e4ac18e866a2f1f87352, type: 3}
+  titlePrefab: {fileID: 0}
+  buttonPrefab: {fileID: 0}
 --- !u!1 &15000016
 GameObject:
   m_ObjectHideFlags: 0
@@ -17686,12 +17686,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1666425616}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -19.70961, y: 0, z: 691.5939}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -20.12973, y: 1.01231, z: 688.6234}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 9217194773734636244}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1666953975
 GameObject:
@@ -27319,6 +27319,7 @@ Transform:
   - {fileID: 1160909125962751798}
   - {fileID: 7668606360824352629}
   - {fileID: 1885078169}
+  - {fileID: 1666425618}
   - {fileID: 4819413781800261329}
   - {fileID: 2925042530075760595}
   m_Father: {fileID: 0}
@@ -27337,4 +27338,3 @@ SceneRoots:
   - {fileID: 1646626576}
   - {fileID: 420483825}
   - {fileID: 9217194773734636244}
-  - {fileID: 1666425618}
