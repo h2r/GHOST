@@ -21,7 +21,7 @@ public class ButtonList : MonoBehaviour
     {
         float x = 0, y = 0;
         
-        if (title != "" && !isHorizontal)
+        if (title != ""  && title != "Unenabled Camera Mode" && !isHorizontal)
         {
             var titleObj = Instantiate(titlePrefab, transform);
             titleObj.GetComponent<RectTransform>().localPosition = new(0, 0, 0);
@@ -31,17 +31,21 @@ public class ButtonList : MonoBehaviour
 
         buttons = new GameObject[options.Length];
 
-        for (int i = 0; i < options.Length; i++)
+        if(title != "Unenabled Camera Mode")
         {
-            buttons[i] = Instantiate(buttonPrefab, transform);
-            buttons[i].GetComponent<RectTransform>().localPosition = new(x, y, 0);
-            buttons[i].transform.Find("Text").GetComponent<TMP_Text>().text = options[i].GetName();
+            for (int i = 0; i < options.Length; i++)
+            {
+                buttons[i] = Instantiate(buttonPrefab, transform);
+                buttons[i].GetComponent<RectTransform>().localPosition = new(x, y, 0);
+                buttons[i].transform.Find("Text").GetComponent<TMP_Text>().text = options[i].GetName();
 
-            if (isHorizontal)
-                x += 150;
-            else
-                y -= 55;
+                if (isHorizontal)
+                    x += 150;
+                else
+                    y -= 55;
+            }
         }
+        
     }
 
     void Update() // Corrected: Removed extra '()'
