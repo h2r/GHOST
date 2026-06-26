@@ -11,7 +11,7 @@ public class ArmJoystickMode : TwoControllerMode
         {
             var gripperTf = spot.GetGripperPos();
             gripperTf.position += (Vector3)joystick;
-            spot.SetGripperTfRPC(gripperTf);
+            spot.SetGripperTf(gripperTf);
         }
         spot.ChangeGripperColorBasedOnDistance();
     }

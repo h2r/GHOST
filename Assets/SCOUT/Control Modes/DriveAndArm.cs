@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class DriveAndArm : OneControllerMode
 {
+    public RobotCommandGateway gateway;
     [Header("View Settings")]
     public GameObject viewOptionsConfigurer;
     private PointCloudCycler pointCloudCycler;
@@ -76,7 +77,7 @@ public class DriveAndArm : OneControllerMode
             switch (armControlMode)
             {
                 case ArmControlMode.AbsolutePos:
-                    spot.SetGripperTfRPC(model.anchor.transform);
+                    gateway.RequestSetGripperTf(spot,model.anchor.transform);
                     isRelativeModeActive = false;
                     break;
 
@@ -103,15 +104,15 @@ public class DriveAndArm : OneControllerMode
                     Vector3 newGripperPosition = initialGripperPosition + controllerDelta;
                     Quaternion newGripperRotation = controllerDeltaRot * initialGripperRotation;
 
-                    spot.SetGripperWorldPoseRPC(newGripperPosition, newGripperRotation);
+                    spot.SetGripperWorldPose(newGripperPosition, newGripperRotation);
                     break;
             }
 
             // Grip toggles gripper open/closed
             if (gripPressed)
-                spot.SetGripperOpen(!spot.GetGripperOpen());
+                gateway.RequestToggleGripperOpen(spot);
 
-            bool isGripperOpen = spot.GetGripperOpen();
+            bool isGripperOpen = gateway.GetSyncedGripperOpen(spot);
 
             thumbstickLabel = "Arm Mode";
             triggerLabel = "";
@@ -130,7 +131,7 @@ public class DriveAndArm : OneControllerMode
                 isRelativeModeActive = false;
 
                 if (Mathf.Abs(joystick.y) > 0.1)
-                    spot.AdjustHeight(joystick.y * 0.02f);
+                    gateway.RequestAdjustHeight(spot,joystick.y * 0.02f);
 
                 thumbstickLabel = "Body Up/Down";
                 gripLabel = "";
@@ -142,7 +143,7 @@ public class DriveAndArm : OneControllerMode
                 isRelativeModeActive = false;
 
                 if (Mathf.Abs(joystick.x) > 0.1)
-                    spot.Rotate(joystick.x * 0.5f);
+                    gateway.RequestRotate(spot,joystick.x * 0.5f);
 
                 thumbstickLabel = "Rotate Spot";
                 gripLabel = "";
@@ -152,13 +153,13 @@ public class DriveAndArm : OneControllerMode
             {
                 // === Normal Drive Mode ===
                 if (joystick.magnitude > 0.1f)
-                    spot.Drive(joystick * 0.5f);
+                    gateway.RequestDrive(spot,joystick * 0.5f);
 
                 if (OVRInput.Get(model.byButton))
-                    spot.AdjustHeight(0.03f);
+                    gateway.RequestAdjustHeight(spot,0.03f);
 
                 if (OVRInput.Get(model.axButton))
-                    spot.AdjustHeight(-0.03f);
+                    gateway.RequestAdjustHeight(spot,-0.03f);
 
                 thumbstickLabel = "Drive Spot";
                 triggerLabel = "Hold: Control Arm";

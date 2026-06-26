@@ -15,6 +15,8 @@ public class WorldLocalGripperSync : MonoBehaviour
 
     void Start()
     {
+        dummyGripperInWorldFrame.transform.position = dummyGripperInLocalFrame.transform.position;
+        dummyGripperInWorldFrame.transform.rotation = dummyGripperInLocalFrame.transform.rotation;
     }
 
     void SwitchGripperReference(string reference)

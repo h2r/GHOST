@@ -12,6 +12,8 @@ public class RobotCommandGateway : NetworkBehaviour
 
     private NetworkVariable<int> redSpotOwner = new(-1);
     private NetworkVariable<int> blueSpotOwner = new(-1);
+    private NetworkVariable<bool> redGripperOpen = new(false);
+    private NetworkVariable<bool> blueGripperOpen = new(false);
 
     public bool TryGetSpotIndex(SpotMode spot, out int spotIndex)
     {
@@ -44,7 +46,47 @@ public class RobotCommandGateway : NetworkBehaviour
         else
             DriveServerRpc(spotIndex, direction);
     }
+    public bool GetSyncedGripperOpen(SpotMode spot)
+    {
+        if (!TryGetSpotIndex(spot, out int spotIndex))
+        {
+            return false;
 
+        }
+        return GetSyncedGripperOpen(spotIndex);
+    }
+    public bool GetSyncedGripperOpen(int spotIndex)
+    {
+        if (spotIndex == 0)
+        {
+            return redGripperOpen.Value;
+
+        }
+        else if(spotIndex == 1)
+        {
+            return blueGripperOpen.Value;
+        }
+        return false;
+    }
+    
+    public void RequestToggleGripperOpen(SpotMode spot)
+    {
+        if(!TryGetSpotIndex(spot, out int spotIndex)){
+            return;
+        }
+        RequestToggleGripperOpen(spotIndex);
+    }
+    public void RequestToggleGripperOpen(int spotIndex)
+    {
+        if (spotIndex == 0)
+        {
+            RequestSetGripperOpen(spotIndex, !redGripperOpen.Value);
+        }
+        if(spotIndex == 1)
+        {
+            RequestSetGripperOpen(spotIndex, !blueGripperOpen.Value);
+        }
+    }
     public void RequestRotate(SpotMode spot, float direction)
     {
         if (TryGetSpotIndex(spot, out int spotIndex))
@@ -99,6 +141,10 @@ public class RobotCommandGateway : NetworkBehaviour
             ExecuteSetGripperWorldPose(spotIndex, position, rotation, NetworkManager.Singleton.LocalClientId);
         else
             SetGripperWorldPoseServerRpc(spotIndex, position, rotation);
+    }
+    public void RequestSetGripperTf(SpotMode spot, Transform transform)
+    {
+        RequestSetGripperWorldPose(spot,transform.position,transform.rotation);
     }
 
     public void RequestSetGripperOpen(SpotMode spot, bool isOpen)
@@ -215,7 +261,14 @@ public class RobotCommandGateway : NetworkBehaviour
     {
         if (!CanClientControlSpot(senderClientId, spotIndex) || !TryGetSpot(spotIndex, out SpotMode spot))
             return;
-
+        if (spotIndex == 0)
+        {
+            redGripperOpen.Value = isOpen;
+        }
+        if (spotIndex == 1)
+        {
+            blueGripperOpen.Value=isOpen;
+        }
         spot.SetGripperOpen(isOpen);
     }
 

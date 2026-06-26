@@ -3639,6 +3639,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d20d9c0adc2961428107103f52df143, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gateway: {fileID: 1256544345}
   viewOptionsConfigurer: {fileID: 8916049519973978855}
   armControlMode: 2
 --- !u!4 &410575833
@@ -5605,6 +5606,81 @@ MonoBehaviour:
   turnDamping: 5
   depthManager1: {fileID: 0}
   depthManager2: {fileID: 0}
+--- !u!1 &1256544342
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1256544344}
+  - component: {fileID: 1256544343}
+  - component: {fileID: 1256544345}
+  m_Layer: 0
+  m_Name: ClientServerGateway
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1256544343
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1256544342}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
+  GlobalObjectIdHash: 4262253830
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 0
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
+--- !u!4 &1256544344
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1256544342}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 3.59223, y: -7.68697, z: -6.2258}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1256544345
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1256544342}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43e1206d29563b049be29f47a821dc18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RobotCommandGateway
+  ShowTopMostFoldoutHeaderGroup: 1
+  spots:
+  - {fileID: 5676146346884262863}
+  - {fileID: 5598556563780689457}
+  allowUnclaimedControl: 0
 --- !u!1 &1307565920
 GameObject:
   m_ObjectHideFlags: 0
@@ -10792,6 +10868,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d20d9c0adc2961428107103f52df143, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gateway: {fileID: 1256544345}
   viewOptionsConfigurer: {fileID: 8916049519973978855}
   armControlMode: 2
 --- !u!1 &4092536144721219793
@@ -13716,3 +13793,4 @@ SceneRoots:
   - {fileID: 9217194773734636244}
   - {fileID: 1248370348}
   - {fileID: 706471867}
+  - {fileID: 1256544344}

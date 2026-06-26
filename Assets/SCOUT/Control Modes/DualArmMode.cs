@@ -186,7 +186,7 @@ public class DualArmMode : TwoControllerMode
             switch (armControlMode)
             {
                 case ArmControlMode.Absolute:
-                    spot.SetGripperTfRPC(model.anchor.transform);
+                    spot.SetGripperTf(model.anchor.transform);
                     isRelativeModeActive = false;
                     break;
                 case ArmControlMode.Relative:
@@ -205,7 +205,7 @@ public class DualArmMode : TwoControllerMode
                     {
                         Vector3 deltaPos = model.anchor.transform.position - initialControllerPosition;
                         Quaternion deltaRot = model.anchor.transform.rotation * Quaternion.Inverse(initialControllerRotation);
-                        spot.SetGripperWorldPoseRPC(initialGripperPosition + deltaPos, deltaRot * initialGripperRotation);
+                        spot.SetGripperWorldPose(initialGripperPosition + deltaPos, deltaRot * initialGripperRotation);
                     }
                     break;
             }
