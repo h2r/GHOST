@@ -1,7 +1,7 @@
 using UnityEngine;
 using static SpotObserverClient;
-
-public class BGRRawImageSubscriber : MonoBehaviour
+using Unity.Netcode;
+public class BGRRawImageSubscriberArms : NetworkBehaviour
 {
     public MeshRenderer meshRenderer;
 
@@ -9,7 +9,7 @@ public class BGRRawImageSubscriber : MonoBehaviour
     public SpotCamera SpotObserverCameraIndex;
     public int SpotObserverStreamIdx;
 
-    public Texture2D texture2D;
+    private Texture2D texture2D;
     private Material runtimeMaterial;
 
     public enum Flip
@@ -30,14 +30,13 @@ public class BGRRawImageSubscriber : MonoBehaviour
         else if (flipMode == Flip.FlipHorizontal) {
             runtimeMaterial.mainTextureScale = new Vector2(-1, 1); // Flip horizontally
         }
-    }
-
+    } 
     private void Update()
     {
         if (spotObserverClient != null && spotObserverClient.TryGetCameraFrame(SpotObserverStreamIdx, SpotObserverCameraIndex, out SpotObserverClient.CameraDepthFrame frame))
         {
             texture2D = frame.ColorTexture;
-            runtimeMaterial.mainTexture = texture2D;
+            
         }
     }
 

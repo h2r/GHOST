@@ -4,6 +4,7 @@ using Unity.Netcode;
 using System.Diagnostics;
 public class ControllerModel : MonoBehaviour
 {
+    public SpotMode attachedSpotMode;
     public GameObject anchor;
     public SkinnedMeshRenderer skinRenderer;
     

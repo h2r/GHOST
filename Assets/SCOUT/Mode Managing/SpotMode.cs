@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class SpotMode : NamedOption
 {
+    public SpotObserverClient spotObserverClient;
     public GameObject rosConnector, dummyGripper, readyDummyGripper, worldDummyGripper, armBase;
     public GameObject actualGripper;
     public Material greenMaterial, grayMaterial, redMaterial;

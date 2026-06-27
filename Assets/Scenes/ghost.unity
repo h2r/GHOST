@@ -6388,7 +6388,6 @@ MonoBehaviour:
   spots:
   - {fileID: 5676146346884262863}
   - {fileID: 5598556563780689457}
-  allowUnclaimedControl: 1
 --- !u!114 &1256544346
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6596,6 +6595,8 @@ MonoBehaviour:
   serverObjects:
   - {fileID: 2136176454}
   clientObjects: []
+  clientBehaviours: []
+  serverBehaviours: []
 --- !u!4 &1337538586 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1137478775509555832, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
@@ -8387,6 +8388,8 @@ MonoBehaviour:
   - {fileID: 1510801769}
   clientObjects:
   - {fileID: 2001055724}
+  clientBehaviours: []
+  serverBehaviours: []
 --- !u!114 &1642970288
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10359,6 +10362,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 223e62e716b268548805aa9eb60b5659, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  attachedSpotMode: {fileID: 5676146346884262863}
   anchor: {fileID: 0}
   skinRenderer: {fileID: 0}
   labels: []
@@ -10437,7 +10441,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5778735643103662370}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 60e61d3d1b504664fb9dbb7d23688c1e, type: 3}
   m_Name: 
@@ -11257,7 +11261,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7471388685253160271}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ff98778ae051cfd40a6e4effdf851ebd, type: 3}
   m_Name: 
@@ -11838,6 +11842,7 @@ GameObject:
   - component: {fileID: 7892326592595442516}
   - component: {fileID: 357160241114662341}
   - component: {fileID: 7892326592595442517}
+  - component: {fileID: 7892326592595442518}
   m_Layer: 0
   m_Name: ArmCam2
   m_TagString: Untagged
@@ -12014,7 +12019,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &3799141805447163380
 RectTransform:
   m_ObjectHideFlags: 0
@@ -12143,7 +12148,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7635187904285357915}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 99cef7ec5a369480f8273d12d41f6b19, type: 3}
   m_Name: 
@@ -12217,7 +12222,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &4123205229365275990
 RectTransform:
   m_ObjectHideFlags: 0
@@ -12857,7 +12862,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &5544920777372107914
 Transform:
   m_ObjectHideFlags: 0
@@ -12960,6 +12965,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bb871ab2670c47a4b4937c2d9460adc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spotObserverClient: {fileID: 0}
   rosConnector: {fileID: 669083912}
   dummyGripper: {fileID: 1681050000}
   readyDummyGripper: {fileID: 423304872}
@@ -13013,7 +13019,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5626891723694077213
 Transform:
   m_ObjectHideFlags: 0
@@ -13085,6 +13091,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bb871ab2670c47a4b4937c2d9460adc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spotObserverClient: {fileID: 0}
   rosConnector: {fileID: 2123763348}
   dummyGripper: {fileID: 244727969}
   readyDummyGripper: {fileID: 1404339517}
@@ -13688,7 +13695,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &6914773329060058749
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13950,6 +13957,7 @@ GameObject:
   - component: {fileID: 2561068329919422422}
   - component: {fileID: 2362112969850559671}
   - component: {fileID: 1947449201108850332}
+  - component: {fileID: 7471388685253160273}
   - component: {fileID: 7471388685253160272}
   m_Layer: 0
   m_Name: ArmCam1
@@ -13967,13 +13975,40 @@ MonoBehaviour:
   m_GameObject: {fileID: 7471388685253160271}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f56071a01b7fb0b4cb8546a5ff4ec78d, type: 3}
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RosSharp.RosBridgeClient.BGRRawImageSubscriber
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
+  GlobalObjectIdHash: 3442600690
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 0
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
+--- !u!114 &7471388685253160273
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7471388685253160271}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 425ae4116167d784fa8d6367fdcda84f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TextureSync
+  ShowTopMostFoldoutHeaderGroup: 1
   meshRenderer: {fileID: 1142502447079962882}
-  spotObserverClient: {fileID: 971801071}
-  SpotObserverCameraIndex: 32
-  SpotObserverStreamIdx: 1
+  spots:
+  - {fileID: 5676146346884262863}
+  - {fileID: 5598556563780689457}
+  model: {fileID: 737598808418184447}
   flipMode: 2
 --- !u!65 &7495809872703337984
 BoxCollider:
@@ -14008,6 +14043,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 223e62e716b268548805aa9eb60b5659, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  attachedSpotMode: {fileID: 5598556563780689457}
   anchor: {fileID: 0}
   skinRenderer: {fileID: 0}
   labels: []
@@ -14276,7 +14312,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3450962385212174929}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ff98778ae051cfd40a6e4effdf851ebd, type: 3}
   m_Name: 
@@ -14295,13 +14331,40 @@ MonoBehaviour:
   m_GameObject: {fileID: 3450962385212174929}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f56071a01b7fb0b4cb8546a5ff4ec78d, type: 3}
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::RosSharp.RosBridgeClient.BGRRawImageSubscriber
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
+  GlobalObjectIdHash: 1539945679
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 0
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
+--- !u!114 &7892326592595442518
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3450962385212174929}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 425ae4116167d784fa8d6367fdcda84f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TextureSync
+  ShowTopMostFoldoutHeaderGroup: 1
   meshRenderer: {fileID: 7700864136377476653}
-  spotObserverClient: {fileID: 1028337600}
-  SpotObserverCameraIndex: 32
-  SpotObserverStreamIdx: 1
+  spots:
+  - {fileID: 5676146346884262863}
+  - {fileID: 5598556563780689457}
+  model: {fileID: 7532563128813087666}
   flipMode: 2
 --- !u!114 &7899945183317588484
 MonoBehaviour:
@@ -14780,6 +14843,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d90da9e41e4cc443b9aaef4b02ca5e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spotObserverClient: {fileID: 0}
   rosConnector: {fileID: 2123763348}
   dummyGripper: {fileID: 244727969}
   readyDummyGripper: {fileID: 0}
@@ -15081,6 +15145,12 @@ MonoBehaviour:
   - {fileID: 4868753326603241157}
   - {fileID: 8916049519973978855}
   - {fileID: 706471865}
+  clientBehaviours:
+  - {fileID: 770272435582215544}
+  - {fileID: 4003556828518863043}
+  serverBehaviours:
+  - {fileID: 7892326592595442516}
+  - {fileID: 2362112969850559671}
 --- !u!114 &9217194773734636246
 MonoBehaviour:
   m_ObjectHideFlags: 0
