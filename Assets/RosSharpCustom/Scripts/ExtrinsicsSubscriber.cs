@@ -21,7 +21,6 @@ using RosSharp.RosBridgeClient.MessageTypes.Geometry;
 using RosSharp.RosBridgeClient.MessageTypes.Std;
 using UnityEngine;
 using System.Collections;
-using System.Diagnostics;
 
 namespace RosSharp.RosBridgeClient
 {
@@ -40,7 +39,6 @@ namespace RosSharp.RosBridgeClient
 
         protected override void ReceiveMessage(MessageTypes.Geometry.Pose pose_)
         {
-            Debug.Log("Received pose!");
             pose = pose_;
             isMessageReceived = true;
         }
