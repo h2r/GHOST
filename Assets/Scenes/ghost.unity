@@ -5691,7 +5691,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &971801070
 Transform:
   m_ObjectHideFlags: 0
@@ -5907,7 +5907,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1028337600
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8386,8 +8386,12 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   serverObjects:
   - {fileID: 1510801769}
+  - {fileID: 971801069}
+  - {fileID: 1028337599}
   clientObjects:
   - {fileID: 2001055724}
+  - {fileID: 971801069}
+  - {fileID: 1028337599}
   clientBehaviours: []
   serverBehaviours: []
 --- !u!114 &1642970288
@@ -14008,6 +14012,8 @@ MonoBehaviour:
   spots:
   - {fileID: 5676146346884262863}
   - {fileID: 5598556563780689457}
+  SpotObserverStreamIdx: 1
+  SpotObserverCameraIndex: 32
   model: {fileID: 737598808418184447}
   flipMode: 2
 --- !u!65 &7495809872703337984
@@ -14364,6 +14370,8 @@ MonoBehaviour:
   spots:
   - {fileID: 5676146346884262863}
   - {fileID: 5598556563780689457}
+  SpotObserverStreamIdx: 1
+  SpotObserverCameraIndex: 32
   model: {fileID: 7532563128813087666}
   flipMode: 2
 --- !u!114 &7899945183317588484
