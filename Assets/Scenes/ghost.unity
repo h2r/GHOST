@@ -12965,7 +12965,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bb871ab2670c47a4b4937c2d9460adc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spotObserverClient: {fileID: 0}
+  spotObserverClient: {fileID: 1028337600}
   rosConnector: {fileID: 669083912}
   dummyGripper: {fileID: 1681050000}
   readyDummyGripper: {fileID: 423304872}
@@ -13091,7 +13091,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bb871ab2670c47a4b4937c2d9460adc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spotObserverClient: {fileID: 0}
+  spotObserverClient: {fileID: 971801071}
   rosConnector: {fileID: 2123763348}
   dummyGripper: {fileID: 244727969}
   readyDummyGripper: {fileID: 1404339517}

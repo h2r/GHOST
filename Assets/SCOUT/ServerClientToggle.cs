@@ -16,11 +16,19 @@ public class ServerClientToggle : NetworkBehaviour
        for (int i = 0; i < serverObjects.Count; i++)
        {
             Debug.Log(NetworkManager.Singleton.IsServer);
-           serverObjects[i].SetActive(IsServer);
+            if (IsServer)
+            {
+                serverObjects[i].SetActive(IsServer);
+                
+            }
        } 
        for (int i = 0; i < clientObjects.Count; i++)
         {
-            clientObjects[i].SetActive(IsClient);
+            if (IsClient)
+            {
+                clientObjects[i].SetActive(IsClient);
+               
+            }
         }
         for (int i = 0; i < clientBehaviours.Count; i++) {
             clientBehaviours[i].enabled = IsClient;

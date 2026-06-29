@@ -7,18 +7,12 @@ public class TextureSync : NetworkBehaviour
     public struct ImageNetwork : INetworkSerializable
     {
         public byte[] data;
+        
         public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
         {
-            int length = 0;
-            serializer.SerializeValue(ref length);
-            if (data != null)
-            {
-                length = data.Length;
-            }
-            if (serializer.IsReader)
-            {
-                data = new byte[length];
-            }
+           
+            
+            
             serializer.SerializeValue(ref data);
         }
         public void SetTexture(Texture2D texture)
@@ -29,7 +23,10 @@ public class TextureSync : NetworkBehaviour
         {
             if(data == null || data.Length == 0) { return null; }
             Texture2D tex = new Texture2D(1, 1);
-            tex.LoadImage(data);
+            if (!tex.LoadImage(data))
+            {
+                return null;
+            }
             return tex;
         }
     }
@@ -40,8 +37,8 @@ public class TextureSync : NetworkBehaviour
     Texture2D tex;
     public SpotMode[] spots;
     private Texture2D[] spotArmImages = new Texture2D[2];
-    int SpotObserverStreamIdx = 1;
-    SpotCamera SpotObserverCameraIndex = SpotCamera.HAND;
+    public int SpotObserverStreamIdx;
+    public SpotCamera SpotObserverCameraIndex;
     public ControllerModel model;
     public enum Flip
     {
@@ -88,7 +85,15 @@ public class TextureSync : NetworkBehaviour
             SpotObserverClient spotObserverClient = spot.spotObserverClient;
             if (spotObserverClient != null && spotObserverClient.TryGetCameraFrame(SpotObserverStreamIdx, SpotObserverCameraIndex, out SpotObserverClient.CameraDepthFrame frame))
             {
-                spotArmImages[spotIndex] = frame.ColorTexture;
+                
+                if (frame.ColorTexture == null)
+                {
+                    Debug.Log("Retrieved null texture from camera, not sending to client");
+                }
+                else
+                {
+                    spotArmImages[spotIndex] = frame.ColorTexture;
+                }
             }
             spotIndex++;
         }
@@ -141,7 +146,7 @@ public class TextureSync : NetworkBehaviour
     /// </summary>
     /// <param name="spotIndex"></param>
     /// <param name="clientOrigin"></param>
-    [ServerRpc]
+    [ServerRpc(RequireOwnership =false)]
     public void RequestGetUpdatedImageServerRPC(int spotIndex,ulong clientOrigin)
     {
         ClientRpcParams clientRpcParams = new ClientRpcParams
