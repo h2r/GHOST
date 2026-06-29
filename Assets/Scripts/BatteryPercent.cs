@@ -2,7 +2,6 @@ using UnityEngine;
 using TMPro;
 using RosSharp.RosBridgeClient;
 using RosSharp.RosBridgeClient.MessageTypes.Spot;
-using System.Diagnostics;
 
 namespace RosSharp.RosBridgeClient
 {
@@ -125,7 +124,6 @@ namespace RosSharp.RosBridgeClient
                 if (batteryLevel < 0)
                 {
                     //Debug.Log($"[{spotIdentifier}] BatteryLevel is invalid (<0) → Displaying 'No Data'");
-                    Debug.Log(batteryLevel);
                     batteryText.text = $"{spotIdentifier} Spot Battery: No Data";
                 }
                 else
