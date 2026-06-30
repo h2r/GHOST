@@ -9,8 +9,8 @@ public class RecordAction : UIOption
 {
     public SpotMode spot;
     public string spot_name = "Spot 1"; //may or not need these; grabbed from StowArmsButton
-    public bool timerActive;
-    private float elapsedTime;
+    public bool timerActive { get; private set; } = false;
+    public float elapsedTime { get; private set; } = 0f;
     private const float maxRecordingTime = 600f; //10 min to complete task
     private ROSConnection ros;
 
@@ -66,7 +66,7 @@ public class RecordAction : UIOption
         }
     }
 
-    private void StopRecording()
+    public void StopRecording()
     {
         timerActive = false;
         elapsedTime = 0f;

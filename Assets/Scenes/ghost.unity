@@ -11850,6 +11850,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cee525640271f134aaec34d86463beca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  spot: {fileID: 0}
+  spot_name: Spot 1
+  recordAction: {fileID: 1666425617}
 --- !u!1 &992404875
 GameObject:
   m_ObjectHideFlags: 0
@@ -26485,7 +26488,7 @@ MonoBehaviour:
   isHorizontal: 0
   options:
   - {fileID: 1666425617}
-  - {fileID: 1666425617}
+  - {fileID: 989389287}
   titlePrefab: {fileID: 3278048788002158022, guid: bfe2b15985d2d437fb47203f0df723ee, type: 3}
   buttonPrefab: {fileID: 1520795838076098022, guid: 39fc7b698942e4ac18e866a2f1f87352, type: 3}
 --- !u!114 &7811334636564698287

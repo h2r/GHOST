@@ -8,53 +8,21 @@ using RosMessageTypes.Std;
 public class StopRecording : UIOption
 {
     public SpotMode spot;
-    public string spot_name = "Spot 1"; //may or not need these; grabbed from StowArmsButton    private ROSConnection ros;
-
-    [SerializeField] private string rosServiceName = "bag_trigger";
-
-    private void Start()
-    {
-        ros = ROSConnection.GetOrCreateInstance();
-        ros.RegisterRosService<SetBoolRequest, SetBoolResponse>(rosServiceName);
-    }
-
+    public string spot_name = "Spot 1"; //may or not need these; grabbed from StowArmsButton 
+    public RecordAction recordAction;
 
     public override void DoAction(ScoutModeManager modeManager)
     {
-       if (RecordAction.timerActive)
+        Debug.Log("Stop Recording Button Pressed! Requesting ROS Bag Stop...");
+        if (recordAction != null && recordAction.timerActive)
         {
-            RecordAction.timerActive = false;
-            RecordAction.elapsedTime = 0f;
-            Debug.Log("Manual trigger! Requesting ROS Bag Stop...");
-            CallRosBagService(false);
-        }
-    }
-
-    
-
-    // Helper method to dispatch the async service call
-    private void CallRosBagService(bool startRecording)
-    {
-        SetBoolRequest request = new SetBoolRequest(startRecording);
-        ros.SendServiceMessage<SetBoolResponse>(rosServiceName, request, OnServiceResponse);
-    }
-
-    // Callback that prints what your Python script replies with
-    private void OnServiceResponse(SetBoolResponse response)
-    {
-        if (response.success)
-        {
-            Debug.Log($"[ROS Success]: {response.message}");
-        }
-        else
-        {
-            Debug.LogError($"[ROS Failure]: {response.message}");
+            recordAction.StopRecording();
         }
     }
 
     public override string GetName()
     {
-        return $"Record Action";
+        return $"Stop Recording";
     }
 
     public override Color GetSelectedColor()
