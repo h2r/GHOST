@@ -5,14 +5,10 @@ using System.Collections;
 using Unity.Robotics.ROSTCPConnector;
 using RosMessageTypes.Std;
 
-public class RecordAction : UIOption
+public class StopRecording : UIOption
 {
     public SpotMode spot;
-    public string spot_name = "Spot 1"; //may or not need these; grabbed from StowArmsButton
-    public bool timerActive;
-    private float elapsedTime;
-    private const float maxRecordingTime = 600f; //10 min to complete task
-    private ROSConnection ros;
+    public string spot_name = "Spot 1"; //may or not need these; grabbed from StowArmsButton    private ROSConnection ros;
 
     [SerializeField] private string rosServiceName = "bag_trigger";
 
@@ -25,26 +21,16 @@ public class RecordAction : UIOption
 
     public override void DoAction(ScoutModeManager modeManager)
     {
-        if (timerActive) return;
-
-        timerActive = true;
-        elapsedTime = 0f;
-        
-        Debug.Log("Button Pressed! Requesting ROS Bag Start...");
-        CallRosBagService(true);
-    }
-
-    private void Update()
-    {
-        if (!timerActive) return; 
-
-        elapsedTime += Time.deltaTime;
-
-        if (elapsedTime >= maxRecordingTime) 
+       if (RecordAction.timerActive)
         {
-            StopRecording();
+            RecordAction.timerActive = false;
+            RecordAction.elapsedTime = 0f;
+            Debug.Log("Manual trigger! Requesting ROS Bag Stop...");
+            CallRosBagService(false);
         }
     }
+
+    
 
     // Helper method to dispatch the async service call
     private void CallRosBagService(bool startRecording)
@@ -64,15 +50,6 @@ public class RecordAction : UIOption
         {
             Debug.LogError($"[ROS Failure]: {response.message}");
         }
-    }
-
-    private void StopRecording()
-    {
-        timerActive = false;
-        elapsedTime = 0f;
-
-        Debug.Log("Timeout or manual trigger! Requesting ROS Bag Stop...");
-        CallRosBagService(false);
     }
 
     public override string GetName()

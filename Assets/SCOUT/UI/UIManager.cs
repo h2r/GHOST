@@ -152,6 +152,7 @@ public class UIManager : MonoBehaviour
             } },
             { SuperMode.Record, new Action<NamedOption>[] { //replace with record
                 m => ((UIOption) m).DoAction(modeManager),
+                m => ((UIOption) m).DoAction(modeManager),
                 m => ((UIOption) m).DoAction(modeManager)
             } },
             // ADDED: Setters for TabSelection
