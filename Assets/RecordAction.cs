@@ -2,6 +2,9 @@ using UnityEngine;
 using System;
 using System.Collections;
 
+using Unity.Robotics.ROSTCPConnector;
+using RosMessageTypes.StdSrvs;
+
 public class RecordAction : UIOption
 {
     public SpotMode spot;
@@ -9,13 +12,26 @@ public class RecordAction : UIOption
     private bool timerActive;
     private float elapsedTime;
     private const float maxRecordingTime = 900f; //15 min to complete task
+    private ROSConnection ros;
+
+    [SerializeField] private string rosServiceName = "bag_trigger";
+
+    private void Start()
+    {
+        ros = ROSConnection.GetOrCreateInstance();
+        ros.RegisterRosService<SetBoolRequest, SetBoolResponse>(rosServiceName);
+    }
 
 
     public override void DoAction(ScoutModeManager modeManager)
     {
-       timerActive = true;
-       elapsedTime = 0f;
-       Debug.Log("Button Pressed!"); //remove once actual logic is here
+        if (timerActive) return;
+
+        timerActive = true;
+        elapsedTime = 0f;
+        
+        Debug.Log("Button Pressed! Requesting ROS Bag Start...");
+        CallRosBagService(true);
     }
 
     private void Update()
@@ -24,11 +40,29 @@ public class RecordAction : UIOption
 
         elapsedTime += Time.deltaTime;
 
-        //put ROS logic here later
-        Debug.Log("Pretend I'm recording..."); //remove for actual logic
         if (elapsedTime >= maxRecordingTime) 
         {
             StopRecording();
+        }
+    }
+
+    // Helper method to dispatch the async service call
+    private void CallRosBagService(bool startRecording)
+    {
+        SetBoolRequest request = new SetBoolRequest(startRecording);
+        ros.SendServiceMessage<SetBoolResponse>(rosServiceName, request, OnServiceResponse);
+    }
+
+    // Callback that prints what your Python script replies with
+    private void OnServiceResponse(SetBoolResponse response)
+    {
+        if (response.success)
+        {
+            Debug.Log($"[ROS Success]: {response.message}");
+        }
+        else
+        {
+            Debug.LogError($"[ROS Failure]: {response.message}");
         }
     }
 
@@ -36,8 +70,9 @@ public class RecordAction : UIOption
     {
         timerActive = false;
         elapsedTime = 0f;
-        
-        //put ending logic here
+
+        Debug.Log("Timeout or manual trigger! Requesting ROS Bag Stop...");
+        CallRosBagService(false);
     }
 
     public override string GetName()
