@@ -5209,7 +5209,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1137478773745686185, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
-      value: ws://128.148.138.132:9090
+      value: ws://10.38.180.94:9090
       objectReference: {fileID: 0}
     - target: {fileID: 1137478773745686192, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_Enabled
@@ -5669,7 +5669,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052575190430, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
-      value: ws://128.148.138.132:9090
+      value: ws://10.38.180.94:9090
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052575190431, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Topic
@@ -6361,7 +6361,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5926854348849661184, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: rosBridgeServerUrl
-      value: ws://128.148.138.132:9090
+      value: ws://10.38.180.94:9090
       objectReference: {fileID: 0}
     - target: {fileID: 6095128873530598835, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Mass
@@ -6461,7 +6461,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8105313734531972663, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: rosBridgeServerUrl
-      value: ws://128.148.138.132:9090
+      value: ws://10.38.180.94:9090
       objectReference: {fileID: 0}
     - target: {fileID: 8551647604095721092, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Mass
@@ -17725,6 +17725,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   spot: {fileID: 0}
   spot_name: Spot 1
+  rosConnector: {fileID: 2123763469}
   rosServiceName: bag_trigger
 --- !u!4 &1666425618
 Transform:
@@ -22169,6 +22170,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RosSharp.RosBridgeClient.SetHeight
   serviceName: /spot/set_stand_height
+--- !u!114 &2123763469 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1137478773745686185, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2123763348}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff98778ae051cfd40a6e4effdf851ebd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2127769091
 GameObject:
   m_ObjectHideFlags: 0
