@@ -13,9 +13,9 @@ public class StopRecording : UIOption
 
     public override void DoAction(ScoutModeManager modeManager)
     {
-        Debug.Log("Stop Recording Button Pressed! Requesting ROS Bag Stop...");
         if (recordAction != null && recordAction.timerActive)
-        {
+        {    
+            Debug.Log("Stop Recording Button Pressed! Requesting ROS Bag Stop...");
             recordAction.StopRecording();
         }
     }
