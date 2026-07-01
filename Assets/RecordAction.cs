@@ -14,9 +14,8 @@ public class RecordAction : UIOption
     public bool timerActive { get; private set; } = false;
     public float elapsedTime { get; private set; } = 0f;
     private const float maxRecordingTime = 600f; // 10 min to complete task
-    
-    // 2. Changed to RosConnector
-    private RosConnector rosConnector;
+
+    [SerializeField] private RosConnector rosConnector;
 
     // Added leading slash to match how Rosbridge indexes global services
     [SerializeField] private string rosServiceName = "/bag_trigger";
@@ -24,10 +23,9 @@ public class RecordAction : UIOption
     private void Start()
     {
         // Automatically finds the active RosConnector component in your Unity scene
-        rosConnector = FindObjectOfType<RosConnector>();
         if (rosConnector == null)
         {
-            Debug.LogError("RecordAction: Could not find RosConnector component in the scene!");
+            Debug.LogError($"RecordAction on {gameObject.name}: Please drag and drop the correct Spot's RosConnector into the inspector field!");
         }
     }
 
