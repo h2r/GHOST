@@ -4,6 +4,7 @@ using System.Collections;
 
 using Unity.Robotics.ROSTCPConnector;
 using RosMessageTypes.Std;
+using System.Diagnostics;
 
 public class StopRecording : UIOption
 {
@@ -14,9 +15,10 @@ public class StopRecording : UIOption
     public override void DoAction(ScoutModeManager modeManager)
     {
         if (recordAction != null && recordAction.timerActive)
-        {    
+        {   Debug.Log(recordAction.elapsedTime);
             Debug.Log("Stop Recording Button Pressed! Requesting ROS Bag Stop...");
             recordAction.StopRecording();
+            Debug.Log(recordAction.elapsedTime);
         }
     }
 
