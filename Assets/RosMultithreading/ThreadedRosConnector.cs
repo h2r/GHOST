@@ -14,7 +14,7 @@ public class ThreadedRosConnector : MonoBehaviour
     public RosSocket RosSocket { get; private set; }
     public RosSocket.SerializerEnum serializer;
     public Protocol protocol;
-    public string rosBridgeServerUrl = "ws://192.168.1.38:9090";
+    public string rosBridgeServerUrl = "ws://10.38.180.94:9090"; // "ws://192.168.1.38:9090
     public int rosTicksPerSecond = 100;
 
     private bool runRosThread = true;
