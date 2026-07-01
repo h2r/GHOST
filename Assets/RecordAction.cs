@@ -2,26 +2,34 @@ using UnityEngine;
 using System;
 using System.Collections;
 
-using Unity.Robotics.ROSTCPConnector;
-using RosMessageTypes.Std;
+// 1. Swapped namespaces to ROS# WebSocket handlers
+using RosSharp.RosBridgeClient;
+using SetBoolRequest = RosSharp.RosBridgeClient.MessageTypes.Std.SetBoolRequest;
+using SetBoolResponse = RosSharp.RosBridgeClient.MessageTypes.Std.SetBoolResponse;
 
 public class RecordAction : UIOption
 {
     public SpotMode spot;
-    public string spot_name = "Spot 1"; //may or not need these; grabbed from StowArmsButton
+    public string spot_name = "Spot 1"; 
     public bool timerActive { get; private set; } = false;
     public float elapsedTime { get; private set; } = 0f;
-    private const float maxRecordingTime = 600f; //10 min to complete task
-    private ROSConnection ros;
+    private const float maxRecordingTime = 600f; // 10 min to complete task
+    
+    // 2. Changed to RosConnector
+    private RosConnector rosConnector;
 
-    [SerializeField] private string rosServiceName = "bag_trigger";
+    // Added leading slash to match how Rosbridge indexes global services
+    [SerializeField] private string rosServiceName = "/bag_trigger";
 
     private void Start()
     {
-        ros = ROSConnection.GetOrCreateInstance();
-        ros.RegisterRosService<SetBoolRequest, SetBoolResponse>(rosServiceName);
+        // Automatically finds the active RosConnector component in your Unity scene
+        rosConnector = FindObjectOfType<RosConnector>();
+        if (rosConnector == null)
+        {
+            Debug.LogError("RecordAction: Could not find RosConnector component in the scene!");
+        }
     }
-
 
     public override void DoAction(ScoutModeManager modeManager)
     {
@@ -49,8 +57,20 @@ public class RecordAction : UIOption
     // Helper method to dispatch the async service call
     private void CallRosBagService(bool startRecording)
     {
+        if (rosConnector == null || rosConnector.RosSocket == null)
+        {
+            Debug.LogError("RecordAction: Cannot call service, ROS# is not connected.");
+            return;
+        }
+
         SetBoolRequest request = new SetBoolRequest(startRecording);
-        ros.SendServiceMessage<SetBoolResponse>(rosServiceName, request, OnServiceResponse);
+        
+        // 3. Updated to ROS# service calling execution structure
+        rosConnector.RosSocket.CallService<SetBoolRequest, SetBoolResponse>(
+            rosServiceName, 
+            OnServiceResponse, 
+            request
+        );
     }
 
     // Callback that prints what your Python script replies with
@@ -85,4 +105,3 @@ public class RecordAction : UIOption
         return Color.white;
     }
 }
-
