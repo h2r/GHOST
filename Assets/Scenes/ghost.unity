@@ -6498,6 +6498,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1137478773745686191, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2123763434}
+    - targetCorrespondingSourceObject: {fileID: 1137478773745686191, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2123763456}
     - targetCorrespondingSourceObject: {fileID: 3310871052575190424, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       insertIndex: 5
       addedObject: {fileID: 669084045}
@@ -18969,6 +18972,52 @@ Transform:
   - {fileID: 1237444029}
   m_Father: {fileID: 1337563388}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1791947804
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1791947806}
+  - component: {fileID: 1791947805}
+  m_Layer: 0
+  m_Name: Ready Arm
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1791947805
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1791947804}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6cd806eaaf1cf445bda1920ac78c4aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArmLook
+  spot: {fileID: 5676146346884262863}
+  spot_name: Red
+--- !u!4 &1791947806
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1791947804}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.90635, y: 1.01231, z: -21.19172}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 9217194773734636244}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1795317099
 GameObject:
   m_ObjectHideFlags: 0
@@ -21885,6 +21934,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RosSharp.RosBridgeClient.SetHeight
   serviceName: /spot/set_stand_height
+--- !u!114 &2123763456
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2123763348}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 760f4f271bcdfa2478bd5a2fbeff5eb9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RosSharp.RosBridgeClient.ThreadedReadyArm
+  serviceName: /spot/arm_ready
 --- !u!1 &2127769091
 GameObject:
   m_ObjectHideFlags: 0
@@ -22438,7 +22500,7 @@ MonoBehaviour:
   - {fileID: 1273408083}
   - {fileID: 433495832}
   isLeft: 1
-  attachedSpotName: 
+  attachedSpotMode: {fileID: 0}
 --- !u!23 &758492290014997255
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -23607,6 +23669,7 @@ MonoBehaviour:
   - {fileID: 3844397681547260360}
   - {fileID: 822474737439515111}
   - {fileID: 1885078170}
+  - {fileID: 1791947805}
   titlePrefab: {fileID: 3278048788002158022, guid: bfe2b15985d2d437fb47203f0df723ee, type: 3}
   buttonPrefab: {fileID: 1520795838076098022, guid: 39fc7b698942e4ac18e866a2f1f87352, type: 3}
 --- !u!1 &2736510880365631446
@@ -25044,7 +25107,7 @@ MonoBehaviour:
   redMaterial: {fileID: 2100000, guid: 86f944557dab0f94d8589ad8c224c4ed, type: 2}
   modeName: Blue Spot
   color: {r: 0, g: 0, b: 1, a: 1}
-  spotName: 
+  spotObserverClient: {fileID: 0}
   useWorldDummyGripper: 0
 --- !u!1 &5616449089262962814
 GameObject:
@@ -25145,7 +25208,7 @@ MonoBehaviour:
   redMaterial: {fileID: 2100000, guid: 86f944557dab0f94d8589ad8c224c4ed, type: 2}
   modeName: Red Spot
   color: {r: 1, g: 0, b: 0, a: 1}
-  spotName: 
+  spotObserverClient: {fileID: 0}
   useWorldDummyGripper: 0
 --- !u!1 &5704221352867220266
 GameObject:
@@ -25957,6 +26020,7 @@ MonoBehaviour:
   options:
   - {fileID: 822474737439515111}
   - {fileID: 1885078170}
+  - {fileID: 1791947805}
   titlePrefab: {fileID: 3278048788002158022, guid: bfe2b15985d2d437fb47203f0df723ee, type: 3}
   buttonPrefab: {fileID: 1520795838076098022, guid: 39fc7b698942e4ac18e866a2f1f87352, type: 3}
 --- !u!1 &7471388685253160271
@@ -25995,8 +26059,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RosSharp.RosBridgeClient.BGRRawImageSubscriber
   meshRenderer: {fileID: 1142502447079962882}
   controllerModel: {fileID: 7532563128813087666}
-  spotObserverClientSpotRos1: {fileID: 971801071}
-  spotObserverClientSpotRos2: {fileID: 1028337600}
   SpotObserverCameraIndex: 32
   SpotObserverStreamIdx: 1
   flipMode: 2
@@ -26043,7 +26105,7 @@ MonoBehaviour:
   - {fileID: 1560963606}
   - {fileID: 2087991522}
   isLeft: 0
-  attachedSpotName: 
+  attachedSpotMode: {fileID: 0}
 --- !u!4 &7548481229296391317
 Transform:
   m_ObjectHideFlags: 0
@@ -26332,8 +26394,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RosSharp.RosBridgeClient.BGRRawImageSubscriber
   meshRenderer: {fileID: 7700864136377476653}
   controllerModel: {fileID: 737598808418184447}
-  spotObserverClientSpotRos1: {fileID: 971801071}
-  spotObserverClientSpotRos2: {fileID: 1028337600}
   SpotObserverCameraIndex: 32
   SpotObserverStreamIdx: 1
   flipMode: 2
@@ -26543,6 +26603,7 @@ MonoBehaviour:
   options:
   - {fileID: 822474737439515111}
   - {fileID: 1885078170}
+  - {fileID: 1791947805}
   titlePrefab: {fileID: 3278048788002158022, guid: bfe2b15985d2d437fb47203f0df723ee, type: 3}
   buttonPrefab: {fileID: 1520795838076098022, guid: 39fc7b698942e4ac18e866a2f1f87352, type: 3}
 --- !u!114 &8418873799364700633
@@ -26823,7 +26884,7 @@ MonoBehaviour:
   redMaterial: {fileID: 0}
   modeName: Multi Spot
   color: {r: 0.5450981, g: 0, b: 0.5450981, a: 1}
-  spotName: 
+  spotObserverClient: {fileID: 0}
   useWorldDummyGripper: 0
   rosConnectorOne: {fileID: 2123763348}
   rosConnectorTwo: {fileID: 669083912}
@@ -27083,6 +27144,7 @@ Transform:
   - {fileID: 1160909125962751798}
   - {fileID: 7668606360824352629}
   - {fileID: 1885078169}
+  - {fileID: 1791947806}
   - {fileID: 4819413781800261329}
   - {fileID: 2925042530075760595}
   m_Father: {fileID: 0}

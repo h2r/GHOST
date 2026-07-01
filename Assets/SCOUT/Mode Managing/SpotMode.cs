@@ -16,6 +16,7 @@ public class SpotMode : NamedOption
 
     private ThreadedMoveSpot moveSpot;
     private ThreadedStowArm stowArm;
+    private ThreadedReadyArm readyArm;
     private ThreadedSetGripper setGripper;
 
     private SetHeight setHeight;
@@ -36,6 +37,7 @@ public class SpotMode : NamedOption
             moveSpot = rosConnector.GetComponent<ThreadedMoveSpot>();
             setGripper = rosConnector.GetComponent<ThreadedSetGripper>();
             stowArm = rosConnector.GetComponent<ThreadedStowArm>();
+            readyArm = rosConnector.GetComponent<ThreadedReadyArm>();
             setHeight = rosConnector.GetComponent<SetHeight>();
             worldLocalGripperSync = rosConnector.GetComponent<WorldLocalGripperSync>();
             enableLocalGripperCmd = rosConnector.GetComponent<PoseStampedRelativePublisher>();
@@ -44,7 +46,7 @@ public class SpotMode : NamedOption
             moveSpot.Move(Vector2.zero, 0, curHeight);
             setGripper.CloseGripper();
             stowArm.Stow();
-            
+            readyArm.Ready();
         }
     }
 
@@ -183,6 +185,21 @@ public class SpotMode : NamedOption
         else
         {
             Debug.LogWarning("ThreadedStowArm not found on rosConnector!");
+        }
+    }
+
+    public virtual void ReadyArm()
+    {
+        if (readyArm != null)
+        {
+            worldLocalGripperSync.useWorldGripper = false; // disable world gripper when readying arm
+            readyArm.Ready();
+            dummyGripper.transform.position = readyDummyGripper.transform.position;
+            dummyGripper.transform.rotation = readyDummyGripper.transform.rotation;
+        }
+        else
+        {
+            Debug.LogWarning("ThreadedReadyArm not found on rosConnector!");
         }
     }
 
