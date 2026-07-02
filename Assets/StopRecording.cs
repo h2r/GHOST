@@ -13,11 +13,15 @@ public class StopRecording : UIOption
 
     public override void DoAction(ScoutModeManager modeManager)
     {
-        if (recordAction != null && recordAction.timerActive)
-        {   Debug.Log(recordAction.elapsedTime);
+        if (recordAction != null && recordAction.timerActive && recordAction.elapsedTime > 0)
+        {   Debug.Log($"Elapsed time: {recordAction.elapsedTime}");
             Debug.Log("Stop Recording Button Pressed! Requesting ROS Bag Stop...");
             recordAction.StopRecording();
-            Debug.Log(recordAction.elapsedTime);
+            Debug.Log($"Reset Time: {recordAction.elapsedTime}");
+        }
+        else
+        {
+            Debug.Log("Elapsed time is not being updated :(");
         }
     }
 
