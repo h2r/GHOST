@@ -5435,6 +5435,10 @@ PrefabInstance:
       propertyPath: Mass
       value: 1.904699
       objectReference: {fileID: 0}
+    - target: {fileID: 1137478775154051525, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: Mass
+      value: 1.904699
+      objectReference: {fileID: 0}
     - target: {fileID: 1137478775229705923, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -6010,6 +6014,10 @@ PrefabInstance:
     - target: {fileID: 3310871053306987607, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: SpotObserverCameraIndex
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871053448524530, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: Mass
+      value: 1.904699
       objectReference: {fileID: 0}
     - target: {fileID: 3310871053646093096, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Topic
@@ -26500,7 +26508,7 @@ MonoBehaviour:
   isHorizontal: 0
   options:
   - {fileID: 1666425617}
-  - {fileID: 989389287}
+  - {fileID: 0}
   titlePrefab: {fileID: 3278048788002158022, guid: bfe2b15985d2d437fb47203f0df723ee, type: 3}
   buttonPrefab: {fileID: 1520795838076098022, guid: 39fc7b698942e4ac18e866a2f1f87352, type: 3}
 --- !u!114 &7811334636564698287
