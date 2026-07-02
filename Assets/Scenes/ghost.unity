@@ -25442,7 +25442,7 @@ MonoBehaviour:
   redMaterial: {fileID: 2100000, guid: 86f944557dab0f94d8589ad8c224c4ed, type: 2}
   modeName: Red Spot
   color: {r: 1, g: 0, b: 0, a: 1}
-  spotObserverClient: {fileID: 0}
+  spotObserverClient: {fileID: 971801071}
   useWorldDummyGripper: 0
 --- !u!1 &5704221352867220266
 GameObject:
