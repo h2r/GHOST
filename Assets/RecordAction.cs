@@ -22,7 +22,7 @@ public class RecordAction : UIOption
 
     private void Start()
     {
-        // Automatically finds the active RosConnector component in your Unity scene
+        // Automatically finds the active RosConnector component 
         if (rosConnector == null)
         {
             Debug.LogError($"RecordAction on {gameObject.name}: Please drag and drop the correct Spot's RosConnector into the inspector field!");
@@ -71,7 +71,7 @@ public class RecordAction : UIOption
         );
     }
 
-    // Callback that prints what your Python script replies with
+    // Callback that prints what the Python script replies with
     private void OnServiceResponse(SetBoolResponse response)
     {
         if (response.success)
@@ -95,7 +95,8 @@ public class RecordAction : UIOption
 
     public override string GetName()
     {
-        return $"Record Action";
+       
+        return (!timerActive) ? $"Record Action" : $"Recording in Progress";
     }
 
     public override Color GetSelectedColor()
