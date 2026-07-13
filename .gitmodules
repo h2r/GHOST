@@ -1,3 +1,6 @@
 [submodule "SpotObserver-release"]
 	path = SpotObserver-release
 	url = https://github.com/fmz/SpotObserver-release.git
+[submodule "lerobot-spot"]
+	path = lerobot-spot
+	url = https://github.com/soujanya957/lerobot-spot.git
