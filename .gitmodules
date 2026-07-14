@@ -1,6 +1,3 @@
 [submodule "SpotObserver-release"]
 	path = SpotObserver-release
 	url = https://github.com/fmz/SpotObserver-release.git
-[submodule "website"]
-	path = website
-	url = https://github.com/h2r/GHOST-website.git
