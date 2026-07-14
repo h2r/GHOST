@@ -14,6 +14,7 @@ public class RecordAction : UIOption
     public bool timerActive { get; private set; } = false;
     public float elapsedTime { get; private set; } = 0f;
     private const float maxRecordingTime = 600f; // 10 min to complete task
+    private bool canInteract = false;
 
     [SerializeField] private RosConnector rosConnector;
 
@@ -27,19 +28,35 @@ public class RecordAction : UIOption
         {
             Debug.LogError($"RecordAction on {gameObject.name}: Please drag and drop the correct Spot's RosConnector into the inspector field!");
         }
+
+        // Enable button clicks after 0.5 seconds (bypasses startup UI triggers)
+        StartCoroutine(EnableInteractionDelay());
+    }
+
+    private IEnumerator EnableInteractionDelay()
+    {
+        yield return new WaitForSeconds(0.5f);
+        canInteract = true;
     }
 
     public override void DoAction(ScoutModeManager modeManager)
     {
+        // If we are still in the startup phase, block the action silently
+        if (!canInteract) 
+        {
+            Debug.LogWarning($"RecordAction: Blocked automatic startup trigger from {gameObject.name}.");
+            return;
+        }
+
         if (timerActive) return;
 
         timerActive = true;
         elapsedTime = 0f;
         
         Debug.Log("Button Pressed! Requesting ROS Bag Start...");
-        CallRosBagService(true);
+        StartCoroutine(WaitAndCallRosBagService(true));
     }
-
+    
     private void Update()
     {
         if (!timerActive) return; 
@@ -52,18 +69,35 @@ public class RecordAction : UIOption
         }
     }
 
-    // Helper method to dispatch the async service call
-    private void CallRosBagService(bool startRecording)
+    // Coroutine that safely waits for ROS# to finish its network handshake
+    private IEnumerator WaitAndCallRosBagService(bool startRecording)
     {
-        if (rosConnector == null || rosConnector.RosSocket == null)
+        if (rosConnector == null)
         {
-            Debug.LogError("RecordAction: Cannot call service, ROS# is not connected.");
-            return;
+            Debug.LogError("RecordAction: Missing RosConnector reference.");
+            yield break;
         }
 
+        // Wait here if the socket is not initialized or still connecting
+        float timeout = 5f; // Prevent infinite loop if ROS is completely offline
+        float elapsedWait = 0f;
+        
+        while ((rosConnector.RosSocket == null || !rosConnector.IsConnected.WaitOne(10)) && elapsedWait < timeout)
+        {
+            elapsedWait += 0.1f;
+            yield return new WaitForSeconds(0.1f);
+        }
+
+        if (rosConnector.RosSocket == null || !rosConnector.IsConnected.WaitOne(10))
+        {
+            Debug.LogError($"RecordAction: Timed out waiting to connect to ROS. Cannot call service '{rosServiceName}'.");
+            timerActive = false; // Reset flag since call failed
+            yield break;
+        }
+
+        // Socket is ready, proceed with the call
         SetBoolRequest request = new SetBoolRequest(startRecording);
         
-        // 3. Updated to ROS# service calling execution structure
         rosConnector.RosSocket.CallService<SetBoolRequest, SetBoolResponse>(
             rosServiceName, 
             OnServiceResponse, 
@@ -90,12 +124,11 @@ public class RecordAction : UIOption
         elapsedTime = 0f;
 
         Debug.Log("Timeout or manual trigger! Requesting ROS Bag Stop...");
-        CallRosBagService(false);
+        StartCoroutine(WaitAndCallRosBagService(false));
     }
 
     public override string GetName()
     {
-       
         return (!timerActive) ? $"Record Action" : $"Recording in Progress";
     }
 
