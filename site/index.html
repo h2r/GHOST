@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GHOST in the Robots — Real-Time Exocentric Dual-Robot VR Teleoperation from Onboard Cameras</title>
+  <meta name="description" content="GHOST: an open-source VR teleoperation system that lets a single operator control two mobile manipulators via direct low-level commands using only onboard cameras." />
+  <!-- Open Graph (update image path once a real preview image exists) -->
+  <meta property="og:title" content="GHOST in the Robots" />
+  <meta property="og:description" content="Real-Time Exocentric Dual-Robot VR Teleoperation from Onboard Cameras" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="assets/images/teaser.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%91%BB%3C/text%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!--
+  ============================================================================
+  DE-ANONYMIZATION NOTE (page is intentionally anonymous for blind review)
+  To reveal authors for the camera-ready / public version:
+    1. Replace the "Anonymous Authors" block in the hero (id="authors") with the
+       markup in the commented <template> right below it.
+    2. Un-disable the arXiv / Code buttons and add real links.
+    3. Update the BibTeX entry at the bottom (id="bibtex").
+    4. Optionally add affiliation logos and an acknowledgements section.
+
+  The real author list is intentionally NOT stored in this public file —
+  copy it from the paper's LaTeX source when de-anonymizing.
+  ============================================================================
+  -->
+
+  <!-- ===================== NAV ===================== -->
+  <header class="nav" id="top">
+    <div class="nav__inner">
+      <a class="nav__brand" href="#top">
+        <span class="nav__ghost" aria-hidden="true">👻</span>
+        <span>GHOST</span>
+      </a>
+      <nav class="nav__links" aria-label="Section navigation">
+        <a href="#abstract">About</a>
+        <a href="#system">System</a>
+        <a href="#tasks">Tasks</a>
+        <a href="#bibtex">BibTeX</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ===================== HERO ===================== -->
+  <section class="hero">
+    <div class="wrap">
+      <p class="hero__eyebrow">Under Review · 2026 · Anonymous Submission</p>
+      <h1 class="hero__title">GHOST in the Robots</h1>
+      <p class="hero__subtitle">Real-Time Exocentric Dual-Robot VR Teleoperation from Onboard Cameras</p>
+
+      <div class="authors" id="authors">
+        <p class="authors__list">Anonymous Authors</p>
+        <p class="authors__affil">Affiliations withheld for double-blind review</p>
+      </div>
+
+      <!-- De-anonymized author block — swap the above <div id="authors"> for this when public
+           (fill in names/affiliations from the paper's LaTeX source):
+      <div class="authors" id="authors">
+        <p class="authors__list">
+          <a href="#">Author One</a><sup>*1</sup>,
+          <a href="#">Author Two</a><sup>*1</sup>,
+          <a href="#">Author Three</a><sup>2</sup>
+        </p>
+        <p class="authors__affil"><sup>1</sup>Institution One &nbsp;·&nbsp; <sup>2</sup>Institution Two &nbsp;·&nbsp; <sup>*</sup>Equal contribution</p>
+      </div>
+      -->
+
+      <div class="cta">
+        <a class="btn btn--primary" href="assets/pdf/paper.pdf" data-optional-pdf>
+          <span class="btn__icon" aria-hidden="true">📄</span> Paper
+        </a>
+        <span class="btn btn--disabled" title="Available after review" aria-disabled="true">
+          <span class="btn__icon" aria-hidden="true">📚</span> arXiv <em>· soon</em>
+        </span>
+        <span class="btn btn--disabled" title="Open-source release after review" aria-disabled="true">
+          <span class="btn__icon" aria-hidden="true">&lt;/&gt;</span> Code <em>· soon</em>
+        </span>
+      </div>
+    </div>
+
+    <!-- Teaser -->
+    <div class="wrap wrap--wide">
+      <figure class="teaser">
+        <div class="media media--video">
+          <video
+            class="fig"
+            controls
+            playsinline
+            preload="metadata"
+            data-fallback="Overview video"
+            data-src-hint="assets/videos/overview.mp4">
+            <source src="assets/videos/overview.mp4" type="video/mp4" />
+          </video>
+        </div>
+        <figcaption>
+          <strong>One operator, two robots, zero external cameras.</strong>
+          Wearing a VR headset, a single person drives two mobile manipulators — separately or both at once — inside a
+          live 3D scene rebuilt on the fly from the robots' own onboard cameras.
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ===================== HIGHLIGHTS ===================== -->
+  <section class="stats wrap">
+    <div class="stat">
+      <div class="stat__num">1 → 2</div>
+      <div class="stat__label">One operator flies two mobile manipulators at once</div>
+    </div>
+    <div class="stat">
+      <div class="stat__num">1.47×</div>
+      <div class="stat__label">Faster for experts than the manufacturer's tablet</div>
+    </div>
+    <div class="stat">
+      <div class="stat__num">1.6–4×</div>
+      <div class="stat__label">Higher success rate for first-time users</div>
+    </div>
+    <div class="stat">
+      <div class="stat__num">Onboard</div>
+      <div class="stat__label">Cameras only — no mocap rig, no cameras bolted to the ceiling</div>
+    </div>
+  </section>
+
+  <!-- ===================== ABSTRACT ===================== -->
+  <section id="abstract" class="section wrap">
+    <h2 class="section__title">What is GHOST?</h2>
+    <div class="prose prose--lead">
+      <p>
+        Two robots beat one: more viewpoints, more reach, and the ability to actually carry things together. The catch
+        is control. One person has to juggle two bases, two arms, and a camera view — while the system keeps multiple
+        video streams flowing over Wi-Fi without falling behind. Most existing systems sidestep this by adding a second
+        operator, leaning on autonomy, or limiting the human to high-level commands.
+      </p>
+      <p>
+        <strong>GHOST</strong> takes a different route: an open-source VR system that gives a single operator direct,
+        low-level control of two mobile manipulators, using <em>nothing but the robots' onboard cameras</em>. Live point
+        clouds from both robots are fused into a shared <strong>exocentric 3D scene</strong> — the operator moves through
+        it like an invisible ghost standing alongside the robots — with a learning-based
+        <strong>depth-completion</strong> model filling in what the sparse sensors miss. Two VR controllers cover
+        everything through <strong>switchable control modes</strong>: drive one robot, guide its arm, or lock both
+        robots together and move them as a unit.
+      </p>
+      <p>
+        And it works. Fifteen first-time users hit <strong>1.6–4×</strong> the success rate of the off-the-shelf tablet
+        interface. Across nine hard dual-robot tasks, experts were <strong>1.47× faster</strong> on average — and
+        completed <strong>two tasks the tablet simply couldn't do</strong>.
+      </p>
+    </div>
+
+    <div class="contrib">
+      <h3 class="contrib__title">What's new</h3>
+      <ol class="contrib__list">
+        <li><span>A shared <strong>exocentric 3D scene</strong> for multi-robot teleoperation.</span></li>
+        <li><span>A <strong>depth-completion pipeline</strong> fast enough to stay in the loop.</span></li>
+        <li><span>A principled <strong>control design space</strong> for driving two robots with two hands.</span></li>
+        <li><span>A suite of <strong>nine challenging tasks</strong> for benchmarking dual-robot teleoperation.</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ===================== SYSTEM OVERVIEW ===================== -->
+  <section id="system" class="section wrap">
+    <h2 class="section__title">How It Works</h2>
+    <p class="prose">
+      The robots are two Boston Dynamics Spots — each a quadruped base with a 6-DoF arm and gripper, a LiDAR on its
+      back, and two front-facing RGB-D cameras — talking over Wi-Fi to a ROS&nbsp;2 server and a VR client. Under the
+      hood, GHOST wires familiar parts (Unity, ROS&nbsp;2, PromptDA, the Spot SDK) into three tightly coupled pieces:
+    </p>
+
+    <figure class="media media--wide">
+      <img class="fig" alt="GHOST system diagram: multi-robot ROS 2 communication, a GPU-accelerated RGB-D perception pipeline, and a Unity-based VR interface."
+           src="assets/images/system-diagram.png"
+           data-fallback="System diagram"
+           data-src-hint="assets/images/system-diagram.png" />
+      <figcaption>
+        <strong>How the pieces fit together.</strong> Small, latency-tolerant data (robot state, commands) flows through
+        ROS&nbsp;2; the heavy RGB-D streams go straight to the GPU, where they become the point clouds and live robot
+        models the operator sees in the headset.
+      </figcaption>
+    </figure>
+
+    <div class="cards cards--3">
+      <div class="card">
+        <div class="card__tag">Client</div>
+        <h3 class="card__title">Unity VR Client</h3>
+        <p>The world the operator lives in. Renders the point-cloud scene and live robot models, and provides the
+           mode-switching controls — fly the camera, drive a robot, steer an arm, or all of the above.</p>
+      </div>
+      <div class="card">
+        <div class="card__tag">Server</div>
+        <h3 class="card__title">ROS&nbsp;2 Server</h3>
+        <p>The coordinator. Streams robot state, executes commands, keeps both robots localized in a common frame, and
+           handles synchronized navigation when they move as a pair.</p>
+      </div>
+      <div class="card">
+        <div class="card__tag">Perception</div>
+        <h3 class="card__title">SpotObserver</h3>
+        <p>The fast path. A GPU-accelerated library that skips ROS entirely: it pulls RGB-D straight off each robot,
+           runs depth completion in real time, and hands Unity dense point clouds with minimal latency.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== TASKS ===================== -->
+  <section id="tasks" class="section section--alt">
+    <div class="wrap wrap--wide">
+    <h2 class="section__title">The Nine Tasks</h2>
+    <p class="prose">
+      We stress-tested GHOST on nine tasks that genuinely need two robots — some demand two arms working together, some
+      an extra viewpoint to see around occlusions, and some careful reasoning about where both robots sit in the room.
+    </p>
+
+    <div class="legend">
+      <span class="legend__item"><span class="dot dot--bimanual"></span>Bimanual manipulation</span>
+      <span class="legend__item"><span class="dot dot--percept"></span>Perceptual blind spots</span>
+      <span class="legend__item"><span class="dot dot--spatial"></span>Spatial context</span>
+    </div>
+
+    <div class="taskgrid">
+      <figure class="task task--bimanual"><div class="media media--task"><img class="fig" alt="Plush Toy Handoff" src="assets/images/tasks/1_final.jpg" data-fallback="1 · Plush Toy Handoff" data-src-hint="assets/images/tasks/1_final.jpg" /></div><figcaption><span class="task__n">1</span> Plush Toy Handoff</figcaption></figure>
+      <figure class="task task--bimanual"><div class="media media--task"><img class="fig" alt="Box Pick & Place" src="assets/images/tasks/2_final.jpg" data-fallback="2 · Box Pick & Place" data-src-hint="assets/images/tasks/2_final.jpg" /></div><figcaption><span class="task__n">2</span> Box Pick &amp; Place</figcaption></figure>
+      <figure class="task task--percept"><div class="media media--task"><img class="fig" alt="Cube Stacking" src="assets/images/tasks/4_final.jpg" data-fallback="3 · Cube Stacking" data-src-hint="assets/images/tasks/4_final.jpg" /></div><figcaption><span class="task__n">3</span> Cube Stacking</figcaption></figure>
+      <figure class="task task--percept"><div class="media media--task"><img class="fig" alt="Cube Collection" src="assets/images/tasks/3_final.jpg" data-fallback="4 · Cube Collection" data-src-hint="assets/images/tasks/3_final.jpg" /></div><figcaption><span class="task__n">4</span> Cube Collection</figcaption></figure>
+      <figure class="task task--bimanual"><div class="media media--task"><img class="fig" alt="Bag Filling" src="assets/images/tasks/6_final.jpg" data-fallback="5 · Bag Filling" data-src-hint="assets/images/tasks/6_final.jpg" /></div><figcaption><span class="task__n">5</span> Bag Filling</figcaption></figure>
+      <figure class="task task--spatial"><div class="media media--task"><img class="fig" alt="Door Passthrough" src="assets/images/tasks/7_final.jpg" data-fallback="6 · Door Passthrough" data-src-hint="assets/images/tasks/7_final.jpg" /></div><figcaption><span class="task__n">6</span> Door Passthrough</figcaption></figure>
+      <figure class="task task--spatial"><div class="media media--task"><img class="fig" alt="Dust-pan Sweep" src="assets/images/tasks/8_final.jpg" data-fallback="7 · Dust-pan Sweep" data-src-hint="assets/images/tasks/8_final.jpg" /></div><figcaption><span class="task__n">7</span> Dust-pan Sweep</figcaption></figure>
+      <figure class="task task--spatial"><div class="media media--task"><img class="fig" alt="Bedsheet Folding" src="assets/images/tasks/5_final.jpg" data-fallback="8 · Bedsheet Folding" data-src-hint="assets/images/tasks/5_final.jpg" /></div><figcaption><span class="task__n">8</span> Bedsheet Folding</figcaption></figure>
+      <figure class="task task--bimanual"><div class="media media--task"><img class="fig" alt="Knot Tying" src="assets/images/tasks/9_final.jpg" data-fallback="9 · Knot Tying" data-src-hint="assets/images/tasks/9_final.jpg" /></div><figcaption><span class="task__n">9</span> Knot Tying</figcaption></figure>
+    </div>
+    </div>
+  </section>
+
+  <!-- ===================== BIBTEX ===================== -->
+  <section id="bibtex" class="section wrap">
+    <h2 class="section__title">BibTeX</h2>
+    <p class="prose prose--muted">Placeholder while the paper is under review — real author list and venue to follow.</p>
+    <div class="code">
+      <button class="code__copy" type="button" data-copy>Copy</button>
+      <pre id="bibtex-src">@article{ghost2026,
+  title   = {GHOST in the Robots: Real-Time Exocentric Dual-Robot
+             VR Teleoperation from Onboard Cameras},
+  author  = {Anonymous Authors},
+  journal = {Under Review},
+  year    = {2026}
+}</pre>
+    </div>
+  </section>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="footer">
+    <div class="wrap">
+      <p>Under review — this page is intentionally anonymous for the time being.</p>
+      <p class="footer__sub">Built as a static site · <a href="#top">Back to top ↑</a></p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
