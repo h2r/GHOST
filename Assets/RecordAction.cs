@@ -48,15 +48,24 @@ public class RecordAction : UIOption
             return;
         }
 
-        if (timerActive) return;
-
-        timerActive = true;
-        elapsedTime = 0f;
-        
-        Debug.Log("Button Pressed! Requesting ROS Bag Start...");
-        StartCoroutine(WaitAndCallRosBagService(true));
+        // TOGGLE BEHAVIOR:
+        if (timerActive) 
+        {
+            // 1. If we are already recording, press again to STOP it
+            Debug.Log("Button Pressed! Requesting ROS Bag Stop...");
+            StopRecording();
+        }
+        else 
+        {
+            // 2. If we are not recording, press to START it
+            timerActive = true;
+            elapsedTime = 0f;
+            
+            Debug.Log("Button Pressed! Requesting ROS Bag Start...");
+            StartCoroutine(WaitAndCallRosBagService(true));
+        }
     }
-    
+
     private void Update()
     {
         if (!timerActive) return; 
