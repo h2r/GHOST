@@ -78,9 +78,14 @@ public class ButtonList : MonoBehaviour
             }
 
             if (options[i].IsToggle && options[i].IsActive)
+            {
                 buttons[i].GetComponent<Image>().color = Color.red;
+                buttons[i].transform.Find("Text").GetComponent<TMP_Text>().text = options[i].GetName();
+            }
             else
+            {
                 buttons[i].GetComponent<Image>().color = color;
+            }
             
         }
     }
