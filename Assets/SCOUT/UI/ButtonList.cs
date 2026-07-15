@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Linq;
 using TMPro;
 using Unity.InferenceEngine;
@@ -9,7 +10,7 @@ public class ButtonList : MonoBehaviour
 {
     public string title;
     public bool isHorizontal;
-    public bool isToggle;
+   // public bool isToggle;
     private bool isActive = false;
     public NamedOption[] options;
     public GameObject titlePrefab, buttonPrefab;
@@ -66,7 +67,8 @@ public class ButtonList : MonoBehaviour
             {
                 var selectedColor = selectedOption.GetSelectedColor();
                 color = new(selectedColor.r, selectedColor.g, selectedColor.b, 0.5f);
-                isActive = !isActive;
+                // isActive = !isActive; should be variable set inside here
+              
 
             }
             else

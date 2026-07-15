@@ -16,7 +16,7 @@ public class RecordAction : UIOption
     private const float maxRecordingTime = 600f; // 10 min to complete task
     private bool canInteract = false;
 
-    public override bool isToggle => true;
+   // public override bool isToggle => true;
 
     [SerializeField] private RosConnector rosConnector;
 
@@ -140,7 +140,7 @@ public class RecordAction : UIOption
 
     public override string GetName()
     {
-        return (!timerActive) ? $"Record Action" : $"Stop Recording";
+        return  $"Record Action" ;
     }
 
     public override Color GetSelectedColor()
