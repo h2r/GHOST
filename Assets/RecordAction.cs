@@ -16,6 +16,8 @@ public class RecordAction : UIOption
     private const float maxRecordingTime = 600f; // 10 min to complete task
     private bool canInteract = false;
 
+    public override bool isToggle => true;
+
     [SerializeField] private RosConnector rosConnector;
 
     // Added leading slash to match how Rosbridge indexes global services

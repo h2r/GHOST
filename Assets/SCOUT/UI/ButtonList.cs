@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using TMPro;
+using Unity.InferenceEngine;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,6 +10,7 @@ public class ButtonList : MonoBehaviour
     public string title;
     public bool isHorizontal;
     public bool isToggle;
+    private bool isActive = false;
     public NamedOption[] options;
     public GameObject titlePrefab, buttonPrefab;
     
@@ -64,12 +66,25 @@ public class ButtonList : MonoBehaviour
             {
                 var selectedColor = selectedOption.GetSelectedColor();
                 color = new(selectedColor.r, selectedColor.g, selectedColor.b, 0.5f);
+                isActive = !isActive;
+
             }
             else
             {
+            
                 color = new(1, 1, 1, 0.5f);
+                
             }
-            buttons[i].GetComponent<Image>().color = color;
+
+            if(buttons[i].GetComponent<UIOption>().isToggle && isActive)
+            {
+                buttons[i].GetComponent<Image>().color = Color.red;
+            }
+            else
+            {
+                buttons[i].GetComponent<Image>().color = color;
+            }
+            
 
             
         }
