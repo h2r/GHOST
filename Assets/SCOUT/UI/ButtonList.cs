@@ -76,14 +76,14 @@ public class ButtonList : MonoBehaviour
                 
             }
 
-            if(selectedOption.isToggle && isActive)
-            {
-                buttons[i].GetComponent<Image>().color = Color.red;
-            }
-            else
-            {
+            //if(selectedOption.isToggle && isActive)
+           // {
+               // buttons[i].GetComponent<Image>().color = Color.red;
+            //}
+           // else
+            //{
                 buttons[i].GetComponent<Image>().color = color;
-            }
+            //}
             
 
             

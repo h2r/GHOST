@@ -200,6 +200,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: Unenabled Camera Mode
   isHorizontal: 0
+  isToggle: 0
   options:
   - {fileID: 340065215537436307}
   - {fileID: 4423366195813605072}
@@ -7551,6 +7552,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: Unenabled Camera Mode
   isHorizontal: 1
+  isToggle: 0
   options:
   - {fileID: 822474737439515111}
   - {fileID: 1885078170}
@@ -11858,9 +11860,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cee525640271f134aaec34d86463beca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  spot: {fileID: 0}
-  spot_name: Spot 1
-  recordAction: {fileID: 1666425617}
 --- !u!1 &992404875
 GameObject:
   m_ObjectHideFlags: 0
@@ -17733,6 +17732,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   spot: {fileID: 0}
   spot_name: Spot 1
+  rosConnector: {fileID: 2123763469}
   rosServiceName: bag_trigger
 --- !u!4 &1666425618
 Transform:
@@ -22177,6 +22177,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RosSharp.RosBridgeClient.SetHeight
   serviceName: /spot/set_stand_height
+--- !u!114 &2123763469 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1137478773745686185, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+  m_PrefabInstance: {fileID: 409472599}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2123763348}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff98778ae051cfd40a6e4effdf851ebd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2127769091
 GameObject:
   m_ObjectHideFlags: 0
@@ -22938,6 +22949,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: Control
   isHorizontal: 0
+  isToggle: 0
   options:
   - {fileID: 6992206332785190946}
   - {fileID: 1254356878}
@@ -23505,6 +23517,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: Right Controller Assignment
   isHorizontal: 0
+  isToggle: 0
   options:
   - {fileID: 5676146346884262863}
   - {fileID: 5598556563780689457}
@@ -23554,6 +23567,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: Left Control Mode
   isHorizontal: 0
+  isToggle: 0
   options:
   - {fileID: 4075332289178829249}
   - {fileID: 3361989143556469971}
@@ -23895,6 +23909,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: 
   isHorizontal: 1
+  isToggle: 0
   options:
   - {fileID: 3844397681547260360}
   - {fileID: 822474737439515111}
@@ -24824,6 +24839,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: Left Controller Assignment
   isHorizontal: 0
+  isToggle: 0
   options:
   - {fileID: 5676146346884262863}
   - {fileID: 5598556563780689457}
@@ -25553,6 +25569,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: 
   isHorizontal: 1
+  isToggle: 0
   options:
   - {fileID: 1896198890660107597}
   - {fileID: 1673877232899162503}
@@ -25702,6 +25719,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: Spot
   isHorizontal: 0
+  isToggle: 0
   options:
   - {fileID: 5676146346884262863}
   - {fileID: 5598556563780689457}
@@ -26250,6 +26268,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: 
   isHorizontal: 1
+  isToggle: 0
   options:
   - {fileID: 822474737439515111}
   - {fileID: 1885078170}
@@ -26494,6 +26513,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: Options
   isHorizontal: 0
+  isToggle: 0
   options:
   - {fileID: 1666425617}
   - {fileID: 0}
@@ -26829,6 +26849,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: 
   isHorizontal: 1
+  isToggle: 0
   options:
   - {fileID: 822474737439515111}
   - {fileID: 1885078170}
@@ -27082,6 +27103,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: Right Control Mode
   isHorizontal: 0
+  isToggle: 0
   options:
   - {fileID: 410575832}
   - {fileID: 3361989143556469971}
