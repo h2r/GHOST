@@ -10,8 +10,7 @@ public class ButtonList : MonoBehaviour
 {
     public string title;
     public bool isHorizontal;
-   // public bool isToggle;
-    private bool isActive = false;
+
     public NamedOption[] options;
     public GameObject titlePrefab, buttonPrefab;
     
@@ -78,16 +77,10 @@ public class ButtonList : MonoBehaviour
                 
             }
 
-            //if(selectedOption.isToggle && isActive)
-           // {
-               // buttons[i].GetComponent<Image>().color = Color.red;
-            //}
-           // else
-            //{
+            if (options[i].IsToggle && options[i].IsActive)
+                buttons[i].GetComponent<Image>().color = Color.red;
+            else
                 buttons[i].GetComponent<Image>().color = color;
-            //}
-            
-
             
         }
     }

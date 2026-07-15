@@ -15,6 +15,8 @@ public class RecordAction : UIOption
     public float elapsedTime { get; private set; } = 0f;
     private const float maxRecordingTime = 600f; // 10 min to complete task
     private bool canInteract = false;
+    public override bool IsToggle => true;
+    public override bool IsActive => timerActive;
 
    // public override bool isToggle => true;
 
@@ -140,7 +142,7 @@ public class RecordAction : UIOption
 
     public override string GetName()
     {
-        return  $"Record Action" ;
+        return (!timerActive) ?  $"Record Action" : $"Stop Recording" ;
     }
 
     public override Color GetSelectedColor()
