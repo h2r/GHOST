@@ -5,7 +5,6 @@ using System.Collections;
 using Unity.Robotics.ROSTCPConnector;
 using RosMessageTypes.Std;
 
-
 public class StopRecording : UIOption
 {
     public SpotMode spot;

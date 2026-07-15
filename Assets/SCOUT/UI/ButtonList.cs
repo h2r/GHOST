@@ -8,6 +8,7 @@ public class ButtonList : MonoBehaviour
 {
     public string title;
     public bool isHorizontal;
+    public bool isToggle;
     public NamedOption[] options;
     public GameObject titlePrefab, buttonPrefab;
     

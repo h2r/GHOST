@@ -138,7 +138,7 @@ public class RecordAction : UIOption
 
     public override string GetName()
     {
-        return (!timerActive) ? $"Record Action" : $"Recording in Progress";
+        return (!timerActive) ? $"Record Action" : $"Stop Recording";
     }
 
     public override Color GetSelectedColor()
