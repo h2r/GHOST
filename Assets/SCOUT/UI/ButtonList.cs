@@ -76,7 +76,7 @@ public class ButtonList : MonoBehaviour
                 
             }
 
-            if(buttons[i].GetComponent<UIOption>().isToggle && isActive)
+            if(selectedOption.isToggle && isActive)
             {
                 buttons[i].GetComponent<Image>().color = Color.red;
             }
