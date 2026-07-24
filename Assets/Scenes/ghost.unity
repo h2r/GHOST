@@ -150,6 +150,51 @@ Transform:
   m_Children: []
   m_Father: {fileID: 437099332}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &10257868
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 10257870}
+  - component: {fileID: 10257869}
+  m_Layer: 0
+  m_Name: Ros Bridge Url Override
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &10257869
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 10257868}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b96c15112b605b4d80fba2ca0fc94b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RosSharp.RosBridgeClient.RosBridgeUrlOverride
+  sharedRosBridgeServerUrl: ws://127.0.0.1:9090
+--- !u!4 &10257870
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 10257868}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.91883, y: 1.4946, z: 1.29618}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &11009078
 GameObject:
   m_ObjectHideFlags: 0
@@ -200,7 +245,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: Unenabled Camera Mode
   isHorizontal: 0
-  isToggle: 0
   options:
   - {fileID: 340065215537436307}
   - {fileID: 4423366195813605072}
@@ -5060,6 +5104,10 @@ PrefabInstance:
       propertyPath: Topic
       value: /spot2/arm_pose_body_follow_commands
       objectReference: {fileID: 0}
+    - target: {fileID: 708264857575880653, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: RosBridgeServerUrl
+      value: ws://10.38.180.94:9090
+      objectReference: {fileID: 0}
     - target: {fileID: 934838920937526486, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Topic
       value: /spot/camera/hand/image111
@@ -5210,7 +5258,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1137478773745686185, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
-      value: ws://128.148.138.132:9090
+      value: ws://127.0.0.1:9090
       objectReference: {fileID: 0}
     - target: {fileID: 1137478773745686192, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_Enabled
@@ -5360,6 +5408,14 @@ PrefabInstance:
       propertyPath: SpotObserverCameraIndex
       value: 32
       objectReference: {fileID: 0}
+    - target: {fileID: 1137478774599216621, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: spotObserverCameraIndex
+      value: 32
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478774599216621, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: spotObserverStreamIndex
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1137478774821249048, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
       value: ws://128.148.138.132:9090
@@ -5405,6 +5461,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 7200000, guid: 7c75016ce147e8a4aadb1b0132241f05, type: 3}
     - target: {fileID: 1137478775010377568, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: sizeScale
+      value: 0.004
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478775010377568, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: size_scale
       value: 0.004
       objectReference: {fileID: 0}
@@ -5426,6 +5486,10 @@ PrefabInstance:
       objectReference: {fileID: 971801071}
     - target: {fileID: 1137478775010377568, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: SpotObserverCameraIndex
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478775010377568, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: spotObserverCameraIndex
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775010377574, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
@@ -5469,6 +5533,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2100000, guid: 2ed8634ad505ab74a8ba24b04a0993f7, type: 2}
     - target: {fileID: 1137478775482946479, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: colorImage
+      value: 
+      objectReference: {fileID: 2800000, guid: c42e37b95e20fb04f872bdd0b7807356, type: 3}
+    - target: {fileID: 1137478775482946479, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: color_image
       value: 
       objectReference: {fileID: 2800000, guid: c42e37b95e20fb04f872bdd0b7807356, type: 3}
@@ -5491,6 +5559,14 @@ PrefabInstance:
     - target: {fileID: 1137478775482946479, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: SpotObserverCameraIndex
       value: 32
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478775482946479, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: spotObserverCameraIndex
+      value: 32
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478775482946479, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: spotObserverStreamIndex
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775509555832, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_LocalPosition.x
@@ -5529,6 +5605,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 7200000, guid: 7c75016ce147e8a4aadb1b0132241f05, type: 3}
     - target: {fileID: 1137478775515482002, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: sizeScale
+      value: 0.004
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478775515482002, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: size_scale
       value: 0.004
       objectReference: {fileID: 0}
@@ -5558,6 +5638,10 @@ PrefabInstance:
       objectReference: {fileID: 971801071}
     - target: {fileID: 1137478775515482002, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: SpotObserverCameraIndex
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1137478775515482002, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: spotObserverCameraIndex
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 1137478775531494915, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
@@ -5674,7 +5758,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052575190430, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: RosBridgeServerUrl
-      value: ws://128.148.138.132:9090
+      value: ws://127.0.0.1:9090
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052575190431, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Topic
@@ -5885,6 +5969,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2100000, guid: 69e79fe9793df704ba76e0155c83285d, type: 2}
     - target: {fileID: 3310871052733856933, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: sizeScale
+      value: 0.004
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871052733856933, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: size_scale
       value: 0.004
       objectReference: {fileID: 0}
@@ -5914,6 +6002,10 @@ PrefabInstance:
       objectReference: {fileID: 1028337600}
     - target: {fileID: 3310871052733856933, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: SpotObserverCameraIndex
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871052733856933, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: spotObserverCameraIndex
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 3310871052733856935, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
@@ -5985,6 +6077,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2100000, guid: bff9913c7b35a5b41ad8d916573e25a9, type: 2}
     - target: {fileID: 3310871053306987607, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: sizeScale
+      value: 0.004
+      objectReference: {fileID: 0}
+    - target: {fileID: 3310871053306987607, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: size_scale
       value: 0.004
       objectReference: {fileID: 0}
@@ -6016,6 +6112,10 @@ PrefabInstance:
       propertyPath: SpotObserverCameraIndex
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 3310871053306987607, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: spotObserverCameraIndex
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 3310871053448524530, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Mass
       value: 1.904699
@@ -6039,6 +6139,10 @@ PrefabInstance:
     - target: {fileID: 3369403143439151073, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: m_Enabled
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3449257224198825646, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
+      propertyPath: RosBridgeServerUrl
+      value: ws://10.38.180.94:9090
       objectReference: {fileID: 0}
     - target: {fileID: 3595094235055674210, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: material
@@ -6370,7 +6474,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5926854348849661184, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: rosBridgeServerUrl
-      value: ws://128.148.138.132:9090
+      value: ws://127.0.0.1:9090
       objectReference: {fileID: 0}
     - target: {fileID: 6095128873530598835, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Mass
@@ -6470,7 +6574,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8105313734531972663, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: rosBridgeServerUrl
-      value: ws://128.148.138.132:9090
+      value: ws://127.0.0.1:9090
       objectReference: {fileID: 0}
     - target: {fileID: 8551647604095721092, guid: 56ddb6be10446584fbc75833cadcd54f, type: 3}
       propertyPath: Mass
@@ -7552,7 +7656,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: Unenabled Camera Mode
   isHorizontal: 1
-  isToggle: 0
   options:
   - {fileID: 822474737439515111}
   - {fileID: 1885078170}
@@ -22949,7 +23052,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: Control
   isHorizontal: 0
-  isToggle: 0
   options:
   - {fileID: 6992206332785190946}
   - {fileID: 1254356878}
@@ -23517,7 +23619,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: Right Controller Assignment
   isHorizontal: 0
-  isToggle: 0
   options:
   - {fileID: 5676146346884262863}
   - {fileID: 5598556563780689457}
@@ -23567,7 +23668,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: Left Control Mode
   isHorizontal: 0
-  isToggle: 0
   options:
   - {fileID: 4075332289178829249}
   - {fileID: 3361989143556469971}
@@ -23647,7 +23747,7 @@ MonoBehaviour:
   SecondsTimeout: 10
   Serializer: 0
   protocol: 1
-  RosBridgeServerUrl: ws://128.148.138.132:9090
+  RosBridgeServerUrl: ws://127.0.0.1:9090
 --- !u!1 &2369611931696308318
 GameObject:
   m_ObjectHideFlags: 0
@@ -23909,7 +24009,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: 
   isHorizontal: 1
-  isToggle: 0
   options:
   - {fileID: 3844397681547260360}
   - {fileID: 822474737439515111}
@@ -24735,7 +24834,7 @@ MonoBehaviour:
   SecondsTimeout: 10
   Serializer: 0
   protocol: 1
-  RosBridgeServerUrl: ws://128.148.138.233:9090
+  RosBridgeServerUrl: ws://127.0.0.1:9090
 --- !u!1 &4460779199687081897
 GameObject:
   m_ObjectHideFlags: 0
@@ -24839,7 +24938,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: Left Controller Assignment
   isHorizontal: 0
-  isToggle: 0
   options:
   - {fileID: 5676146346884262863}
   - {fileID: 5598556563780689457}
@@ -25050,7 +25148,7 @@ MonoBehaviour:
   SecondsTimeout: 10
   Serializer: 0
   protocol: 1
-  RosBridgeServerUrl: ws://128.148.138.233:9090
+  RosBridgeServerUrl: ws://127.0.0.1:9090
 --- !u!4 &5105090148137265867
 Transform:
   m_ObjectHideFlags: 0
@@ -25569,7 +25667,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: 
   isHorizontal: 1
-  isToggle: 0
   options:
   - {fileID: 1896198890660107597}
   - {fileID: 1673877232899162503}
@@ -25719,7 +25816,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: Spot
   isHorizontal: 0
-  isToggle: 0
   options:
   - {fileID: 5676146346884262863}
   - {fileID: 5598556563780689457}
@@ -26268,7 +26364,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: 
   isHorizontal: 1
-  isToggle: 0
   options:
   - {fileID: 822474737439515111}
   - {fileID: 1885078170}
@@ -26513,10 +26608,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: Options
   isHorizontal: 0
-  isToggle: 0
   options:
   - {fileID: 1666425617}
-  - {fileID: 0}
   titlePrefab: {fileID: 3278048788002158022, guid: bfe2b15985d2d437fb47203f0df723ee, type: 3}
   buttonPrefab: {fileID: 1520795838076098022, guid: 39fc7b698942e4ac18e866a2f1f87352, type: 3}
 --- !u!114 &7811334636564698287
@@ -26628,7 +26721,7 @@ MonoBehaviour:
   SecondsTimeout: 10
   Serializer: 0
   protocol: 1
-  RosBridgeServerUrl: ws://128.148.138.132:9090
+  RosBridgeServerUrl: ws://127.0.0.1:9090
 --- !u!114 &7892326592595442517
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -26849,7 +26942,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: 
   isHorizontal: 1
-  isToggle: 0
   options:
   - {fileID: 822474737439515111}
   - {fileID: 1885078170}
@@ -27103,7 +27195,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   title: Right Control Mode
   isHorizontal: 0
-  isToggle: 0
   options:
   - {fileID: 410575832}
   - {fileID: 3361989143556469971}
@@ -27414,3 +27505,4 @@ SceneRoots:
   - {fileID: 1646626576}
   - {fileID: 420483825}
   - {fileID: 9217194773734636244}
+  - {fileID: 10257870}

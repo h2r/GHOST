@@ -32,8 +32,8 @@ namespace RosSharp.RosBridgeClient
 
             // Just take first battery charge_percentage for now
             batteryLevel = message.battery_states[0].charge_percentage;
-            // Debug.Log($"[BatteryPercent] Updated batteryLevel: {batteryLevel}");
-            // Debug.Log("[BatteryPercent] " + message);
+            Debug.Log($"[BatteryPercent] Updated batteryLevel: {batteryLevel}");
+            Debug.Log("[BatteryPercent] " + message);
 
         }
 
