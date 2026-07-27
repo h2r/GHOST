@@ -42,7 +42,7 @@
         <span>GHOST</span>
       </a>
       <nav class="nav__links" aria-label="Section navigation">
-        <a href="#abstract">About</a>
+        <a href="#abstract">Abstract</a>
         <a href="#system">System</a>
         <a href="#tasks">Tasks</a>
         <a href="#bibtex">BibTeX</a>
@@ -102,9 +102,10 @@
           </video>
         </div>
         <figcaption>
-          <strong>One operator, two robots, zero external cameras.</strong>
-          Wearing a VR headset, a single person drives two mobile manipulators — separately or both at once — inside a
-          live 3D scene rebuilt on the fly from the robots' own onboard cameras.
+          <strong>GHOST enables single-operator dual-robot control.</strong>
+          One operator controls two mobile manipulators — individually or simultaneously — using our VR interface to perform
+          complex mobile-manipulation tasks inside a 3D scene reconstructed and rendered in real time from the robots'
+          onboard cameras.
         </figcaption>
       </figure>
     </div>
@@ -114,66 +115,67 @@
   <section class="stats wrap">
     <div class="stat">
       <div class="stat__num">1 → 2</div>
-      <div class="stat__label">One operator flies two mobile manipulators at once</div>
+      <div class="stat__label">One operator controls two mobile manipulators</div>
     </div>
     <div class="stat">
       <div class="stat__num">1.47×</div>
-      <div class="stat__label">Faster for experts than the manufacturer's tablet</div>
+      <div class="stat__label">Faster on average for experts vs. the tablet baseline</div>
     </div>
     <div class="stat">
       <div class="stat__num">1.6–4×</div>
-      <div class="stat__label">Higher success rate for first-time users</div>
+      <div class="stat__label">Higher novice success rate vs. an off-the-shelf interface</div>
     </div>
     <div class="stat">
-      <div class="stat__num">Onboard</div>
-      <div class="stat__label">Cameras only — no mocap rig, no cameras bolted to the ceiling</div>
+      <div class="stat__num">Realtime</div>
+      <div class="stat__label">Scene reconstruction and rendering in real time from onboard cameras</div>
     </div>
   </section>
 
   <!-- ===================== ABSTRACT ===================== -->
   <section id="abstract" class="section wrap">
-    <h2 class="section__title">What is GHOST?</h2>
+    <h2 class="section__title">Abstract</h2>
     <div class="prose prose--lead">
       <p>
-        Two robots beat one: more viewpoints, more reach, and the ability to actually carry things together. The catch
-        is control. One person has to juggle two bases, two arms, and a camera view — while the system keeps multiple
-        video streams flowing over Wi-Fi without falling behind. Most existing systems sidestep this by adding a second
-        operator, leaning on autonomy, or limiting the human to high-level commands.
+        Teleoperating multiple robots simultaneously enables additional views and coordinated control. Yet, it poses
+        fundamental challenges: the system must present sensor data cohesively and allow operators to manage multiple
+        robot bases, arms, and cameras while maintaining low latency. Current multi-robot teleoperation systems require
+        multiple operators, rely on autonomous coordination, or restrict operators to high-level commands.
       </p>
       <p>
-        <strong>GHOST</strong> takes a different route: an open-source VR system that gives a single operator direct,
-        low-level control of two mobile manipulators, using <em>nothing but the robots' onboard cameras</em>. Live point
-        clouds from both robots are fused into a shared <strong>exocentric 3D scene</strong> — the operator moves through
-        it like an invisible ghost standing alongside the robots — with a learning-based
-        <strong>depth-completion</strong> model filling in what the sparse sensors miss. Two VR controllers cover
-        everything through <strong>switchable control modes</strong>: drive one robot, guide its arm, or lock both
-        robots together and move them as a unit.
+        We present <strong>GHOST</strong>: an open-source VR teleoperation system that enables single-operator control of
+        two mobile manipulators via direct low-level commands using <em>only onboard cameras</em>. GHOST creates an
+        <strong>exocentric 3D workspace</strong> by integrating real-time point clouds from both robots' body cameras,
+        where point coverage is improved through learning-based completion to aid operator scene understanding. For
+        control, the operator uses a <strong>mode-switching control architecture</strong> — either for individual robots
+        or to coordinate both robots simultaneously.
       </p>
       <p>
-        And it works. Fifteen first-time users hit <strong>1.6–4×</strong> the success rate of the off-the-shelf tablet
-        interface. Across nine hard dual-robot tasks, experts were <strong>1.47× faster</strong> on average — and
-        completed <strong>two tasks the tablet simply couldn't do</strong>.
+        Experiments with 15 novice operators demonstrate <strong>1.6–4×</strong> the success rate of an off-the-shelf
+        interface. For experts across nine challenging dual-robot tasks, our system enabled task completion on
+        <strong>two tasks that were impossible</strong> on an off-the-shelf tablet interface, and experts were
+        <strong>1.47× faster</strong> on average compared to the tablet.
       </p>
     </div>
 
     <div class="contrib">
-      <h3 class="contrib__title">What's new</h3>
+      <h3 class="contrib__title">Contributions</h3>
       <ol class="contrib__list">
-        <li><span>A shared <strong>exocentric 3D scene</strong> for multi-robot teleoperation.</span></li>
-        <li><span>A <strong>depth-completion pipeline</strong> fast enough to stay in the loop.</span></li>
-        <li><span>A principled <strong>control design space</strong> for driving two robots with two hands.</span></li>
-        <li><span>A suite of <strong>nine challenging tasks</strong> for benchmarking dual-robot teleoperation.</span></li>
+        <li><span>An <strong>exocentric 3D scene</strong> for multi-robot teleoperation.</span></li>
+        <li><span>A <strong>low-latency depth-completion</strong> pipeline.</span></li>
+        <li><span>A principled <strong>control design space</strong> for dual-robot teleoperation.</span></li>
+        <li><span>A set of <strong>challenging evaluation tasks</strong> for dual-robot teleoperation.</span></li>
       </ol>
     </div>
   </section>
 
   <!-- ===================== SYSTEM OVERVIEW ===================== -->
   <section id="system" class="section wrap">
-    <h2 class="section__title">How It Works</h2>
+    <h2 class="section__title">System Overview</h2>
     <p class="prose">
-      The robots are two Boston Dynamics Spots — each a quadruped base with a 6-DoF arm and gripper, a LiDAR on its
-      back, and two front-facing RGB-D cameras — talking over Wi-Fi to a ROS&nbsp;2 server and a VR client. Under the
-      hood, GHOST wires familiar parts (Unity, ROS&nbsp;2, PromptDA, the Spot SDK) into three tightly coupled pieces:
+      A single operator teleoperates two Boston Dynamics Spot mobile manipulators within a unified VR framework. Each
+      Spot has a quadruped base, a 6-DoF arm with gripper, a LiDAR unit, and two front-facing RGB-D sensors. The robots
+      communicate over onboard Wi-Fi with a ROS&nbsp;2 server and a VR client. GHOST integrates off-the-shelf tools
+      (PromptDA, ROS2, Unity, the Spot SDK) into three tightly coupled components:
     </p>
 
     <figure class="media media--wide">
@@ -182,9 +184,9 @@
            data-fallback="System diagram"
            data-src-hint="assets/images/system-diagram.png" />
       <figcaption>
-        <strong>How the pieces fit together.</strong> Small, latency-tolerant data (robot state, commands) flows through
-        ROS&nbsp;2; the heavy RGB-D streams go straight to the GPU, where they become the point clouds and live robot
-        models the operator sees in the headset.
+        <strong>The GHOST system.</strong> Low-bandwidth state/command data is bridged through ROS&nbsp;2, while
+        high-bandwidth RGB-D streams are processed on the GPU and rendered as interactive point clouds and virtual robot
+        models for low-latency teleoperation.
       </figcaption>
     </figure>
 
@@ -192,20 +194,20 @@
       <div class="card">
         <div class="card__tag">Client</div>
         <h3 class="card__title">Unity VR Client</h3>
-        <p>The world the operator lives in. Renders the point-cloud scene and live robot models, and provides the
-           mode-switching controls — fly the camera, drive a robot, steer an arm, or all of the above.</p>
+        <p>Renders the 3D scene as dynamic point clouds and live robot models, and gives the operator mode-switching
+           control for independent or coordinated operation.</p>
       </div>
       <div class="card">
         <div class="card__tag">Server</div>
-        <h3 class="card__title">ROS&nbsp;2 Server</h3>
-        <p>The coordinator. Streams robot state, executes commands, keeps both robots localized in a common frame, and
-           handles synchronized navigation when they move as a pair.</p>
+        <h3 class="card__title">ROS2 Server</h3>
+        <p>Manages low-bandwidth state streaming, command execution, multi-robot localization, and synchronized
+           navigation between the two robots.</p>
       </div>
       <div class="card">
         <div class="card__tag">Perception</div>
         <h3 class="card__title">SpotObserver</h3>
-        <p>The fast path. A GPU-accelerated library that skips ROS entirely: it pulls RGB-D straight off each robot,
-           runs depth completion in real time, and hands Unity dense point clouds with minimal latency.</p>
+        <p>A GPU-accelerated library that bypasses ROS messaging to pull RGB-D directly from each robot, runs real-time
+           depth completion, and produces dense point clouds with minimal latency for Unity to render.</p>
       </div>
     </div>
   </section>
@@ -213,10 +215,10 @@
   <!-- ===================== TASKS ===================== -->
   <section id="tasks" class="section section--alt">
     <div class="wrap wrap--wide">
-    <h2 class="section__title">The Nine Tasks</h2>
+    <h2 class="section__title">Evaluation Tasks</h2>
     <p class="prose">
-      We stress-tested GHOST on nine tasks that genuinely need two robots — some demand two arms working together, some
-      an extra viewpoint to see around occlusions, and some careful reasoning about where both robots sit in the room.
+      We evaluate GHOST on nine dual-robot tasks spanning perceptual blind spots, bimanual manipulation, and spatial
+      context awareness. All require coordinated control of two mobile manipulators.
     </p>
 
     <div class="legend">
@@ -240,9 +242,9 @@
   </section>
 
   <!-- ===================== BIBTEX ===================== -->
-  <section id="bibtex" class="section wrap">
+  <!-- <section id="bibtex" class="section wrap">
     <h2 class="section__title">BibTeX</h2>
-    <p class="prose prose--muted">Placeholder while the paper is under review — real author list and venue to follow.</p>
+    <p class="prose prose--muted">Anonymous placeholder — update with author names and venue for the camera-ready version.</p>
     <div class="code">
       <button class="code__copy" type="button" data-copy>Copy</button>
       <pre id="bibtex-src">@article{ghost2026,
@@ -253,12 +255,12 @@
   year    = {2026}
 }</pre>
     </div>
-  </section>
+  </section> -->
 
   <!-- ===================== FOOTER ===================== -->
   <footer class="footer">
     <div class="wrap">
-      <p>Under review — this page is intentionally anonymous for the time being.</p>
+      <p>Anonymous submission · under review. This project page contains no author-identifying information.</p>
       <p class="footer__sub">Built as a static site · <a href="#top">Back to top ↑</a></p>
     </div>
   </footer>
