@@ -136,6 +136,8 @@ public class SpotObserverClient : MonoBehaviour
     public GameObject rosConnector;
 
     public bool[] useVisionPipeline = { false, false };
+    public string[] depthCompletionModelFiles;
+    public int currentDepthModelIndex = 0;
     public string depthCompletionModelFile;
 
     public bool enableLogging = false;
@@ -202,7 +204,9 @@ public class SpotObserverClient : MonoBehaviour
         if (model != IntPtr.Zero)
             return true;
 
-        string modelPath = depthCompletionModelFile == null ? string.Empty : depthCompletionModelFile.Trim();
+        // string modelPath = depthCompletionModelFile == null ? string.Empty : depthCompletionModelFile.Trim();
+        string modelPath = GetCurrentDepthModelPath();
+        modelPath = modelPath == null ? string.Empty : modelPath.Trim();
         if (string.IsNullOrEmpty(modelPath))
         {
             Debug.LogError("No model path configured for the Spot vision pipeline.");
@@ -507,11 +511,11 @@ public class SpotObserverClient : MonoBehaviour
         robot_id = -1;
         isConnected = false;
 
-        // if (model != IntPtr.Zero)
-        // {
-        //     SOb_UnloadModel(model);
-        //     model = IntPtr.Zero;
-        // }
+        if (model != IntPtr.Zero)
+        {
+            SOb_UnloadModel(model);
+            model = IntPtr.Zero;
+        }
 
         if (SpotCamToIdx != null)
         {
@@ -693,5 +697,53 @@ public class SpotObserverClient : MonoBehaviour
             return (frame.ColorTexture, frame.DepthTensor);
 
         return (null, null);
+    }
+
+    public string GetCurrentDepthModelPath()
+    {
+        if (depthCompletionModelFiles != null && depthCompletionModelFiles.Length > 0)
+        {
+            currentDepthModelIndex = Mathf.Clamp(currentDepthModelIndex, 0, depthCompletionModelFiles.Length - 1);
+            return depthCompletionModelFiles[currentDepthModelIndex];
+        }
+        return depthCompletionModelFile;
+    }
+    
+    public string GetCurrentDepthModelName()
+    {
+        string path = GetCurrentDepthModelPath();
+        if (string.IsNullOrEmpty(path))
+            return "None";
+        return System.IO.Path.GetFileNameWithoutExtension(path);
+    }
+
+    public bool CycleDepthModel()
+    {
+        if (depthCompletionModelFiles == null || depthCompletionModelFiles.Length == 0)
+            return false;
+
+        currentDepthModelIndex = (currentDepthModelIndex + 1) % depthCompletionModelFiles.Length;
+        depthCompletionModelFile = depthCompletionModelFiles[currentDepthModelIndex];
+
+        Debug.Log($"{username}: switched depth model selection to {depthCompletionModelFile}");
+
+        return ReloadDepthModelSelection();
+    }
+
+    public bool ReloadDepthModelSelection()
+    {
+        string selected = GetCurrentDepthModelPath();
+        if (string.IsNullOrEmpty(selected))
+        {
+            Debug.LogWarning($"{username}: no depth model selected");
+            return false;
+        }
+
+        depthCompletionModelFile = selected;
+
+        // Placeholder for now for native restart / reload in SpotObserver
+        // would have a stop / unload / clear / update depthCompletionModelFile / reload / relaunch pipeline
+        Debug.Log($"{username} requested depth model reload -> {selected}"); 
+        return true;
     }
 }

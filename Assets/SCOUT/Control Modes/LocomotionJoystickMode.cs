@@ -7,6 +7,7 @@ public class LocomotionJoystickMode : OneControllerMode
     public GameObject viewOptionsConfigurer;
     private PointCloudCycler pointCloudCycler;
     private PositionPresetCycler positionPresetCycler;
+    private DepthModelCycler depthModelCycler;
 
     [Header("References")]
     public GameObject cameraRig;
@@ -68,6 +69,7 @@ public class LocomotionJoystickMode : OneControllerMode
 
         pointCloudCycler = viewOptionsConfigurer.GetComponent<PointCloudCycler>();
         positionPresetCycler = viewOptionsConfigurer.GetComponent<PositionPresetCycler>();
+        depthModelCycler = viewOptionsConfigurer.GetComponent<DepthModelCycler>();
     }
 
     public override void ControlUpdate(SpotMode spot, ControllerModel model)
@@ -96,6 +98,9 @@ public class LocomotionJoystickMode : OneControllerMode
         Vector3 rotationCenter = headTransform != null ? headTransform.position : rigPositioner.pos;
 
         // cycle point cloud / views
+        if (OVRInput.GetDown(model.joystickButton)) // thumpstick press
+            if (depthModelCycler != null)
+                depthModelCycler.CycleModels();
         if (OVRInput.GetDown(model.axButton))
             pointCloudCycler.CyclePointClouds();
         if (OVRInput.GetDown(model.byButton))
@@ -235,6 +240,7 @@ public class LocomotionJoystickMode : OneControllerMode
         model.indexLabel = doHeightAdjust ? "" : "Hold: Up/Down";
         model.axLabel = "Cycle PointClouds";
         model.byLabel = "Cycle ViewPoints";
+        model.joystickLabel = "Cycle Model";
 
         // Calculate the final delta
         LastMoveDelta = cameraRig.transform.position - positionBeforeUpdate;
