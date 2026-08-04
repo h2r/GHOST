@@ -80,6 +80,16 @@ public class SpotObserverClient : MonoBehaviour
     [DllImport("SpotObserverLib", CharSet = CharSet.Ansi)]
     private static extern IntPtr SOb_LoadModel(string modelPath, string backend);
 
+    // kind: 0 = single-shot (PromptDA-style), 1 = streaming (KV-cache model).
+    // The family cannot be inferred from the file -- both are .onnx.
+    [DllImport("SpotObserverLib", CharSet = CharSet.Ansi)]
+    private static extern IntPtr SOb_LoadModelEx(string modelPath, string backend, int kind);
+
+    // Stops the vision pipeline on the stream (if running) and relaunches it on
+    // the given preloaded model handle. The camera stream keeps running.
+    [DllImport("SpotObserverLib")]
+    private static extern bool SOb_SwitchVisionPipelineModel(int robot_id, int stream_id, IntPtr model);
+
     [DllImport("SpotObserverLib")]
     private static extern void SOb_UnloadModel(IntPtr model);
 
@@ -137,6 +147,9 @@ public class SpotObserverClient : MonoBehaviour
 
     public bool[] useVisionPipeline = { false, false };
     public string[] depthCompletionModelFiles;
+    // Parallel to depthCompletionModelFiles: 0 = single-shot, 1 = streaming
+    // (KV-cache). Missing/short array defaults to single-shot.
+    public int[] depthCompletionModelKinds;
     public int currentDepthModelIndex = 0;
     public string depthCompletionModelFile;
 
@@ -154,6 +167,9 @@ public class SpotObserverClient : MonoBehaviour
     private bool[] isStreaming = { false, false };
     private bool[] isVisionPipelineRunning = { false, false };
     private IntPtr model = IntPtr.Zero;
+    // One preloaded handle per depthCompletionModelFiles entry. Loading happens
+    // once at startup; cycling models is a handle switch with no load stall.
+    private IntPtr[] modelHandles = null;
 
     private Texture2D[][] rgb_textures;
 
@@ -199,14 +215,48 @@ public class SpotObserverClient : MonoBehaviour
         return false;
     }
 
+    private int GetDepthModelKind(int index)
+    {
+        if (depthCompletionModelKinds != null && index >= 0 && index < depthCompletionModelKinds.Length)
+            return depthCompletionModelKinds[index];
+        return 0; // single-shot
+    }
+
     private bool EnsureVisionModelLoaded()
     {
         if (model != IntPtr.Zero)
             return true;
 
-        // string modelPath = depthCompletionModelFile == null ? string.Empty : depthCompletionModelFile.Trim();
-        string modelPath = GetCurrentDepthModelPath();
-        modelPath = modelPath == null ? string.Empty : modelPath.Trim();
+        // Preload every selectable model once, up front. Model switching later is
+        // a handle swap (SOb_SwitchVisionPipelineModel) with no load in the hot
+        // path -- so all the load cost lives here, at startup.
+        if (depthCompletionModelFiles != null && depthCompletionModelFiles.Length > 0)
+        {
+            modelHandles = new IntPtr[depthCompletionModelFiles.Length];
+            for (int i = 0; i < depthCompletionModelFiles.Length; i++)
+            {
+                string path = depthCompletionModelFiles[i] == null ? string.Empty : depthCompletionModelFiles[i].Trim();
+                if (string.IsNullOrEmpty(path))
+                {
+                    Debug.LogError($"{username}: empty depth model path at index {i}");
+                    return false;
+                }
+                modelHandles[i] = SOb_LoadModelEx(path, "cuda", GetDepthModelKind(i));
+                if (modelHandles[i] == IntPtr.Zero)
+                {
+                    Debug.LogError($"{username}: failed to load depth model ({path}, kind {GetDepthModelKind(i)})");
+                    return false;
+                }
+                Debug.Log($"{username}: loaded depth model {i}: {path} (kind {GetDepthModelKind(i)})");
+            }
+
+            currentDepthModelIndex = Mathf.Clamp(currentDepthModelIndex, 0, modelHandles.Length - 1);
+            model = modelHandles[currentDepthModelIndex];
+            return true;
+        }
+
+        // Legacy single-model path.
+        string modelPath = depthCompletionModelFile == null ? string.Empty : depthCompletionModelFile.Trim();
         if (string.IsNullOrEmpty(modelPath))
         {
             Debug.LogError("No model path configured for the Spot vision pipeline.");
@@ -511,9 +561,28 @@ public class SpotObserverClient : MonoBehaviour
         robot_id = -1;
         isConnected = false;
 
-        if (model != IntPtr.Zero)
+        if (modelHandles != null)
         {
-            SOb_UnloadModel(model);
+            // Only streaming handles are unloaded: each streaming load is a fresh
+            // per-client instance, so this is safe. Single-shot handles are shared
+            // by path across clients on the native side -- unloading one here
+            // would dangle another client's copy of the same pointer. Those stay
+            // resident until process teardown.
+            for (int i = 0; i < modelHandles.Length; i++)
+            {
+                if (modelHandles[i] != IntPtr.Zero && GetDepthModelKind(i) == 1)
+                {
+                    SOb_UnloadModel(modelHandles[i]);
+                }
+                modelHandles[i] = IntPtr.Zero;
+            }
+            modelHandles = null;
+            model = IntPtr.Zero;
+        }
+        else if (model != IntPtr.Zero)
+        {
+            // Legacy single-model path: single-shot and possibly shared; leave
+            // resident (matches pre-branch behavior where unload was disabled).
             model = IntPtr.Zero;
         }
 
@@ -722,6 +791,9 @@ public class SpotObserverClient : MonoBehaviour
         if (depthCompletionModelFiles == null || depthCompletionModelFiles.Length == 0)
             return false;
 
+        // Clamp before incrementing: a negative inspector value would otherwise
+        // survive the modulo and index out of range.
+        currentDepthModelIndex = Mathf.Clamp(currentDepthModelIndex, 0, depthCompletionModelFiles.Length - 1);
         currentDepthModelIndex = (currentDepthModelIndex + 1) % depthCompletionModelFiles.Length;
         depthCompletionModelFile = depthCompletionModelFiles[currentDepthModelIndex];
 
@@ -732,18 +804,38 @@ public class SpotObserverClient : MonoBehaviour
 
     public bool ReloadDepthModelSelection()
     {
-        string selected = GetCurrentDepthModelPath();
-        if (string.IsNullOrEmpty(selected))
+        if (modelHandles == null || modelHandles.Length == 0)
         {
-            Debug.LogWarning($"{username}: no depth model selected");
+            Debug.LogWarning($"{username}: no depth models preloaded; selection applies at next launch");
             return false;
         }
 
-        depthCompletionModelFile = selected;
+        currentDepthModelIndex = Mathf.Clamp(currentDepthModelIndex, 0, modelHandles.Length - 1);
+        IntPtr next = modelHandles[currentDepthModelIndex];
+        model = next; // any future launch uses the new selection
 
-        // Placeholder for now for native restart / reload in SpotObserver
-        // would have a stop / unload / clear / update depthCompletionModelFile / reload / relaunch pipeline
-        Debug.Log($"{username} requested depth model reload -> {selected}"); 
-        return true;
+        // Not connected yet: updating the selection is the whole change.
+        if (robot_id < 0)
+            return true;
+
+        // Live switch on every running vision pipeline: the native call stops the
+        // pipeline, relaunches it on the preloaded handle, and leaves the camera
+        // stream running. Sub-second, since nothing is loaded here.
+        bool allOk = true;
+        for (int s = 0; s < stream_ids.Length; s++)
+        {
+            if (s >= useVisionPipeline.Length || !useVisionPipeline[s]) continue;
+            if (stream_ids[s] < 0 || !isVisionPipelineRunning[s]) continue;
+
+            bool ok = SOb_SwitchVisionPipelineModel(robot_id, stream_ids[s], next);
+            if (!ok)
+                Debug.LogError($"{username}: depth model switch failed on stream {s} " +
+                               "(model may not support this stream's camera count -- see native log)");
+            allOk &= ok;
+        }
+
+        if (allOk)
+            Debug.Log($"{username}: depth model switched to {GetCurrentDepthModelName()}");
+        return allOk;
     }
 }

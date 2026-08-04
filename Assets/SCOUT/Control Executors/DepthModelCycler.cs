@@ -23,7 +23,10 @@ public class DepthModelCycler : MonoBehaviour
 
             bool success = client.CycleDepthModel();
             anySuccess |= success;
-            activeModelName = client.GetCurrentDepthModelName();
+            // Only name the model from a client that actually switched, so the
+            // badge can't display a model that a failed client is not running.
+            if (success)
+                activeModelName = client.GetCurrentDepthModelName();
         }
 
         if (messageManager != null)

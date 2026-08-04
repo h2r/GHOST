@@ -240,7 +240,9 @@ public class LocomotionJoystickMode : OneControllerMode
         model.indexLabel = doHeightAdjust ? "" : "Hold: Up/Down";
         model.axLabel = "Cycle PointClouds";
         model.byLabel = "Cycle ViewPoints";
-        model.joystickLabel = "Cycle Model";
+        // Append rather than overwrite: the joystick axis still does
+        // Rotate/Up-Down/Fly (set above); pressing it cycles the depth model.
+        model.joystickLabel += " | Press: Cycle Model";
 
         // Calculate the final delta
         LastMoveDelta = cameraRig.transform.position - positionBeforeUpdate;
