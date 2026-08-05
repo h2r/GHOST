@@ -94,6 +94,31 @@ public class PoseConsistentVideoDepth : MonoBehaviour
         opticalBufferCompute = null;
     }
 
+    // Clears the temporal history ring buffer so stale frames (e.g. from a depth
+    // model that was just swapped out) stop getting fused into new output.
+    public void ResetHistory()
+    {
+        buffer_pos = 0;
+
+        if (depthBufferCompute != null)
+        {
+            var zeros = new float[depthBufferCompute.count * 3];
+            depthBufferCompute.SetData(zeros);
+        }
+
+        if (poseBufferCompute != null)
+        {
+            var zeros = new float[poseBufferCompute.count * 16];
+            poseBufferCompute.SetData(zeros);
+        }
+
+        if (opticalBufferCompute != null)
+        {
+            var zeros = new float[opticalBufferCompute.count * 2];
+            opticalBufferCompute.SetData(zeros);
+        }
+    }
+
     // Writes converted/CVD-filtered float3 depth into the caller-owned output buffer.
     // The input depth and optical buffers are borrowed and are never released here.
     public bool WriteConsistentDepth(ComputeBuffer depth_buffer, ComputeBuffer output_buffer, Matrix4x4 pose_mat, ComputeBuffer optical_buffer, bool activate_CVD, float edgethreshold, bool activate_depth_completion, float cvd_weight)

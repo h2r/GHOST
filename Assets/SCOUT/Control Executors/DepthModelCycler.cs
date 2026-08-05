@@ -17,14 +17,18 @@ public class DepthModelCycler : MonoBehaviour
 
         for (int i = 0; i < spotObserverClients.Length; i++)
         {
+            Debug.Log($"Cycling depth model for client {i}");
             SpotObserverClient client = spotObserverClients[i];
             if (client == null)
                 continue;
+            Debug.Log($"Cycling depth model for client {client.name}");
 
             bool success = client.CycleDepthModel();
             anySuccess |= success;
             // Only name the model from a client that actually switched, so the
             // badge can't display a model that a failed client is not running.
+            Debug.Log($"Depth model switch for client {client.name} was {(success ? "successful" : "unsuccessful")}");
+
             if (success)
                 activeModelName = client.GetCurrentDepthModelName();
         }

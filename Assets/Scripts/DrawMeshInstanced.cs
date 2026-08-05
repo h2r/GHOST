@@ -74,6 +74,7 @@ public class DrawMeshInstanced : MonoBehaviour
     private int frameHeight;
     private int frameSize;
     private ulong lastFrameSequence;
+    private int lastDepthModelIndex = -1;
     private bool hasFrameData;
     private bool savedMeshUploaded;
     private bool ownsColorImage;
@@ -399,6 +400,14 @@ public class DrawMeshInstanced : MonoBehaviour
         if (spotObserverClient == null || !spotObserverClient.TryGetCameraFrame(spotObserverStreamIndex, spotObserverCameraIndex, out SpotObserverClient.CameraDepthFrame frame))
         {
             return false;
+        }
+
+        if (CVD != null && lastDepthModelIndex != spotObserverClient.currentDepthModelIndex)
+        {
+            // Depth model changed under us: drop CVD's fused history so the previous
+            // model's frames stop bleeding into the new model's output.
+            CVD.ResetHistory();
+            lastDepthModelIndex = spotObserverClient.currentDepthModelIndex;
         }
 
         if (hasFrameData && frame.Sequence == lastFrameSequence)

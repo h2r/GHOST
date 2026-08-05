@@ -11509,8 +11509,13 @@ MonoBehaviour:
   password: bigbubbabigbubba
   rosConnector: {fileID: 2123763348}
   useVisionPipeline: 0100
+  depthCompletionModelFiles:
+  - Assets/onnx/promptda/promptda-vitl-rotated_optimized_batch2_fp16.onnx
+  - 
+  depthCompletionModelKinds: 0000000001000000
+  currentDepthModelIndex: 0
   depthCompletionModelFile: Assets/onnx/promptda/promptda-vitl-rotated_optimized_batch2_fp16.onnx
-  enableLogging: 0
+  enableLogging: 1
   enableDebugDumps: 0
   enableFrameDebugLogging: 0
 --- !u!1 &973382266
@@ -11937,6 +11942,9 @@ MonoBehaviour:
   password: bigbubbabigbubba
   rosConnector: {fileID: 669083912}
   useVisionPipeline: 0100
+  depthCompletionModelFiles: []
+  depthCompletionModelKinds: 
+  currentDepthModelIndex: 0
   depthCompletionModelFile: Assets/onnx/promptda/promptda-vitl-rotated_optimized_batch2_fp16.onnx
   enableLogging: 0
   enableDebugDumps: 0
@@ -22438,7 +22446,7 @@ MonoBehaviour:
   - {fileID: 1273408083}
   - {fileID: 433495832}
   isLeft: 1
-  attachedSpotName: 
+  attachedSpotMode: {fileID: 0}
 --- !u!23 &758492290014997255
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -25044,7 +25052,7 @@ MonoBehaviour:
   redMaterial: {fileID: 2100000, guid: 86f944557dab0f94d8589ad8c224c4ed, type: 2}
   modeName: Blue Spot
   color: {r: 0, g: 0, b: 1, a: 1}
-  spotName: 
+  spotObserverClient: {fileID: 0}
   useWorldDummyGripper: 0
 --- !u!1 &5616449089262962814
 GameObject:
@@ -25145,7 +25153,7 @@ MonoBehaviour:
   redMaterial: {fileID: 2100000, guid: 86f944557dab0f94d8589ad8c224c4ed, type: 2}
   modeName: Red Spot
   color: {r: 1, g: 0, b: 0, a: 1}
-  spotName: 
+  spotObserverClient: {fileID: 0}
   useWorldDummyGripper: 0
 --- !u!1 &5704221352867220266
 GameObject:
@@ -25995,8 +26003,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RosSharp.RosBridgeClient.BGRRawImageSubscriber
   meshRenderer: {fileID: 1142502447079962882}
   controllerModel: {fileID: 7532563128813087666}
-  spotObserverClientSpotRos1: {fileID: 971801071}
-  spotObserverClientSpotRos2: {fileID: 1028337600}
   SpotObserverCameraIndex: 32
   SpotObserverStreamIdx: 1
   flipMode: 2
@@ -26043,7 +26049,7 @@ MonoBehaviour:
   - {fileID: 1560963606}
   - {fileID: 2087991522}
   isLeft: 0
-  attachedSpotName: 
+  attachedSpotMode: {fileID: 0}
 --- !u!4 &7548481229296391317
 Transform:
   m_ObjectHideFlags: 0
@@ -26332,8 +26338,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RosSharp.RosBridgeClient.BGRRawImageSubscriber
   meshRenderer: {fileID: 7700864136377476653}
   controllerModel: {fileID: 737598808418184447}
-  spotObserverClientSpotRos1: {fileID: 971801071}
-  spotObserverClientSpotRos2: {fileID: 1028337600}
   SpotObserverCameraIndex: 32
   SpotObserverStreamIdx: 1
   flipMode: 2
@@ -26823,7 +26827,7 @@ MonoBehaviour:
   redMaterial: {fileID: 0}
   modeName: Multi Spot
   color: {r: 0.5450981, g: 0, b: 0.5450981, a: 1}
-  spotName: 
+  spotObserverClient: {fileID: 0}
   useWorldDummyGripper: 0
   rosConnectorOne: {fileID: 2123763348}
   rosConnectorTwo: {fileID: 669083912}
@@ -26861,6 +26865,7 @@ GameObject:
   - component: {fileID: 2925042530075760595}
   - component: {fileID: 3361971512141547424}
   - component: {fileID: 8916049519973978856}
+  - component: {fileID: 8916049519973978857}
   m_Layer: 0
   m_Name: ViewOptionConfigurer
   m_TagString: Untagged
@@ -26883,6 +26888,21 @@ MonoBehaviour:
   depthManagers:
   - {fileID: 638278051}
   - {fileID: 1639569377}
+  messageManager: {fileID: 1335493519}
+--- !u!114 &8916049519973978857
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8916049519973978855}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 942aca08f9c9ef7968778e7236ea8297, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DepthModelCycler
+  spotObserverClients:
+  - {fileID: 971801071}
   messageManager: {fileID: 1335493519}
 --- !u!114 &8976075098727268183
 MonoBehaviour:

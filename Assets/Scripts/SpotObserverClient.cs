@@ -104,7 +104,8 @@ public class SpotObserverClient : MonoBehaviour
         int robot_id,
         int stream_id
     );
-
+    [DllImport("SpotObserverLib")]
+    private static extern void SOb_SetDepthAveraging(int robot_id, int stream_id, bool enable_averaging);
     [DllImport("SpotObserverLib")]
     private static extern bool SOb_SetUnityLogCallback(LogCallback callback);
     [DllImport("SpotObserverLib")]
@@ -497,6 +498,8 @@ public class SpotObserverClient : MonoBehaviour
                 launch_vision_pipeline(stream);
                 Debug.Log("Started the vision pipeline for robot " + RobotIP + " for stream index " + stream + ".");
             }            
+            SOb_SetDepthAveraging(robot_id, stream_id, true);
+
         }
     }
 
